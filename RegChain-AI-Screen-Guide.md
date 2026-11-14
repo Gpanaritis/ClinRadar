@@ -84,9 +84,15 @@ Status on 14 November 2026. The screens were captured from `main` with the demo 
 
 ![Country requirements](screens/12-country-requirements.png)
 
-**Shows:** the country library: requirements by country, topic and scope, coverage gaps per topic, and links to open changes.
+**Shows:** the country library: requirements by country, topic and scope, coverage gaps per topic, and links to open changes. Each record now answers three questions:
 
-**Real or simulated:** sample records for a handful of countries. It does not reflect the 17 countries in the demo portfolio.
+- **Is it current?** Every record is *In force*, *Changing* (an open change may alter it) or *Replaced* (the rule changed and the update is not approved yet), with who checked it last, when it is next due and an overdue flag. Before the SME approves the UK case, the UK labeling record shows as replaced on 28 Apr 2026 instead of passing the earlier rule off as current.
+- **Which of our trials does it touch?** Each record shows the trials, sites and patients in that country, and for the UK labeling record, the 7 trials, 12 batches and 6 shipments that need action. "See the trials" lists them, most urgent first.
+- **What do we do?** Opening a record shows practical answers (what the label must show, when a shorter label is allowed, who must oversee imports, who can receive a US shipment), lead times, and what is still to confirm.
+
+![Requirement detail](screens/12b-requirement-detail.png)
+
+**Real or simulated:** six sample records for the UK, the EU and the US. The practical answers are short paraphrases written on 14 Nov 2026 from the official sources named under each answer: regulation 46 and Schedule 14 on legislation.gov.uk, MHRA's transitional and import guidance, Regulation (EU) 536/2014 as amended by 2022/2239, 21 CFR 312.6, 312.40 and 312.110, and FDA's import page. They are examples, not reviewed regulatory advice. The reviewers' names and check dates are fictional. The trial counts come from the demo portfolio, so they only appear when the dashboard runs through `Start-RegChain.cmd`. The library has records for 4 of the portfolio's 17 countries (UK, Germany, France and the US).
 
 ### 11. Source log
 
@@ -114,13 +120,15 @@ Status on 14 November 2026. The screens were captured from `main` with the demo 
 
 - [ ] One real AI run with an API key, and a recorded result for the venue in case the internet fails.
 - [x] The SME should approve the AI's draft, not pre-written text (logic gap 1, fixed).
-- [ ] The Overview tiles, the Source log and Country requirements should match the demo portfolio and the four real sources, or the pitch should say they are samples.
+- [x] Country requirements show whether each record is current, which portfolio trials it touches, and what to do.
+- [ ] The Overview tiles, the Source log and the library's countries should match the demo portfolio (17 countries) and the four real sources, or the pitch should say they are samples.
 - [ ] Display names for batch results (the specification and the dashboard still differ; see the project plan, step 1).
 
 **For a real product:**
 
 - Discovery of new documents, not only known pages (see Part 4).
 - More countries and topics, with sources per country.
+- Practical answers and lead times drafted by the AI from the sources and approved by an expert, instead of written by hand. Authority lead times are not in the watched sources yet.
 - Site stock and depot stock, not only planned shipments.
 - Real login and roles, saved decisions, and links to the trial database (EDC), Quality system (QMS) and safety database.
 - An inbox for the SME: every open change across countries, by deadline.
