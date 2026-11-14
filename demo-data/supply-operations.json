@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "note": "FICTIONAL supply operations data for the RegChain agents: stock, site supply, relabelling capacity, label approvals, couriers, QP planning, trial authorisation records and site contacts. Each block stands for a validated system the agents may read through MCP; they never write to it.",
+  "as_of": "2026-11-14",
+  "systems": {
+    "specs": {"name": "RegChain Country Specifications", "validated": false, "access": "read-only"},
+    "irt": {"name": "IRT/RTSM", "validated": true, "access": "read-only"},
+    "erp": {"name": "ERP batch records", "validated": true, "access": "read-only"},
+    "depot": {"name": "Depot and labelling", "validated": true, "access": "read-only"},
+    "etmf": {"name": "eTMF", "validated": true, "access": "read-only"},
+    "drafts": {"name": "RegChain draft inbox", "validated": false, "access": "draft-only: every draft needs approval in its own validated system"}
+  },
+  "shipmentKits": {
+    "SHP-01": 10, "SHP-02": 8, "SHP-03": 6, "SHP-04": 12, "SHP-05": 6, "SHP-06": 14, "SHP-07": 16, "SHP-08": 10, "SHP-09": 12, "SHP-10": 8,
+    "SHP-ES-01": 12, "SHP-ES-02": 12, "SHP-ES-03": 12, "SHP-ES-04": 12, "SHP-ES-05": 12, "SHP-ES-06": 12, "SHP-ES-07": 6, "SHP-ES-08": 12, "SHP-ES-09": 6, "SHP-ES-10": 12
+  },
+  "depotStock": {
+    "UK depot": {"A-101": 4, "B-102": 24, "C-103": 40, "D-104": 18, "F-106": 10, "G-107": 20, "H-108": 36, "J-201": 6, "J-202": 30, "J-203": 48, "K-301": 16, "K-302": 30, "L-401": 8, "L-402": 12, "L-403": 34, "M-501": 20, "M-502": 28, "N-601": 22, "N-602": 26, "P-701": 12, "P-702": 18},
+    "Central EU depot, Belgium": {"E-105": 14, "J-204": 20, "K-303": 12, "R-803": 18, "R-804": 10, "R-807": 9, "XZ417-26A": 96, "XZ417-26B": 120, "XZ417-26C": 0}
+  },
+  "siteStockDays": {
+    "SITE-GB-01": 9, "SITE-GB-02": 12, "SITE-GB-03": 15, "SITE-GB-04": 6, "SITE-GB-05": 10, "SITE-GB-06": 5, "SITE-GB-07": 14, "SITE-GB-08": 20, "SITE-GB-09": 11, "SITE-GB-10": 8,
+    "SITE-DE-01": 7, "SITE-DE-02": 9
+  },
+  "relabel": {
+    "UK depot": {"slots": [{"date": "2026-11-16", "kits": 40}, {"date": "2026-11-18", "kits": 60}, {"date": "2026-11-20", "kits": 60}], "turnaroundBusinessDays": 1},
+    "Central EU depot, Belgium": {"slots": [{"date": "2026-11-19", "kits": 50}, {"date": "2026-11-26", "kits": 50}], "turnaroundBusinessDays": 2}
+  },
+  "labelApprovals": {
+    "UK": {
+      "IMP-001": {"status": "approved", "version": "2"},
+      "IMP-003": {"status": "approved", "version": "2"},
+      "IMP-004": {"status": "approved", "version": "2"},
+      "IMP-005": {"status": "in approval", "version": "2", "expected": "2026-11-25"},
+      "IMP-006": {"status": "approved", "version": "2"},
+      "IMP-007": {"status": "approved", "version": "2"},
+      "IMP-008": {"status": "approved", "version": "2"},
+      "IMP-009": {"status": "not started", "version": "2"}
+    },
+    "DE": {
+      "IMP-002": {"status": "not started", "version": "1", "leadBusinessDays": 15},
+      "IMP-004": {"status": "draft ready", "version": "1", "leadBusinessDays": 5}
+    }
+  },
+  "couriers": {
+    "UK logistics partner": {"from": "UK depot", "to": ["GB"], "standardTransitBusinessDays": 1, "expressTransitBusinessDays": 0, "weekend": false},
+    "EU logistics partner": {"from": "Central EU depot, Belgium", "to": ["DE", "ES", "FR", "IT", "PL"], "standardTransitBusinessDays": 2, "expressTransitBusinessDays": 1, "weekend": false}
+  },
+  "qpPlan": {
+    "XZ417-26C": {"status": "QP slot available, not booked", "earliestRelease": "2027-03-02", "qpSite": "Packaging site, Netherlands"}
+  },
+  "trialAuthorisations": {
+    "STUDY-004|GB": {"route": "old_rules", "document": "MHRA clinical trial authorisation letter, 12 Jun 2025", "reference": "TMF-004-GB-0137", "irtRecord": "unknown"},
+    "STUDY-001|GB": {"route": "old_rules", "document": "MHRA clinical trial authorisation letter, 3 Mar 2024", "reference": "TMF-001-GB-0088", "irtRecord": "old_rules"},
+    "STUDY-003|GB": {"route": "old_rules", "document": "MHRA clinical trial authorisation letter, 21 Nov 2024", "reference": "TMF-003-GB-0102", "irtRecord": "old_rules"}
+  },
+  "siteContacts": {
+    "ES-06": {"contact": "Hospital pharmacy, site ES-06", "channel": "Site portal", "typicalResponseBusinessDays": 5},
+    "ES-08": {"contact": "Hospital pharmacy, site ES-08", "channel": "Site portal", "typicalResponseBusinessDays": 5}
+  }
+}

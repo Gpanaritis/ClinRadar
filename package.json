@@ -1,15 +1,18 @@
 {
   "name": "regchain-ai",
   "private": true,
-  "description": "RegChain AI hackathon prototype: regulatory change monitoring for clinical supply",
+  "description": "RegChain AI hackathon prototype: regulatory change monitoring and pre-shipment checks for clinical supply, with an agent layer over MCP",
   "scripts": {
     "start": "node serve-regchain.cjs --open",
     "check:ai": "node scripts/check-ai-step.mjs",
     "embed:data": "node scripts/embed-data.mjs",
-    "check:data": "node scripts/embed-data.mjs --check"
+    "check:data": "node scripts/embed-data.mjs --check",
+    "check:agent": "node scripts/check-agent.mjs"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^1.8.0"
+    "@anthropic-ai/sdk": "^1.8.0",
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^4.6.7"
   },
   "engines": {
     "node": ">=20.12"

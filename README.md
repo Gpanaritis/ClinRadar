@@ -30,6 +30,19 @@ To turn it on:
 
 `npm run check:ai` tests the source fetching and RegChain's checks without calling the API.
 
+## Agents
+
+A blocked shipment's panel has **Resolve with agents**. It opens a page where an orchestrator (Claude Opus 5.5) and four specialist agents (Claude Sonnet 5.5) work through the problem:
+
+- They read IRT, ERP, the depot and the eTMF through six MCP servers, which are read-only except for a draft inbox.
+- They propose two or three options and check each one against RegChain's rules.
+- They draft the changes for people to approve.
+
+Only options that pass the fixed rules can be approved. Each draft still needs approval in its own validated system. Every step is logged and can be exported.
+
+**Run the AI agents** needs the same `.env` key as the AI step. **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers without calling Claude. `npm run check:agent` tests the rules, the six MCP servers, three scripted runs and the live loop with a stand-in for Claude, without calling the API. The systems behind the MCP servers are fictional data in `demo-data/supply-operations.json`. Design and compliance notes: [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
+
+- [Agents: how they resolve blocked shipments within validated systems](RegChain-AI-Agents.md)
 - [Product review, 15 Nov 2026: is the problem real, what was fixed, what is open](RegChain-AI-Product-Review.md)
 - [Project plan: what is done and what is next](RegChain-AI-Project-Plan.md)
 - [Demo scenario: one UK rule change, seven trials affected](RegChain-AI-Demo-Scenario.md)

@@ -20,6 +20,7 @@ const dashboardHtml = readFileSync(join(__dirname, "RegChain-AI-Dashboard.html")
 const dataFiles = [
   { id: "portfolio-data", file: join(__dirname, "demo-data", "uk-labelling-portfolio.json"), name: "Portfolio" },
   { id: "spain-data", file: join(__dirname, "demo-data", "spain-scenario.json"), name: "Spain scenario" },
+  { id: "specifications-data", file: join(__dirname, "demo-data", "country-specifications.json"), name: "Country Specifications" },
 ];
 function dashboardPage() {
   let page = dashboardHtml;
@@ -104,6 +105,64 @@ function sendJson(response, status, body) {
 
 const loadModule = name => import(pathToFileURL(join(__dirname, "regchain-ai", name)).href);
 
+// The MCP systems the agents can use, described once (started at launch, so the page doesn't wait for them).
+let agentSystemsCache = null;
+function agentSystems() {
+  agentSystemsCache ??= (async () => {
+    const { connectSystems, describeSystems, closeSystems } = await loadModule("agent.mjs");
+    const systems = await connectSystems(__dirname);
+    const described = describeSystems(systems);
+    await closeSystems(systems);
+    return described;
+  })().catch(error => {
+    agentSystemsCache = null;
+    throw error;
+  });
+  return agentSystemsCache;
+}
+
+// One agent run, streamed to the page as server-sent events. Live runs call Claude; scripted runs do not.
+let agentRunning = false;
+async function streamAgentRun(request, response) {
+  const site = request.headers["sec-fetch-site"];
+  if (site && !["same-origin", "none"].includes(site)) {
+    sendJson(response, 403, { error: "Requests from other sites are refused." });
+    return;
+  }
+  const params = new URL(request.url, origin).searchParams;
+  const shipment = params.get("shipment") || "";
+  const mode = params.get("mode") === "live" ? "live" : "scripted";
+  response.writeHead(200, { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-store", Connection: "keep-alive", "X-RegChain-Local": identity });
+  const fail = message => {
+    response.write("event: failure\ndata: " + JSON.stringify({ error: message }) + "\n\n");
+    response.end();
+  };
+  const { loadData, shipmentView } = await loadModule("rules.mjs");
+  if (!shipmentView(await loadData(__dirname), shipment)) return fail("Unknown shipment.");
+  if (mode === "live" && !(await sdkInstalled())) return fail("The Anthropic SDK is not installed. Run npm install in the RegChain folder, then restart.");
+  if (mode === "live" && !(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN)) return fail("Add ANTHROPIC_API_KEY to the .env file next to serve-regchain.cjs, then restart RegChain.");
+  if (agentRunning) return fail("An agent run is already in progress.");
+  agentRunning = true;
+  try {
+    const { resolveShipment } = await loadModule("agent.mjs");
+    const record = await resolveShipment({ root: __dirname, shipmentId: shipment, mode, emit: event => response.write("data: " + JSON.stringify(event) + "\n\n") });
+    const { cacheDir } = await loadModule("sources.mjs");
+    const dir = cacheDir(__dirname);
+    await mkdir(dir, { recursive: true });
+    await writeFile(join(dir, "agent-run-" + shipment + ".json"), JSON.stringify(record, null, 2));
+    response.write("event: complete\ndata: " + JSON.stringify(record) + "\n\n");
+    response.end();
+  } catch (error) {
+    const message = error.status === 401 ? "The Anthropic API key was not accepted. Check ANTHROPIC_API_KEY in the .env file." :
+      error.code === "ERR_MODULE_NOT_FOUND" ? "The agent packages are not installed. Run npm install in the RegChain folder, then restart RegChain." :
+      error.message || "The agent run failed.";
+    console.error("Agent run failed: " + message);
+    fail(message);
+  } finally {
+    agentRunning = false;
+  }
+}
+
 async function sdkInstalled() {
   try {
     await import("@anthropic-ai/sdk");
@@ -164,6 +223,35 @@ async function handleApi(request, response, path) {
       sdk: await sdkInstalled(),
       recorded: recorded ? { at: recorded.at, model: recorded.model, verified: recorded.verification.verified } : null
     });
+    return;
+  }
+  if (path === "/api/agent/status" && request.method === "GET") {
+    const agent = await loadModule("agent.mjs");
+    sendJson(response, 200, {
+      keySet: Boolean(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN),
+      sdk: await sdkInstalled(),
+      models: { orchestrator: agent.ORCHESTRATOR_MODEL, specialists: agent.SPECIALIST_MODEL },
+      systems: await agentSystems(),
+      running: agentRunning,
+    });
+    return;
+  }
+  if (path === "/api/agent/last" && request.method === "GET") {
+    const shipment = new URL(request.url, origin).searchParams.get("shipment") || "";
+    if (!/^SHP-[A-Z0-9-]+$/.test(shipment)) {
+      sendJson(response, 400, { error: "Unknown shipment." });
+      return;
+    }
+    const { cacheDir } = await loadModule("sources.mjs");
+    try {
+      sendJson(response, 200, JSON.parse(await readFile(join(cacheDir(__dirname), "agent-run-" + shipment + ".json"), "utf8")));
+    } catch {
+      sendJson(response, 404, { error: "No agent run on this computer yet." });
+    }
+    return;
+  }
+  if (path === "/api/agent/run" && request.method === "GET") {
+    await streamAgentRun(request, response);
     return;
   }
   if (path === "/api/sources/retry" && request.method === "POST") {
@@ -286,4 +374,5 @@ server.on("error", error => {
 server.listen(port, host, () => {
   console.log("RegChain AI is running at " + origin + "\nPress Ctrl+C to stop.");
   openBrowser();
+  agentSystems().catch(error => console.error("The agent systems did not start: " + error.message));
 });
