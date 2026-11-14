@@ -29,6 +29,7 @@ To turn it on:
 `npm run check:ai` tests the source fetching and RegChain's checks without calling the API.
 
 - [Project plan: what is done and what is next](RegChain-AI-Project-Plan.md)
+- [Demo scenario: one UK rule change, seven trials affected](RegChain-AI-Demo-Scenario.md)
 - [Dashboard mockup](RegChain-AI-Dashboard-Mockup.png)
 - [Research notes](RegChain-AI-Dashboard-Research.md)
 - [Master specification](RegChain-AI-Master-Specification.md)

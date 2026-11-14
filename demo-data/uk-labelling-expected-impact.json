@@ -1,0 +1,743 @@
+{
+  "case_id": "RC-UK-001",
+  "requirement_record_id": "GB/IMP_LABELING",
+  "effective_date": "2026-04-28",
+  "assessment_as_of": "2026-11-14T10:00:00Z",
+  "totals": {
+    "studies_checked": 18,
+    "studies_with_uk_sites": 9,
+    "active_uk_studies_with_supply": 8,
+    "studies_needing_action": 7,
+    "studies_needing_verification_only": 1,
+    "batches_checked": 33,
+    "uk_batches": 21,
+    "labeling_review_required": 7,
+    "needs_review": 5,
+    "verify_specification_and_approvals": 6,
+    "potential_transition_eligibility": 3,
+    "out_of_scope": 12,
+    "shipments_checked": 10,
+    "uk_shipments_needing_action": 6,
+    "earliest_preparation_target": "2026-11-14",
+    "patients_at_sites_awaiting_those_shipments": 101
+  },
+  "studies": [
+    {
+      "study_id": "STUDY-001",
+      "title": "UK legacy-cohort study",
+      "status": "active",
+      "has_uk_sites": true,
+      "uk_batches": 4,
+      "batch_counts": {
+        "labeling_review_required": 1,
+        "needs_review": 1,
+        "verify_specification_and_approvals": 1,
+        "potential_transition_eligibility": 1,
+        "out_of_scope": 0
+      },
+      "needs_action": true,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-002",
+      "title": "Germany-only distribution study",
+      "status": "active",
+      "has_uk_sites": false,
+      "uk_batches": 0,
+      "batch_counts": {
+        "labeling_review_required": 0,
+        "needs_review": 0,
+        "verify_specification_and_approvals": 0,
+        "potential_transition_eligibility": 0,
+        "out_of_scope": 1
+      },
+      "needs_action": false,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-003",
+      "title": "UK labeling and supply study",
+      "status": "active",
+      "has_uk_sites": true,
+      "uk_batches": 3,
+      "batch_counts": {
+        "labeling_review_required": 1,
+        "needs_review": 1,
+        "verify_specification_and_approvals": 1,
+        "potential_transition_eligibility": 0,
+        "out_of_scope": 0
+      },
+      "needs_action": true,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-004",
+      "title": "Multinational asthma maintenance study",
+      "status": "active",
+      "has_uk_sites": true,
+      "uk_batches": 3,
+      "batch_counts": {
+        "labeling_review_required": 1,
+        "needs_review": 1,
+        "verify_specification_and_approvals": 1,
+        "potential_transition_eligibility": 0,
+        "out_of_scope": 1
+      },
+      "needs_action": true,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-005",
+      "title": "Rare disease enzyme replacement study",
+      "status": "active",
+      "has_uk_sites": true,
+      "uk_batches": 2,
+      "batch_counts": {
+        "labeling_review_required": 2,
+        "needs_review": 0,
+        "verify_specification_and_approvals": 0,
+        "potential_transition_eligibility": 0,
+        "out_of_scope": 1
+      },
+      "needs_action": true,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-006",
+      "title": "Paediatric vaccine booster study",
+      "status": "active",
+      "has_uk_sites": true,
+      "uk_batches": 3,
+      "batch_counts": {
+        "labeling_review_required": 0,
+        "needs_review": 1,
+        "verify_specification_and_approvals": 1,
+        "potential_transition_eligibility": 1,
+        "out_of_scope": 0
+      },
+      "needs_action": true,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-007",
+      "title": "Migraine prevention study",
+      "status": "active",
+      "has_uk_sites": true,
+      "uk_batches": 2,
+      "batch_counts": {
+        "labeling_review_required": 0,
+        "needs_review": 0,
+        "verify_specification_and_approvals": 2,
+        "potential_transition_eligibility": 0,
+        "out_of_scope": 0
+      },
+      "needs_action": false,
+      "verification_only": true
+    },
+    {
+      "study_id": "STUDY-008",
+      "title": "Type 2 diabetes outcomes study",
+      "status": "active",
+      "has_uk_sites": true,
+      "uk_batches": 2,
+      "batch_counts": {
+        "labeling_review_required": 1,
+        "needs_review": 1,
+        "verify_specification_and_approvals": 0,
+        "potential_transition_eligibility": 0,
+        "out_of_scope": 1
+      },
+      "needs_action": true,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-009",
+      "title": "Rheumatoid arthritis biologic study",
+      "status": "active",
+      "has_uk_sites": true,
+      "uk_batches": 2,
+      "batch_counts": {
+        "labeling_review_required": 1,
+        "needs_review": 0,
+        "verify_specification_and_approvals": 0,
+        "potential_transition_eligibility": 1,
+        "out_of_scope": 0
+      },
+      "needs_action": true,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-010",
+      "title": "US oncology dose-finding study",
+      "status": "active",
+      "has_uk_sites": false,
+      "uk_batches": 0,
+      "batch_counts": {
+        "labeling_review_required": 0,
+        "needs_review": 0,
+        "verify_specification_and_approvals": 0,
+        "potential_transition_eligibility": 0,
+        "out_of_scope": 1
+      },
+      "needs_action": false,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-011",
+      "title": "Japan bridging study",
+      "status": "active",
+      "has_uk_sites": false,
+      "uk_batches": 0,
+      "batch_counts": {
+        "labeling_review_required": 0,
+        "needs_review": 0,
+        "verify_specification_and_approvals": 0,
+        "potential_transition_eligibility": 0,
+        "out_of_scope": 1
+      },
+      "needs_action": false,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-012",
+      "title": "EU psoriasis study",
+      "status": "active",
+      "has_uk_sites": false,
+      "uk_batches": 0,
+      "batch_counts": {
+        "labeling_review_required": 0,
+        "needs_review": 0,
+        "verify_specification_and_approvals": 0,
+        "potential_transition_eligibility": 0,
+        "out_of_scope": 1
+      },
+      "needs_action": false,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-013",
+      "title": "Spain and Portugal hepatitis study",
+      "status": "active",
+      "has_uk_sites": false,
+      "uk_batches": 0,
+      "batch_counts": {
+        "labeling_review_required": 0,
+        "needs_review": 0,
+        "verify_specification_and_approvals": 0,
+        "potential_transition_eligibility": 0,
+        "out_of_scope": 1
+      },
+      "needs_action": false,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-014",
+      "title": "Nordic heart failure study",
+      "status": "active",
+      "has_uk_sites": false,
+      "uk_batches": 0,
+      "batch_counts": {
+        "labeling_review_required": 0,
+        "needs_review": 0,
+        "verify_specification_and_approvals": 0,
+        "potential_transition_eligibility": 0,
+        "out_of_scope": 1
+      },
+      "needs_action": false,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-015",
+      "title": "US and Canada obesity study",
+      "status": "active",
+      "has_uk_sites": false,
+      "uk_batches": 0,
+      "batch_counts": {
+        "labeling_review_required": 0,
+        "needs_review": 0,
+        "verify_specification_and_approvals": 0,
+        "potential_transition_eligibility": 0,
+        "out_of_scope": 1
+      },
+      "needs_action": false,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-016",
+      "title": "France and Belgium lupus study",
+      "status": "active",
+      "has_uk_sites": false,
+      "uk_batches": 0,
+      "batch_counts": {
+        "labeling_review_required": 0,
+        "needs_review": 0,
+        "verify_specification_and_approvals": 0,
+        "potential_transition_eligibility": 0,
+        "out_of_scope": 1
+      },
+      "needs_action": false,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-017",
+      "title": "Australia chronic pain study",
+      "status": "active",
+      "has_uk_sites": false,
+      "uk_batches": 0,
+      "batch_counts": {
+        "labeling_review_required": 0,
+        "needs_review": 0,
+        "verify_specification_and_approvals": 0,
+        "potential_transition_eligibility": 0,
+        "out_of_scope": 1
+      },
+      "needs_action": false,
+      "verification_only": false
+    },
+    {
+      "study_id": "STUDY-018",
+      "title": "UK oncology follow-up study, supply closed",
+      "status": "completed",
+      "has_uk_sites": true,
+      "uk_batches": 0,
+      "batch_counts": {
+        "labeling_review_required": 0,
+        "needs_review": 0,
+        "verify_specification_and_approvals": 0,
+        "potential_transition_eligibility": 0,
+        "out_of_scope": 0
+      },
+      "needs_action": false,
+      "verification_only": false
+    }
+  ],
+  "batches": [
+    {
+      "batch_id": "A-101",
+      "study_id": "STUDY-001",
+      "study_country_id": "STUDY-001-GB",
+      "finished_imp_qp_certification_date": "2026-04-20",
+      "code": "potential_transition_eligibility",
+      "reason": "Pre-cutoff QP date, old-rules cohort, intended trial use and legacy labelling evidence are on file. SME confirms the Schedule 14 conditions.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "B-102",
+      "study_id": "STUDY-003",
+      "study_country_id": "STUDY-003-GB",
+      "finished_imp_qp_certification_date": "2026-05-05",
+      "code": "labeling_review_required",
+      "reason": "QP certified 2026-05-05, after the cutoff, with a legacy label. Manufactured before the cutoff, but the QP date decides.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "C-103",
+      "study_id": "STUDY-003",
+      "study_country_id": "STUDY-003-GB",
+      "finished_imp_qp_certification_date": "2026-05-05",
+      "code": "verify_specification_and_approvals",
+      "reason": "QP certified 2026-05-05, after the cutoff, with the updated label. Verify the approved specification.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "D-104",
+      "study_id": "STUDY-001",
+      "study_country_id": "STUDY-001-GB",
+      "finished_imp_qp_certification_date": null,
+      "code": "needs_review",
+      "reason": "Missing finished_imp_qp_certification_date.",
+      "missing_facts": [
+        "finished_imp_qp_certification_date"
+      ]
+    },
+    {
+      "batch_id": "E-105",
+      "study_id": "STUDY-002",
+      "study_country_id": "STUDY-002-DE",
+      "finished_imp_qp_certification_date": "2026-05-05",
+      "code": "out_of_scope",
+      "reason": "Supplied to DE, no UK linkage.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "F-106",
+      "study_id": "STUDY-003",
+      "study_country_id": "STUDY-003-GB",
+      "finished_imp_qp_certification_date": "2026-04-28",
+      "code": "needs_review",
+      "reason": "QP certification falls on the cutoff day. Escalate to the SME.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "G-107",
+      "study_id": "STUDY-001",
+      "study_country_id": "STUDY-001-GB",
+      "finished_imp_qp_certification_date": "2026-06-10",
+      "code": "labeling_review_required",
+      "reason": "QP certified 2026-06-10, after the cutoff, with a legacy label.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "H-108",
+      "study_id": "STUDY-001",
+      "study_country_id": "STUDY-001-GB",
+      "finished_imp_qp_certification_date": "2026-09-02",
+      "code": "verify_specification_and_approvals",
+      "reason": "QP certified 2026-09-02, after the cutoff, with the updated label. Verify the approved specification.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "J-201",
+      "study_id": "STUDY-004",
+      "study_country_id": "STUDY-004-GB",
+      "finished_imp_qp_certification_date": "2026-03-30",
+      "code": "needs_review",
+      "reason": "Pre-cutoff QP date, but transition conditions are not confirmed: old_rules_cohort.",
+      "missing_facts": [
+        "old_rules_cohort"
+      ]
+    },
+    {
+      "batch_id": "J-202",
+      "study_id": "STUDY-004",
+      "study_country_id": "STUDY-004-GB",
+      "finished_imp_qp_certification_date": "2026-07-14",
+      "code": "labeling_review_required",
+      "reason": "QP certified 2026-07-14, after the cutoff, with a legacy label.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "J-203",
+      "study_id": "STUDY-004",
+      "study_country_id": "STUDY-004-GB",
+      "finished_imp_qp_certification_date": "2026-10-01",
+      "code": "verify_specification_and_approvals",
+      "reason": "QP certified 2026-10-01, after the cutoff, with the updated label. Verify the approved specification.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "J-204",
+      "study_id": "STUDY-004",
+      "study_country_id": "STUDY-004-DE",
+      "finished_imp_qp_certification_date": "2026-07-14",
+      "code": "out_of_scope",
+      "reason": "Supplied to DE, no UK linkage.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "K-301",
+      "study_id": "STUDY-005",
+      "study_country_id": "STUDY-005-GB",
+      "finished_imp_qp_certification_date": "2026-05-20",
+      "code": "labeling_review_required",
+      "reason": "QP certified 2026-05-20, after the cutoff, with a legacy label.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "K-302",
+      "study_id": "STUDY-005",
+      "study_country_id": "STUDY-005-GB",
+      "finished_imp_qp_certification_date": "2026-08-11",
+      "code": "labeling_review_required",
+      "reason": "QP certified 2026-08-11, after the cutoff, with a legacy label.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "K-303",
+      "study_id": "STUDY-005",
+      "study_country_id": "STUDY-005-FR",
+      "finished_imp_qp_certification_date": "2026-08-11",
+      "code": "out_of_scope",
+      "reason": "Supplied to FR, no UK linkage.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "L-401",
+      "study_id": "STUDY-006",
+      "study_country_id": "STUDY-006-GB",
+      "finished_imp_qp_certification_date": "2026-02-15",
+      "code": "potential_transition_eligibility",
+      "reason": "Pre-cutoff QP date, old-rules cohort, intended trial use and legacy labelling evidence are on file. SME confirms the Schedule 14 conditions.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "L-402",
+      "study_id": "STUDY-006",
+      "study_country_id": "STUDY-006-GB",
+      "finished_imp_qp_certification_date": "2026-04-27",
+      "code": "needs_review",
+      "reason": "Pre-cutoff QP date, but transition conditions are not confirmed: intended_trial_use.",
+      "missing_facts": [
+        "intended_trial_use"
+      ]
+    },
+    {
+      "batch_id": "L-403",
+      "study_id": "STUDY-006",
+      "study_country_id": "STUDY-006-GB",
+      "finished_imp_qp_certification_date": "2026-06-30",
+      "code": "verify_specification_and_approvals",
+      "reason": "QP certified 2026-06-30, after the cutoff, with the updated label. Verify the approved specification.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "M-501",
+      "study_id": "STUDY-007",
+      "study_country_id": "STUDY-007-GB",
+      "finished_imp_qp_certification_date": "2026-09-18",
+      "code": "verify_specification_and_approvals",
+      "reason": "QP certified 2026-09-18, after the cutoff, with the updated label. Verify the approved specification.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "M-502",
+      "study_id": "STUDY-007",
+      "study_country_id": "STUDY-007-GB",
+      "finished_imp_qp_certification_date": "2026-10-20",
+      "code": "verify_specification_and_approvals",
+      "reason": "QP certified 2026-10-20, after the cutoff, with the updated label. Verify the approved specification.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "N-601",
+      "study_id": "STUDY-008",
+      "study_country_id": "STUDY-008-GB",
+      "finished_imp_qp_certification_date": "2026-05-28",
+      "code": "labeling_review_required",
+      "reason": "QP certified 2026-05-28, after the cutoff, with a legacy label.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "N-602",
+      "study_id": "STUDY-008",
+      "study_country_id": "STUDY-008-GB",
+      "finished_imp_qp_certification_date": "2026-08-25",
+      "code": "needs_review",
+      "reason": "Missing label_spec.",
+      "missing_facts": [
+        "label_spec"
+      ]
+    },
+    {
+      "batch_id": "N-603",
+      "study_id": "STUDY-008",
+      "study_country_id": "STUDY-008-US",
+      "finished_imp_qp_certification_date": "2026-08-25",
+      "code": "out_of_scope",
+      "reason": "Supplied to US, no UK linkage.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "P-701",
+      "study_id": "STUDY-009",
+      "study_country_id": "STUDY-009-GB",
+      "finished_imp_qp_certification_date": "2026-04-01",
+      "code": "potential_transition_eligibility",
+      "reason": "Pre-cutoff QP date, old-rules cohort, intended trial use and legacy labelling evidence are on file. SME confirms the Schedule 14 conditions.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "P-702",
+      "study_id": "STUDY-009",
+      "study_country_id": "STUDY-009-GB",
+      "finished_imp_qp_certification_date": "2026-07-07",
+      "code": "labeling_review_required",
+      "reason": "QP certified 2026-07-07, after the cutoff, with a legacy label.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "R-801",
+      "study_id": "STUDY-010",
+      "study_country_id": "STUDY-010-US",
+      "finished_imp_qp_certification_date": "2026-09-15",
+      "code": "out_of_scope",
+      "reason": "Supplied to US, no UK linkage.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "R-802",
+      "study_id": "STUDY-011",
+      "study_country_id": "STUDY-011-JP",
+      "finished_imp_qp_certification_date": "2026-08-19",
+      "code": "out_of_scope",
+      "reason": "Supplied to JP, no UK linkage.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "R-803",
+      "study_id": "STUDY-012",
+      "study_country_id": "STUDY-012-DE",
+      "finished_imp_qp_certification_date": "2026-08-03",
+      "code": "out_of_scope",
+      "reason": "Supplied to DE, no UK linkage.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "R-804",
+      "study_id": "STUDY-013",
+      "study_country_id": "STUDY-013-ES",
+      "finished_imp_qp_certification_date": "2026-06-15",
+      "code": "out_of_scope",
+      "reason": "Supplied to ES, no UK linkage.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "R-805",
+      "study_id": "STUDY-014",
+      "study_country_id": "STUDY-014-SE",
+      "finished_imp_qp_certification_date": "2026-09-23",
+      "code": "out_of_scope",
+      "reason": "Supplied to SE, no UK linkage.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "R-806",
+      "study_id": "STUDY-015",
+      "study_country_id": "STUDY-015-US",
+      "finished_imp_qp_certification_date": "2026-10-19",
+      "code": "out_of_scope",
+      "reason": "Supplied to US, no UK linkage.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "R-807",
+      "study_id": "STUDY-016",
+      "study_country_id": "STUDY-016-FR",
+      "finished_imp_qp_certification_date": "2026-09-09",
+      "code": "out_of_scope",
+      "reason": "Supplied to FR, no UK linkage.",
+      "missing_facts": []
+    },
+    {
+      "batch_id": "R-808",
+      "study_id": "STUDY-017",
+      "study_country_id": "STUDY-017-AU",
+      "finished_imp_qp_certification_date": "2026-07-22",
+      "code": "out_of_scope",
+      "reason": "Supplied to AU, no UK linkage.",
+      "missing_facts": []
+    }
+  ],
+  "shipments": [
+    {
+      "shipment_id": "SHP-01",
+      "batch_ids": [
+        "B-102"
+      ],
+      "site_id": "SITE-GB-01",
+      "planned_dispatch_date": "2026-11-22",
+      "preparation_target_date": "2026-11-17",
+      "days_to_preparation_target": 3,
+      "patients_on_treatment_at_site": 14,
+      "status": "action_before_dispatch"
+    },
+    {
+      "shipment_id": "SHP-02",
+      "batch_ids": [
+        "D-104"
+      ],
+      "site_id": "SITE-GB-02",
+      "planned_dispatch_date": "2026-11-25",
+      "preparation_target_date": "2026-11-20",
+      "days_to_preparation_target": 6,
+      "patients_on_treatment_at_site": 9,
+      "status": "action_before_dispatch"
+    },
+    {
+      "shipment_id": "SHP-03",
+      "batch_ids": [
+        "E-105"
+      ],
+      "site_id": "SITE-DE-01",
+      "planned_dispatch_date": "2026-11-23",
+      "preparation_target_date": "2026-11-18",
+      "days_to_preparation_target": 4,
+      "patients_on_treatment_at_site": 12,
+      "status": "not_affected"
+    },
+    {
+      "shipment_id": "SHP-04",
+      "batch_ids": [
+        "J-202"
+      ],
+      "site_id": "SITE-GB-04",
+      "planned_dispatch_date": "2026-11-19",
+      "preparation_target_date": "2026-11-14",
+      "days_to_preparation_target": 0,
+      "patients_on_treatment_at_site": 22,
+      "status": "action_before_dispatch"
+    },
+    {
+      "shipment_id": "SHP-05",
+      "batch_ids": [
+        "K-301"
+      ],
+      "site_id": "SITE-GB-06",
+      "planned_dispatch_date": "2026-11-27",
+      "preparation_target_date": "2026-11-22",
+      "days_to_preparation_target": 8,
+      "patients_on_treatment_at_site": 6,
+      "status": "action_before_dispatch"
+    },
+    {
+      "shipment_id": "SHP-06",
+      "batch_ids": [
+        "N-601"
+      ],
+      "site_id": "SITE-GB-09",
+      "planned_dispatch_date": "2026-12-02",
+      "preparation_target_date": "2026-11-27",
+      "days_to_preparation_target": 13,
+      "patients_on_treatment_at_site": 31,
+      "status": "action_before_dispatch"
+    },
+    {
+      "shipment_id": "SHP-07",
+      "batch_ids": [
+        "L-403"
+      ],
+      "site_id": "SITE-GB-07",
+      "planned_dispatch_date": "2026-11-24",
+      "preparation_target_date": "2026-11-19",
+      "days_to_preparation_target": 5,
+      "patients_on_treatment_at_site": 40,
+      "status": "check_before_dispatch"
+    },
+    {
+      "shipment_id": "SHP-08",
+      "batch_ids": [
+        "P-702"
+      ],
+      "site_id": "SITE-GB-10",
+      "planned_dispatch_date": "2026-12-04",
+      "preparation_target_date": "2026-11-29",
+      "days_to_preparation_target": 15,
+      "patients_on_treatment_at_site": 19,
+      "status": "action_before_dispatch"
+    },
+    {
+      "shipment_id": "SHP-09",
+      "batch_ids": [
+        "M-501"
+      ],
+      "site_id": "SITE-GB-08",
+      "planned_dispatch_date": "2026-12-08",
+      "preparation_target_date": "2026-12-03",
+      "days_to_preparation_target": 19,
+      "patients_on_treatment_at_site": 25,
+      "status": "check_before_dispatch"
+    },
+    {
+      "shipment_id": "SHP-10",
+      "batch_ids": [
+        "J-204"
+      ],
+      "site_id": "SITE-DE-02",
+      "planned_dispatch_date": "2026-11-26",
+      "preparation_target_date": "2026-11-21",
+      "days_to_preparation_target": 7,
+      "patients_on_treatment_at_site": 20,
+      "status": "not_affected"
+    }
+  ]
+}
