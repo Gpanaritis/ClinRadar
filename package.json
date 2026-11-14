@@ -1,0 +1,15 @@
+{
+  "name": "regchain-ai",
+  "private": true,
+  "description": "RegChain AI hackathon prototype: regulatory change monitoring for clinical supply",
+  "scripts": {
+    "start": "node serve-regchain.cjs --open",
+    "check:ai": "node scripts/check-ai-step.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0"
+  },
+  "engines": {
+    "node": ">=20.12"
+  }
+}
