@@ -1,6 +1,6 @@
 # TrialReady · RegChain AI
 
-RegChain AI is a browser prototype for country regulatory and clinical supply intelligence. Open a change from the regional overview to see evidence, study impact, regulatory review, and Quality follow-up in one case.
+RegChain AI is a browser prototype for country regulatory and clinical supply intelligence. **Shipment checks** tests every planned shipment against its destination's Country Specification before it leaves the depot. Changes to the rules reach the specification through governed cases: open one from the regional overview to see evidence, study impact, regulatory review and Quality follow-up.
 
 ## Run locally
 

@@ -128,6 +128,28 @@ The Spain case has the same steps as the UK case. The AI panel reads the note in
 
 **Real or simulated:** the whole scenario is fictional (note, authority, trial, sites and people) and lives in `demo-data/spain-scenario.json`. The AI check works the same way as in the UK case, plus one extra check: every edit must target a real line of the specification. It has been tested with a stand-in AI only. The story, the numbers and a demo script are in [RegChain-AI-Spain-Scenario.md](RegChain-AI-Spain-Scenario.md).
 
+### 14. Shipment checks
+
+![Shipment checks](screens/18-shipment-checks.png)
+
+**Shows:** the pre-shipment check, now the second item in the menu. Every planned shipment (20, to the UK, Germany and Spain) is tested against its destination's Country Specification before it leaves the depot. The result is **Blocked** (a check fails, data is missing, or an expert decision is needed), **Confirm before dispatch**, or **Ready to ship**. Today: 11 blocked, 5 to confirm, 4 ready. The Overview's first tile, "Shipments blocked", opens this page, and every shipment row on the Overview cards opens its check.
+
+![Shipment check detail](screens/18b-shipment-check-detail.png)
+
+Opening a shipment shows each check with its result, the reason and where the requirement comes from. A requirement from a change still waiting for approval is marked **Pending change** in orange: before RC-UK-001 is approved, specification v12 still has the earlier labeling text, but SHP-04 already fails the amended rule. Requirements whose data isn't connected yet, such as invoices, show as **Not checked** and never block. The planner can **hold the shipment, swap the batch or proceed as planned**, with a reason recorded under their name. Proceeding with a blocked shipment is an override.
+
+**What it finds:**
+- **Rule changes:** UK legacy labels after the cutoff, and from 1 Mar 2027 the Spanish delivery note and pharmacy notice.
+- **Requirements that already existed but weren't met**, which is the failure mode the research found most often:
+  - two German shipments have no German label specification on record;
+  - a trial's UK authorisation route isn't recorded;
+  - a batch has no QP certification date;
+  - a Spanish batch has no QP release planned;
+  - two Spanish sites have no pharmacy code.
+- **Plan problems:** a UK dispatch planned on a Sunday, and preparation dates on weekends.
+
+**Real or simulated:** the checks are rules written in the page, run on the demo portfolio and the Spain scenario. Invoices, label texts and courier data aren't connected, so those requirements show as Not checked. Actions are saved in the browser.
+
 ## Part 2 · What is missing
 
 **For the demo:**

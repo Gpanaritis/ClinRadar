@@ -55,13 +55,22 @@ What nobody seems to offer is the link from a country's requirements to **specif
 
 Tested in headless Edge: 23 checks pass with no AI result recorded and with a failed one. A sweep of 137 screens finds no demo wording and no page errors, served and as a file.
 
+## Built after the review: the pre-shipment check
+
+The **Shipment checks** page tests all 20 planned shipments against their destination's Country Specification. Today it finds 11 blocked, 5 to confirm and 4 ready to ship. Each check names its source and marks requirements from changes still waiting for approval as **pending**. The planner can hold a shipment, swap the batch or proceed, with a reason recorded under their name. The blocked shipments include both kinds of failure: rule changes (UK legacy labels) and requirements that already existed but weren't met (a missing German label specification, a missing QP date, a missing pharmacy code).
+
+**Suggested demo order (about 3 minutes):**
+1. **Shipment checks.** 11 of 20 blocked. Open SHP-04: it must be prepared today and fails the amended UK labeling rule, marked "pending change: specification v12 doesn't say this yet". Open SHP-03: Germany has no label specification for that batch, a gap that has nothing to do with any rule change.
+2. **The UK case.** Found at the first scan, 200 days after the rule applied; the look-back lists 7 legacy-label batches. Run the AI check, approve, and SHP-04 now cites specification v13.
+3. **Spain.** The same check flags the new rule 107 days early. Hold SHP-ES-09, whose batch has no QP release planned.
+
 ## Still open, ranked
 
 **For the hackathon:**
 1. **Real AI runs** for both cases, with saved results in case the venue's internet fails (needs the API key).
 2. **One clock.** "Today" is fixed at Saturday 14 Nov 2026, but approvals use the real clock. UK preparation dates use calendar days, so some fall on weekends. Pick the demo date, move the UK data to business days and regenerate the answer key.
-3. **Shipment actions.** Rows can't be clicked yet. Add Hold / Swap batch / Proceed, each with a reason in the audit trail.
-4. **Pre-shipment check view** (if the reframe is agreed): each planned shipment against each section of its country's specification, with pass, fail or missing data.
+3. ~~Shipment actions~~ and ~~the pre-shipment check view~~: built (see above). Still to do: put shipment actions into each case's audit trail, not only the browser.
+4. **Connect more data** so fewer requirements show as Not checked: invoices, label texts, courier and importer alerts.
 5. **Fewer status words.** About 20 remain. Reduce them to the three impact words plus Current / Change to assess / Edit suggested.
 6. **Smaller items:**
    - In Spain, the delivery note sits under "Mandatory invoice statements".
