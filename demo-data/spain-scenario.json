@@ -28,13 +28,13 @@
   },
   "notice": {
     "id": "es-notice",
-    "title": "Nota informativa 12/2026 (ficticia)",
-    "titleEn": "Information note 12/2026 (fictional)",
-    "authority": "Autoridad Demo de Medicamentos (ficticia)",
+    "title": "Nota informativa 12/2026 (escenario ilustrativo)",
+    "titleEn": "Information note 12/2026 (illustrative scenario)",
+    "authority": "Autoridad nacional de medicamentos (escenario ilustrativo)",
     "published": "2026-11-10",
     "effective": "2027-03-01",
     "language": "es",
-    "text": "Nota informativa 12/2026 (ficticia)\nDocumentación que debe acompañar a los envíos de medicamentos en investigación a los centros de ensayos clínicos en España\n1. A partir del 1 de marzo de 2027, cada envío de medicamentos en investigación a un centro de ensayo clínico en España deberá ir acompañado de un albarán de entrega redactado en español.\n2. El albarán de entrega indicará el número de ensayo clínico de la UE, el código del servicio de farmacia del hospital receptor y el número de lote de cada medicamento incluido en el envío.\n3. El promotor enviará al servicio de farmacia del hospital receptor un aviso electrónico de cada envío con una antelación mínima de tres días hábiles respecto a la fecha prevista de entrega.\n4. El servicio de farmacia rechazará los envíos que no cumplan los requisitos de los puntos 1 a 3, y los medicamentos rechazados se devolverán al remitente.\n5. Los envíos despachados antes del 1 de marzo de 2027 y entregados a más tardar el 8 de marzo de 2027 podrán seguir el procedimiento anterior.\n6. Esta nota no modifica los requisitos de etiquetado de los medicamentos en investigación.\nEsta nota es un ejemplo ficticio creado para una demostración y no procede de ninguna autoridad real."
+    "text": "Nota informativa 12/2026 (escenario ilustrativo)\nDocumentación que debe acompañar a los envíos de medicamentos en investigación a los centros de ensayos clínicos en España\n1. A partir del 1 de marzo de 2027, cada envío de medicamentos en investigación a un centro de ensayo clínico en España deberá ir acompañado de un albarán de entrega redactado en español.\n2. El albarán de entrega indicará el número de ensayo clínico de la UE, el código del servicio de farmacia del hospital receptor y el número de lote de cada medicamento incluido en el envío.\n3. El promotor enviará al servicio de farmacia del hospital receptor un aviso electrónico de cada envío con una antelación mínima de tres días hábiles respecto a la fecha prevista de entrega.\n4. El servicio de farmacia rechazará los envíos que no cumplan los requisitos de los puntos 1 a 3, y los medicamentos rechazados se devolverán al remitente.\n5. Los envíos despachados antes del 1 de marzo de 2027 y entregados a más tardar el 8 de marzo de 2027 podrán seguir el procedimiento anterior.\n6. Esta nota no modifica los requisitos de etiquetado de los medicamentos en investigación.\nEscenario ilustrativo: esta nota no procede de ninguna autoridad real."
   },
   "trial": {
     "id": "CTP-7842-201",
@@ -45,18 +45,18 @@
     "plannedSites": 64,
     "plannedPatients": 480,
     "firstPatientIn": "2027-02-15",
-    "depot": "Demo Central Depot NV, Belgium",
+    "depot": "Central EU depot, Belgium",
     "standardLeadBusinessDays": 5,
     "expeditedLeadBusinessDays": 2,
     "sites": [
-      {"id": "ES-01", "city": "Madrid", "hospital": "Hospital Demo Madrid Norte", "pharmacyCode": "FH-28-0101", "plannedPatients": 12},
-      {"id": "ES-02", "city": "Madrid", "hospital": "Hospital Demo Madrid Sur", "pharmacyCode": "FH-28-0207", "plannedPatients": 10},
-      {"id": "ES-03", "city": "Barcelona", "hospital": "Hospital Demo Barcelona Mar", "pharmacyCode": "FH-08-0112", "plannedPatients": 12},
-      {"id": "ES-04", "city": "Barcelona", "hospital": "Hospital Demo Barcelona Nord", "pharmacyCode": "FH-08-0315", "plannedPatients": 8},
-      {"id": "ES-05", "city": "Valencia", "hospital": "Hospital Demo Valencia", "pharmacyCode": "FH-46-0104", "plannedPatients": 9},
-      {"id": "ES-06", "city": "Sevilla", "hospital": "Hospital Demo Sevilla", "pharmacyCode": null, "plannedPatients": 8},
-      {"id": "ES-07", "city": "Bilbao", "hospital": "Hospital Demo Bilbao", "pharmacyCode": "FH-48-0109", "plannedPatients": 7},
-      {"id": "ES-08", "city": "Málaga", "hospital": "Hospital Demo Málaga", "pharmacyCode": null, "plannedPatients": 6}
+      {"id": "ES-01", "city": "Madrid", "hospital": "Hospital pharmacy, site ES-01", "pharmacyCode": "FH-28-0101", "plannedPatients": 12},
+      {"id": "ES-02", "city": "Madrid", "hospital": "Hospital pharmacy, site ES-02", "pharmacyCode": "FH-28-0207", "plannedPatients": 10},
+      {"id": "ES-03", "city": "Barcelona", "hospital": "Hospital pharmacy, site ES-03", "pharmacyCode": "FH-08-0112", "plannedPatients": 12},
+      {"id": "ES-04", "city": "Barcelona", "hospital": "Hospital pharmacy, site ES-04", "pharmacyCode": "FH-08-0315", "plannedPatients": 8},
+      {"id": "ES-05", "city": "Valencia", "hospital": "Hospital pharmacy, site ES-05", "pharmacyCode": "FH-46-0104", "plannedPatients": 9},
+      {"id": "ES-06", "city": "Sevilla", "hospital": "Hospital pharmacy, site ES-06", "pharmacyCode": null, "plannedPatients": 8},
+      {"id": "ES-07", "city": "Bilbao", "hospital": "Hospital pharmacy, site ES-07", "pharmacyCode": "FH-48-0109", "plannedPatients": 7},
+      {"id": "ES-08", "city": "Málaga", "hospital": "Hospital pharmacy, site ES-08", "pharmacyCode": null, "plannedPatients": 6}
     ],
     "shipments": [
       {"id": "SHP-ES-01", "site": "ES-01", "kind": "Initial site supply", "dispatch": "2027-02-01", "delivery": "2027-02-03", "kits": 12},
@@ -86,7 +86,7 @@
       "logistics": {"owner": "M. Silva, Clinical Supply Logistics EU", "checked": "2026-10-05", "review": "2027-01-20", "sources": ["es-notice"], "case": "es",
         "items": ["Prepare each shipment 5 business days before dispatch, or 2 when expedited.", "Road transport from the central depot in Belgium at 15–25 °C with a temperature monitor.", "Hospital pharmacies receive deliveries on working days only."]},
       "carriers": {"owner": "M. Silva, Clinical Supply Logistics EU", "checked": "2026-10-05", "review": "2027-01-20", "sources": [],
-        "items": ["Demo EU logistics: road shipments from the central depot to sites."]},
+        "items": ["EU logistics partner: road shipments from the central depot to sites."]},
       "ior": {"owner": "D. Ortega, Trade Compliance EU", "checked": "2026-10-05", "review": "2027-01-20", "sources": [],
         "items": ["Consignee: the hospital pharmacy of each trial site."]},
       "contacts": {"owner": "Local affiliate, Spain", "checked": "2026-10-05", "review": "2027-01-20", "sources": [], "case": "es",

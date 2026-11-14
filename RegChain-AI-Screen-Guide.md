@@ -1,6 +1,6 @@
 # RegChain AI · screen guide and gap review
 
-Status on 14 November 2026. The screens were captured from `main` with the demo portfolio loaded. The AI panel shows the test run from `scripts/check-ai-step.mjs`, which uses a stand-in instead of Claude and is labelled as such on screen; no real AI run has been done yet.
+Status on 14 November 2026. The screens were captured with the portfolio and the Spain scenario loaded; the screens themselves carry no demo labels. The AI panel shows the test run from `scripts/check-ai-step.mjs`, which uses a stand-in instead of Claude and is labelled as such on screen; no real AI run has been done yet.
 
 **In short:** the dashboard tells the story end to end, from one regulation change to the trials, batches and shipments it affects, then the expert's decision, the updated Country Specification and the Quality task. Two things weaken it today: the quote check proves words exist but not that they support the claim, and the system only watches four known pages, so it would miss a brand-new regulation or guidance page. (A third, the expert approving pre-written text instead of the AI's draft, is now fixed; see logic gap 1.)
 

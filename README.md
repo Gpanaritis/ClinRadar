@@ -8,7 +8,9 @@ On Windows, open **Start-RegChain.cmd** from the repository folder. If Node.js i
 
 From a terminal on any system with Node.js, run `node serve-regchain.cjs` from the repository folder and open **http://127.0.0.1:4173/**. Use the same address and browser profile to keep saved review decisions and replay settings across sessions. File-mode browser storage varies by browser and is separate from localhost.
 
-The prototype uses historical examples, fictional portfolio records and simulated roles. The configurable schedule replays sample checks while the dashboard is open.
+The prototype uses a real UK rule change, a fictional trial portfolio, a fictional Spain scenario and simulated roles. The screens carry no demo labels; this README and the docs below say what is real and what is simulated. The configurable schedule re-runs recorded checks while the dashboard is open.
+
+The page carries a copy of the data in `demo-data/`, so the full portfolio and the Spain scenario also show when the file is opened directly. After changing anything in `demo-data/`, run `npm run embed:data` (and `npm run check:data` to confirm the copy is current). The local server always reads the files themselves.
 
 ## AI step
 

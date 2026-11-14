@@ -43,7 +43,7 @@ Say these out loud in the demo, and replace them in this order where time allows
 1. **Portfolio data.** The dashboard reads the fictional portfolio from `demo-data/uk-labelling-portfolio.json` through the local server, and falls back to a built-in 3-trial sample when the page is opened as a plain file. It should come from the database.
 2. **Decisions.** SME decisions, the published version, the Quality task and the case history are saved only in the browser (`localStorage`). They should be saved in the database.
 3. **Roles.** Anyone can pick "Regulatory SME" from a dropdown. A demo session with a fixed role per user is enough for the hackathon.
-4. **Replay and schedule.** The Replay button and the monitoring schedule fetch nothing; they update a counter and show a fixed message. Only the AI check fetches real sources.
+4. **Checks and schedule.** The Run checks button and the monitoring schedule fetch nothing; they update a counter and show a fixed message. Only the AI check fetches real sources.
 5. **The EU and GB import changes.** Their summaries are written in advance. Only the UK labeling case has the AI check.
 
 ## Who does what
@@ -81,7 +81,7 @@ The spec (section 9) already defines most routes. Confirm them with Giannis and 
 
 | Route | Used by the dashboard for |
 | --- | --- |
-| `POST /v1/replays` | The Replay button: run the pipeline on the official sources, live or recorded |
+| `POST /v1/replays` | The Run checks button: run the pipeline on the official sources, live or recorded |
 | `GET /v1/cases/{id}` | The case page: source diff, citations, AI draft, check results, batch assessment, proposal revision |
 | `GET /v1/evidence/{id}` | The evidence drawer: verified excerpt, locator, source version, fingerprint, link |
 | `GET /v1/cases/{id}/impact` | Impact report download |
