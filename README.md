@@ -18,7 +18,7 @@ The UK labeling case has a live AI check, at the top of its **Evidence & impact*
 - the effective date must match the recorded rule (28 April 2026);
 - the change status must agree with the text comparison.
 
-If any check fails, Approve and Edit & approve are blocked for the Regulatory SME. The texts are never stored in the repository; the server keeps the last copy and the last result in `.regchain-cache/`, so a recorded check still shows without internet.
+If any check fails, Approve and Edit & approve are blocked for the Regulatory SME. When every check passes, the AI's draft becomes the proposal the SME reviews, as a new revision recorded in the audit trail. It never overwrites an SME's own edit or a case that is past review. The texts are never stored in the repository; the server keeps the last copy and the last result in `.regchain-cache/`, so a recorded check still shows without internet.
 
 To turn it on:
 

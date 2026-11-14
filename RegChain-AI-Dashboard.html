@@ -218,7 +218,7 @@ function saveWorkflow(state) {
 }
 function appendWorkflowEvent(state,type,role,now,detail) {
  const eventId=ukCase.id+"-"+String(state.events.length+1).padStart(2,"0");
- state.events.push({eventId,type,actor:workflowRoles[role]??(role==="scheduler"?"Demo scheduler":"Demo publisher"),at:now,revision:state.revision,detail});
+ state.events.push({eventId,type,actor:workflowRoles[role]??(role==="scheduler"?"Demo scheduler":role==="ai"?"RegChain AI check":"Demo publisher"),at:now,revision:state.revision,detail});
 }
 function workflowStep(state,command,role,now) {
  const {action,revision}=command;
@@ -242,6 +242,7 @@ function workflowStep(state,command,role,now) {
    if(!instruction||instruction===state.draft) throw Error("Edit the operational instruction before choosing Edit & approve.");
    state.revision++;
    state.draft=instruction;
+   state.draftSource="sme";
    appendWorkflowEvent(state,"proposal.edited",role,now,instruction);
   }
   const reviewOn=command.reviewOn;
@@ -254,7 +255,8 @@ function workflowStep(state,command,role,now) {
    return;
   }
   state.stage="published";
-  state.publication={version:2,previousVersion:1,revision:state.revision,at:now,effective:ukCase.effective,policy:ukCase.policy,instruction:state.draft,evidenceIds:ukCase.evidence.map(item=>item.id)};
+  state.publication={version:2,previousVersion:1,revision:state.revision,at:now,effective:ukCase.effective,policy:state.policy??ukCase.policy,instruction:state.draft,
+   source:state.draftSource??"seed",evidenceIds:ukCase.evidence.map(item=>item.id)};
   appendWorkflowEvent(state,"country_record.published","publisher",now,"GB/IMP_LABELING v2 · Receipt LOCAL-REC-02");
   const nextReview=shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").map(shipment=>shipment.preparationDate).sort()[0];
   state.task={id:"QMS-DEMO-001",owner:workflowRoles.owner,status:"assigned",evidence:null,assignedAt:now,dueOn:nextReview,
@@ -293,6 +295,23 @@ function workflowStep(state,command,role,now) {
   return;
  }
  throw Error("This action is unavailable for the selected role and task status.");
+}
+// A passing AI check becomes the proposal under review, as a new revision.
+// Never while the case is past review, never over an SME edit, and once per AI run.
+function adoptAiDraft(state,result,now) {
+ if(state.stage!=="review"||!result?.verification?.verified||state.draftSource==="sme"||state.aiRunAt===result.at) return false;
+ const draft=result.draft??{};
+ const instruction=String(draft.proposedRequirement??"").trim();
+ if(!instruction) return false;
+ state.revision++;
+ state.policy=String(draft.requirementStatement||draft.summary||ukCase.policy).trim();
+ state.conditions=[draft.scope,...(draft.transition?.conditions??[])].map(item=>String(item??"").trim()).filter(Boolean);
+ state.draft=instruction;
+ state.draftSource="ai";
+ state.aiRunAt=result.at;
+ state.aiModel=result.model;
+ appendWorkflowEvent(state,"proposal.ai_draft_adopted","ai",now,"Draft from "+result.model+" became revision "+state.revision+" after all "+result.verification.checks.length+" checks passed.");
+ return true;
 }
 </script>
 <script id="dashboard-ui">
@@ -632,9 +651,13 @@ function workflowDecision() {
 function workflowProposal() {
   const decision=panel("SME decision","Demo role and rationale are recorded in the case history.",casePad(workflowDecision()),caseRoleSelect());
   const published=workflow.publication;
+  const origin=workflow.draftSource==="ai"?"Drafted by the AI check ("+(workflow.aiModel||"AI")+", "+scheduleDate(Date.parse(workflow.aiRunAt))+") after all checks passed. The SME decides.":
+    workflow.draftSource==="sme"?"Edited by the Regulatory SME.":"Example text written for the demo. A passing AI check replaces it with a checked draft.";
+  const conditions=workflow.conditions??ukCase.conditions;
   const proposed=panel("Country requirement comparison",ukCase.requirement+" · Proposal revision "+workflow.revision,
-    compareValues("Seeded baseline · v1",ukCase.baseline,published?"Approved country value":"Proposed country value",published?.policy??ukCase.policy)+
-    '<div class="case-pad" style="padding-top:11px"><h3>Scope and conditions</h3>'+listItems(ukCase.conditions.map(esc))+'<p>'+esc(workflow.draft)+'</p></div>');
+    compareValues("Seeded baseline · v1",ukCase.baseline,published?"Approved country value":"Proposed country value",published?.policy??workflow.policy??ukCase.policy)+
+    '<div class="case-pad" style="padding-top:11px"><div class="inline-note">'+icon("info")+'<span>'+esc(origin)+'</span></div><h3>Scope and conditions</h3>'+
+    (conditions.length?listItems(conditions.map(esc)):'<p>No scope or transition conditions in the draft.</p>')+'<h3>Operational instruction</h3><p>'+esc(workflow.draft)+'</p></div>');
   const confidence=panel("Confidence by dimension","Qualitative evidence assessment",casePad(factlist([
     ["Detection","High · instrument and MHRA sources agree on commencement"],["Extraction","High · cited provisions and guidance are available"],
     ["Applicability","Mixed · missing QP date and cutoff-day case"],["Interpretation",published?"Approved for the country record in this demo":"Requires authorized SME decision"]
@@ -689,6 +712,22 @@ async function aiRequest(path,options={}) {
   return body;
 }
 const aiBlocked = () => Boolean(aiState.result && !aiState.result.verification.verified);
+function applyAiDraft() {
+  if(!aiState.result) return false;
+  const next=structuredClone(readWorkflow(workflow));
+  if(!adoptAiDraft(next,aiState.result,new Date().toISOString())) return false;
+  workflow=next;
+  saveWorkflow(workflow);
+  return true;
+}
+function aiAdoptionNote(result) {
+  if(!result.verification.verified) return "";
+  const adopted=workflow.draftSource==="ai"&&workflow.aiRunAt===result.at;
+  const text=adopted?(workflow.stage==="review"?"This draft is the proposal under SME review · revision "+workflow.revision+".":"This draft was the proposal the SME decided on."):
+    workflow.draftSource==="sme"?"Not applied: the SME has edited the proposal. Reset the demo case to use this draft.":
+    workflow.stage!=="review"?"Not applied: the case is no longer in review.":"";
+  return text?'<div class="inline-note">'+icon("info")+'<span>'+esc(text)+'</span></div>':"";
+}
 function refreshAi() {const card=byId("ai-card");if(card) card.outerHTML=aiCard();}
 async function loadAi() {
   if(aiState.phase==="offline") return;
@@ -696,7 +735,8 @@ async function loadAi() {
     aiState.status=await aiRequest("/api/ai/status");
     if(aiState.status.recorded) aiState.result=await aiRequest("/api/ai/analysis");
   } catch {aiState.phase="offline";}
-  refreshAi();
+  if(applyAiDraft()) render();
+  else refreshAi();
 }
 async function runAi() {
   aiState={...aiState,phase:"running",error:""};
@@ -705,13 +745,15 @@ async function runAi() {
   try {
     aiState.result=await aiRequest("/api/ai/analyze",{method:"POST"});
     aiState.fresh=true;
-    notify(aiState.result.verification.verified?"AI check complete. All checks passed.":"AI check complete. Some checks failed, so SME approval is blocked.");
   } catch(error) {
     aiState.error=error.message;
-    notify("AI check failed.");
   }
   aiState.phase="idle";
-  refreshAi();
+  const adopted=!aiState.error&&applyAiDraft();
+  if(adopted) render();
+  else refreshAi();
+  notify(aiState.error?"AI check failed.":!aiState.result.verification.verified?"AI check complete. Some checks failed, so SME approval is blocked.":
+    adopted?"AI check complete. All checks passed, and the AI draft is now the proposal for SME review.":"AI check complete. All checks passed.");
   byId("ai-run")?.focus();
 }
 function aiSetupHints() {
@@ -737,7 +779,7 @@ function aiResult(result) {
   const diffView='<details class="diff"><summary>What changed in regulation 46 · '+diff.added+' lines added, '+diff.removed+' removed</summary><ol>'+
     changed.map(line=>'<li class="'+(line.type==="added"?"add":"del")+'">'+(line.type==="added"?"+ ":"− ")+esc(line.text)+'</li>').join("")+'</ol></details>';
   const transition=draft.transition||{applies:false,conditions:[]};
-  return gate+checks+
+  return gate+aiAdoptionNote(result)+checks+
     '<h3>Sources read</h3><div class="table-wrap ai-sources"><table><thead><tr><th>Source</th><th>Version</th><th>Fingerprint</th><th>Copy</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+diffView+
     '<h3>AI draft for '+esc(result.rule.requirement)+'</h3><p>'+esc(draft.summary)+'</p>'+
     factlist([["Change status",draft.status],["Effective date",draft.effectiveDate],["Scope",draft.scope],["Transition",transition.applies?"Earlier rules can continue under conditions":"No transition found"]])+
@@ -947,6 +989,7 @@ const actions={
   "confirm-reset-workflow":()=>{
     workflow=initialWorkflow();
     saveWorkflow(workflow);
+    applyAiDraft();
     reviewDecision="approve";
     openCase("uk","proposal");
     notify("UK demo case reset.");

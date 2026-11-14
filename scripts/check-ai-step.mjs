@@ -61,6 +61,7 @@ const base = {
   effectiveDate: "2026-04-28",
   scope: "UK clinical trials",
   transition: { applies: true, conditions: ["Test condition"] },
+  requirementStatement: "Test requirement statement.",
   proposedRequirement: "Test instruction.",
   uncertainties: [],
 };

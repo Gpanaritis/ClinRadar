@@ -23,15 +23,16 @@ const TASK = `Draft the change for the company requirement GB/IMP_LABELING:
 3. effectiveDate: the date the new version applies.
 4. scope: who and what the new rules apply to.
 5. transition: whether the earlier rules can continue for some products, and each condition for that.
-6. proposedRequirement: the operational instruction the company record should say, in two to four sentences.
-7. claims: between four and eight claims that support the points above, each with its quote and source id.
-8. uncertainties: what an expert still needs to confirm.`;
+6. requirementStatement: one sentence stating the requirement as the company's country record should publish it.
+7. proposedRequirement: the operational instruction for the supply team, in two to four sentences.
+8. claims: between four and eight claims that support the points above, each with its quote and source id.
+9. uncertainties: what an expert still needs to confirm.`;
 
 function schemaFor(sourceIds) {
   return {
     type: "object",
     additionalProperties: false,
-    required: ["status", "summary", "effectiveDate", "scope", "transition", "proposedRequirement", "claims", "uncertainties"],
+    required: ["status", "summary", "effectiveDate", "scope", "transition", "requirementStatement", "proposedRequirement", "claims", "uncertainties"],
     properties: {
       status: { type: "string", enum: ["material", "cosmetic", "no_change"] },
       summary: { type: "string" },
@@ -46,6 +47,7 @@ function schemaFor(sourceIds) {
           conditions: { type: "array", items: { type: "string" } },
         },
       },
+      requirementStatement: { type: "string" },
       proposedRequirement: { type: "string" },
       claims: {
         type: "array",
