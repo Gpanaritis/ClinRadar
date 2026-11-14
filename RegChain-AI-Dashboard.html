@@ -30,6 +30,27 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 .case-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr);gap:15px;align-items:start}.case-stack{display:grid;gap:15px;min-width:0}.case-pad{padding:0 15px 15px}.case-pad p{color:var(--muted);margin:5px 0 10px}.case-pad .facts{margin-bottom:8px}.workflow-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:15px}.workflow-steps button{padding:11px 12px;background:white;color:var(--ink);border:0;text-align:left;font-weight:700}.workflow-steps button+button{border-left:1px solid var(--line)}.workflow-steps button[aria-pressed=true]{background:#edf4ff;color:var(--deep);box-shadow:inset 0 -2px var(--blue)}.workflow-steps .sub{margin-top:3px}.compare{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.compare>div{padding:13px 15px;min-width:0}.compare>div+div{border-left:1px solid var(--line);background:#f5f9ff}.compare h3,.case-pad h3{font-size:13px}.compare p{margin-top:5px;font-size:13px;overflow-wrap:anywhere}.review-form{display:grid;gap:11px}.review-form textarea{font:inherit;line-height:1.4;resize:vertical;padding:8px;border:1px solid #d5e2f1;border-radius:7px;color:var(--ink);width:100%;min-height:70px}.review-form textarea:focus-visible{outline:3px solid #3b72ef;outline-offset:3px}.form-feedback{font-size:12px;color:#9f2c42}.form-feedback:empty{display:none}.case-list{list-style:none;padding:0;margin:8px 0 0}.case-list li{border-top:1px solid var(--line);padding:8px 0;overflow-wrap:anywhere}.case-list small{color:var(--muted);display:block}.evidence-item{padding:10px 0;border-top:1px solid var(--line)}.evidence-item p{font-size:12px;margin:5px 0}.evidence-item h3{margin-top:5px}.case-title{overflow-wrap:anywhere}
 @media(max-width:900px){.case-layout{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:480px){.compare{grid-template-columns:1fr}.compare>div+div{border-left:0;border-top:1px solid var(--line)}.workflow-steps button{padding:8px 6px;font-size:12px}}
+.field select{min-height:40px;padding:8px 36px 8px 11px;border-radius:9px;border-color:#cbd9ec;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2349668d' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E") right 11px center/16px no-repeat;appearance:none;font-weight:650}
+.field select:hover{border-color:#8eabe0}.field select:focus-visible{outline:2px solid #3b72ef;outline-offset:2px}
+@supports (appearance:base-select) and selector(::picker(select)){
+  .field select,.field select::picker(select){appearance:base-select}
+  .field select{background:#fff;padding:8px 11px;gap:12px;align-items:center}
+  .field select:open{border-color:var(--blue);box-shadow:0 0 0 3px #e4eeff}
+  .field select::picker-icon{color:#49668d;transition:rotate .16s}
+  .field select:open::picker-icon{rotate:180deg}
+  .field select::picker(select){margin-block:6px;padding:5px;border:1px solid #d6e1f1;border-radius:12px;background:#fff;color:var(--ink);box-shadow:0 10px 28px #153b6e26;max-inline-size:calc(100vw - 24px)}
+  .field option{min-height:38px;border-radius:7px;padding:8px 9px;gap:8px;white-space:normal;font-weight:550}
+  .field option:hover,.field option:focus-visible{background:#f0f5ff}
+  .field option:checked{background:#e9f1ff;color:#1744ad;font-weight:750}
+  .field option::checkmark{order:1;margin-inline-start:auto;color:var(--blue)}
+}
+.case-tabs{display:flex;flex-wrap:wrap;gap:3px;padding:4px;margin-bottom:15px;background:#edf3fc;border:1px solid var(--line);border-radius:10px}
+.case-tabs button{border:0;border-radius:7px;background:none;color:#425d80;padding:8px 13px;font-weight:700;text-align:left}
+.case-tabs button:hover{background:#f8fbff}.case-tabs button[aria-pressed=true]{background:white;color:var(--deep);box-shadow:0 1px 3px #26447422}
+.jurisdiction{margin:0;padding:10px 15px 5px;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.region .change{padding-left:39px}.source-references summary{padding:13px 15px;cursor:pointer;font-weight:700}.source-references[open] summary{border-bottom:1px solid var(--line)}
+.tile:not(button):hover{border-color:var(--line);background:white}.rail .nav[aria-current="location"]{background:#e9f1ff;color:#1644ad;font-weight:750}
+@media(forced-colors:active){.field select,.field select::picker(select){appearance:auto;background:Canvas;color:CanvasText}.field select:focus-visible{outline-color:Highlight}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -195,7 +216,7 @@ function workflowStep(state,command,role,now) {
   }
   const reviewOn=command.reviewOn;
   if(action==="defer" && (!/^\d{4}-\d{2}-\d{2}$/.test(reviewOn??"") || reviewOn<=(command.today??now.slice(0,10)))) throw Error("Choose a future return-to-review date.");
-  if(action==="approve" && instruction!==state.draft) throw Error("Use Edit & approve to publish a modified instruction.");
+  if(action==="approve" && command.instruction!=null && instruction!==state.draft) throw Error("Use Edit & approve to publish a modified instruction.");
   state.decision={action,rationale:reason,actor:workflowRoles[role],time:now,revision:state.revision,reviewOn:action==="defer"?reviewOn:null};
   appendWorkflowEvent(state,"proposal."+({approve:"approved",edit:"approved",reject:"rejected",investigate:"investigation_requested",defer:"deferred"}[action]),role,now,reason+(action==="defer"?" · Return "+reviewOn:""));
   if(action==="reject" || action==="investigate" || action==="defer") {
@@ -265,14 +286,13 @@ const icons = {
   schedule:'<rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/><path d="M5.5 2.5v3m5-3v3M2.5 7h11M6 10.5h3.5"/>',
   review:'<path d="M5 2.5h6l2 2v9H3v-11h2zm.5 6 1.6 1.6 3.5-3.5"/>'
 };
-const navItems = {overview:"Overview",countries:"Country requirements",changes:"Detected changes",studies:"Study impact",review:"Review & follow-up",schedule:"Monitoring schedule",sources:"Source log",research:"Data & use cases"};
+const navItems = {overview:"Overview",countries:"Country requirements",sources:"Source log",schedule:"Monitoring schedule"};
 const byId = id => document.getElementById(id);
 const esc = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const icon = name => '<svg viewBox="0 0 16 16" aria-hidden="true">'+icons[name]+'</svg>';
 const badge = (text,tone="") => '<span class="badge '+tone+'">'+esc(text)+'</span>';
 const trigger = (text,act,value="",tone="",symbol="") => '<button type="button" class="btn '+tone+'" data-act="'+act+'" data-value="'+esc(value)+'">'+(symbol?icon(symbol):"")+esc(text)+'</button>';
 const openLink = (text,url,tone="") => '<a class="btn '+tone+'" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(text)+icon("external")+'</a>';
-const quiet = (text,view) => '<button type="button" class="quiet" data-act="nav" data-value="'+view+'">'+esc(text)+icon("arrow")+'</button>';
 let page = "overview";
 let currentChange = "uk";
 let studyView = "portfolio";
@@ -281,7 +301,8 @@ let sourceSearch = "";
 let currentCountry = "uk";
 let workflow = readWorkflow();
 let workflowRole = "viewer";
-let workflowTab = "proposal";
+let workflowTab = "impact";
+let reviewDecision = "approve";
 let countrySearch = "";
 let countryTopic = "all";
 let countryScope = "all";
@@ -331,8 +352,9 @@ function runStatus() {
 function shell() {
   byId("brand-mark").innerHTML=icon("logo");
   byId("mode").innerHTML=icon("clock")+" Historical replay";
-  byId("crumb").innerHTML='Clinical Supply '+icon("chevron")+' <strong>'+navItems[page]+'</strong>';
-  byId("nav").innerHTML=Object.entries(navItems).map(([id,name])=>'<button type="button" class="nav" data-act="nav" data-value="'+id+'"'+(page===id?' aria-current="page"':'')+'>'+icon(id)+name+'</button>').join("");
+  byId("crumb").innerHTML=page==="case"?'Clinical Supply '+icon("chevron")+" <strong>Change details</strong>":
+    'Clinical Supply '+icon("chevron")+' <strong>'+esc(navItems[page])+'</strong>';
+  byId("nav").innerHTML=Object.entries(navItems).map(([id,name])=>'<button type="button" class="nav" data-act="nav" data-value="'+id+'"'+(page===id?' aria-current="page"':page==="case"&&id==="overview"?' aria-current="location"':'')+'>'+icon(id)+name+'</button>').join("");
 }
 function heading(title,description,action="") {
   return '<header class="page-head"><div><h1 id="page-title" tabindex="-1">'+title+'</h1><p>'+description+'</p></div>'+action+'</header>';
@@ -345,30 +367,36 @@ function updateRun() {
   }
 }
 function overview() {
-  if(!openChanges().some(change=>change.id===currentChange)) selectChange(openChanges()[0].id);
-  return heading("Regulatory monitor","Track open changes by region, then review the country requirements and affected studies.",'<div class="actions">'+trigger("Monitoring schedule","nav","schedule","","schedule")+'<button id="replay" class="btn primary" type="button" data-act="replay">'+icon("retry")+'Replay checks</button></div>')+
+  return heading("Regulatory monitor","Open a change to see its evidence, impact and next action.",'<button id="replay" class="btn primary" type="button" data-act="replay">'+icon("retry")+'Replay checks</button>')+
     '<div class="runbar"><div class="runbar-left">'+icon("clock")+'<strong>Replay '+String(scheduleState.runCount).padStart(2,"0")+'</strong><span class="separator">·</span><span>'+ (scheduleState.lastAt?"Last replay "+scheduleDate(scheduleState.lastAt):"Historical sample · "+replayDate) +'</span></div><div class="actions">'+badge("Completed with 1 retry needed","amber")+badge(scheduleState.enabled?cadence(scheduleState.days)+" · demo":"Schedule paused",scheduleState.enabled?"blue":"")+'</div></div>'+
     '<div class="tiles" aria-label="Replay summary">'+
-      tile("Countries with open changes",openCountries().length,"Plus 1 shared EU update","countries","regions")+
-      tile("Open changes",openChanges().length,(ukOpen()?"2 UK or GB":"1 GB")+" · 1 shared EU","changes","changes")+
-      tile("Studies to review",ukOpen()?studies.filter(study=>study.status==="Batch review").length:0,"UK labeling · fictional portfolio","studies","studies")+
+      tile("Countries with open changes",openCountries().length,"Plus 1 shared EU update","countries")+
+      tile("Open changes",openChanges().length,(ukOpen()?"2 UK or GB":"1 GB")+" · 1 shared EU","changes")+
+      tile("Studies to review",ukOpen()?studies.filter(study=>study.status==="Batch review").length:0,"UK labeling · fictional portfolio","studies")+
       tile("Checks to retry",retryCount,"Coverage gap in Great Britain","alert","retry-filter")+
-    '</div><div class="layout">'+regionCard()+changeCard(true)+'</div><div class="space" id="study-card">'+studyCard(true)+'</div>';
+    '</div>'+regionCard();
 }
 function tile(title,value,hint,symbol,target) {
-  return '<button type="button" class="tile" data-act="metric" data-value="'+target+'"><div class="tile-top"><span class="tile-icon">'+icon(symbol)+'</span>'+title+'</div><strong>'+value+'</strong><small>'+hint+'</small></button>';
+  const body='<div class="tile-top"><span class="tile-icon">'+icon(symbol)+'</span>'+title+'</div><strong>'+value+'</strong><small>'+hint+'</small>';
+  return target?'<button type="button" class="tile" data-act="metric" data-value="'+target+'">'+body+'</button>':'<div class="tile">'+body+'</div>';
+}
+function changeRow(change) {
+  return '<button type="button" class="change" data-act="open-case" data-value="'+change.id+'"><span class="change-mark">'+icon("changes")+'</span><span><span class="change-top"><strong>'+change.title+'</strong>'+
+    badge(...(change.id==="uk"?caseStatus():[change.status,change.tone]))+'</span><small>'+change.scope+' · '+change.kind+' · '+change.when+'</small><span class="change-summary">'+change.summary+'</span></span>'+icon("chevron")+'</button>';
 }
 function regionCard() {
   const content=regions.map(region=>{
     const local=openCountries().filter(country=>country.region===region);
     const shared=region==="Europe"?changes.filter(change=>change.scope==="EU"):[];
     const summary=local.length ? local.length+(local.length===1?" country":" countries")+" with open changes" : shared.length ? "Shared updates" : "Outside replay coverage";
-    const countryLinks=local.map(country=>{const count=openChangeIds(country).length;return '<div class="region-child"><button type="button" class="country-control" data-act="country-page" data-value="'+country.id+'">'+country.name+'<small class="sub">'+(ukOpen()?"UK and Great Britain scopes":"Great Britain scope")+'</small></button>'+badge(count===1?"1 open change":count+" open changes","amber")+'</div>';}).join("");
-    const sharedLinks=shared.map(change=>'<div class="region-child"><button type="button" class="country-control" data-act="change-detail" data-value="'+change.id+'">European Union<small class="sub">'+change.title+'</small></button>'+badge("Shared update","blue")+'</div>').join("");
+    const countryLinks=local.map(country=>'<h3 class="jurisdiction">'+country.name+'</h3>'+openChangeIds(country).map(id=>changeRow(changes.find(change=>change.id===id))).join("")).join("");
+    const sharedLinks=shared.length?'<h3 class="jurisdiction">European Union · shared scope</h3>'+shared.map(changeRow).join(""):"";
     return '<details class="region" data-region="'+region+'"'+(expandedRegions.has(region)?" open":"")+'><summary>'+icon("chevron")+'<span class="region-label"><strong>'+region+'</strong><small>'+summary+'</small></span></summary>'+
       (countryLinks+sharedLinks || '<div class="region-child"><small>This replay contains no checks for this region.</small></div>')+'</details>';
   }).join("");
-  return '<section id="regions" class="card" aria-labelledby="regions-title"><div class="card-head"><div><h2 id="regions-title" tabindex="-1">Changes by region</h2><p>Countries with open changes in the replay</p></div>'+quiet("Open country library","countries")+'</div><div class="region-list">'+content+'</div></section>';
+  const resolved=changes.filter(change=>!openChanges().includes(change));
+  const history=resolved.length?'<details class="region source-references"><summary>Resolved changes ('+resolved.length+')</summary>'+resolved.map(changeRow).join("")+'</details>':"";
+  return '<section id="regions" class="card" aria-labelledby="regions-title"><div class="card-head"><div><h2 id="regions-title">Changes by region</h2><p>Open monitoring cases</p></div></div><div class="region-list">'+content+'</div>'+history+'</section>';
 }
 const countryById = id => countries.find(country=>country.id===id);
 function publishedRecord(record) {
@@ -405,7 +433,7 @@ function countryRequirements() {
   const coverage=hasLocal ? "Sample country coverage" : all.length ? "Shared EU coverage only" : "Not assessed";
   const links=[...openChangeIds(country),...(country.shared??[])].map(id=>{
     const change=changes.find(item=>item.id===id);
-    return trigger(change.title,"change-detail",id,"","file");
+    return trigger(change.title,"open-case",id,"","file");
   });
   const rows=filtered.map(record=>'<button type="button" class="req-row" data-act="requirement" data-value="'+record.id+'"><span><strong>'+record.title+'</strong><small class="sub">'+record.topic+' · '+record.scope+' · '+record.basis+'</small><small class="sub">'+record.when+'</small></span>'+icon("chevron")+'</button>').join("");
   const coveredTopics=new Set(all.map(record=>record.topic));
@@ -427,56 +455,46 @@ function requirementDetail(id) {
     factlist([["Jurisdiction",record.scope],["Topic",record.topic],["Source type",record.basis],["Date or edition",record.when],["Source provision",record.locator]])+
     block("Requirement summary",record.summary)+
     '<div class="actions">'+openLink("Open official source",source?.url??record.url,"primary")+
-    (record.id==="uk-label"?trigger("View versions","open-workflow","history","","arrow"):record.related?trigger("View related change","change-detail",record.related,"","arrow"):"")+'</div>');
+    (record.id==="uk-label"?trigger("View versions","case-history","uk","","arrow"):record.related?trigger("View related change","open-case",record.related,"","arrow"):"")+'</div>');
 }
 function monitoringSchedule() {
   return heading("Monitoring schedule","Set the interval for automatic checks.")+
     '<div class="layout">'+
     '<section class="card"><div class="card-head"><div><h2>Automatic checks</h2><p>Browser demo settings</p></div>'+badge(scheduleState.enabled?cadence(scheduleState.days):"Paused",scheduleState.enabled?"blue":"")+'</div><div class="settings">'+
-    '<form id="schedule-form"><label class="toggle"><input type="checkbox" name="enabled"'+(scheduleState.enabled?" checked":"")+'> Enable automatic replay</label><label class="field">Repeat every (days)<input type="number" name="days" min="1" max="365" step="1" value="'+scheduleState.days+'" required></label><div class="actions"><button type="submit" class="btn primary">Save schedule</button><button id="replay" type="button" class="btn" data-act="replay">'+icon("retry")+'Replay checks</button></div></form>'+
+    '<form id="schedule-form"><label class="toggle"><input type="checkbox" name="enabled"'+(scheduleState.enabled?" checked":"")+'> Enable automatic replay</label><label class="field">Repeat every (days)<input type="number" name="days" min="1" max="365" step="1" value="'+scheduleState.days+'" required></label><div class="actions"><button type="submit" class="btn primary">Save schedule</button></div></form>'+
     '<div class="inline-note">'+icon("info")+'<span>Runs the saved sample while this page is open. If a run is missed, the next visit replays it once. Live background monitoring requires a deployed scheduler.</span></div></div></section>'+
     '<section class="card"><div class="card-head"><div><h2>Run status</h2><p>Schedule times are shown in Athens time.</p></div></div><div class="settings">'+
-    '<div id="run-status">'+runStatus()+'</div>'+
-    '<div class="actions" style="margin-top:12px">'+quiet("View source log","sources")+'</div></div></section></div>';
+    '<div id="run-status">'+runStatus()+'</div></div></section></div>';
 }
-function sourceTable(data,compact) {
+function sourceTable(data) {
   if (!data.length) return '<p class="nothing">No pages match these filters.</p>';
-  const rows=data.map(source=>'<tr><td><button class="entity-button" type="button" data-act="source-detail" data-value="'+source.id+'">'+icon("file")+'<span>'+source.title+'<small class="sub">'+source.authority+' · '+(compact?source.scope:source.path)+'</small></span></button></td><td class="nowrap muted">'+source.checked+'</td><td>'+badge(source.status,source.tone)+'</td>'+(!compact?'<td class="hide-narrow">'+source.scope+'</td><td class="hide-narrow">'+source.type+'</td>':'')+'</tr>').join("");
-  return '<div class="table-wrap" tabindex="0"><table><caption class="sr">Source pages checked in the replay</caption><thead><tr><th>Page checked</th><th>UTC</th><th>Check status</th>'+(!compact?'<th class="hide-narrow">Scope</th><th class="hide-narrow">Source type</th>':'')+'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+  const rows=data.map(source=>'<tr><td><button class="entity-button" type="button" data-act="source-detail" data-value="'+source.id+'">'+icon("file")+'<span>'+source.title+'<small class="sub">'+source.authority+' · '+source.path+'</small></span></button></td><td class="nowrap muted">'+source.checked+'</td><td>'+badge(source.status,source.tone)+'</td><td class="hide-narrow">'+source.scope+'</td><td class="hide-narrow">'+source.type+'</td></tr>').join("");
+  return '<div class="table-wrap" tabindex="0"><table><caption class="sr">Source pages checked in the replay</caption><thead><tr><th>Page checked</th><th>UTC</th><th>Check status</th><th class="hide-narrow">Scope</th><th class="hide-narrow">Source type</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
 }
 function tableMatches(source) {
   const matchStatus=sourceFilter==="all"||source.status===sourceFilter;
   const haystack=[source.title,source.authority,source.scope,source.path,source.section].join(" ").toLowerCase();
   return matchStatus&&haystack.includes(sourceSearch.trim().toLowerCase());
 }
-function sourceCard(compact) {
-  const filters=compact?quiet("View source log","sources"):'<div class="filters"><label class="field">Find a page<input id="source-search" type="search" placeholder="Page or authority" value="'+esc(sourceSearch)+'"></label><label class="field">Check status<select id="source-filter"><option value="all">All statuses</option>'+["Changed","Unchanged","Retry needed"].map(status=>'<option'+(status===sourceFilter?' selected':'')+'>'+status+'</option>').join("")+'</select></label></div>';
-  return '<section class="card" aria-labelledby="sources-title"><div class="card-head"><div><h2 id="sources-title">Pages checked</h2><p>Latest replay attempts by source page</p></div>'+filters+'</div><div id="source-results">'+sourceTable(compact?sources:sources.filter(tableMatches),compact)+'</div></section>';
+function sourceCard() {
+  const filters='<div class="filters"><label class="field">Find a page<input id="source-search" type="search" placeholder="Page or authority" value="'+esc(sourceSearch)+'"></label><label class="field">Check status<select id="source-filter">'+options([["all","All statuses"],...["Changed","Unchanged","Retry needed"].map(status=>[status,status])],sourceFilter)+'</select></label></div>';
+  return '<section class="card"><div class="card-head">'+filters+'</div><div id="source-results">'+sourceTable(sources.filter(tableMatches))+'</div></section>';
 }
-function changeCard(compact) {
-  const visible=compact?openChanges():changes;
-  const active=visible.find(change=>change.id===currentChange)??visible[0];
-  const entries=visible.map(change=>'<button type="button" class="change" data-act="'+(compact?"select-change":"change-detail")+'" data-value="'+change.id+'"'+(compact?' aria-pressed="'+(active.id===change.id)+'"':'')+'><span class="change-mark">'+icon("changes")+'</span><span><span class="change-top"><strong>'+change.title+'</strong>'+badge(...(change.id==="uk"?caseStatus():[change.status,change.tone]))+'</span><small>'+change.scope+' · '+change.kind+' · '+change.when+'</small><span class="change-summary">'+change.summary+'</span></span>'+icon("chevron")+'</button>').join("");
-  return '<section class="card"><div class="card-head"><div><h2>'+(compact?"Open changes":"Detected changes")+'</h2><p>'+(compact?"Select a change to see its study screen.":"Historical source changes and review status.")+'</p></div>'+(compact?quiet("View queue","changes"):"")+'</div><div class="change-list">'+entries+'</div>'+(compact?'<div class="card-foot">'+trigger("View change evidence","change-detail",active.id,"","file")+'</div>':'')+'</section>';
-}
-function studyCard(compact) {
+function studyCard() {
   const change=selectedChange();
   const selected=filteredStudies();
   const registry=studyView==="registry";
   const name=registry?"Public registry matches":"Portfolio impact";
-  const tabs='<div class="study-tabs" aria-label="Study dataset"><button type="button" data-act="study-view" data-value="portfolio" aria-pressed="'+!registry+'">Demo portfolio</button><button type="button" data-act="study-view" data-value="registry" aria-pressed="'+registry+'">Public registry</button></div>';
+  const tabs=currentChange==="uk"?'<div class="study-tabs" role="group" aria-label="Study dataset"><button type="button" data-act="study-view" data-value="portfolio" aria-pressed="'+!registry+'">Demo portfolio</button><button type="button" data-act="study-view" data-value="registry" aria-pressed="'+registry+'">Public registry</button></div>':"";
   const content=selected.length?'<div class="table-wrap" tabindex="0"><table><caption class="sr">'+name+'</caption><thead><tr><th>Study</th><th>Listed location</th><th>'+ (registry?"Screening result":"Assessment") +'</th><th class="hide-narrow">'+(registry?"Registry status":"Reason")+'</th></tr></thead><tbody>'+selected.map(study=>'<tr><td><button type="button" class="entity-button" data-act="study-detail" data-value="'+study.id+'"><span>'+esc(study.title)+'<small class="sub">'+study.id+' · '+study.sponsor+'</small></span></button></td><td>'+study.sites+'</td><td>'+badge(registry?"Candidate match":study.status,registry?"blue":study.tone)+'</td><td class="hide-narrow muted">'+(registry?study.status+' · '+study.posted:study.reason)+'</td></tr>').join("")+'</tbody></table></div>':'<p class="nothing">No fictional portfolio assessment is loaded for this change. Open Public registry to see candidates.</p>';
   const note=registry?"Country matches help prioritize screening. Supply impact requires sponsor data.":change.studyNote;
-  return '<section class="card"><div class="card-head study-head"><div><h2>Study impact</h2><p>'+change.title+'</p></div>'+tabs+'</div>'+content+'<div class="inline-note">'+icon("info")+'<span>'+note+'</span></div><div class="card-foot"><small>'+ (registry?registryCredit:"Synthetic study and supply records") +'</small>'+(compact?quiet("Open study workspace","studies"):"")+'</div></section>';
+  return '<section class="card"><div class="card-head study-head"><h2>'+name+'</h2>'+tabs+'</div>'+content+'<div class="inline-note">'+icon("info")+'<span>'+note+'</span></div><div class="card-foot"><small>'+ (registry?registryCredit:"Synthetic study and supply records") +'</small></div></section>';
 }
 function resourceCard(name,text,url,linkName) {
   return '<article class="card resource"><h2>'+esc(name)+'</h2><p>'+esc(text)+'</p><div>'+openLink(linkName,url)+'</div></article>';
 }
-function research() {
-  return heading("Data & use cases","Source-backed examples and public study datasets for screening.")+
-    '<div class="resource-grid">'+resources.map(item=>resourceCard(item.name,item.text,item.url,"Open data source")).join("")+'</div>'+
-    '<h2 class="research-lead">Regulatory use cases</h2>'+changeCard(false)+
-    '<div class="space">'+resourceCard("EU Annex VI immediate packaging","Assess whether an eligible inner package can omit the expiry or retest date. The decision depends on the internal packaging configuration and applicable conditions.",sources.find(source=>source.id==="annex").url,"Open EUR-Lex")+'</div>';
+function sourceReferences() {
+  return '<details class="card source-references space"><summary>Study data sources</summary><div class="drawer-body"><div class="resource-grid">'+resources.map(item=>resourceCard(item.name,item.text,item.url,"Open data source")).join("")+'</div></div></details>';
 }
 function panel(title,description,body,action="") {
   return '<section class="card"><div class="card-head"><div><h2>'+esc(title)+'</h2>'+(description?'<p>'+esc(description)+'</p>':"")+'</div>'+action+'</div>'+body+'</section>';
@@ -488,9 +506,13 @@ function caseRoleSelect() {
   return '<label class="field">Demo role<select id="workflow-role">'+options(Object.entries(workflowRoles),workflowRole)+'</select></label>';
 }
 function workflowNavigation() {
-  const tabs=[["proposal","Review proposal",caseStatus()[0]],["history","Country record",workflow.publication?"Version 2 published":"Version 1 published"],["follow-up","Quality follow-up",workflow.task?taskStateLabel(workflow.task.status):"Awaiting publication"]];
-  return '<div class="workflow-steps card" role="group" aria-label="Case stages">'+tabs.map(([id,title,subtitle])=>
-    '<button type="button" data-act="workflow-tab" data-value="'+id+'" aria-pressed="'+(workflowTab===id)+'">'+title+'<span class="sub">'+esc(subtitle)+'</span></button>').join("")+'</div>';
+  const tabs=[["impact","Evidence & impact"]];
+  if(currentChange==="uk"){
+    tabs.push(["proposal","SME decision"],["history","Country record"]);
+    if(workflow.task) tabs.push(["follow-up","Quality follow-up"]);
+  }
+  return tabs.length>1?'<div class="case-tabs" role="group" aria-label="Case sections">'+tabs.map(([id,title])=>
+    '<button type="button" data-act="workflow-tab" data-value="'+id+'" aria-pressed="'+(workflowTab===id)+'">'+title+'</button>').join("")+'</div>':"";
 }
 function workflowEvidence() {
   const rows=ukCase.evidence.map(item=>{
@@ -512,13 +534,22 @@ function actionForm(fields,buttons) {
    '<div class="actions">'+buttons.map(([value,title,tone])=>'<button type="submit" name="action" value="'+value+'" class="btn '+(tone??"")+'">'+esc(title)+'</button>').join("")+'</div><div id="workflow-error" class="form-feedback" role="alert"></div></form>';
 }
 const reasonField = label => '<label class="field">'+esc(label)+'<textarea name="reason" maxlength="2000" required></textarea></label>';
+const reviewDecisions=[["approve","Approve & publish"],["edit","Edit & approve"],["reject","Reject"],["investigate","Request investigation"],["defer","Defer"]];
+function decisionFields() {
+  if(reviewDecision==="edit") return '<label class="field">Operational instruction<textarea name="instruction" maxlength="2000" required>'+esc(workflow.draft)+'</textarea></label>';
+  if(reviewDecision==="defer") return '<label class="field">Return-to-review date<input type="date" name="reviewOn" required></label>';
+  return "";
+}
 function workflowDecision() {
   const decision=workflow.decision;
   if(workflow.stage==="review") {
     if(workflowRole!=="reviewer") return '<p>Choose the Regulatory SME demo role to record a decision.</p>';
-    return actionForm('<label class="field">Operational instruction<textarea name="instruction" maxlength="2000">'+esc(workflow.draft)+'</textarea></label>'+reasonField("Decision rationale")+
-      '<label class="field">Return-to-review date (for deferral)<input type="date" name="reviewOn"></label>',
-      [["approve","Approve & publish","primary"],["edit","Edit & approve"],["reject","Reject"],["investigate","Request investigation"],["defer","Defer"]]);
+    const fields=decisionFields();
+    return '<form id="workflow-form" class="review-form" data-revision="'+workflow.revision+'">'+
+      '<label class="field">Decision<select id="review-decision" name="decision">'+options(reviewDecisions,reviewDecision)+'</select></label>'+
+      '<div id="decision-fields"'+(fields?"":" hidden")+'>'+fields+'</div>'+reasonField("Decision rationale")+
+      '<div class="actions"><button id="record-decision" type="submit" name="action" value="'+reviewDecision+'" class="btn primary">'+reviewDecisions.find(([id])=>id===reviewDecision)[1]+'</button></div>'+
+      '<div id="workflow-error" class="form-feedback" role="alert"></div></form>';
   }
   const details=decision?factlist([["Decision by",decision.actor],["Rationale",decision.rationale],["Recorded",scheduleDate(decision.time)],
     ...(decision.reviewOn?[["Return to review",displayDay(decision.reviewOn)]]:[])]):"";
@@ -526,19 +557,16 @@ function workflowDecision() {
   return details+(canResume?actionForm(reasonField("Reason to resume review"),[["resume","Resume as new revision","primary"]]):"");
 }
 function workflowProposal() {
-  const nextShipment=shipmentFindings().find(shipment=>shipment.id==="SHP-01");
-  const decision=panel("SME decision","Demo role and rationale are recorded in the case history.",casePad(workflowDecision()));
+  const decision=panel("SME decision","Demo role and rationale are recorded in the case history.",casePad(workflowDecision()),caseRoleSelect());
+  const published=workflow.publication;
   const proposed=panel("Country requirement comparison",ukCase.requirement+" · Proposal revision "+workflow.revision,
-    compareValues("Seeded baseline · v1",ukCase.baseline,"Proposed country value",ukCase.policy)+
+    compareValues("Seeded baseline · v1",ukCase.baseline,published?"Approved country value":"Proposed country value",published?.policy??ukCase.policy)+
     '<div class="case-pad" style="padding-top:11px"><h3>Scope and conditions</h3>'+listItems(ukCase.conditions.map(esc))+'<p>'+esc(workflow.draft)+'</p></div>');
-  const assessment=panel("Impact and timing","Controlled example · "+ukCase.snapshot,casePad(
-    factlist([["Severity","High · potential labeling or supply disruption"],["Operational urgency","Priority · sample review by "+displayDay(nextShipment.preparationDate)],["Legal date basis","Effective "+displayDay(ukCase.effective)+" · finished-IMP QP date for batch screening"],["Portfolio scope","2 UK studies · 5 UK batches · 2 potentially relevant shipments"]])+
-    trigger("View studies, batches & shipments","go-impact","uk","","arrow")));
   const confidence=panel("Confidence by dimension","Qualitative evidence assessment",casePad(factlist([
     ["Detection","High · instrument and MHRA sources agree on commencement"],["Extraction","High · cited provisions and guidance are available"],
-    ["Applicability","Mixed · missing QP date and cutoff-day case"],["Interpretation","Requires authorized SME decision"]
+    ["Applicability","Mixed · missing QP date and cutoff-day case"],["Interpretation",published?"Approved for the country record in this demo":"Requires authorized SME decision"]
   ])));
-  return '<div class="case-layout"><div class="case-stack">'+proposed+decision+'</div><div class="case-stack">'+workflowEvidence()+assessment+confidence+'</div></div>';
+  return '<div class="case-layout"><div class="case-stack">'+proposed+decision+'</div>'+confidence+'</div>';
 }
 function workflowHistory() {
   const publication=workflow.publication;
@@ -549,7 +577,7 @@ function workflowHistory() {
     casePad('<p>Version 1 is the published demo baseline. A new version appears after SME approval.</p>');
   const query=casePad('<label class="field">Ordinary cohort date<input type="date" id="record-as-of" value="'+ukCase.effective+'"></label><p id="record-as-of-result" aria-live="polite">'+asOfText(ukCase.effective)+'</p><p>Use the batch assessment for Schedule 14 transition checks.</p>');
   return '<div class="case-layout"><div class="case-stack">'+panel("Version history",ukCase.requirement,history)+panel("Look up an applicable version","Ordinary cohort",query)+'</div>'+
-    '<div class="case-stack">'+panel("Publication receipt","Local country platform simulation",receipt)+workflowEvidence()+'</div></div>';
+    '<div class="case-stack">'+panel("Publication receipt","Local country platform simulation",receipt)+'</div></div>';
 }
 function asOfText(day) {
  if(!day) return "Choose an operational date.";
@@ -573,15 +601,33 @@ function workflowFollowUp() {
     else if(task.status==="submitted"&&workflowRole==="verifier") content+=actionForm(reasonField("Verification rationale"),[["verify","Verify & close case","primary"],["return","Return evidence"]]);
     else if(task.status!=="verified") content+='<p>Select '+(task.status==="submitted"?"Quality verifier":"Quality action owner")+' to continue the mock handoff.</p>';
   }
-  return '<div class="case-layout">'+panel("Quality follow-up",task?task.id+" · Simulated QMS task":"Awaiting publication",casePad(content))+
-    panel("Audit trail",ukCase.id,casePad(listItems([...workflow.events].reverse().map(event=>'<strong>'+esc(event.type.replaceAll("."," · ").replaceAll("_"," "))+'</strong><small>'+esc(event.actor+" · "+scheduleDate(event.at)+" · revision "+event.revision)+'</small><small>'+esc(event.detail)+'</small>'))),trigger("Export audit JSON","export-workflow","","","file"))+'</div>';
+  return panel("Quality follow-up",task?task.id+" · Simulated QMS task":"Awaiting publication",casePad(content),caseRoleSelect());
 }
-function reviewWorkspace() {
-  const content={proposal:workflowProposal,history:workflowHistory,"follow-up":workflowFollowUp};
-  return heading("Review & follow-up",ukCase.id+" · UK investigational medicinal product labeling",caseRoleSelect())+
-    '<div class="runbar"><div class="runbar-left">'+icon("review")+'<strong>Historical case</strong><span class="separator">·</span><span>Local demo roles and records</span></div>'+badge(...caseStatus())+'</div>'+
-    workflowNavigation()+content[workflowTab]()+
-    '<div class="actions space">'+trigger("Reset UK case","reset-workflow","","","retry")+'</div>';
+function auditPanel() {
+  return '<details class="card source-references space"><summary>Audit trail ('+workflow.events.length+')</summary><div class="drawer-body"><div class="actions">'+
+    trigger("Export audit JSON","export-workflow","","","file")+' '+trigger("Reset demo case","reset-workflow","","","retry")+'</div>'+
+    listItems([...workflow.events].reverse().map(event=>'<strong>'+esc(event.type.replaceAll("."," · ").replaceAll("_"," "))+'</strong><small>'+esc(event.actor+" · "+scheduleDate(event.at)+" · revision "+event.revision)+'</small><small>'+esc(event.detail)+'</small>'))+'</div></details>';
+}
+function caseImpact() {
+  const change=selectedChange();
+  const evidence=change.id==="uk"?workflowEvidence():panel("Regulatory evidence",change.authority+" · "+change.when,casePad(
+    compareValues("Previous reference",change.before,"What changed",change.after)+
+    '<div class="evidence-item"><h3>Supporting sources</h3><div class="actions">'+change.evidence.map(id=>trigger(sources.find(source=>source.id===id).title,"source-detail",id,"","file")).join("")+'</div></div>'));
+  const facts=change.id==="uk"?[
+    ["Severity","High · potential labeling or supply disruption"],
+    ["Operational urgency","Priority · sample review by "+displayDay(shipmentFindings()[0].preparationDate)],
+    ["Legal date basis","Date of finished-IMP QP certification"],
+    ["Portfolio scope","2 UK studies · 5 UK batches · 2 shipments to assess"]
+  ]:[["Applicability","Public registry screening only"]];
+  const context=panel("Assessment",change.id==="uk"?ukCase.snapshot:"",casePad(factlist(facts)+'<h3>Inputs to check</h3><p>'+esc(change.need)+'</p>'));
+  return '<div class="case-layout">'+evidence+context+'</div><div id="study-card" class="space">'+studyCard()+operationalImpact()+'</div>';
+}
+function changeWorkspace() {
+  const change=selectedChange();
+  const content={impact:caseImpact,proposal:workflowProposal,history:workflowHistory,"follow-up":workflowFollowUp};
+  const status=change.id==="uk"?caseStatus():[change.status,change.tone];
+  return heading(esc(change.title),esc((change.id==="uk"?ukCase.id+" · ":"")+change.scope+" · "+change.kind+" · "+change.when),badge(...status))+
+    workflowNavigation()+content[workflowTab]()+(change.id==="uk"?auditPanel():"");
 }
 function impactTable(title,description,columns,rows) {
  return panel(title,description,'<div class="table-wrap" tabindex="0" aria-label="'+esc(title)+'"><table><thead><tr>'+
@@ -602,16 +648,12 @@ const views = {
   overview,
   countries:countryLibrary,
   schedule:monitoringSchedule,
-  review:reviewWorkspace,
-  sources:()=>heading("Pages checked","Inspect each page, its retrieval result, the section compared and the linked evidence.")+sourceCard(false),
-  changes:()=>heading("Detected changes","Inspect a change, its source evidence and the inputs needed for study screening.")+changeCard(false),
-  studies:()=>heading("Study impact","Explore the portfolio assessment or public matches for the selected change.")+
-    '<div class="runbar"><label class="field">Regulatory change<select id="study-change">'+changes.map(change=>'<option value="'+change.id+'"'+(change.id===currentChange?' selected':'')+'>'+change.title+'</option>').join("")+'</select></label><div class="actions">'+trigger("View change evidence","change-detail",currentChange,"","file")+(currentChange==="uk"?trigger("Open SME review","open-workflow","proposal","primary","arrow"):"")+'</div></div><div id="study-card">'+studyCard(false)+operationalImpact()+'</div>',
-  research
+  case:changeWorkspace,
+  sources:()=>heading("Source log","Review page checks, retry status and linked evidence.")+sourceCard()+sourceReferences(),
 };
 function render() {shell();byId("view").innerHTML=views[page]();updateRun();}
 function notify(text="") {byId("announce").textContent=text;}
-function navigate(to,focus=true) {page=to;render();if(focus){byId("page-title").focus({preventScroll:true});window.scrollTo(0,0);}}
+function navigate(to) {page=to;render();byId("page-title").focus({preventScroll:true});window.scrollTo(0,0);}
 function factlist(facts) {
   return '<dl class="facts">'+facts.map(([label,value])=>'<div><dt>'+esc(label)+'</dt><dd>'+esc(value)+'</dd></div>').join("")+'</dl>';
 }
@@ -632,15 +674,7 @@ function sourceDetail(id) {
     ["Authority",source.authority],["Scope",source.scope],["Check time",replayDate+" · "+source.checked+" UTC (replay)"],
     ["Source edition",source.edition],["Compared section",source.status==="Retry needed"?"Comparison pending":source.section]
   ])+block("Check result",source.result)+'<section><h3>Page URL</h3><a class="url" href="'+esc(source.url)+'" target="_blank" rel="noopener noreferrer">'+esc(source.url)+'</a></section>'+
-  (source.change?'<div>'+trigger("View related change","change-detail",source.change,"","arrow")+'</div>':""));
-}
-function changeDetail(id) {
-  const change=changes.find(item=>item.id===id);
-  drawer("Detected change",change.title,badge(...(id==="uk"?caseStatus():[change.status,change.tone]))+factlist([["Authority",change.authority],["Scope",change.scope],["Date basis",change.when]])+
-    block("Previous reference",change.before)+block("What changed",change.after)+block("Study data needed",change.need)+
-    '<section><h3>Supporting sources</h3><div class="actions">'+change.evidence.map(id=>trigger(sources.find(source=>source.id===id).title,"source-detail",id,"","file")).join("")+'</div></section>'+
-    '<div class="actions">'+trigger("View study impact","go-impact",id,"","arrow")+
-    (id==="uk"?trigger("Open SME review","open-workflow","proposal","primary","review"):"")+'</div>');
+  (source.change && page==="sources"?'<div>'+trigger("View related change","open-case",source.change,"","arrow")+'</div>':""));
 }
 function studyDetail(id) {
   const isPublic=id.startsWith("NCT");
@@ -652,7 +686,7 @@ function studyDetail(id) {
       block("Information needed to assess impact",change.need)+'<p>'+esc(registryCredit)+'</p><div>'+openLink("Open registry record",study.url,"primary")+'</div>');
   } else {
     drawer("Fictional portfolio",study.title,badge(study.status,study.tone)+factlist([["Study ID",study.id],["Location",study.sites],["Related change",change.title],["Batches",study.batches.join(", ")]])+
-      block("Assessment",study.detail)+'<div>'+trigger("View change evidence","change-detail",change.id,"","file")+'</div>');
+      block("Assessment",study.detail));
   }
 }
 function selectChange(id) {
@@ -660,8 +694,7 @@ function selectChange(id) {
   studyView=studies.some(study=>study.changes.includes(id))?"portfolio":"registry";
 }
 function updateStudies() {
-  const overviewPage=page==="overview";
-  byId("study-card").innerHTML=studyCard(overviewPage)+(overviewPage?"":operationalImpact());
+  byId("study-card").innerHTML=studyCard()+operationalImpact();
 }
 function replay(reason="manual") {
   if (replaying) return;
@@ -719,11 +752,12 @@ function athensDay() {
   const parts=new Intl.DateTimeFormat("en-GB",{year:"numeric",month:"2-digit",day:"2-digit",timeZone:"Europe/Athens"}).formatToParts(new Date());
   return ["year","month","day"].map(type=>parts.find(part=>part.type===type).value).join("-");
 }
-function openWorkflow(tab) {
+function openCase(id,tab) {
   if(byId("drawer").open) byId("drawer").close();
   drawerOrigin=null;
-  workflowTab=tab;
-  navigate("review");
+  selectChange(id);
+  workflowTab=tab??(id==="uk"&&workflow.task&&workflow.stage!=="closed"?"follow-up":"impact");
+  navigate("case");
 }
 function exportWorkflow() {
   const data={caseId:ukCase.id,requirementId:ukCase.requirement,assessmentSnapshot:ukCase.snapshot,mode:"historical demo",
@@ -737,23 +771,12 @@ function exportWorkflow() {
   anchor.remove();
   window.setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-function openCountry(id) {
-  currentCountry=id;
-  countrySearch="";
-  countryTopic="all";
-  countryScope="all";
-  navigate("countries");
-}
 const actions={
   nav:to=>{notify();navigate(to);},
   metric:target=>{
     if(target==="retry-filter"){sourceFilter="Retry needed";sourceSearch="";navigate("sources");return;}
-    if(target==="regions"){byId("regions-title").focus();byId("regions").scrollIntoView({block:"nearest"});return;}
-    if(target==="studies") selectChange("uk");
-    navigate(target);
   },
   replay:()=>replay(),
-  "country-page":openCountry,
   "pick-country":id=>{
     currentCountry=id;
     countryTopic="all";
@@ -764,7 +787,8 @@ const actions={
     focusTarget.focus();
   },
   requirement:requirementDetail,
-  "open-workflow":openWorkflow,
+  "open-case":openCase,
+  "case-history":id=>openCase(id,"history"),
   "workflow-tab":tab=>{workflowTab=tab;render();byId("view").querySelector('[data-act="workflow-tab"][data-value="'+tab+'"]').focus();},
   "export-workflow":exportWorkflow,
   "reset-workflow":()=>drawer("Historical demo","Reset the UK case?",
@@ -772,21 +796,12 @@ const actions={
   "confirm-reset-workflow":()=>{
     workflow=initialWorkflow();
     saveWorkflow(workflow);
-    openWorkflow("proposal");
+    reviewDecision="approve";
+    openCase("uk","proposal");
     notify("UK demo case reset.");
   },
   "source-detail":sourceDetail,
-  "change-detail":changeDetail,
   "study-detail":studyDetail,
-  "select-change":id=>{
-    selectChange(id);
-    byId("view").querySelectorAll('[data-act="select-change"]').forEach(control=>control.setAttribute("aria-pressed",String(control.dataset.value===id)));
-    byId("view").querySelector('[data-act="change-detail"]').dataset.value=id;
-    updateStudies();
-    byId("study-card").scrollIntoView({block:"nearest"});
-    notify("Study impact updated for "+selectedChange().title+".");
-  },
-  "go-impact":id=>{byId("drawer").close();drawerOrigin=null;selectChange(id);navigate("studies");},
   "study-view":tab=>{studyView=tab;updateStudies();byId("study-card").querySelector('[data-value="'+tab+'"]').focus();notify(tab==="registry"?"Showing public registry candidates.":"Showing the fictional portfolio assessment.");}
 };
 document.addEventListener("click",event=>{
@@ -796,7 +811,7 @@ document.addEventListener("click",event=>{
 document.addEventListener("input",event=>{
   if(event.target.id==="source-search"){
     sourceSearch=event.target.value;
-    byId("source-results").innerHTML=sourceTable(sources.filter(tableMatches),false);
+    byId("source-results").innerHTML=sourceTable(sources.filter(tableMatches));
   }
   if (event.target.id==="country-search") {
     countrySearch=event.target.value;
@@ -810,14 +825,19 @@ document.addEventListener("change",event=>{
     byId("workflow-role").focus();
   }
   if(event.target.id==="record-as-of") byId("record-as-of-result").textContent=asOfText(event.target.value);
+  if(event.target.id==="review-decision") {
+    reviewDecision=event.target.value;
+    const fields=decisionFields();
+    byId("decision-fields").innerHTML=fields;
+    byId("decision-fields").hidden=!fields;
+    const submit=byId("record-decision");
+    submit.value=reviewDecision;
+    submit.textContent=reviewDecisions.find(([id])=>id===reviewDecision)[1];
+    byId("workflow-error").textContent="";
+  }
   if(event.target.id==="source-filter"){
     sourceFilter=event.target.value;
-    byId("source-results").innerHTML=sourceTable(sources.filter(tableMatches),false);
-  }
-  if(event.target.id==="study-change"){
-    selectChange(event.target.value);
-    render();
-    byId("study-change").focus();
+    byId("source-results").innerHTML=sourceTable(sources.filter(tableMatches));
   }
   if (event.target.id==="country-topic" || event.target.id==="country-scope") {
     const {id,value}=event.target;
@@ -844,6 +864,8 @@ document.addEventListener("submit",event=>{
     try {workflowStep(next,command,workflowRole,new Date().toISOString());}
     catch(error){byId("workflow-error").textContent=error.message;return;}
     workflow=next;
+    if(["approve","edit"].includes(command.action)) workflowTab="follow-up";
+    if(command.action==="resume") reviewDecision="approve";
     const saved=saveWorkflow(workflow);
     render();
     byId("page-title").focus({preventScroll:true});

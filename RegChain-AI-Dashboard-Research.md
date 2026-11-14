@@ -33,10 +33,10 @@ Clarivate's ClaRITA provides a comparable workflow for regulatory alerts, impact
 
 ## Dashboard workflow
 
-1. **Scan changes by region.** Expand Europe to see the UK cases and a separate EU-wide guidance case. Other regions disclose their coverage when expanded. Overview counts describe open items in the historical replay.
-2. **Browse country requirements.** Search the country list, choose a topic or scope, and open a requirement's summary and official reference. Use Source log to inspect individual checks and coverage gaps.
-3. **Inspect a change.** Read the previous reference, the change, the supporting sources and the missing information. Selecting a change updates the study panel.
-4. **Review study impact.** Drill into fictional studies and their batches, or open the public registry candidates and their original records. For the UK labeling case, the separate approval demo remains available from the study workspace.
+1. **Overview.** Open a change from its region and jurisdiction. The case opens to Evidence & impact, with the supporting sources, outstanding inputs and applicable study assessments together. Resolved cases remain accessible from the overview.
+2. **Case.** For the UK labeling example, use SME decision to record an outcome. Approval opens Quality follow-up. Country record shows the published versions, and the case's audit trail holds the decision and follow-up history.
+3. **Country requirements.** Search by country and filter by topic or scope. Open a record to inspect its summary and official reference or view the history of the UK labeling requirement.
+4. **Monitoring.** Use Source log for failed checks and coverage gaps. Use Monitoring schedule to change the cadence of the local replay.
 
 ## Country coverage and cadence
 
