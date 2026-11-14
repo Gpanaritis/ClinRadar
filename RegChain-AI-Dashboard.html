@@ -25,6 +25,8 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 @media(max-width:1120px){.shell{grid-template-columns:171px minmax(0,1fr)}.content,.top{padding-left:19px;padding-right:19px}.table-wrap .hide-narrow{display:none}}
 @media(max-width:900px){.shell{display:block}.rail{position:static;height:auto;padding:11px 13px;gap:9px;border-right:0;border-bottom:1px solid var(--line)}.rail nav{display:flex;flex-wrap:wrap}.brand{margin:0;padding:0}.nav{width:auto;padding:7px 8px}.rail-foot{display:none}.layout{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){.content,.top{padding-left:12px;padding-right:12px}.content{padding-top:17px}.top{min-height:54px}.tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.tile{padding:9px}.card-head{padding:11px}.card-foot{padding:9px 11px}.resource-grid{grid-template-columns:1fr}.study-tabs{max-width:100%;flex-wrap:wrap}}
+.region-list{display:grid}.region{border-top:1px solid #edf1f7}.region summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:12px 14px}.region summary::-webkit-details-marker{display:none}.region summary:hover{background:#f5f9ff}.region summary>svg:first-child{width:13px;color:#496795}.region[open] summary>svg:first-child{transform:rotate(90deg)}.region-label{min-width:0;flex:1}.region-label strong,.region-label small{display:block}.region-label small{color:var(--muted);font-size:11px;margin-top:2px}.region-child{display:flex;justify-content:space-between;gap:9px;padding:9px 12px 9px 39px;background:#f7faff;border-top:1px solid #eef2f9;align-items:center}.region-child .badge{flex:none}.country-control{border:0;color:#174485;background:none;padding:0;text-align:left;font-weight:700}.country-control:hover{text-decoration:underline}.country-row{display:flex;gap:10px;align-items:center;padding:11px 13px;width:100%;text-align:left;border:0;border-top:1px solid #edf1f7;background:white;color:var(--ink)}.country-row:hover,.country-row[aria-pressed=true]{background:#edf4ff}.country-row>span:first-child{flex:1}.country-row svg{width:13px;color:#496795}.library-layout{display:grid;grid-template-columns:minmax(230px,.62fr) minmax(0,1.38fr);gap:14px;align-items:start}.library-layout .card-head input{width:100%}.section-label{font-size:12px;color:var(--muted);font-weight:750;padding:8px 13px;background:#f5f8fc;border-top:1px solid var(--line)}.req-list{padding:0 14px 4px}.req-row{width:100%;display:flex;justify-content:space-between;gap:12px;align-items:center;background:white;border:0;border-top:1px solid #edf1f7;padding:11px 0;color:var(--ink);text-align:left}.req-row:hover strong{color:var(--blue);text-decoration:underline}.req-row svg{color:#5b76a0;width:14px}.req-row>span:first-child{flex:1}.req-row strong{display:block}.settings{padding:0 15px 15px}.settings form{display:grid;gap:13px}.settings .field input{width:96px}.settings label.toggle{display:flex;gap:8px;align-items:center;font-weight:700}.settings .inline-note{margin-top:14px;border:0;border-radius:8px;padding:9px}.settings .actions{margin-top:4px}.small-action{font-size:12px;font-weight:700}.nowrap-badge{text-align:right}
+@media(max-width:760px){.library-layout{grid-template-columns:minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -40,7 +42,7 @@ const replayDate = "14 Nov 2026";
 const registryCredit = "ClinicalTrials.gov, U.S. National Library of Medicine · accessed 14 Nov 2026";
 const sources = [
  {id:"transition",title:"Clinical trial transitional arrangements",authority:"MHRA",scope:"UK",type:"Guidance",path:"GOV.UK / Clinical trials / Transition",checked:"09:42",status:"Changed",tone:"blue",edition:"15 Jul 2026",section:"Part 7 labeling transition and finished-IMP QP certification",result:"Compared against the legacy labeling baseline. A conditional transition and the date basis for batch triage are in the reviewed evidence.",url:"https://www.gov.uk/guidance/clinical-trials-for-medicines-clinical-trials-regulations-transitional-arrangements#transitional-arrangements-for-labelling-of-investigational-medicinal-products",change:"uk"},
- {id:"qa",title:"Clinical Trials Regulation Q&A",authority:"European Commission",scope:"EU",type:"Guidance PDF",path:"EudraLex / Volume 10 / July 2026 Q&A",checked:"09:41",status:"Changed",tone:"blue",edition:"July 2026 edition",section:"Revision history and new Q&A 8.4",result:"The July revision history identifies a new question about labeling cryopreserved medicinal products. This is a historical guidance example.",url:"https://health.ec.europa.eu/document/download/4ec3992a-ef9b-41f9-8e34-1dd6d0a479ae_en?filename=mp_ctr_qa_rules.pdf",change:"eu"},
+ {id:"qa",title:"Clinical Trials Regulation Q&A",authority:"European Commission",scope:"EU",type:"Guidance PDF",path:"EudraLex / Volume 10 / CTR Q&A",checked:"09:41",status:"Changed",tone:"blue",edition:"July 2026 change · linked PDF can advance",section:"Q&A 8.4",result:"The July 2026 revision introduced Q&A 8.4 on cryopreserved product labeling. The linked Commission PDF now serves a later edition that retains the question.",url:"https://health.ec.europa.eu/document/download/4ec3992a-ef9b-41f9-8e34-1dd6d0a479ae_en?filename=mp_ctr_qa_rules.pdf",change:"eu"},
  {id:"imports",title:"Importing IMPs into Great Britain",authority:"MHRA",scope:"GB",type:"Guidance",path:"GOV.UK / Importing IMPs / Updated guidance",checked:"09:40",status:"Changed",tone:"blue",edition:"12 Feb 2025",section:"Publication change log and QP certification for approved-country imports",result:"The published update notice describes changes reflecting implementation of the EU Clinical Trials Regulation for EU QP certification.",url:"https://www.gov.uk/government/publications/importing-investigational-medicinal-products-into-great-britain-from-approved-countries",change:"import"},
  {id:"statute",title:"UK Clinical Trials amendment",authority:"UK Legislation",scope:"UK",type:"Statutory instrument",path:"legislation.gov.uk / S.I. 2025/538",checked:"09:39",status:"Unchanged",tone:"green",edition:"2025 instrument",section:"Regulation 32 and inserted Schedule 14 paragraph 6",result:"The replay keeps the same statutory reference on this check. The instrument supplies supporting evidence for the UK labeling case.",url:"https://www.legislation.gov.uk/uksi/2025/538/pdfs/uksi_20250538_en.pdf",change:"uk"},
  {id:"annex",title:"EU Annex VI packaging rules",authority:"EUR-Lex",scope:"EU",type:"Delegated regulation",path:"EUR-Lex / Delegated Regulation 2022/2239",checked:"09:38",status:"Unchanged",tone:"green",edition:"15 Nov 2022 · Official Journal",section:"Annex, entries B.6.2 and B.6.3",result:"The stored comparison is unchanged. The historical amendment is an additional use case for assessing eligible immediate-packaging configurations.",url:"https://eur-lex.europa.eu/eli/reg_del/2022/2239/oj/eng"},
@@ -66,6 +68,26 @@ const resources = [
  {name:"EMA CTIS public portal",text:"EU and EEA trial searches, EU trial numbers and public trial information. Use explicit registry identifiers to link records.",url:"https://www.ema.europa.eu/en/human-regulatory-overview/research-development/clinical-trials-human-medicines/clinical-trials-information-system-ctis"},
  {name:"AACT database",text:"Relational ClinicalTrials.gov data for SQL queries and bulk snapshots. AACT is a mirror of the registry.",url:"https://aact.ctti-clinicaltrials.org/landing"}
 ];
+const regions = ["Europe","North America","Asia","Oceania","South America","Africa"];
+const countries = [
+ {id:"uk",name:"United Kingdom",region:"Europe",changes:["uk","import"]},
+ {id:"de",name:"Germany",region:"Europe",shared:["eu"]},
+ {id:"fr",name:"France",region:"Europe",shared:["eu"]},
+ {id:"us",name:"United States",region:"North America"},
+ {id:"jp",name:"Japan",region:"Asia"},
+ {id:"au",name:"Australia",region:"Oceania"},
+ {id:"br",name:"Brazil",region:"South America"},
+ {id:"za",name:"South Africa",region:"Africa"}
+];
+const topics = ["Labeling & packaging","Import & customs","Release & certification","Storage & distribution","Returns & destruction","Permits & authorizations","Documentation","Controlled products"];
+const requirements = [
+ {id:"uk-label",scope:"UK",country:"uk",topic:topics[0],title:"IMP labeling under amended Part 7",basis:"UK regulation",when:"28 Apr 2026",status:"Example baseline",summary:"Use the amended Part 7 requirements for investigational medicinal products where applicable. Confirm the product and trial scope and any applicable authorization, variation or exception.",locator:"Regulation 32, substituting Part 7",source:"statute",related:"uk"},
+ {id:"uk-transition",scope:"UK",country:"uk",topic:topics[0],title:"Transitional labeling for qualifying batches",basis:"UK regulation with MHRA guidance",when:"28 Apr 2026",status:"Example baseline",summary:"The earlier rules can continue for qualifying batches made before the relevant day, labeled under the old rules and used in their intended old-rules trials. The MHRA guidance uses finished-IMP QP certification as the manufacturing date for this assessment.",locator:"Schedule 14, paragraph 6 and MHRA transition guidance",source:"transition",related:"uk"},
+ {id:"gb-import",scope:"Great Britain",country:"uk",topic:topics[1],title:"Approved-country import oversight",basis:"MHRA guidance",when:"Guidance edition · 12 Feb 2025",status:"Example baseline",summary:"For the approved-country import route, verify the UK import authorization holder and the mechanism for checking certification by a qualified person in an approved country.",locator:"GOV.UK import guidance and approved-country list",source:"imports",related:"import"},
+ {id:"eu-pack",scope:"EU",shared:true,topic:topics[0],title:"Immediate packaging and expiry or retest dates",basis:"EU delegated regulation",when:"In force from 5 Dec 2022",status:"Shared EU baseline",summary:"Annex VI allows the period of use to be omitted from the immediate package in specified configurations. Verify the packaging conditions and the other particulars required by Annex VI.",locator:"Delegated Regulation (EU) 2022/2239, Annex, B.6.2 and B.6.3",source:"annex",related:"eu"},
+ {id:"us-label",scope:"United States",country:"us",topic:topics[0],title:"Investigational new drug labeling",basis:"U.S. federal regulation",when:"Current eCFR section",status:"Example baseline",summary:"21 CFR 312.6 sets the investigational-use statement for immediate packages of investigational new drugs for human use and addresses misleading or unsupported labeling claims. The section also specifies a limited exception process.",locator:"21 CFR § 312.6",url:"https://www.ecfr.gov/current/title-21/chapter-I/subchapter-D/part-312/subpart-A/section-312.6"},
+ {id:"us-import",scope:"United States",country:"us",topic:topics[1],title:"Importing investigational new drugs",basis:"FDA guidance page",when:"See linked FDA source",status:"Example baseline",summary:"FDA describes the IND, U.S. consignee and labeling evidence for imports under an active IND. Check applicability and exemptions against the governing provisions.",locator:"FDA, Importing Investigational New Drugs",url:"https://www.fda.gov/drugs/human-drug-imports/importing-investigational-new-drugs"}
+];
 </script>
 <script id="dashboard-ui">
 "use strict";
@@ -83,9 +105,11 @@ const icons = {
   clock:'<circle cx="8" cy="8" r="5.5"/><path d="M8 5v3l2 1.5"/>',
   retry:'<path d="M3 7a5 5 0 1 1 1 4m-1-7v3.5h3.5"/>',
   alert:'<path d="M8 2.5 14 13H2ZM8 6v3m0 1.8h.01"/>',
-  external:'<path d="M9 3h4v4m0-4L7 9m0-5H3v9h9V9"/>'
+  external:'<path d="M9 3h4v4m0-4L7 9m0-5H3v9h9V9"/>',
+  countries:'<path d="M3 14V2.5m0 1c2-1.5 3.3-.5 5 0 1.8.5 3 .7 5-1v7c-2 1.7-3.2 1.5-5 1-1.7-.5-3-1.5-5 0"/>',
+  schedule:'<rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/><path d="M5.5 2.5v3m5-3v3M2.5 7h11M6 10.5h3.5"/>'
 };
-const navItems = {"overview":"Overview","sources":"Pages checked","changes":"Detected changes","studies":"Study impact","research":"Data & use cases"};
+const navItems = {overview:"Overview",countries:"Country requirements",changes:"Detected changes",studies:"Study impact",schedule:"Monitoring schedule",sources:"Source log",research:"Data & use cases"};
 const byId = id => document.getElementById(id);
 const esc = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const icon = name => '<svg viewBox="0 0 16 16" aria-hidden="true">'+icons[name]+'</svg>';
@@ -98,12 +122,45 @@ let currentChange = "uk";
 let studyView = "portfolio";
 let sourceFilter = "all";
 let sourceSearch = "";
-let replayCount = 1;
+let currentCountry = "uk";
+let countrySearch = "";
+let countryTopic = "all";
+let countryScope = "all";
+const expandedRegions = new Set(countries.filter(country=>country.changes?.length).map(country=>country.region));
+if (changes.some(change=>change.scope==="EU")) expandedRegions.add("Europe");
+const scheduleKey = "regchain-dashboard-schedule-v1";
+const dayMs = 24 * 60 * 60 * 1000;
+const athens = new Intl.DateTimeFormat("en-GB",{dateStyle:"medium",timeStyle:"short",timeZone:"Europe/Athens"});
+let scheduleState = readSchedule();
 let replaying = false;
 let drawerOrigin = null;
 const selectedChange = () => changes.find(change=>change.id===currentChange);
 const filteredStudies = () => studyView === "portfolio" ? studies.filter(study=>study.changes.includes(currentChange)) : publicStudies.filter(study=>study.countries.includes(selectedChange().scope));
 const retryCount = sources.filter(source=>source.status==="Retry needed").length;
+const currentOpenCountries = countries.filter(country=>country.changes?.length);
+
+function readSchedule() {
+  const fallback={enabled:false,days:1,nextAt:null,lastAt:null,lastReason:null,runCount:1};
+  try {
+    const saved=JSON.parse(localStorage.getItem(scheduleKey));
+    if (saved && typeof saved.enabled==="boolean" && Number.isInteger(saved.days) && saved.days>=1 && saved.days<=365 &&
+      Number.isInteger(saved.runCount) && saved.runCount>=1 &&
+      (!saved.enabled || Number.isFinite(saved.nextAt))) return {...fallback,...saved};
+  } catch {}
+  return fallback;
+}
+function storeSchedule() {
+  try {localStorage.setItem(scheduleKey,JSON.stringify(scheduleState));}
+  catch {return false;}
+  return true;
+}
+function cadence(days) {return days===1?"Every day":"Every "+days+" days";}
+function scheduleDate(value) {return value ? athens.format(value)+" Athens time" : "—";}
+function runStatus() {
+  const next=scheduleState.enabled?scheduleDate(scheduleState.nextAt):"Paused";
+  const last=scheduleState.lastAt?scheduleDate(scheduleState.lastAt)+" · "+(scheduleState.lastReason==="scheduled"?"Scheduled replay":"Manual replay"):"Historical sample · "+replayDate;
+  return factlist([["Next demo run",next],["Last run",last],["Source coverage",sources.length+" sample checks · "+retryCount+" retry needed"]]);
+}
 
 function shell() {
   byId("brand-mark").innerHTML=icon("logo");
@@ -122,17 +179,89 @@ function updateRun() {
   }
 }
 function overview() {
-  return heading("Regulatory monitor","See what was checked, what changed, and which studies need review.",'<button id="replay" class="btn primary" type="button" data-act="replay">'+icon("retry")+'Replay checks</button>')+
-    '<div class="runbar"><div class="runbar-left">'+icon("clock")+'<strong>Replay '+String(replayCount).padStart(2,"0")+'</strong><span class="separator">·</span><span>'+replayDate+' · times in UTC</span></div>'+badge("Completed with 1 retry needed","amber")+'</div>'+
+  return heading("Regulatory monitor","Track open changes by region, then review the country requirements and affected studies.",'<div class="actions">'+trigger("Monitoring schedule","nav","schedule","","schedule")+'<button id="replay" class="btn primary" type="button" data-act="replay">'+icon("retry")+'Replay checks</button></div>')+
+    '<div class="runbar"><div class="runbar-left">'+icon("clock")+'<strong>Replay '+String(scheduleState.runCount).padStart(2,"0")+'</strong><span class="separator">·</span><span>'+ (scheduleState.lastAt?"Last replay "+scheduleDate(scheduleState.lastAt):"Historical sample · "+replayDate) +'</span></div><div class="actions">'+badge("Completed with 1 retry needed","amber")+badge(scheduleState.enabled?cadence(scheduleState.days)+" · demo":"Schedule paused",scheduleState.enabled?"blue":"")+'</div></div>'+
     '<div class="tiles" aria-label="Replay summary">'+
-      tile("Pages checked",sources.length,"3 changed · 2 unchanged · 1 retry","sources","sources")+
-      tile("Changes detected",changes.length,"3 published-source examples","changes","changes")+
+      tile("Countries with open changes",currentOpenCountries.length,"Plus 1 shared EU update","countries","regions")+
+      tile("Open changes",changes.length,"2 UK or GB · 1 shared EU","changes","changes")+
       tile("Studies to review",studies.filter(study=>study.status==="Batch review").length,"UK labeling · fictional portfolio","studies","studies")+
-      tile("Checks to retry",retryCount,"Approved-country list","alert","retry-filter")+
-    '</div><div class="layout">'+sourceCard(true)+changeCard(true)+'</div><div class="space" id="study-card">'+studyCard(true)+'</div>';
+      tile("Checks to retry",retryCount,"Coverage gap in Great Britain","alert","retry-filter")+
+    '</div><div class="layout">'+regionCard()+changeCard(true)+'</div><div class="space" id="study-card">'+studyCard(true)+'</div>';
 }
 function tile(title,value,hint,symbol,target) {
   return '<button type="button" class="tile" data-act="metric" data-value="'+target+'"><div class="tile-top"><span class="tile-icon">'+icon(symbol)+'</span>'+title+'</div><strong>'+value+'</strong><small>'+hint+'</small></button>';
+}
+function regionCard() {
+  const content=regions.map(region=>{
+    const local=currentOpenCountries.filter(country=>country.region===region);
+    const shared=region==="Europe"?changes.filter(change=>change.scope==="EU"):[];
+    const summary=local.length ? local.length+(local.length===1?" country":" countries")+" with open changes" : shared.length ? "Shared updates" : "Outside replay coverage";
+    const countryLinks=local.map(country=>'<div class="region-child"><button type="button" class="country-control" data-act="country-page" data-value="'+country.id+'">'+country.name+'<small class="sub">UK and Great Britain scopes</small></button>'+badge(country.changes.length+" open changes","amber")+'</div>').join("");
+    const sharedLinks=shared.map(change=>'<div class="region-child"><button type="button" class="country-control" data-act="change-detail" data-value="'+change.id+'">European Union<small class="sub">'+change.title+'</small></button>'+badge("Shared update","blue")+'</div>').join("");
+    return '<details class="region" data-region="'+region+'"'+(expandedRegions.has(region)?" open":"")+'><summary>'+icon("chevron")+'<span class="region-label"><strong>'+region+'</strong><small>'+summary+'</small></span></summary>'+
+      (countryLinks+sharedLinks || '<div class="region-child"><small>This replay contains no checks for this region.</small></div>')+'</details>';
+  }).join("");
+  return '<section id="regions" class="card" aria-labelledby="regions-title"><div class="card-head"><div><h2 id="regions-title" tabindex="-1">Changes by region</h2><p>Countries with open changes in the replay</p></div>'+quiet("Open country library","countries")+'</div><div class="region-list">'+content+'</div></section>';
+}
+const countryById = id => countries.find(country=>country.id===id);
+const recordsFor = country => requirements.filter(record=>record.country===country.id || (record.shared && country.shared));
+function countryList() {
+  const query=countrySearch.trim().toLowerCase();
+  const groups=regions.map(region=>{
+    const matches=countries.filter(country=>country.region===region && (country.name.toLowerCase().includes(query)||region.toLowerCase().includes(query)));
+    if (!matches.length) return "";
+    return '<div class="section-label">'+region+'</div>'+matches.map(country=>{
+      const count=recordsFor(country).length;
+      const status=country.changes?"Open changes":count?"Sample coverage":"Not assessed";
+      return '<button type="button" class="country-row" data-act="pick-country" data-value="'+country.id+'" aria-pressed="'+(currentCountry===country.id)+'"><span><strong>'+country.name+'</strong><small class="sub">'+status+'</small></span>'+icon("chevron")+'</button>';
+    }).join("");
+  }).join("");
+  return groups||'<p class="nothing">No countries match this search.</p>';
+}
+function options(values,selected) {
+  return values.map(([value,label])=>'<option value="'+esc(value)+'"'+(value===selected?" selected":"")+'>'+esc(label)+'</option>').join("");
+}
+function countryRequirements() {
+  const country=countryById(currentCountry);
+  const all=recordsFor(country);
+  const filtered=all.filter(record=>(countryTopic==="all"||record.topic===countryTopic) && (countryScope==="all"||(countryScope==="shared"?record.shared:!record.shared)));
+  const hasLocal=all.some(record=>!record.shared);
+  const coverage=hasLocal ? "Sample country coverage" : all.length ? "Shared EU coverage only" : "Not assessed";
+  const links=[...(country.changes??[]),...(country.shared??[])].map(id=>{
+    const change=changes.find(item=>item.id===id);
+    return trigger(change.title,"change-detail",id,"","file");
+  });
+  const rows=filtered.map(record=>'<button type="button" class="req-row" data-act="requirement" data-value="'+record.id+'"><span><strong>'+record.title+'</strong><small class="sub">'+record.topic+' · '+record.scope+' · '+record.basis+'</small><small class="sub">'+record.when+'</small></span>'+icon("chevron")+'</button>').join("");
+  const coveredTopics=new Set(all.map(record=>record.topic));
+  const missing=topics.filter(topic=>!coveredTopics.has(topic));
+  return '<section class="card"><div class="card-head"><div><h2>'+country.name+'</h2><p>'+country.region+' · '+all.length+' sample records</p></div>'+badge(coverage,hasLocal?"blue":all.length?"purple":"")+'</div>'+
+    '<div class="card-foot"><div class="filters"><label class="field">Topic<select id="country-topic">'+options([["all","All topics"],...topics.map(topic=>[topic,topic])],countryTopic)+'</select></label><label class="field">Record scope<select id="country-scope">'+options([["all","All scopes"],["local","Country-specific"],["shared","Shared EU"]],countryScope)+'</select></label></div></div>'+
+    (rows?'<div class="req-list">'+rows+'</div>':'<p class="nothing">'+(all.length?"No records match these filters.":"This prototype has no reviewed records for this country.")+'</p>')+
+    '<div class="inline-note">'+icon("info")+'<span>'+esc((all.length && !hasLocal?"Country-specific requirements are not assessed. ":"")+(missing.length?"No sample coverage for "+missing.join(", ")+".":""))+'</span></div>'+
+    (links.length?'<div class="card-foot"><small>Related open changes</small><div class="actions">'+links.join("")+'</div></div>':"")+'</section>';
+}
+function countryLibrary() {
+  return heading("Country requirements","Browse the clinical supply library by country, topic and jurisdiction.")+
+    '<div class="library-layout"><section class="card"><div class="card-head"><label class="field" style="width:100%">Find a country<input id="country-search" type="search" placeholder="Country or continent" value="'+esc(countrySearch)+'"></label></div><div id="country-list">'+countryList()+'</div></section><div id="country-requirements">'+countryRequirements()+'</div></div>';
+}
+function requirementDetail(id) {
+  const record=requirements.find(item=>item.id===id);
+  const source=sources.find(item=>item.id===record.source);
+  drawer("Country requirements library",record.title,badge(record.status,"blue")+
+    factlist([["Jurisdiction",record.scope],["Topic",record.topic],["Source type",record.basis],["Date or edition",record.when],["Source provision",record.locator]])+
+    block("Requirement summary",record.summary)+
+    '<div class="actions">'+openLink("Open official source",source?.url??record.url,"primary")+
+    (record.related?trigger("View related change","change-detail",record.related,"","arrow"):"")+'</div>');
+}
+function monitoringSchedule() {
+  return heading("Monitoring schedule","Set the interval for automatic checks.")+
+    '<div class="layout">'+
+    '<section class="card"><div class="card-head"><div><h2>Automatic checks</h2><p>Browser demo settings</p></div>'+badge(scheduleState.enabled?cadence(scheduleState.days):"Paused",scheduleState.enabled?"blue":"")+'</div><div class="settings">'+
+    '<form id="schedule-form"><label class="toggle"><input type="checkbox" name="enabled"'+(scheduleState.enabled?" checked":"")+'> Enable automatic replay</label><label class="field">Repeat every (days)<input type="number" name="days" min="1" max="365" step="1" value="'+scheduleState.days+'" required></label><div class="actions"><button type="submit" class="btn primary">Save schedule</button><button id="replay" type="button" class="btn" data-act="replay">'+icon("retry")+'Replay checks</button></div></form>'+
+    '<div class="inline-note">'+icon("info")+'<span>Runs the saved sample while this page is open. If a run is missed, the next visit replays it once. Live background monitoring requires a deployed scheduler.</span></div></div></section>'+
+    '<section class="card"><div class="card-head"><div><h2>Run status</h2><p>Schedule times are shown in Athens time.</p></div></div><div class="settings">'+
+    '<div id="run-status">'+runStatus()+'</div>'+
+    '<div class="actions" style="margin-top:12px">'+quiet("View source log","sources")+'</div></div></section></div>';
 }
 function sourceTable(data,compact) {
   if (!data.length) return '<p class="nothing">No pages match these filters.</p>';
@@ -173,6 +302,8 @@ function research() {
 }
 const views = {
   overview,
+  countries:countryLibrary,
+  schedule:monitoringSchedule,
   sources:()=>heading("Pages checked","Inspect each page, its retrieval result, the section compared and the linked evidence.")+sourceCard(false),
   changes:()=>heading("Detected changes","Inspect a change, its source evidence and the inputs needed for study screening.")+changeCard(false),
   studies:()=>heading("Study impact","Explore the portfolio assessment or public matches for the selected change.")+
@@ -229,24 +360,75 @@ function selectChange(id) {
   studyView=studies.some(study=>study.changes.includes(id))?"portfolio":"registry";
 }
 function updateStudies() {byId("study-card").innerHTML=studyCard(page==="overview");}
-function replay() {
+function replay(reason="manual") {
   if (replaying) return;
   replaying=true;updateRun();notify("Replaying the six recorded checks.");
   window.setTimeout(()=>{
-    replayCount++;replaying=false;
-    if(page==="overview"){render();byId("replay").focus();}
+    scheduleState=readScheduleOrCurrent();
+    if (reason==="scheduled" && (!scheduleState.enabled || scheduleState.nextAt>Date.now())) {
+      replaying=false;
+      updateRun();
+      notify();
+      return;
+    }
+    const now=Date.now();
+    scheduleState.runCount++;
+    scheduleState.lastAt=now;
+    scheduleState.lastReason=reason;
+    if (reason==="scheduled") {
+      const interval=scheduleState.days*dayMs;
+      scheduleState.nextAt+= (Math.floor((now-scheduleState.nextAt)/interval)+1)*interval;
+    }
+    storeSchedule();
+    replaying=false;
+    if (page==="overview" || page==="schedule") {
+      const focused=byId("replay")===document.activeElement;
+      if (!byId("schedule-form")?.contains(document.activeElement) || focused) {
+        render();
+        if(focused) byId("replay").focus();
+      } else {
+        byId("run-status").innerHTML=runStatus();
+        updateRun();
+      }
+    }
     notify("Replay complete. Three changes detected. One source check needs retry.");
   },350);
+}
+function readScheduleOrCurrent() {
+  try {return localStorage.getItem(scheduleKey)?readSchedule():scheduleState;}
+  catch {return scheduleState;}
+}
+function checkDue() {
+  scheduleState=readScheduleOrCurrent();
+  if(scheduleState.enabled && scheduleState.nextAt<=Date.now() && !replaying) replay("scheduled");
+}
+function openCountry(id) {
+  currentCountry=id;
+  countrySearch="";
+  countryTopic="all";
+  countryScope="all";
+  navigate("countries");
 }
 const actions={
   nav:to=>{notify();navigate(to);},
   metric:target=>{
     if(target==="retry-filter"){sourceFilter="Retry needed";sourceSearch="";navigate("sources");return;}
-    if(target==="sources"){sourceFilter="all";sourceSearch="";}
+    if(target==="regions"){byId("regions-title").focus();byId("regions").scrollIntoView({block:"nearest"});return;}
     if(target==="studies") selectChange("uk");
     navigate(target);
   },
-  replay,
+  replay:()=>replay(),
+  "country-page":openCountry,
+  "pick-country":id=>{
+    currentCountry=id;
+    countryTopic="all";
+    countryScope="all";
+    byId("country-list").innerHTML=countryList();
+    byId("country-requirements").innerHTML=countryRequirements();
+    const focusTarget=window.matchMedia("(max-width:760px)").matches?byId("country-topic"):byId("country-list").querySelector('[data-value="'+id+'"]');
+    focusTarget.focus();
+  },
+  requirement:requirementDetail,
   "source-detail":sourceDetail,
   "change-detail":changeDetail,
   "study-detail":studyDetail,
@@ -270,6 +452,10 @@ document.addEventListener("input",event=>{
     sourceSearch=event.target.value;
     byId("source-results").innerHTML=sourceTable(sources.filter(tableMatches),false);
   }
+  if (event.target.id==="country-search") {
+    countrySearch=event.target.value;
+    byId("country-list").innerHTML=countryList();
+  }
 });
 document.addEventListener("change",event=>{
   if(event.target.id==="source-filter"){
@@ -281,9 +467,41 @@ document.addEventListener("change",event=>{
     render();
     byId("study-change").focus();
   }
+  if (event.target.id==="country-topic" || event.target.id==="country-scope") {
+    const {id,value}=event.target;
+    if(id==="country-topic") countryTopic=value;
+    else countryScope=value;
+    byId("country-requirements").innerHTML=countryRequirements();
+    byId(id).focus();
+  }
+});
+document.addEventListener("toggle",event=>{
+  const region=event.target.dataset?.region;
+  if (!region || !event.target.isConnected) return;
+  if(event.target.open) expandedRegions.add(region);
+  else expandedRegions.delete(region);
+},true);
+document.addEventListener("submit",event=>{
+  if(event.target.id!=="schedule-form") return;
+  event.preventDefault();
+  scheduleState=readScheduleOrCurrent();
+  const {enabled,days}=event.target.elements;
+  const interval=Number(days.value);
+  if(!Number.isInteger(interval)||interval<1||interval>365) return;
+  const keepNext=scheduleState.enabled && scheduleState.days===interval;
+  scheduleState={...scheduleState,enabled:enabled.checked,days:interval,
+    nextAt:enabled.checked?(keepNext?scheduleState.nextAt:Date.now()+interval*dayMs):null};
+  const saved=storeSchedule();
+  render();
+  byId("schedule-form").querySelector('button[type="submit"]').focus();
+  notify(saved?"Schedule saved.": "Schedule applies to this tab. Browser storage is unavailable.");
+  checkDue();
 });
 byId("drawer").addEventListener("close",()=>{if(drawerOrigin?.isConnected) drawerOrigin.focus();drawerOrigin=null;});
 render();
+checkDue();
+window.setInterval(checkDue,15000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden) checkDue();});
 </script>
 </body>
 </html>
