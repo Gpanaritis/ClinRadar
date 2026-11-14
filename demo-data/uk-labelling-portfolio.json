@@ -1,0 +1,1829 @@
+{
+  "schema_version": "0.1",
+  "synthetic_operational_data": true,
+  "note": "Fictional sponsor portfolio for the RegChain demo. No real studies, sites, products or patients.",
+  "assessment_as_of": "2026-11-14T10:00:00Z",
+  "studies": [
+    {
+      "id": "STUDY-001",
+      "title": "UK legacy-cohort study",
+      "phase": "III",
+      "therapy_area": "Oncology",
+      "status": "active",
+      "countries": [
+        "GB"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-002",
+      "title": "Germany-only distribution study",
+      "phase": "II",
+      "therapy_area": "Immunology",
+      "status": "active",
+      "countries": [
+        "DE"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-003",
+      "title": "UK labeling and supply study",
+      "phase": "III",
+      "therapy_area": "Cardiology",
+      "status": "active",
+      "countries": [
+        "GB"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-004",
+      "title": "Multinational asthma maintenance study",
+      "phase": "III",
+      "therapy_area": "Respiratory",
+      "status": "active",
+      "countries": [
+        "GB",
+        "DE",
+        "PL",
+        "ES"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-005",
+      "title": "Rare disease enzyme replacement study",
+      "phase": "II",
+      "therapy_area": "Rare disease",
+      "status": "active",
+      "countries": [
+        "GB",
+        "FR",
+        "IT"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-006",
+      "title": "Paediatric vaccine booster study",
+      "phase": "III",
+      "therapy_area": "Vaccines",
+      "status": "active",
+      "countries": [
+        "GB",
+        "NL"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-007",
+      "title": "Migraine prevention study",
+      "phase": "II",
+      "therapy_area": "Neurology",
+      "status": "active",
+      "countries": [
+        "GB",
+        "IE"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-008",
+      "title": "Type 2 diabetes outcomes study",
+      "phase": "III",
+      "therapy_area": "Metabolic",
+      "status": "active",
+      "countries": [
+        "GB",
+        "US",
+        "CA"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-009",
+      "title": "Rheumatoid arthritis biologic study",
+      "phase": "III",
+      "therapy_area": "Immunology",
+      "status": "active",
+      "countries": [
+        "GB",
+        "DE"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-010",
+      "title": "US oncology dose-finding study",
+      "phase": "I",
+      "therapy_area": "Oncology",
+      "status": "active",
+      "countries": [
+        "US"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-011",
+      "title": "Japan bridging study",
+      "phase": "I",
+      "therapy_area": "Metabolic",
+      "status": "active",
+      "countries": [
+        "JP"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-012",
+      "title": "EU psoriasis study",
+      "phase": "III",
+      "therapy_area": "Dermatology",
+      "status": "active",
+      "countries": [
+        "DE",
+        "FR",
+        "ES"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-013",
+      "title": "Spain and Portugal hepatitis study",
+      "phase": "II",
+      "therapy_area": "Infectious disease",
+      "status": "active",
+      "countries": [
+        "ES",
+        "PT"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-014",
+      "title": "Nordic heart failure study",
+      "phase": "III",
+      "therapy_area": "Cardiology",
+      "status": "active",
+      "countries": [
+        "SE",
+        "DK",
+        "FI"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-015",
+      "title": "US and Canada obesity study",
+      "phase": "II",
+      "therapy_area": "Metabolic",
+      "status": "active",
+      "countries": [
+        "US",
+        "CA"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-016",
+      "title": "France and Belgium lupus study",
+      "phase": "II",
+      "therapy_area": "Immunology",
+      "status": "active",
+      "countries": [
+        "FR",
+        "BE"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-017",
+      "title": "Australia chronic pain study",
+      "phase": "II",
+      "therapy_area": "Neurology",
+      "status": "active",
+      "countries": [
+        "AU"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-018",
+      "title": "UK oncology follow-up study, supply closed",
+      "phase": "III",
+      "therapy_area": "Oncology",
+      "status": "completed",
+      "countries": [
+        "GB"
+      ],
+      "source_ref": "SRC-CTMS"
+    }
+  ],
+  "study_countries": [
+    {
+      "id": "STUDY-001-GB",
+      "study_id": "STUDY-001",
+      "country_code": "GB",
+      "jurisdiction": "UK",
+      "authorization_cohort": "old_rules",
+      "site_ids": [
+        "SITE-GB-02",
+        "SITE-GB-03"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-002-DE",
+      "study_id": "STUDY-002",
+      "country_code": "DE",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-DE-01"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-003-GB",
+      "study_id": "STUDY-003",
+      "country_code": "GB",
+      "jurisdiction": "UK",
+      "authorization_cohort": "old_rules",
+      "site_ids": [
+        "SITE-GB-01"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-004-GB",
+      "study_id": "STUDY-004",
+      "country_code": "GB",
+      "jurisdiction": "UK",
+      "authorization_cohort": "unknown",
+      "site_ids": [
+        "SITE-GB-04",
+        "SITE-GB-05"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-004-DE",
+      "study_id": "STUDY-004",
+      "country_code": "DE",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-DE-02"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-004-PL",
+      "study_id": "STUDY-004",
+      "country_code": "PL",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-PL-01"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-004-ES",
+      "study_id": "STUDY-004",
+      "country_code": "ES",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-ES-01"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-005-GB",
+      "study_id": "STUDY-005",
+      "country_code": "GB",
+      "jurisdiction": "UK",
+      "authorization_cohort": "new_rules",
+      "site_ids": [
+        "SITE-GB-06"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-005-FR",
+      "study_id": "STUDY-005",
+      "country_code": "FR",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-FR-01"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-005-IT",
+      "study_id": "STUDY-005",
+      "country_code": "IT",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-IT-01"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-006-GB",
+      "study_id": "STUDY-006",
+      "country_code": "GB",
+      "jurisdiction": "UK",
+      "authorization_cohort": "old_rules",
+      "site_ids": [
+        "SITE-GB-07"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-006-NL",
+      "study_id": "STUDY-006",
+      "country_code": "NL",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-NL-01"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-007-GB",
+      "study_id": "STUDY-007",
+      "country_code": "GB",
+      "jurisdiction": "UK",
+      "authorization_cohort": "new_rules",
+      "site_ids": [
+        "SITE-GB-08"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-007-IE",
+      "study_id": "STUDY-007",
+      "country_code": "IE",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-IE-01"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-008-GB",
+      "study_id": "STUDY-008",
+      "country_code": "GB",
+      "jurisdiction": "UK",
+      "authorization_cohort": "new_rules",
+      "site_ids": [
+        "SITE-GB-09"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-008-US",
+      "study_id": "STUDY-008",
+      "country_code": "US",
+      "jurisdiction": "US",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-US-01"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-008-CA",
+      "study_id": "STUDY-008",
+      "country_code": "CA",
+      "jurisdiction": "CA",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-CA-01"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-009-GB",
+      "study_id": "STUDY-009",
+      "country_code": "GB",
+      "jurisdiction": "UK",
+      "authorization_cohort": "old_rules",
+      "site_ids": [
+        "SITE-GB-10"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-009-DE",
+      "study_id": "STUDY-009",
+      "country_code": "DE",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-DE-03"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-010-US",
+      "study_id": "STUDY-010",
+      "country_code": "US",
+      "jurisdiction": "US",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-US-02"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-011-JP",
+      "study_id": "STUDY-011",
+      "country_code": "JP",
+      "jurisdiction": "JP",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-JP-01"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-012-DE",
+      "study_id": "STUDY-012",
+      "country_code": "DE",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-DE-04"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-012-FR",
+      "study_id": "STUDY-012",
+      "country_code": "FR",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-012-ES",
+      "study_id": "STUDY-012",
+      "country_code": "ES",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-013-ES",
+      "study_id": "STUDY-013",
+      "country_code": "ES",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-ES-02"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-013-PT",
+      "study_id": "STUDY-013",
+      "country_code": "PT",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-014-SE",
+      "study_id": "STUDY-014",
+      "country_code": "SE",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-SE-01"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-014-DK",
+      "study_id": "STUDY-014",
+      "country_code": "DK",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-014-FI",
+      "study_id": "STUDY-014",
+      "country_code": "FI",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-015-US",
+      "study_id": "STUDY-015",
+      "country_code": "US",
+      "jurisdiction": "US",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-US-03"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-015-CA",
+      "study_id": "STUDY-015",
+      "country_code": "CA",
+      "jurisdiction": "CA",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-016-FR",
+      "study_id": "STUDY-016",
+      "country_code": "FR",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-FR-02"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-016-BE",
+      "study_id": "STUDY-016",
+      "country_code": "BE",
+      "jurisdiction": "EU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-017-AU",
+      "study_id": "STUDY-017",
+      "country_code": "AU",
+      "jurisdiction": "AU",
+      "authorization_cohort": "not_applicable",
+      "site_ids": [
+        "SITE-AU-01"
+      ],
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "STUDY-018-GB",
+      "study_id": "STUDY-018",
+      "country_code": "GB",
+      "jurisdiction": "UK",
+      "authorization_cohort": "old_rules",
+      "site_ids": [
+        "SITE-GB-11"
+      ],
+      "source_ref": "SRC-CTMS"
+    }
+  ],
+  "sites": [
+    {
+      "id": "SITE-GB-01",
+      "study_id": "STUDY-003",
+      "country_code": "GB",
+      "city": "London",
+      "patients_on_treatment": 14,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-GB-02",
+      "study_id": "STUDY-001",
+      "country_code": "GB",
+      "city": "Manchester",
+      "patients_on_treatment": 9,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-GB-03",
+      "study_id": "STUDY-001",
+      "country_code": "GB",
+      "city": "Glasgow",
+      "patients_on_treatment": 7,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-GB-04",
+      "study_id": "STUDY-004",
+      "country_code": "GB",
+      "city": "Birmingham",
+      "patients_on_treatment": 22,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-GB-05",
+      "study_id": "STUDY-004",
+      "country_code": "GB",
+      "city": "Leeds",
+      "patients_on_treatment": 17,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-GB-06",
+      "study_id": "STUDY-005",
+      "country_code": "GB",
+      "city": "Cambridge",
+      "patients_on_treatment": 6,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-GB-07",
+      "study_id": "STUDY-006",
+      "country_code": "GB",
+      "city": "Bristol",
+      "patients_on_treatment": 40,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-GB-08",
+      "study_id": "STUDY-007",
+      "country_code": "GB",
+      "city": "Edinburgh",
+      "patients_on_treatment": 25,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-GB-09",
+      "study_id": "STUDY-008",
+      "country_code": "GB",
+      "city": "Newcastle",
+      "patients_on_treatment": 31,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-GB-10",
+      "study_id": "STUDY-009",
+      "country_code": "GB",
+      "city": "Oxford",
+      "patients_on_treatment": 19,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-GB-11",
+      "study_id": "STUDY-018",
+      "country_code": "GB",
+      "city": "Cardiff",
+      "patients_on_treatment": 0,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-DE-01",
+      "study_id": "STUDY-002",
+      "country_code": "DE",
+      "city": "Berlin",
+      "patients_on_treatment": 12,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-DE-02",
+      "study_id": "STUDY-004",
+      "country_code": "DE",
+      "city": "Munich",
+      "patients_on_treatment": 20,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-PL-01",
+      "study_id": "STUDY-004",
+      "country_code": "PL",
+      "city": "Warsaw",
+      "patients_on_treatment": 15,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-ES-01",
+      "study_id": "STUDY-004",
+      "country_code": "ES",
+      "city": "Madrid",
+      "patients_on_treatment": 11,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-FR-01",
+      "study_id": "STUDY-005",
+      "country_code": "FR",
+      "city": "Lyon",
+      "patients_on_treatment": 5,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-IT-01",
+      "study_id": "STUDY-005",
+      "country_code": "IT",
+      "city": "Milan",
+      "patients_on_treatment": 4,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-NL-01",
+      "study_id": "STUDY-006",
+      "country_code": "NL",
+      "city": "Utrecht",
+      "patients_on_treatment": 35,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-IE-01",
+      "study_id": "STUDY-007",
+      "country_code": "IE",
+      "city": "Dublin",
+      "patients_on_treatment": 13,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-US-01",
+      "study_id": "STUDY-008",
+      "country_code": "US",
+      "city": "Boston",
+      "patients_on_treatment": 44,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-CA-01",
+      "study_id": "STUDY-008",
+      "country_code": "CA",
+      "city": "Toronto",
+      "patients_on_treatment": 18,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-DE-03",
+      "study_id": "STUDY-009",
+      "country_code": "DE",
+      "city": "Hamburg",
+      "patients_on_treatment": 16,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-US-02",
+      "study_id": "STUDY-010",
+      "country_code": "US",
+      "city": "Houston",
+      "patients_on_treatment": 12,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-JP-01",
+      "study_id": "STUDY-011",
+      "country_code": "JP",
+      "city": "Osaka",
+      "patients_on_treatment": 10,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-DE-04",
+      "study_id": "STUDY-012",
+      "country_code": "DE",
+      "city": "Frankfurt",
+      "patients_on_treatment": 21,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-ES-02",
+      "study_id": "STUDY-013",
+      "country_code": "ES",
+      "city": "Seville",
+      "patients_on_treatment": 14,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-SE-01",
+      "study_id": "STUDY-014",
+      "country_code": "SE",
+      "city": "Gothenburg",
+      "patients_on_treatment": 27,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-US-03",
+      "study_id": "STUDY-015",
+      "country_code": "US",
+      "city": "Chicago",
+      "patients_on_treatment": 33,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-FR-02",
+      "study_id": "STUDY-016",
+      "country_code": "FR",
+      "city": "Lille",
+      "patients_on_treatment": 8,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "id": "SITE-AU-01",
+      "study_id": "STUDY-017",
+      "country_code": "AU",
+      "city": "Melbourne",
+      "patients_on_treatment": 16,
+      "source_ref": "SRC-CTMS"
+    }
+  ],
+  "products": [
+    {
+      "id": "IMP-001",
+      "study_id": "STUDY-001",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-002",
+      "study_id": "STUDY-002",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-003",
+      "study_id": "STUDY-003",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-004",
+      "study_id": "STUDY-004",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-005",
+      "study_id": "STUDY-005",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-006",
+      "study_id": "STUDY-006",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-007",
+      "study_id": "STUDY-007",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-008",
+      "study_id": "STUDY-008",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-009",
+      "study_id": "STUDY-009",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-010",
+      "study_id": "STUDY-010",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-011",
+      "study_id": "STUDY-011",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-012",
+      "study_id": "STUDY-012",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-013",
+      "study_id": "STUDY-013",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-014",
+      "study_id": "STUDY-014",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-015",
+      "study_id": "STUDY-015",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-016",
+      "study_id": "STUDY-016",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-017",
+      "study_id": "STUDY-017",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-018",
+      "study_id": "STUDY-018",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    }
+  ],
+  "label_specs": [
+    {
+      "id": "IMP-001-UK-v1",
+      "product_id": "IMP-001",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-001-UK-v2",
+      "product_id": "IMP-001",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-002-UK-v1",
+      "product_id": "IMP-002",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-002-UK-v2",
+      "product_id": "IMP-002",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-003-UK-v1",
+      "product_id": "IMP-003",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-003-UK-v2",
+      "product_id": "IMP-003",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-004-UK-v1",
+      "product_id": "IMP-004",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-004-UK-v2",
+      "product_id": "IMP-004",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-005-UK-v1",
+      "product_id": "IMP-005",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-005-UK-v2",
+      "product_id": "IMP-005",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-006-UK-v1",
+      "product_id": "IMP-006",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-006-UK-v2",
+      "product_id": "IMP-006",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-007-UK-v1",
+      "product_id": "IMP-007",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-007-UK-v2",
+      "product_id": "IMP-007",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-008-UK-v1",
+      "product_id": "IMP-008",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-008-UK-v2",
+      "product_id": "IMP-008",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-009-UK-v1",
+      "product_id": "IMP-009",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-009-UK-v2",
+      "product_id": "IMP-009",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-010-UK-v1",
+      "product_id": "IMP-010",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-010-UK-v2",
+      "product_id": "IMP-010",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-011-UK-v1",
+      "product_id": "IMP-011",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-011-UK-v2",
+      "product_id": "IMP-011",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-012-UK-v1",
+      "product_id": "IMP-012",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-012-UK-v2",
+      "product_id": "IMP-012",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-013-UK-v1",
+      "product_id": "IMP-013",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-013-UK-v2",
+      "product_id": "IMP-013",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-014-UK-v1",
+      "product_id": "IMP-014",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-014-UK-v2",
+      "product_id": "IMP-014",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-015-UK-v1",
+      "product_id": "IMP-015",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-015-UK-v2",
+      "product_id": "IMP-015",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-016-UK-v1",
+      "product_id": "IMP-016",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-016-UK-v2",
+      "product_id": "IMP-016",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-017-UK-v1",
+      "product_id": "IMP-017",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-017-UK-v2",
+      "product_id": "IMP-017",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-018-UK-v1",
+      "product_id": "IMP-018",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "IMP-018-UK-v2",
+      "product_id": "IMP-018",
+      "version": "2",
+      "jurisdiction": "UK",
+      "legacy_reference": false,
+      "source_ref": "SRC-SUPPLY"
+    }
+  ],
+  "batches": [
+    {
+      "id": "A-101",
+      "study_id": "STUDY-001",
+      "study_country_id": "STUDY-001-GB",
+      "product_id": "IMP-001",
+      "label_spec_id": "IMP-001-UK-v1",
+      "physical_manufacture_date": "2026-04-10",
+      "finished_imp_qp_certification_date": "2026-04-20",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "B-102",
+      "study_id": "STUDY-003",
+      "study_country_id": "STUDY-003-GB",
+      "product_id": "IMP-003",
+      "label_spec_id": "IMP-003-UK-v1",
+      "physical_manufacture_date": "2026-04-20",
+      "finished_imp_qp_certification_date": "2026-05-05",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "C-103",
+      "study_id": "STUDY-003",
+      "study_country_id": "STUDY-003-GB",
+      "product_id": "IMP-003",
+      "label_spec_id": "IMP-003-UK-v2",
+      "physical_manufacture_date": "2026-04-24",
+      "finished_imp_qp_certification_date": "2026-05-05",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "D-104",
+      "study_id": "STUDY-001",
+      "study_country_id": "STUDY-001-GB",
+      "product_id": "IMP-001",
+      "label_spec_id": "IMP-001-UK-v1",
+      "physical_manufacture_date": "2026-05-12",
+      "finished_imp_qp_certification_date": null,
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "E-105",
+      "study_id": "STUDY-002",
+      "study_country_id": "STUDY-002-DE",
+      "product_id": "IMP-002",
+      "label_spec_id": null,
+      "physical_manufacture_date": "2026-04-22",
+      "finished_imp_qp_certification_date": "2026-05-05",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "F-106",
+      "study_id": "STUDY-003",
+      "study_country_id": "STUDY-003-GB",
+      "product_id": "IMP-003",
+      "label_spec_id": "IMP-003-UK-v1",
+      "physical_manufacture_date": "2026-04-15",
+      "finished_imp_qp_certification_date": "2026-04-28",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "G-107",
+      "study_id": "STUDY-001",
+      "study_country_id": "STUDY-001-GB",
+      "product_id": "IMP-001",
+      "label_spec_id": "IMP-001-UK-v1",
+      "physical_manufacture_date": "2026-05-29",
+      "finished_imp_qp_certification_date": "2026-06-10",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "H-108",
+      "study_id": "STUDY-001",
+      "study_country_id": "STUDY-001-GB",
+      "product_id": "IMP-001",
+      "label_spec_id": "IMP-001-UK-v2",
+      "physical_manufacture_date": "2026-08-20",
+      "finished_imp_qp_certification_date": "2026-09-02",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "J-201",
+      "study_id": "STUDY-004",
+      "study_country_id": "STUDY-004-GB",
+      "product_id": "IMP-004",
+      "label_spec_id": "IMP-004-UK-v1",
+      "physical_manufacture_date": "2026-03-18",
+      "finished_imp_qp_certification_date": "2026-03-30",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "J-202",
+      "study_id": "STUDY-004",
+      "study_country_id": "STUDY-004-GB",
+      "product_id": "IMP-004",
+      "label_spec_id": "IMP-004-UK-v1",
+      "physical_manufacture_date": "2026-07-01",
+      "finished_imp_qp_certification_date": "2026-07-14",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "J-203",
+      "study_id": "STUDY-004",
+      "study_country_id": "STUDY-004-GB",
+      "product_id": "IMP-004",
+      "label_spec_id": "IMP-004-UK-v2",
+      "physical_manufacture_date": "2026-09-17",
+      "finished_imp_qp_certification_date": "2026-10-01",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "J-204",
+      "study_id": "STUDY-004",
+      "study_country_id": "STUDY-004-DE",
+      "product_id": "IMP-004",
+      "label_spec_id": null,
+      "physical_manufacture_date": "2026-07-01",
+      "finished_imp_qp_certification_date": "2026-07-14",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "K-301",
+      "study_id": "STUDY-005",
+      "study_country_id": "STUDY-005-GB",
+      "product_id": "IMP-005",
+      "label_spec_id": "IMP-005-UK-v1",
+      "physical_manufacture_date": "2026-05-08",
+      "finished_imp_qp_certification_date": "2026-05-20",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "K-302",
+      "study_id": "STUDY-005",
+      "study_country_id": "STUDY-005-GB",
+      "product_id": "IMP-005",
+      "label_spec_id": "IMP-005-UK-v1",
+      "physical_manufacture_date": "2026-07-30",
+      "finished_imp_qp_certification_date": "2026-08-11",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "K-303",
+      "study_id": "STUDY-005",
+      "study_country_id": "STUDY-005-FR",
+      "product_id": "IMP-005",
+      "label_spec_id": null,
+      "physical_manufacture_date": "2026-07-30",
+      "finished_imp_qp_certification_date": "2026-08-11",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "L-401",
+      "study_id": "STUDY-006",
+      "study_country_id": "STUDY-006-GB",
+      "product_id": "IMP-006",
+      "label_spec_id": "IMP-006-UK-v1",
+      "physical_manufacture_date": "2026-02-02",
+      "finished_imp_qp_certification_date": "2026-02-15",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "L-402",
+      "study_id": "STUDY-006",
+      "study_country_id": "STUDY-006-GB",
+      "product_id": "IMP-006",
+      "label_spec_id": "IMP-006-UK-v1",
+      "physical_manufacture_date": "2026-04-14",
+      "finished_imp_qp_certification_date": "2026-04-27",
+      "intended_trial_use_confirmed": false,
+      "legacy_labeling_evidence_on_file": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "L-403",
+      "study_id": "STUDY-006",
+      "study_country_id": "STUDY-006-GB",
+      "product_id": "IMP-006",
+      "label_spec_id": "IMP-006-UK-v2",
+      "physical_manufacture_date": "2026-06-17",
+      "finished_imp_qp_certification_date": "2026-06-30",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "M-501",
+      "study_id": "STUDY-007",
+      "study_country_id": "STUDY-007-GB",
+      "product_id": "IMP-007",
+      "label_spec_id": "IMP-007-UK-v2",
+      "physical_manufacture_date": "2026-09-04",
+      "finished_imp_qp_certification_date": "2026-09-18",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "M-502",
+      "study_id": "STUDY-007",
+      "study_country_id": "STUDY-007-GB",
+      "product_id": "IMP-007",
+      "label_spec_id": "IMP-007-UK-v2",
+      "physical_manufacture_date": "2026-10-06",
+      "finished_imp_qp_certification_date": "2026-10-20",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "N-601",
+      "study_id": "STUDY-008",
+      "study_country_id": "STUDY-008-GB",
+      "product_id": "IMP-008",
+      "label_spec_id": "IMP-008-UK-v1",
+      "physical_manufacture_date": "2026-05-14",
+      "finished_imp_qp_certification_date": "2026-05-28",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "N-602",
+      "study_id": "STUDY-008",
+      "study_country_id": "STUDY-008-GB",
+      "product_id": "IMP-008",
+      "label_spec_id": null,
+      "physical_manufacture_date": "2026-08-11",
+      "finished_imp_qp_certification_date": "2026-08-25",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "N-603",
+      "study_id": "STUDY-008",
+      "study_country_id": "STUDY-008-US",
+      "product_id": "IMP-008",
+      "label_spec_id": null,
+      "physical_manufacture_date": "2026-08-11",
+      "finished_imp_qp_certification_date": "2026-08-25",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "P-701",
+      "study_id": "STUDY-009",
+      "study_country_id": "STUDY-009-GB",
+      "product_id": "IMP-009",
+      "label_spec_id": "IMP-009-UK-v1",
+      "physical_manufacture_date": "2026-03-20",
+      "finished_imp_qp_certification_date": "2026-04-01",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": true,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "P-702",
+      "study_id": "STUDY-009",
+      "study_country_id": "STUDY-009-GB",
+      "product_id": "IMP-009",
+      "label_spec_id": "IMP-009-UK-v1",
+      "physical_manufacture_date": "2026-06-23",
+      "finished_imp_qp_certification_date": "2026-07-07",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "R-801",
+      "study_id": "STUDY-010",
+      "study_country_id": "STUDY-010-US",
+      "product_id": "IMP-010",
+      "label_spec_id": null,
+      "physical_manufacture_date": "2026-09-01",
+      "finished_imp_qp_certification_date": "2026-09-15",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "R-802",
+      "study_id": "STUDY-011",
+      "study_country_id": "STUDY-011-JP",
+      "product_id": "IMP-011",
+      "label_spec_id": null,
+      "physical_manufacture_date": "2026-08-05",
+      "finished_imp_qp_certification_date": "2026-08-19",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "R-803",
+      "study_id": "STUDY-012",
+      "study_country_id": "STUDY-012-DE",
+      "product_id": "IMP-012",
+      "label_spec_id": null,
+      "physical_manufacture_date": "2026-07-20",
+      "finished_imp_qp_certification_date": "2026-08-03",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "R-804",
+      "study_id": "STUDY-013",
+      "study_country_id": "STUDY-013-ES",
+      "product_id": "IMP-013",
+      "label_spec_id": null,
+      "physical_manufacture_date": "2026-06-01",
+      "finished_imp_qp_certification_date": "2026-06-15",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "R-805",
+      "study_id": "STUDY-014",
+      "study_country_id": "STUDY-014-SE",
+      "product_id": "IMP-014",
+      "label_spec_id": null,
+      "physical_manufacture_date": "2026-09-09",
+      "finished_imp_qp_certification_date": "2026-09-23",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "R-806",
+      "study_id": "STUDY-015",
+      "study_country_id": "STUDY-015-US",
+      "product_id": "IMP-015",
+      "label_spec_id": null,
+      "physical_manufacture_date": "2026-10-05",
+      "finished_imp_qp_certification_date": "2026-10-19",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "R-807",
+      "study_id": "STUDY-016",
+      "study_country_id": "STUDY-016-FR",
+      "product_id": "IMP-016",
+      "label_spec_id": null,
+      "physical_manufacture_date": "2026-08-26",
+      "finished_imp_qp_certification_date": "2026-09-09",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "R-808",
+      "study_id": "STUDY-017",
+      "study_country_id": "STUDY-017-AU",
+      "product_id": "IMP-017",
+      "label_spec_id": null,
+      "physical_manufacture_date": "2026-07-08",
+      "finished_imp_qp_certification_date": "2026-07-22",
+      "intended_trial_use_confirmed": true,
+      "legacy_labeling_evidence_on_file": false,
+      "source_ref": "SRC-SUPPLY"
+    }
+  ],
+  "shipments": [
+    {
+      "id": "SHP-01",
+      "batch_ids": [
+        "B-102"
+      ],
+      "site_id": "SITE-GB-01",
+      "study_country_id": "STUDY-003-GB",
+      "destination_jurisdiction": "UK",
+      "planned_dispatch_date": "2026-11-22",
+      "preparation_lead_calendar_days": 5,
+      "logistics_partner_id": "PARTNER-LOGISTICS-UK-01",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "SHP-02",
+      "batch_ids": [
+        "D-104"
+      ],
+      "site_id": "SITE-GB-02",
+      "study_country_id": "STUDY-001-GB",
+      "destination_jurisdiction": "UK",
+      "planned_dispatch_date": "2026-11-25",
+      "preparation_lead_calendar_days": 5,
+      "logistics_partner_id": "PARTNER-LOGISTICS-UK-01",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "SHP-03",
+      "batch_ids": [
+        "E-105"
+      ],
+      "site_id": "SITE-DE-01",
+      "study_country_id": "STUDY-002-DE",
+      "destination_jurisdiction": "EU",
+      "planned_dispatch_date": "2026-11-23",
+      "preparation_lead_calendar_days": 5,
+      "logistics_partner_id": "PARTNER-LOGISTICS-EU-01",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "SHP-04",
+      "batch_ids": [
+        "J-202"
+      ],
+      "site_id": "SITE-GB-04",
+      "study_country_id": "STUDY-004-GB",
+      "destination_jurisdiction": "UK",
+      "planned_dispatch_date": "2026-11-19",
+      "preparation_lead_calendar_days": 5,
+      "logistics_partner_id": "PARTNER-LOGISTICS-UK-01",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "SHP-05",
+      "batch_ids": [
+        "K-301"
+      ],
+      "site_id": "SITE-GB-06",
+      "study_country_id": "STUDY-005-GB",
+      "destination_jurisdiction": "UK",
+      "planned_dispatch_date": "2026-11-27",
+      "preparation_lead_calendar_days": 5,
+      "logistics_partner_id": "PARTNER-LOGISTICS-UK-01",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "SHP-06",
+      "batch_ids": [
+        "N-601"
+      ],
+      "site_id": "SITE-GB-09",
+      "study_country_id": "STUDY-008-GB",
+      "destination_jurisdiction": "UK",
+      "planned_dispatch_date": "2026-12-02",
+      "preparation_lead_calendar_days": 5,
+      "logistics_partner_id": "PARTNER-LOGISTICS-UK-01",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "SHP-07",
+      "batch_ids": [
+        "L-403"
+      ],
+      "site_id": "SITE-GB-07",
+      "study_country_id": "STUDY-006-GB",
+      "destination_jurisdiction": "UK",
+      "planned_dispatch_date": "2026-11-24",
+      "preparation_lead_calendar_days": 5,
+      "logistics_partner_id": "PARTNER-LOGISTICS-UK-01",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "SHP-08",
+      "batch_ids": [
+        "P-702"
+      ],
+      "site_id": "SITE-GB-10",
+      "study_country_id": "STUDY-009-GB",
+      "destination_jurisdiction": "UK",
+      "planned_dispatch_date": "2026-12-04",
+      "preparation_lead_calendar_days": 5,
+      "logistics_partner_id": "PARTNER-LOGISTICS-UK-01",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "SHP-09",
+      "batch_ids": [
+        "M-501"
+      ],
+      "site_id": "SITE-GB-08",
+      "study_country_id": "STUDY-007-GB",
+      "destination_jurisdiction": "UK",
+      "planned_dispatch_date": "2026-12-08",
+      "preparation_lead_calendar_days": 5,
+      "logistics_partner_id": "PARTNER-LOGISTICS-UK-01",
+      "source_ref": "SRC-SUPPLY"
+    },
+    {
+      "id": "SHP-10",
+      "batch_ids": [
+        "J-204"
+      ],
+      "site_id": "SITE-DE-02",
+      "study_country_id": "STUDY-004-DE",
+      "destination_jurisdiction": "EU",
+      "planned_dispatch_date": "2026-11-26",
+      "preparation_lead_calendar_days": 5,
+      "logistics_partner_id": "PARTNER-LOGISTICS-EU-01",
+      "source_ref": "SRC-SUPPLY"
+    }
+  ],
+  "partners": [
+    {
+      "id": "PARTNER-PACKAGING-01",
+      "role": "packaging_and_labeling"
+    },
+    {
+      "id": "PARTNER-LOGISTICS-UK-01",
+      "role": "logistics_uk"
+    },
+    {
+      "id": "PARTNER-LOGISTICS-EU-01",
+      "role": "logistics_eu"
+    }
+  ],
+  "regulatory_case": {
+    "id": "RC-UK-001",
+    "jurisdiction": "UK",
+    "requirement_record_id": "GB/IMP_LABELING",
+    "effective_date": "2026-04-28",
+    "rule_event": "finished_imp_qp_certification_date",
+    "evidence_source_ids": [
+      "reg46-before",
+      "reg46-after",
+      "sch14-para6",
+      "mhra-labelling-transition"
+    ]
+  },
+  "source_records": [
+    {
+      "id": "SRC-CTMS",
+      "source_system": "CTMS demo",
+      "record_version": "1",
+      "observed_at": "2026-11-14T09:00:00Z"
+    },
+    {
+      "id": "SRC-SUPPLY",
+      "source_system": "Clinical supply demo",
+      "record_version": "1",
+      "observed_at": "2026-11-14T09:00:00Z"
+    }
+  ]
+}

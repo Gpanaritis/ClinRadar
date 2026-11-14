@@ -91,7 +91,7 @@ The spec (section 9) already defines most routes. Confirm them with Giannis and 
 
 Also agree:
 
-- [ ] One seed file for the fictional portfolio, merging the dashboard's sample data with `RegChain-AI-Clinical-Trial-Input.example.json`.
+- [x] One seed file for the fictional portfolio: `demo-data/uk-labelling-portfolio.json` (18 trials, 30 sites, 33 batches, 10 shipments, same format as `RegChain-AI-Clinical-Trial-Input.example.json`). See `RegChain-AI-Demo-Scenario.md`.
 - [ ] What the pipeline returns when a check fails: no approvable proposal, with the reason shown.
 - [ ] How the dashboard learns the user's role (a demo session per role is enough).
 
@@ -118,6 +118,7 @@ Also agree:
 ### Step 5 · Tests (from spec section 10)
 
 - [ ] Batch results match the agreed status list for A-101 to F-106. B-102 must use the 5 May QP date, not the 20 April manufacture date.
+- [ ] The pipeline's results for the whole demo portfolio match `demo-data/uk-labelling-expected-impact.json` (7 trials needing action, 6 UK shipments needing action, earliest deadline 14 November 2026).
 - [ ] Minimum acceptance set for the demo:
   - AT-01 · replaying the official pair creates one material case, and replaying again returns the same case.
   - AT-05 and AT-06 · A-101 to F-106 get their expected results, with missing inputs named.
@@ -154,6 +155,9 @@ The server reads `.env` only when it starts, so restart the launcher after chang
 | --- | --- |
 | `README.md` | Short introduction and how to run |
 | `RegChain-AI-Project-Plan.md` | This plan |
+| `RegChain-AI-Demo-Scenario.md` | The demo story: one UK rule change, seven trials affected |
+| `demo-data/` | Fictional portfolio (seed) and its expected impact (test answer key) |
+| `scripts/build-demo-portfolio.mjs` | Builds both demo data files |
 | `RegChain-AI-Master-Specification.md` | Full product specification and hackathon brief |
 | `RegChain-AI-Dashboard-Research.md` | Research notes |
 | `RegChain-AI-Clinical-Trial-Workflow.md` | Trial workflow, data map and AI input instructions (Greek) |
