@@ -12,7 +12,23 @@ const port = Number(process.env.REGCHAIN_PORT) || 4173;
 const origin = "http://" + host + ":" + port;
 const allowedOrigins = [origin, "http://localhost:" + port];
 const identity = "regchain-dashboard";
-const dashboard = readFileSync(join(__dirname, "RegChain-AI-Dashboard.html"));
+const dashboardHtml = readFileSync(join(__dirname, "RegChain-AI-Dashboard.html"), "utf8");
+const portfolioFile = join(__dirname, "demo-data", "uk-labelling-portfolio.json");
+
+// The page gets the fictional demo portfolio as JSON inside a data script tag.
+// The file is read on every request, so a rebuilt portfolio shows on reload.
+function dashboardPage() {
+  let page = dashboardHtml;
+  try {
+    const data = readFileSync(portfolioFile, "utf8");
+    JSON.parse(data);
+    const tag = '<script id="portfolio-data" type="application/json">' + data.replace(/</g, "\\u003c") + "</script>\n";
+    page = page.replace('<script id="dashboard-data">', tag + '<script id="dashboard-data">');
+  } catch (error) {
+    if (error.code !== "ENOENT") console.error("Demo portfolio not loaded: " + error.message);
+  }
+  return Buffer.from(page);
+}
 const wantBrowser = process.argv.includes("--open");
 
 // The recorded company rule the AI draft is checked against (mirrors ukCase in the dashboard).
@@ -168,6 +184,7 @@ const server = createServer((request, response) => {
     response.writeHead(404).end("Page not found");
     return;
   }
+  const dashboard = dashboardPage();
   response.writeHead(200, {
     "Content-Type": "text/html; charset=utf-8",
     "Content-Length": dashboard.length,

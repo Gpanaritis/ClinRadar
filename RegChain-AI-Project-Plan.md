@@ -39,7 +39,7 @@ Blue: Giannis. Green: dashboard and product side. The API between them is the fi
 
 Say these out loud in the demo, and replace them in this order where time allows.
 
-1. **Portfolio data.** Studies, batches, shipments and partners are written into the page. They should come from the database.
+1. **Portfolio data.** The dashboard reads the fictional portfolio from `demo-data/uk-labelling-portfolio.json` through the local server, and falls back to a built-in 3-trial sample when the page is opened as a plain file. It should come from the database.
 2. **Decisions.** SME decisions, the published version, the Quality task and the case history are saved only in the browser (`localStorage`). They should be saved in the database.
 3. **Roles.** Anyone can pick "Regulatory SME" from a dropdown. A demo session with a fixed role per user is enough for the hackathon.
 4. **Replay and schedule.** The Replay button and the monitoring schedule fetch nothing; they update a counter and show a fixed message. Only the AI check fetches real sources.

@@ -53,6 +53,7 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 @media(forced-colors:active){.field select,.field select::picker(select){appearance:auto;background:Canvas;color:CanvasText}.field select:focus-visible{outline-color:Highlight}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 .ai-card{margin-bottom:15px}.ai-card .case-pad>p{max-width:780px}.ai-gate{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:2px 0 10px}.ai-card h3{font-size:13px;margin-top:14px}.ai-quote{margin:4px 0 2px!important;font-size:12px;border-left:3px solid var(--line);padding-left:8px;color:var(--ink)!important}.ai-claim .badge{margin-right:6px}.ai-sources{margin-top:6px}.ai-sources td{vertical-align:top}.mono{font-family:ui-monospace,Consolas,monospace;font-size:11px}.diff{margin-top:12px}.diff summary{cursor:pointer;font-weight:700;font-size:13px}.diff ol{list-style:none;padding:0;margin:8px 0 0;max-height:320px;overflow:auto;border:1px solid var(--line);border-radius:8px;font-size:12px}.diff li{padding:4px 10px;border-top:1px solid #f0f3f8;overflow-wrap:anywhere}.diff li:first-child{border-top:0}.diff .add{background:#e7f6ef;color:#196449}.diff .del{background:#fcecf0;color:#9f2c42;text-decoration:line-through}
+.portfolio-impact{margin-bottom:17px}.impact-headline{font-size:15px;line-height:1.5;color:var(--ink)!important;max-width:860px;margin:2px 0 4px!important}.impact-headline strong{color:var(--deep)}
 </style>
 </head>
 <body>
@@ -63,6 +64,12 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 <dialog id="drawer" class="drawer" aria-labelledby="drawer-title"><div class="drawer-top"><div><div class="sub" id="drawer-type"></div><h2 id="drawer-title"></h2></div><form method="dialog"><button class="btn close" aria-label="Close details">×</button></form></div><div class="drawer-body" id="drawer-body"></div></dialog>
 <script id="dashboard-data">
 "use strict";
+// Fictional demo portfolio (demo-data/uk-labelling-portfolio.json), added by the local server.
+// Without it, as when the file is opened directly, the built-in sample below is used.
+const portfolio = (() => {
+  try {const source=document.getElementById("portfolio-data");return source?JSON.parse(source.textContent):null;}
+  catch {return null;}
+})();
 const replayDate = "14 Nov 2026";
 const registryCredit = "ClinicalTrials.gov, U.S. National Library of Medicine · accessed 14 Nov 2026";
 const sources = [
@@ -131,7 +138,28 @@ const ukCase = {
   "Confirm any applicable exemption or approved variation. Escalate exact cutoff-day cases in this demo."
  ]
 };
-const demoBatches = [
+const countryNames = {GB:"UK",DE:"Germany",FR:"France",IT:"Italy",ES:"Spain",PL:"Poland",NL:"Netherlands",IE:"Ireland",PT:"Portugal",SE:"Sweden",DK:"Denmark",FI:"Finland",BE:"Belgium",US:"United States",CA:"Canada",JP:"Japan",AU:"Australia"};
+const partnerNames = {"PARTNER-LOGISTICS-UK-01":"Demo UK logistics","PARTNER-LOGISTICS-EU-01":"Demo EU logistics"};
+function portfolioBatches() {
+  return portfolio.batches.map(batch=>{
+    const studyCountry=portfolio.study_countries.find(item=>item.id===batch.study_country_id);
+    const label=portfolio.label_specs.find(item=>item.id===batch.label_spec_id);
+    const qp=batch.finished_imp_qp_certification_date;
+    const made=batch.physical_manufacture_date;
+    return {id:batch.id,study:batch.study_id,scope:studyCountry.country_code==="GB"?"UK":studyCountry.country_code,qp,
+      ...(qp&&made<ukCase.effective&&qp>ukCase.effective?{made}:{}),
+      label:label?(label.legacy_reference?"Legacy":"Updated"):undefined,
+      oldRules:studyCountry.authorization_cohort==="old_rules",intended:batch.intended_trial_use_confirmed,legacyEvidence:batch.legacy_labeling_evidence_on_file};
+  });
+}
+function portfolioShipments() {
+  return portfolio.shipments.map(shipment=>{
+    const site=portfolio.sites.find(item=>item.id===shipment.site_id);
+    return {id:shipment.id,batch:shipment.batch_ids[0],destination:countryNames[site.country_code]||site.country_code,date:shipment.planned_dispatch_date,
+      partner:partnerNames[shipment.logistics_partner_id]||shipment.logistics_partner_id,leadDays:shipment.preparation_lead_calendar_days,site:site.city,patients:site.patients_on_treatment};
+  });
+}
+const demoBatches = portfolio ? portfolioBatches() : [
  {id:"A-101",study:"STUDY-001",scope:"UK",qp:"2026-04-20",label:"Legacy",oldRules:true,intended:true,legacyEvidence:true},
  {id:"B-102",study:"STUDY-003",scope:"UK",qp:"2026-05-05",made:"2026-04-20",label:"Legacy"},
  {id:"C-103",study:"STUDY-003",scope:"UK",qp:"2026-05-05",label:"Updated"},
@@ -140,8 +168,9 @@ const demoBatches = [
  {id:"F-106",study:"STUDY-003",scope:"UK",qp:"2026-04-28",label:"Legacy"}
 ];
 function batchFinding(batch) {
- if(batch.scope!=="UK") return ["Out of scope","Germany-only study and batch."];
+ if(batch.scope!=="UK") return ["Out of scope","Supplied to "+(countryNames[batch.scope]||batch.scope)+", no UK linkage."];
  if(!batch.qp) return ["Insufficient information","Finished-IMP QP certification date is missing."];
+ if(!batch.label) return ["Insufficient information","Label version is missing."];
  if(batch.qp===ukCase.effective) return ["Needs SME assessment","QP certification is on the cutoff date."];
  if(batch.qp<ukCase.effective) return batch.oldRules&&batch.intended&&batch.legacyEvidence
   ? ["Potential transition eligibility","Pre-cutoff QP, old-rules cohort, intended use and legacy labeling evidence are present."]
@@ -153,7 +182,7 @@ const assessedBatches = demoBatches.map(batch=>{
  const [status,reason]=batchFinding(batch);
  return {...batch,status,reason,evidenceIds:batch.scope==="UK"?["EV-01","EV-02"]:["EV-01"]};
 });
-const demoShipments = [
+const demoShipments = portfolio ? portfolioShipments() : [
  {id:"SHP-01",batch:"B-102",destination:"UK",date:"2026-11-22",partner:"Demo labeling vendor",leadDays:5},
  {id:"SHP-02",batch:"D-104",destination:"UK",date:"2026-11-25",partner:"Demo UK depot",leadDays:5},
  {id:"SHP-03",batch:"E-105",destination:"Germany",date:"2026-11-23",partner:"Demo EU depot",leadDays:5}
@@ -229,7 +258,7 @@ function workflowStep(state,command,role,now) {
   appendWorkflowEvent(state,"country_record.published","publisher",now,"GB/IMP_LABELING v2 · Receipt LOCAL-REC-02");
   const nextReview=shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").map(shipment=>shipment.preparationDate).sort()[0];
   state.task={id:"QMS-DEMO-001",owner:workflowRoles.owner,status:"assigned",evidence:null,assignedAt:now,dueOn:nextReview,
-   version:2,revision:state.revision,studyIds:["STUDY-001","STUDY-003"],
+   version:2,revision:state.revision,studyIds:[...new Set(assessedBatches.filter(batch=>batch.scope==="UK").map(batch=>batch.study))],
    batchIds:assessedBatches.filter(batch=>batch.scope==="UK").map(batch=>batch.id),
    shipmentIds:shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").map(shipment=>shipment.id)};
   appendWorkflowEvent(state,"quality_task.assigned","publisher",now,"Mock Quality task assigned for "+state.task.studyIds.join(", ")+".");
@@ -367,15 +396,57 @@ function updateRun() {
     button.innerHTML=icon("retry")+(replaying?"Replaying…":"Replay checks");
   }
 }
+const actionStatuses = ["Labeling review required","Insufficient information","Needs SME assessment"];
+if(portfolio) {
+  studies.splice(0,studies.length,...portfolio.studies.map(study=>{
+    const own=assessedBatches.filter(batch=>batch.study===study.id);
+    const uk=own.filter(batch=>batch.scope==="UK");
+    const action=uk.filter(batch=>actionStatuses.includes(batch.status)).length;
+    const verify=uk.filter(batch=>batch.status==="Verify specification").length;
+    const transition=uk.filter(batch=>batch.status==="Potential transition eligibility").length;
+    const [status,tone]=action?["Batch review","amber"]:verify?["Specification check","blue"]:transition?["Confirm transition","purple"]:["Not affected",""];
+    const parts=[action&&action+(action===1?" batch to review":" batches to review"),verify&&verify+" to verify",transition&&transition+" may use the transition"].filter(Boolean);
+    return {id:study.id,title:study.title,sponsor:"Fictional sponsor",sites:study.countries.map(code=>countryNames[code]||code).join(", "),status,tone,
+      reason:uk.length?parts.join(" · "):study.status==="completed"?"Supply closed. No UK batches in supply.":"No UK sites.",
+      detail:uk.length?uk.map(batch=>batch.id+": "+batch.status+". "+batch.reason).join(" "):"Checked and excluded: no UK batches in supply.",
+      batches:own.map(batch=>batch.id),changes:["uk"],rank:action?0:verify?1:transition?2:3};
+  }).sort((a,b)=>a.rank-b.rank));
+  const ukChange=changes.find(change=>change.id==="uk");
+  ukChange.studyNote=studies.filter(study=>study.status==="Batch review").length+" of "+studies.length+" fictional portfolio studies have UK batches to review. The public registry view shows screening candidates.";
+}
+function portfolioImpactCard() {
+  if(!portfolio||!ukOpen()) return "";
+  const asOf=portfolio.assessment_as_of.slice(0,10);
+  const daysLeft=day=>Math.round((Date.parse(day)-Date.parse(asOf))/86400000);
+  const statusOf=id=>assessedBatches.find(batch=>batch.id===id)?.status;
+  const urgent=shipmentFindings().filter(shipment=>actionStatuses.includes(statusOf(shipment.batch))).sort((a,b)=>a.preparationDate.localeCompare(b.preparationDate));
+  const trials=studies.filter(study=>study.status==="Batch review").length;
+  const batches=assessedBatches.filter(batch=>actionStatuses.includes(batch.status)).length;
+  const patients=urgent.reduce((sum,shipment)=>sum+(shipment.patients||0),0);
+  const first=urgent[0];
+  const firstDays=first?daysLeft(first.preparationDate):null;
+  const when=firstDays===0?"<strong>today</strong>":firstDays===1?"<strong>tomorrow</strong>":"by <strong>"+esc(displayDay(first?.preparationDate))+"</strong>";
+  const headline='<p class="impact-headline"><strong>'+trials+' of '+studies.length+'</strong> trials need action. <strong>'+batches+'</strong> batches need a labeling review or an expert decision, and <strong>'+urgent.length+'</strong> UK shipments need work before dispatch'+
+    (first?'. The first must be prepared '+when+', for a site with '+first.patients+' patients on treatment.':'.')+'</p>';
+  const rows=urgent.map(shipment=>{
+    const days=daysLeft(shipment.preparationDate);
+    return '<tr><td><strong>'+esc(shipment.id)+'</strong><span class="sub">Batch '+esc(shipment.batch)+' · '+esc(statusOf(shipment.batch))+'</span></td><td>'+esc(shipment.site||shipment.destination)+'</td><td class="nowrap">'+esc(displayDay(shipment.preparationDate))+'</td>'+
+      '<td>'+badge(days<=0?"Today":days===1?"1 day":days+" days",days<=0?"red":days<=3?"amber":"")+'</td><td>'+esc(shipment.patients)+'</td></tr>';
+  }).join("");
+  return '<section class="card portfolio-impact"><div class="card-head"><div><h2>UK labeling change · portfolio impact</h2><p>Fictional portfolio · assessed '+esc(displayDay(asOf))+'</p></div>'+trigger("Open the UK case","open-case","uk","primary","arrow")+'</div>'+
+    '<div class="case-pad">'+headline+'</div>'+
+    (rows?'<div class="table-wrap" tabindex="0"><table><caption class="sr">UK shipments that need action before dispatch</caption><thead><tr><th>Shipment</th><th>Site</th><th>Prepare by</th><th>Time left</th><th>Patients on treatment</th></tr></thead><tbody>'+rows+'</tbody></table></div>':"")+
+    '<div class="card-foot"><small>'+esc(patients+" patients on treatment at the sites these shipments resupply · "+portfolio.batches.length+" batches and "+portfolio.shipments.length+" shipments checked")+'</small></div></section>';
+}
 function overview() {
   return heading("Regulatory monitor","Open a change to see its evidence, impact and next action.",'<button id="replay" class="btn primary" type="button" data-act="replay">'+icon("retry")+'Replay checks</button>')+
     '<div class="runbar"><div class="runbar-left">'+icon("clock")+'<strong>Replay '+String(scheduleState.runCount).padStart(2,"0")+'</strong><span class="separator">·</span><span>'+ (scheduleState.lastAt?"Last replay "+scheduleDate(scheduleState.lastAt):"Historical sample · "+replayDate) +'</span></div><div class="actions">'+badge("Completed with 1 retry needed","amber")+badge(scheduleState.enabled?cadence(scheduleState.days)+" · demo":"Schedule paused",scheduleState.enabled?"blue":"")+'</div></div>'+
     '<div class="tiles" aria-label="Replay summary">'+
       tile("Countries with open changes",openCountries().length,"Plus 1 shared EU update","countries")+
       tile("Open changes",openChanges().length,(ukOpen()?"2 UK or GB":"1 GB")+" · 1 shared EU","changes")+
-      tile("Studies to review",ukOpen()?studies.filter(study=>study.status==="Batch review").length:0,"UK labeling · fictional portfolio","studies")+
+      tile("Studies to review",ukOpen()?studies.filter(study=>study.status==="Batch review").length:0,portfolio?"Of "+studies.length+" checked · UK labeling":"UK labeling · fictional portfolio","studies")+
       tile("Checks to retry",retryCount,"Coverage gap in Great Britain","alert","retry-filter")+
-    '</div>'+regionCard();
+    '</div>'+portfolioImpactCard()+regionCard();
 }
 function tile(title,value,hint,symbol,target) {
   const body='<div class="tile-top"><span class="tile-icon">'+icon(symbol)+'</span>'+title+'</div><strong>'+value+'</strong><small>'+hint+'</small>';
@@ -694,9 +765,9 @@ function caseImpact() {
     '<div class="evidence-item"><h3>Supporting sources</h3><div class="actions">'+change.evidence.map(id=>trigger(sources.find(source=>source.id===id).title,"source-detail",id,"","file")).join("")+'</div></div>'));
   const facts=change.id==="uk"?[
     ["Severity","High · potential labeling or supply disruption"],
-    ["Operational urgency","Priority · sample review by "+displayDay(shipmentFindings()[0].preparationDate)],
+    ["Operational urgency","Priority · sample review by "+displayDay(shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").map(shipment=>shipment.preparationDate).sort()[0])],
     ["Legal date basis","Date of finished-IMP QP certification"],
-    ["Portfolio scope","2 UK studies · 5 UK batches · 2 shipments to assess"]
+    ["Portfolio scope",new Set(assessedBatches.filter(batch=>batch.scope==="UK").map(batch=>batch.study)).size+" UK studies · "+assessedBatches.filter(batch=>batch.scope==="UK").length+" UK batches · "+shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").length+" shipments to assess"]
   ]:[["Applicability","Public registry screening only"]];
   const context=panel("Assessment",change.id==="uk"?ukCase.snapshot:"",casePad(factlist(facts)+'<h3>Inputs to check</h3><p>'+esc(change.need)+'</p>'));
   return (change.id==="uk"?aiCard():"")+'<div class="case-layout">'+evidence+context+'</div><div id="study-card" class="space">'+studyCard()+operationalImpact()+'</div>';
@@ -717,10 +788,10 @@ function operationalImpact() {
   if(currentChange!=="uk"||studyView!=="portfolio") return "";
   const shipments=shipmentFindings();
   return '<div class="case-stack space">'+impactTable("Batch applicability","Fictional portfolio · finished-IMP QP certification drives the date comparison",
-    ["Batch","Study","QP date","Label","Assessment","Basis"],assessedBatches.map(batch=>[batch.id,batch.study,displayDay(batch.qp),batch.label,batch.status,
+    ["Batch","Study","QP date","Label","Assessment","Basis"],assessedBatches.map(batch=>[batch.id,batch.study,displayDay(batch.qp),batch.label||"Unknown",batch.status,
       (batch.made?"Physical manufacture "+displayDay(batch.made)+". ":"")+batch.reason]))+
     impactTable("Shipments and partners","Planning dates set preparation priority. Labeling applicability comes from the linked batch.",
-      ["Shipment / batch","Destination","Planned dispatch","Prep target","Partner","Assessment"],shipments.map(shipment=>[shipment.id+" / "+shipment.batch,shipment.destination,displayDay(shipment.date),
+      ["Shipment / batch","Destination","Planned dispatch","Prep target","Partner","Assessment"],shipments.map(shipment=>[shipment.id+" / "+shipment.batch,shipment.site?shipment.destination+" · "+shipment.site+" · "+shipment.patients+" patients":shipment.destination,displayDay(shipment.date),
         shipment.status==="Out of scope"?"—":displayDay(shipment.preparationDate),shipment.partner,shipment.status]))+'</div>';
 }
 const views = {

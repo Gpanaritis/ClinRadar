@@ -87,7 +87,7 @@ Together these sites have **101 patients on treatment** whose resupply depends o
 
 ## How to use it in the demo
 
-1. **Open with the headline numbers:** 7 of 18 trials need action, and the first deadline is today.
+1. **Open with the headline numbers:** 7 of 18 trials need action, and the first deadline is today. The Overview page shows them in the "UK labeling change · portfolio impact" card, with the six shipments and their time left.
 2. **Show the source change:** run the AI check, open the regulation 46 comparison and the quote checks.
 3. **Show the trials:** the 7 trials needing action, the 1 needing a check only, and the 10 excluded with reasons.
 4. **Zoom into one shipment:** SHP-01, where B-102 was made before the cutoff but certified after it.
