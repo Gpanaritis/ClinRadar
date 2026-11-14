@@ -1,0 +1,229 @@
+{
+  "schema_version": 1,
+  "note": "FICTIONAL Country Specifications, shaped like real ones. Regulatory lines paraphrase official sources checked on 14 Nov 2026; company details and people are invented.",
+  "countries": {
+    "uk": {
+      "version": 12,
+      "published": "2026-09-09",
+      "next": "2026-12-09",
+      "owner": "A. Novak, Regulatory Affairs UK",
+      "sections": {
+        "regulatory": {
+          "owner": "A. Novak, Regulatory Affairs UK",
+          "checked": "2026-02-02",
+          "review": "2026-05-02",
+          "sources": [
+            "statute",
+            "transition"
+          ],
+          "case": "uk",
+          "notes": [
+            "uk-label",
+            "uk-transition"
+          ],
+          "items": [
+            "Label IMPs under Part 7 as it stood before the 2025 amendment: regulation 46 applies Article 15 of Directive 2003/94/EC.",
+            "Each trial needs MHRA authorisation and a favourable ethics opinion before IMP is released to sites.",
+            "Label language: English (company standard)."
+          ]
+        },
+        "import": {
+          "owner": "M. Okafor, Trade Compliance UK",
+          "checked": "2026-06-03",
+          "review": "2026-09-03",
+          "sources": [
+            "imports",
+            "list"
+          ],
+          "change": "import",
+          "notes": [
+            "gb-import"
+          ],
+          "items": [
+            "From approved countries (initially the EU and EEA): the QP of a UK MIA(IMP) holder checks each batch's QP certification before release to the trial. The batch is not certified again.",
+            "From any other country: import and QP certification by the UK MIA(IMP) holder.",
+            "Each shipment travels with a commercial invoice and the batch's QP certification evidence."
+          ]
+        },
+        "permits": {
+          "owner": "A. Novak, Regulatory Affairs UK",
+          "checked": "2026-09-09",
+          "review": "2026-12-09",
+          "sources": [],
+          "items": [
+            "MHRA clinical trial authorisation for each trial, tracked in the trial system.",
+            "The UK depot holds the UK MIA(IMP) used for import oversight. Licence copy filed in the quality system.",
+            "Controlled drugs need a Home Office import licence for each shipment."
+          ]
+        },
+        "controlled": {
+          "owner": "A. Novak, Regulatory Affairs UK",
+          "checked": "2026-09-09",
+          "review": "2026-12-09",
+          "sources": [],
+          "items": [
+            "No IMP in our active UK trials is a controlled drug.",
+            "Check every new IMP against the schedules of the Misuse of Drugs Regulations 2001 before its first UK shipment."
+          ]
+        },
+        "invoice": {
+          "owner": "M. Okafor, Trade Compliance UK",
+          "checked": "2026-09-09",
+          "review": "2026-12-09",
+          "sources": [],
+          "items": [
+            "“No commercial value. Value for customs purposes only.”",
+            "“Investigational medicinal product for clinical trial use only.”",
+            "The trial reference and the UK importer of record on every invoice."
+          ]
+        },
+        "ports": {
+          "owner": "S. Hughes, Clinical Supply Logistics UK",
+          "checked": "2026-09-09",
+          "review": "2026-12-09",
+          "sources": [],
+          "items": [
+            "Air: London Heathrow (LHR), for shipments from outside Europe.",
+            "Road: Dover, for shipments from the EU depot."
+          ]
+        },
+        "logistics": {
+          "owner": "S. Hughes, Clinical Supply Logistics UK",
+          "checked": "2026-09-09",
+          "review": "2026-12-09",
+          "sources": [],
+          "items": [
+            "Prepare each shipment 5 calendar days before dispatch.",
+            "2–8 °C products: validated shipper, transit under 72 hours.",
+            "The depot dispatches and receives on working days only."
+          ]
+        },
+        "carriers": {
+          "owner": "S. Hughes, Clinical Supply Logistics UK",
+          "checked": "2026-09-09",
+          "review": "2026-12-09",
+          "sources": [],
+          "items": [
+            "UK logistics partner: deliveries from the UK depot to sites.",
+            "EU logistics partner: shipments from the EU depot to the UK."
+          ]
+        },
+        "ior": {
+          "owner": "M. Okafor, Trade Compliance UK",
+          "checked": "2026-09-09",
+          "review": "2026-12-09",
+          "sources": [],
+          "items": [
+            "Importer of record: the UK affiliate.",
+            "Consignee: the UK depot, the UK MIA(IMP) holder."
+          ]
+        },
+        "contacts": {
+          "owner": "Local affiliate, UK",
+          "checked": "2026-06-03",
+          "review": "2026-09-03",
+          "sources": [],
+          "items": [
+            "Clinical supply lead: R. Evans",
+            "Depot QP: K. Shah",
+            "Customs broker: contracted UK customs broker"
+          ]
+        },
+        "notes": {
+          "owner": "A. Novak, Regulatory Affairs UK",
+          "checked": "2026-09-09",
+          "review": "2026-12-09",
+          "sources": [],
+          "items": [
+            "Allow two extra working days for customs clearance in December."
+          ]
+        }
+      }
+    },
+    "de": {
+      "version": 8,
+      "published": "2026-10-01",
+      "next": "2027-01-15",
+      "owner": "L. Weber, Regulatory Affairs EU",
+      "sections": {
+        "regulatory": {
+          "owner": "L. Weber, Regulatory Affairs EU",
+          "checked": "2026-10-01",
+          "review": "2027-04-01",
+          "sources": [
+            "annex",
+            "qa"
+          ],
+          "change": "eu",
+          "notes": [
+            "eu-pack"
+          ],
+          "items": [
+            "Label under Annex VI of Regulation (EU) 536/2014. The expiry date may be left off the immediate pack when the outer pack stays with it, or for blisters and small units (B.6.2 and B.6.3).",
+            "Label language: German (company standard; Article 69 lets each Member State set it)."
+          ]
+        }
+      }
+    },
+    "fr": {
+      "version": 9,
+      "published": "2026-09-24",
+      "next": "2027-01-08",
+      "owner": "L. Weber, Regulatory Affairs EU",
+      "sections": {
+        "regulatory": {
+          "owner": "L. Weber, Regulatory Affairs EU",
+          "checked": "2026-09-24",
+          "review": "2027-03-24",
+          "sources": [
+            "annex",
+            "qa"
+          ],
+          "change": "eu",
+          "notes": [
+            "eu-pack"
+          ],
+          "items": [
+            "Label under Annex VI of Regulation (EU) 536/2014. The expiry date may be left off the immediate pack when the outer pack stays with it, or for blisters and small units (B.6.2 and B.6.3).",
+            "Label language: French (company standard; Article 69 lets each Member State set it)."
+          ]
+        }
+      }
+    },
+    "us": {
+      "version": 15,
+      "published": "2026-08-20",
+      "next": "2026-11-20",
+      "owner": "J. Carter, Regulatory Affairs US",
+      "sections": {
+        "regulatory": {
+          "owner": "J. Carter, Regulatory Affairs US",
+          "checked": "2026-08-20",
+          "review": "2027-02-20",
+          "sources": [],
+          "notes": [
+            "us-label"
+          ],
+          "items": [
+            "Immediate package label: “Caution: New Drug—Limited by Federal (or United States) law to investigational use.” (21 CFR 312.6(a))",
+            "No label statement may be false or misleading, or present the drug as safe or effective for what is being investigated (21 CFR 312.6(b))."
+          ]
+        },
+        "import": {
+          "owner": "J. Carter, Regulatory Affairs US",
+          "checked": "2026-08-20",
+          "review": "2027-02-20",
+          "sources": [],
+          "notes": [
+            "us-import"
+          ],
+          "items": [
+            "Import only under an IND in effect, for the investigation it covers (21 CFR 312.110).",
+            "Ship to investigators 30 days after FDA receives the IND, or earlier if FDA authorises it (21 CFR 312.40(c)).",
+            "Consignee: the sponsor, a qualified investigator named in the IND, or the US agent of a foreign sponsor named in the IND (21 CFR 312.110(a))."
+          ]
+        }
+      }
+    }
+  }
+}

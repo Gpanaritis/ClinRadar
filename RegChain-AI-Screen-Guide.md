@@ -150,11 +150,59 @@ Opening a shipment shows each check with its result, the reason and where the re
 
 **Real or simulated:** the checks are rules written in the page, run on the demo portfolio and the Spain scenario. Invoices, label texts and courier data aren't connected, so those requirements show as Not checked. Actions are saved in the browser.
 
+### 15. Agents · resolving a blocked shipment
+
+![Resolve with agents in the shipment panel](screens/19-agents-drawer.png)
+
+**Shows:** every blocked or to-confirm shipment's panel now has **Resolve with agents** after the checks. Recording an action by hand is still there below it, under **Or record an action yourself**. The button opens the Agents page for that shipment (the menu keeps Shipment checks highlighted).
+
+![Agents page](screens/19b-agents.png)
+
+At the top, **How the agents are kept in bounds**:
+
+- read-only access to the validated systems;
+- drafts, never changes;
+- fixed rules decide whether an option passes;
+- every step is logged.
+
+Below it are the six systems connected over MCP, with their tool counts: five read-only and one draft-only.
+
+**What the agents are doing** fills in step by step as the run streams. The orchestrator states the goal, reads the checks and asks a specialist. The specialist calls its system, shown as a chip with the tool and its inputs, and the system's answer appears beneath. The specialist reports back, the orchestrator checks options, and finally the verifier checks every option. The **Agents** panel shows who is working and how many tool calls each agent made. **This run** shows the mode, the models, the steps, the MCP calls, the drafts and, for live runs, the tokens.
+
+![Options checked against the rules](screens/19c-agents-options.png)
+
+**Resolution** shows the recommendation, the root cause and each option with:
+
+- its actions;
+- why it was proposed and its risk;
+- RegChain's result: "Passes the rules · confirm before dispatch", or "Does not pass · not feasible" with the reason, for example "the site has 7 days of stock".
+
+Only passing options have **Approve this plan**, approved under the role chosen in **Acting as**. Approving:
+
+- records the plan and the person;
+- marks the shipment "Batch swap requested" or "On hold" on Shipment checks;
+- shows each draft with "Next: approve this draft in IRT" (or ERP, the depot, the QMS, the site portal).
+
+Nothing changes in the validated systems. **Export the run** saves the full audit record as JSON.
+
+![Escalation when nothing passes](screens/19d-agents-escalation.png)
+
+When no option passes, as for SHP-03 (the German label specification takes 15 business days and the site has 7 days of stock), the agents recommend **escalation** and draft a QMS escalation instead of guessing.
+
+**Real or simulated:**
+
+- **Real:** the MCP servers, the agent loop, the rule checks, the streaming and the approval.
+- **Fictional:** the systems behind the MCP servers are data in `demo-data/supply-operations.json`.
+- **Run modes:** **Run the AI agents** needs the API key and has not been run yet. **Scripted walkthrough (no AI)** runs the same steps with coded decisions and is what these screens show.
+
+See [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
+
 ## Part 2 · What is missing
 
 **For the demo:**
 
-- [ ] One real AI run with an API key, and a recorded result for the venue in case the internet fails.
+- [ ] One real AI run with an API key, and a recorded result for the venue in case the internet fails. The same for one live agent run (SHP-04 is the best one to show).
+- [x] An agentic step: agents read the supply systems over MCP, propose fixes for a blocked shipment, check them against the rules and draft the changes for approval (section 15).
 - [x] The SME should approve the AI's draft, not pre-written text (logic gap 1, fixed).
 - [x] A future-dated change that shows the early warning: the fictional Spain case.
 - [x] Country specifications show, section by section, whether each is current, how it is kept current, which portfolio trials it touches, and the suggested edit.
