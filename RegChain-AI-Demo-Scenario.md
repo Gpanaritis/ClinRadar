@@ -4,6 +4,8 @@
 
 The regulation and its sources are real. The sponsor, trials, sites, batches, shipments and patient counts are fictional, and the demo says so.
 
+> A second, fictional scenario shows the early warning before a rule applies: [RegChain-AI-Spain-Scenario.md](RegChain-AI-Spain-Scenario.md).
+
 ## The story in one minute
 
 A sponsor runs 18 trials in 17 countries. On 28 April 2026 the UK's amended clinical trial rules on labelling investigational medicinal products (IMPs) came into force. Batches certified by a Qualified Person (QP) before that date may keep the old labels if conditions are met. Batches certified after it need labels that follow the new rules, and a batch certified on the day itself goes to the expert.

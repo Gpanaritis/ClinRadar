@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "note": "FICTIONAL demo scenario. The information note, the authority, the trial, the sites, the companies and the people are invented for the RegChain demo. None of it is a real rule or a real record.",
+  "case": {
+    "id": "RC-ES-001",
+    "requirement": "ES/IMP_SHIPPING_DOCUMENTS",
+    "effective": "2027-03-01",
+    "transitionDeliveredBy": "2027-03-08",
+    "noticeBusinessDays": 3,
+    "preparedAt": "2026-11-14T09:44:00Z",
+    "policy": "From 1 Mar 2027, every IMP shipment to a trial site in Spain carries a delivery note in Spanish with the EU trial number, the hospital pharmacy code and each batch number, and the hospital pharmacy gets an electronic notice at least 3 business days before delivery.",
+    "instruction": "For each shipment to a Spanish site dispatched from 1 Mar 2027, or delivered after 8 Mar 2027, print the Spanish delivery note at the depot and send the hospital pharmacy notice 3 business days before delivery. Complete the missing hospital pharmacy codes before the first affected shipment.",
+    "conditions": [
+      "Applies to IMP shipments to clinical trial sites in Spain.",
+      "Shipments dispatched before 1 Mar 2027 and delivered by 8 Mar 2027 can follow the earlier procedure.",
+      "Labeling requirements do not change."
+    ],
+    "sectionEdits": [
+      {"section": "invoice", "replaces": "Delivery note in English or Spanish with the trial number and kit numbers.", "text": "From 1 Mar 2027: a delivery note in Spanish with the EU trial number, the hospital pharmacy code and the batch number of each product."},
+      {"section": "logistics", "replaces": "", "text": "From 1 Mar 2027: send the hospital pharmacy an electronic notice at least 3 business days before delivery. Shipments without the notice or the Spanish delivery note are refused and returned."},
+      {"section": "contacts", "replaces": "", "text": "From 1 Mar 2027: keep the hospital pharmacy code of every Spanish site. It must be on each delivery note."}
+    ],
+    "evidence": [
+      {"id": "EV-ES-01", "point": "Point 1", "excerpt": "cada envío de medicamentos en investigación a un centro de ensayo clínico en España deberá ir acompañado de un albarán de entrega redactado en español"},
+      {"id": "EV-ES-02", "point": "Point 3", "excerpt": "con una antelación mínima de tres días hábiles respecto a la fecha prevista de entrega"},
+      {"id": "EV-ES-03", "point": "Point 5", "excerpt": "Los envíos despachados antes del 1 de marzo de 2027 y entregados a más tardar el 8 de marzo de 2027 podrán seguir el procedimiento anterior"}
+    ]
+  },
+  "notice": {
+    "id": "es-notice",
+    "title": "Nota informativa 12/2026 (ficticia)",
+    "titleEn": "Information note 12/2026 (fictional)",
+    "authority": "Autoridad Demo de Medicamentos (ficticia)",
+    "published": "2026-11-10",
+    "effective": "2027-03-01",
+    "language": "es",
+    "text": "Nota informativa 12/2026 (ficticia)\nDocumentación que debe acompañar a los envíos de medicamentos en investigación a los centros de ensayos clínicos en España\n1. A partir del 1 de marzo de 2027, cada envío de medicamentos en investigación a un centro de ensayo clínico en España deberá ir acompañado de un albarán de entrega redactado en español.\n2. El albarán de entrega indicará el número de ensayo clínico de la UE, el código del servicio de farmacia del hospital receptor y el número de lote de cada medicamento incluido en el envío.\n3. El promotor enviará al servicio de farmacia del hospital receptor un aviso electrónico de cada envío con una antelación mínima de tres días hábiles respecto a la fecha prevista de entrega.\n4. El servicio de farmacia rechazará los envíos que no cumplan los requisitos de los puntos 1 a 3, y los medicamentos rechazados se devolverán al remitente.\n5. Los envíos despachados antes del 1 de marzo de 2027 y entregados a más tardar el 8 de marzo de 2027 podrán seguir el procedimiento anterior.\n6. Esta nota no modifica los requisitos de etiquetado de los medicamentos en investigación.\nEsta nota es un ejemplo ficticio creado para una demostración y no procede de ninguna autoridad real."
+  },
+  "trial": {
+    "id": "CTP-7842-201",
+    "title": "Phase III study of XZ-417 in rheumatology",
+    "product": "XZ-417 50 mg film-coated tablets",
+    "phase": "III",
+    "countries": ["DE", "ES", "IT", "PL"],
+    "plannedSites": 64,
+    "plannedPatients": 480,
+    "firstPatientIn": "2027-02-15",
+    "depot": "Demo Central Depot NV, Belgium",
+    "standardLeadBusinessDays": 5,
+    "expeditedLeadBusinessDays": 2,
+    "sites": [
+      {"id": "ES-01", "city": "Madrid", "hospital": "Hospital Demo Madrid Norte", "pharmacyCode": "FH-28-0101", "plannedPatients": 12},
+      {"id": "ES-02", "city": "Madrid", "hospital": "Hospital Demo Madrid Sur", "pharmacyCode": "FH-28-0207", "plannedPatients": 10},
+      {"id": "ES-03", "city": "Barcelona", "hospital": "Hospital Demo Barcelona Mar", "pharmacyCode": "FH-08-0112", "plannedPatients": 12},
+      {"id": "ES-04", "city": "Barcelona", "hospital": "Hospital Demo Barcelona Nord", "pharmacyCode": "FH-08-0315", "plannedPatients": 8},
+      {"id": "ES-05", "city": "Valencia", "hospital": "Hospital Demo Valencia", "pharmacyCode": "FH-46-0104", "plannedPatients": 9},
+      {"id": "ES-06", "city": "Sevilla", "hospital": "Hospital Demo Sevilla", "pharmacyCode": null, "plannedPatients": 8},
+      {"id": "ES-07", "city": "Bilbao", "hospital": "Hospital Demo Bilbao", "pharmacyCode": "FH-48-0109", "plannedPatients": 7},
+      {"id": "ES-08", "city": "Málaga", "hospital": "Hospital Demo Málaga", "pharmacyCode": null, "plannedPatients": 6}
+    ],
+    "shipments": [
+      {"id": "SHP-ES-01", "site": "ES-01", "kind": "Initial site supply", "dispatch": "2027-02-01", "delivery": "2027-02-03", "kits": 12},
+      {"id": "SHP-ES-02", "site": "ES-03", "kind": "Initial site supply", "dispatch": "2027-02-02", "delivery": "2027-02-04", "kits": 12},
+      {"id": "SHP-ES-03", "site": "ES-05", "kind": "Initial site supply", "dispatch": "2027-02-08", "delivery": "2027-02-10", "kits": 12},
+      {"id": "SHP-ES-04", "site": "ES-02", "kind": "Initial site supply", "dispatch": "2027-02-15", "delivery": "2027-02-17", "kits": 12},
+      {"id": "SHP-ES-05", "site": "ES-04", "kind": "Initial site supply, held for the site initiation visit", "dispatch": "2027-02-26", "delivery": "2027-03-09", "kits": 12},
+      {"id": "SHP-ES-06", "site": "ES-07", "kind": "Initial site supply", "dispatch": "2027-03-01", "delivery": "2027-03-03", "kits": 12},
+      {"id": "SHP-ES-07", "site": "ES-01", "kind": "Resupply forecast", "dispatch": "2027-03-04", "delivery": "2027-03-08", "kits": 6},
+      {"id": "SHP-ES-08", "site": "ES-06", "kind": "Initial site supply", "dispatch": "2027-03-08", "delivery": "2027-03-10", "kits": 12},
+      {"id": "SHP-ES-09", "site": "ES-03", "kind": "Resupply forecast", "dispatch": "2027-03-15", "delivery": "2027-03-17", "kits": 6},
+      {"id": "SHP-ES-10", "site": "ES-08", "kind": "Initial site supply", "dispatch": "2027-03-22", "delivery": "2027-03-24", "kits": 12}
+    ]
+  },
+  "specification": {
+    "version": 4,
+    "published": "2026-10-05",
+    "next": "2027-01-20",
+    "owner": "C. Ruiz, Regulatory Affairs Spain",
+    "sections": {
+      "regulatory": {"owner": "C. Ruiz, Regulatory Affairs Spain", "checked": "2026-10-05", "review": "2027-04-05", "sources": ["annex", "qa"], "change": "eu", "notes": ["eu-pack"],
+        "items": ["Label under Annex VI of Regulation (EU) 536/2014. The expiry date may be left off the immediate pack when the outer pack stays with it, or for blisters and small units (B.6.2 and B.6.3).", "Label language: Spanish (company standard; Article 69 lets each Member State set it)."]},
+      "import": {"owner": "D. Ortega, Trade Compliance EU", "checked": "2026-10-05", "review": "2027-01-20", "sources": [],
+        "items": ["Supply comes from the central depot in Belgium, within the EU.", "Each shipment travels with the QP release documentation of its batches."]},
+      "invoice": {"owner": "D. Ortega, Trade Compliance EU", "checked": "2026-10-05", "review": "2027-01-20", "sources": ["es-notice"], "case": "es",
+        "items": ["Pro-forma invoice: “No commercial value. Value for customs purposes only.”", "Delivery note in English or Spanish with the trial number and kit numbers."]},
+      "logistics": {"owner": "M. Silva, Clinical Supply Logistics EU", "checked": "2026-10-05", "review": "2027-01-20", "sources": ["es-notice"], "case": "es",
+        "items": ["Prepare each shipment 5 business days before dispatch, or 2 when expedited.", "Road transport from the central depot in Belgium at 15–25 °C with a temperature monitor.", "Hospital pharmacies receive deliveries on working days only."]},
+      "carriers": {"owner": "M. Silva, Clinical Supply Logistics EU", "checked": "2026-10-05", "review": "2027-01-20", "sources": [],
+        "items": ["Demo EU logistics: road shipments from the central depot to sites."]},
+      "ior": {"owner": "D. Ortega, Trade Compliance EU", "checked": "2026-10-05", "review": "2027-01-20", "sources": [],
+        "items": ["Consignee: the hospital pharmacy of each trial site."]},
+      "contacts": {"owner": "Local affiliate, Spain", "checked": "2026-10-05", "review": "2027-01-20", "sources": [], "case": "es",
+        "items": ["Hospital pharmacy contact for each site, kept in the site file."]},
+      "notes": {"owner": "C. Ruiz, Regulatory Affairs Spain", "checked": "2026-10-05", "review": "2027-01-20", "sources": [],
+        "items": ["Check regional public holidays: hospital pharmacies do not receive deliveries on them."]}
+    }
+  }
+}

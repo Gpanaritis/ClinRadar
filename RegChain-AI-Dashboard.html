@@ -60,7 +60,7 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 .practice{list-style:none;padding:0;margin:6px 0 0}.practice li{border-top:1px solid var(--line);padding:9px 0}.practice li:first-child{border-top:0;padding-top:3px}.practice li:last-child{padding-bottom:0}.practice strong{font-size:13px}.practice strong+.badge{margin-left:6px}.practice p{margin:3px 0 2px;font-size:13px;color:#3f597c}.practice small{display:block;color:var(--muted);font-size:11px}.exposure-lines{margin:5px 0 0;padding-left:17px;font-size:13px;color:#3f597c}.exposure-lines li{margin:2px 0}
 .spec-brief{display:flex;gap:7px;align-items:flex-start;margin:0 15px 12px;padding:9px 11px;border-radius:9px;background:#f4f8ff;border:1px solid #dbe7fb;font-size:12px;color:#33507a}.spec-brief svg{width:15px;height:15px;margin-top:1px}.spec-brief strong{color:var(--ink)}.spec-excerpt{color:#3f597c}
 .redline{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:5px;font-size:13px}.redline li{padding:7px 9px;border-radius:7px;overflow-wrap:anywhere}.redline .del{background:#fcecf0;color:#9f2c42;text-decoration:line-through}.redline .add{background:#e7f6ef;color:#14523b}.note-line{margin-top:7px!important;font-size:12px!important;color:var(--muted)!important}
-.source-notes summary{cursor:pointer;font-weight:700;font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.source-notes summary::before{content:"";width:7px;height:7px;border-right:2px solid #496795;border-bottom:2px solid #496795;transform:rotate(-45deg);margin-right:2px;transition:transform .15s}.source-notes[open] summary::before{transform:rotate(45deg)}.source-notes[open] summary{margin-bottom:4px}.lead-head{margin-top:12px}
+.note-text{white-space:pre-line}.case-pad .redline{margin-bottom:12px}.source-notes summary{cursor:pointer;font-weight:700;font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.source-notes summary::before{content:"";width:7px;height:7px;border-right:2px solid #496795;border-bottom:2px solid #496795;transform:rotate(-45deg);margin-right:2px;transition:transform .15s}.source-notes[open] summary::before{transform:rotate(45deg)}.source-notes[open] summary{margin-bottom:4px}.lead-head{margin-top:12px}
 </style>
 </head>
 <body>
@@ -75,6 +75,11 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 // Without it, as when the file is opened directly, the built-in sample below is used.
 const portfolio = (() => {
   try {const source=document.getElementById("portfolio-data");return source?JSON.parse(source.textContent):null;}
+  catch {return null;}
+})();
+// Fictional Spain scenario (demo-data/spain-scenario.json), also added by the local server. Without it, Spain is left out.
+const spain = (() => {
+  try {const source=document.getElementById("spain-data");return source?JSON.parse(source.textContent):null;}
   catch {return null;}
 })();
 const replayDate = "14 Nov 2026";
@@ -175,6 +180,23 @@ const countrySpecs = {
    items:["Import only under an IND in effect, for the investigation it covers (21 CFR 312.110).","Ship to investigators 30 days after FDA receives the IND, or earlier if FDA authorises it (21 CFR 312.40(c)).","Consignee: the sponsor, a qualified investigator named in the IND, or the US agent of a foreign sponsor named in the IND (21 CFR 312.110(a))."]}
  }}
 };
+const specSectionNames = Object.fromEntries(specSections.map(section=>[section.id,section.name]));
+const specCountryName = id => countries.find(country=>country.id===id)?.name??id;
+// The fictional Spain scenario: Spain's specification, the new information note and its open case.
+if(spain) {
+  const noteDay=new Intl.DateTimeFormat("en-GB",{dateStyle:"medium",timeZone:"UTC"}).format(new Date(spain.notice.published));
+  countries.splice(countries.findIndex(country=>country.id==="fr")+1,0,{id:"es",name:"Spain",region:"Europe",changes:["es"],shared:["eu"]});
+  countrySpecs.es=spain.specification;
+  sources.push({id:spain.notice.id,title:spain.notice.titleEn,authority:spain.notice.authority,scope:"ES",type:"Information note (fictional)",path:"Fictional authority / Information notes",
+    checked:"09:44",status:"New",tone:"blue",edition:noteDay,section:"Whole note · applies from 1 Mar 2027",change:"es",url:null,text:spain.notice.text,
+    result:"New information note found the day it was published. From 1 Mar 2027 it requires a Spanish delivery note and a notice to the hospital pharmacy 3 business days before each delivery."});
+  changes.push({id:"es",title:"Spain: delivery note and pharmacy notice for IMP shipments",authority:spain.notice.authority,scope:"ES",kind:"Shipping documents",status:"SME review",tone:"amber",when:"Applies from 1 Mar 2027",
+    summary:"From 1 Mar 2027, shipments to Spanish sites need a delivery note in Spanish and a notice to the hospital pharmacy 3 business days before delivery.",
+    before:"Delivery note in English or Spanish with the trial number and kit numbers. No advance notice to the hospital pharmacy.",
+    after:"A delivery note in Spanish with the EU trial number, the hospital pharmacy code and each batch number, plus an electronic notice 3 business days before delivery. Shipments without them are refused.",
+    need:"Dispatch and delivery dates of each shipment to a Spanish site, each site's hospital pharmacy code, and the documents the depot prints.",
+    evidence:[spain.notice.id],studyNote:"The fictional trial "+spain.trial.id+" opens 8 Spanish sites from February 2027."});
+}
 // What the official sources say, shown in the specification sections that cite them.
 // Short paraphrases written from the sources named in `ref` (checked 14 Nov 2026), not reviewed advice.
 const sourceNotes = {
@@ -257,8 +279,59 @@ const ukCase = {
   "UK trial and investigational medicinal product in scope",
   "Legacy pathway requires a pre-cutoff finished-IMP QP date, old-rules trial cohort, old-rules labeling and intended trial use",
   "Confirm any applicable exemption or approved variation. Escalate exact cutoff-day cases in this demo."
- ]
+ ],
+ key:"uk", country:"uk", storageKey:"regchain-governed-uk-workflow-v1", preparedAt:"2026-11-14T09:42:00Z", taskId:"QMS-DEMO-001", receipt:"LOCAL-REC-02",
+ // The UK edit replaces the labeling line of the regulatory section and adds the supply instruction.
+ edits:state=>[{section:"regulatory",replaces:ukCase.baseline,text:state.policy??ukCase.policy},{section:"regulatory",replaces:"",text:"Supply instruction: "+state.draft}]
 };
+// The fictional Spain case (demo-data/spain-scenario.json): a new information note that applies from 1 Mar 2027.
+const esCase = spain ? {
+ ...spain.case, key:"es", country:"es", storageKey:"regchain-governed-es-workflow-v1", taskId:"QMS-DEMO-002", receipt:"LOCAL-REC-03",
+ snapshot:"PORTFOLIO-01 + "+spain.trial.id, initialText:spain.case.instruction,
+ baseline:"Delivery note in English or Spanish. No advance notice to the hospital pharmacy.",
+ evidence:spain.case.evidence.map(item=>({...item,source:spain.notice.id,tier:2,kind:"Information note (fictional)",locator:item.point})),
+ edits:state=>state.sectionEdits??spain.case.sectionEdits
+} : null;
+const governedCases = esCase ? {uk:ukCase,es:esCase} : {uk:ukCase};
+const caseOf = state => governedCases[state?.caseId??"uk"];
+// Apply a case's edits to one section's lines: replace the line an edit names, otherwise add it at the end.
+function applyEdits(items,edits) {
+  const lines=[...items];
+  const plain=text=>String(text??"").replace(/\s+/g," ").trim();
+  for(const edit of edits) {
+    const at=edit.replaces?lines.findIndex(line=>plain(line)===plain(edit.replaces)):-1;
+    if(at>=0) lines[at]=edit.text; else lines.push(edit.text);
+  }
+  return lines;
+}
+// Spain: which shipments of the fictional trial need the new documents. Business days skip weekends only in this demo.
+function businessDaysBefore(day,count) {
+  const date=new Date(day+"T00:00:00Z");
+  for(let left=count;left>0;) {
+    date.setUTCDate(date.getUTCDate()-1);
+    if(![0,6].includes(date.getUTCDay())) left--;
+  }
+  return date.toISOString().slice(0,10);
+}
+function spainShipmentFindings() {
+  if(!spain) return [];
+  const {trial,case:rule}=spain;
+  return trial.shipments.map(shipment=>{
+    const site=trial.sites.find(item=>item.id===shipment.site);
+    const earlier=shipment.dispatch<rule.effective && shipment.delivery<=rule.transitionDeliveredBy;
+    const why=earlier?"Dispatched before 1 Mar 2027 and delivered by 8 Mar 2027, so the earlier procedure applies.":
+      shipment.dispatch>=rule.effective?"Dispatched on or after 1 Mar 2027.":"Dispatched before 1 Mar 2027 but delivered after 8 Mar 2027, so the earlier procedure no longer covers it.";
+    const status=earlier?"Earlier procedure allowed":site.pharmacyCode?"New documents needed":"Insufficient information";
+    return {...shipment,site,status,affected:!earlier,reason:why+(!earlier&&!site.pharmacyCode?" The site has no hospital pharmacy code for the delivery note.":""),
+      prepareBy:businessDaysBefore(shipment.dispatch,trial.standardLeadBusinessDays),noticeBy:businessDaysBefore(shipment.delivery,rule.noticeBusinessDays)};
+  });
+}
+function spainImpact() {
+  const all=spainShipmentFindings();
+  const affected=all.filter(item=>item.affected).sort((a,b)=>a.prepareBy.localeCompare(b.prepareBy));
+  const missing=[...new Map(affected.filter(item=>!item.site.pharmacyCode).map(item=>[item.site.id,item.site])).values()];
+  return {all,affected,first:affected[0],missing,sites:spain?.trial.sites.length??0};
+}
 const countryNames = {GB:"UK",DE:"Germany",FR:"France",IT:"Italy",ES:"Spain",PL:"Poland",NL:"Netherlands",IE:"Ireland",PT:"Portugal",SE:"Sweden",DK:"Denmark",FI:"Finland",BE:"Belgium",US:"United States",CA:"Canada",JP:"Japan",AU:"Australia"};
 const partnerNames = {"PARTNER-LOGISTICS-UK-01":"Demo UK logistics","PARTNER-LOGISTICS-EU-01":"Demo EU logistics"};
 function portfolioBatches() {
@@ -317,28 +390,29 @@ function shipmentFindings() {
  });
 }
 const workflowRoles = {viewer:"Clinical Supply viewer",reviewer:"Regulatory SME",owner:"Quality action owner",verifier:"Quality verifier"};
-const workflowKey = "regchain-governed-uk-workflow-v1";
-function initialWorkflow() {
- return {schema:1,stage:"review",revision:1,draft:ukCase.initialText,decision:null,publication:null,task:null,events:[{
-  eventId:"RC-UK-001-01",type:"case.prepared",actor:"Historical replay",at:"2026-11-14T09:42:00Z",
-  revision:1,detail:"Source evidence compared and fictional portfolio assessment prepared."
+// Each governed case keeps its own workflow in browser storage.
+function initialWorkflow(caseId="uk") {
+ const governed=governedCases[caseId];
+ return {schema:1,caseId,stage:"review",revision:1,draft:governed.initialText,decision:null,publication:null,task:null,events:[{
+  eventId:governed.id+"-01",type:"case.prepared",actor:"Historical replay",at:governed.preparedAt,
+  revision:1,detail:caseId==="uk"?"Source evidence compared and fictional portfolio assessment prepared.":"New information note found on publication and the fictional trial's Spanish shipments assessed."
  }]};
 }
-function readWorkflow(fallback=initialWorkflow()) {
+function readWorkflow(caseId="uk",fallback=initialWorkflow(caseId)) {
  try {
-  const raw=localStorage.getItem(workflowKey);
+  const raw=localStorage.getItem(governedCases[caseId].storageKey);
   if(!raw) return fallback;
   const saved=JSON.parse(raw);
-  if(saved?.schema===1 && Array.isArray(saved.events) && Number.isInteger(saved.revision)) return saved;
+  if(saved?.schema===1 && Array.isArray(saved.events) && Number.isInteger(saved.revision) && (saved.caseId??"uk")===caseId) return {...saved,caseId};
  } catch {}
  return fallback;
 }
 function saveWorkflow(state) {
- try {localStorage.setItem(workflowKey,JSON.stringify(state));return true;}
+ try {localStorage.setItem(caseOf(state).storageKey,JSON.stringify(state));return true;}
  catch {return false;}
 }
 function appendWorkflowEvent(state,type,role,now,detail) {
- const eventId=ukCase.id+"-"+String(state.events.length+1).padStart(2,"0");
+ const eventId=caseOf(state).id+"-"+String(state.events.length+1).padStart(2,"0");
  state.events.push({eventId,type,actor:workflowRoles[role]??(role==="scheduler"?"Demo scheduler":role==="ai"?"RegChain AI check":"Demo publisher"),at:now,revision:state.revision,detail});
 }
 function workflowStep(state,command,role,now) {
@@ -376,14 +450,25 @@ function workflowStep(state,command,role,now) {
    return;
   }
   state.stage="published";
-  state.publication={version:2,previousVersion:1,revision:state.revision,at:now,effective:ukCase.effective,policy:state.policy??ukCase.policy,instruction:state.draft,
-   source:state.draftSource??"seed",evidenceIds:ukCase.evidence.map(item=>item.id)};
-  appendWorkflowEvent(state,"country_record.published","publisher",now,"UK Country Specification v"+(countrySpecs.uk.version+1)+" · Regulatory requirements · "+ukCase.requirement+" · Receipt LOCAL-REC-02");
-  const nextReview=shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").map(shipment=>shipment.preparationDate).sort()[0];
-  state.task={id:"QMS-DEMO-001",owner:workflowRoles.owner,status:"assigned",evidence:null,assignedAt:now,dueOn:nextReview,
-   version:2,revision:state.revision,studyIds:[...new Set(assessedBatches.filter(batch=>batch.scope==="UK").map(batch=>batch.study))],
-   batchIds:assessedBatches.filter(batch=>batch.scope==="UK").map(batch=>batch.id),
-   shipmentIds:shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").map(shipment=>shipment.id)};
+  const governed=caseOf(state);
+  const spec=countrySpecs[governed.country];
+  const sectionEdits=governed.edits(state);
+  state.publication={version:spec.version+1,previousVersion:spec.version,revision:state.revision,at:now,effective:governed.effective,policy:state.policy??governed.policy,instruction:state.draft,
+   sectionEdits,source:state.draftSource??"seed",evidenceIds:governed.evidence.map(item=>item.id)};
+  const sectionList=[...new Set(sectionEdits.map(edit=>edit.section))].map(id=>specSectionNames[id]??id).join(", ");
+  appendWorkflowEvent(state,"country_record.published","publisher",now,specCountryName(governed.country)+" Country Specification v"+(spec.version+1)+" · "+sectionList+" · "+governed.requirement+" · Receipt "+governed.receipt);
+  if(governed.key==="uk") {
+   const nextReview=shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").map(shipment=>shipment.preparationDate).sort()[0];
+   state.task={id:governed.taskId,owner:workflowRoles.owner,status:"assigned",evidence:null,assignedAt:now,dueOn:nextReview,
+    version:spec.version+1,revision:state.revision,studyIds:[...new Set(assessedBatches.filter(batch=>batch.scope==="UK").map(batch=>batch.study))],
+    batchIds:assessedBatches.filter(batch=>batch.scope==="UK").map(batch=>batch.id),
+    shipmentIds:shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").map(shipment=>shipment.id)};
+  } else {
+   const impact=spainImpact();
+   state.task={id:governed.taskId,owner:workflowRoles.owner,status:"assigned",evidence:null,assignedAt:now,dueOn:impact.first?.prepareBy??governed.effective,
+    version:spec.version+1,revision:state.revision,studyIds:[spain.trial.id],batchIds:[],shipmentIds:impact.affected.map(item=>item.id),
+    siteIds:impact.missing.map(site=>site.id)};
+  }
   appendWorkflowEvent(state,"quality_task.assigned","publisher",now,"Mock Quality task assigned for "+state.task.studyIds.join(", ")+".");
   return;
  }
@@ -424,8 +509,16 @@ function adoptAiDraft(state,result,now) {
  const draft=result.draft??{};
  const instruction=String(draft.proposedRequirement??"").trim();
  if(!instruction) return false;
+ const governed=caseOf(state);
+ if(governed.key!=="uk") {
+  const known=countrySpecs[governed.country].sections;
+  const edits=(Array.isArray(draft.sectionEdits)?draft.sectionEdits:[]).map(edit=>({section:String(edit?.section??""),replaces:String(edit?.replaces??"").trim(),text:String(edit?.text??"").trim()}))
+   .filter(edit=>known[edit.section] && edit.text);
+  if(!edits.length) return false;
+  state.sectionEdits=edits;
+ }
  state.revision++;
- state.policy=String(draft.requirementStatement||draft.summary||ukCase.policy).trim();
+ state.policy=String(draft.requirementStatement||draft.summary||governed.policy).trim();
  state.conditions=[draft.scope,...(draft.transition?.conditions??[])].map(item=>String(item??"").trim()).filter(Boolean);
  state.draft=instruction;
  state.draftSource="ai";
@@ -469,7 +562,16 @@ let studyView = "portfolio";
 let sourceFilter = "all";
 let sourceSearch = "";
 let currentCountry = "uk";
-let workflow = readWorkflow();
+// One workflow per governed case; `workflow` is the one for the case on screen.
+const workflows = Object.fromEntries(Object.keys(governedCases).map(id=>[id,readWorkflow(id)]));
+let workflow = workflows.uk;
+const isGoverned = id => Object.hasOwn(governedCases,id);
+const activeCase = () => governedCases[currentChange]??ukCase;
+function setWorkflow(state) {
+  const id=state.caseId??"uk";
+  workflows[id]=state;
+  if(id===(isGoverned(currentChange)?currentChange:"uk")) workflow=state;
+}
 let workflowRole = "viewer";
 let workflowTab = "impact";
 let reviewDecision = "approve";
@@ -486,13 +588,14 @@ let drawerOrigin = null;
 const selectedChange = () => changes.find(change=>change.id===currentChange);
 const filteredStudies = () => studyView === "portfolio" ? studies.filter(study=>study.changes.includes(currentChange)) : publicStudies.filter(study=>study.countries.includes(selectedChange().scope));
 const retryCount = sources.filter(source=>source.status==="Retry needed").length;
-const ukOpen = () => !["closed","rejected"].includes(workflow.stage);
-const openChanges = () => changes.filter(change=>change.id!=="uk"||ukOpen());
-const openChangeIds = country => (country.changes??[]).filter(id=>id!=="uk"||ukOpen());
+const caseOpen = id => !["closed","rejected"].includes(workflows[id].stage);
+const ukOpen = () => caseOpen("uk");
+const openChanges = () => changes.filter(change=>!isGoverned(change.id)||caseOpen(change.id));
+const openChangeIds = country => (country.changes??[]).filter(id=>!isGoverned(id)||caseOpen(id));
 const openCountries = () => countries.filter(country=>openChangeIds(country).length);
-function caseStatus() {
+function caseStatus(id=currentChange) {
   return {review:["SME review","amber"],investigating:["Investigation requested","amber"],deferred:["Deferred","amber"],
-    rejected:["Rejected",""],published:["Published · follow-up open","blue"],closed:["Closed · mock evidence verified","green"]}[workflow.stage];
+    rejected:["Rejected",""],published:["Published · follow-up open","blue"],closed:["Closed · mock evidence verified","green"]}[workflows[id].stage];
 }
 
 function readSchedule() {
@@ -581,15 +684,40 @@ function portfolioImpactCard() {
     (rows?'<div class="table-wrap" tabindex="0"><table><caption class="sr">UK shipments that need action before dispatch</caption><thead><tr><th>Shipment</th><th>Site</th><th>Prepare by</th><th>Time left</th><th>Patients on treatment</th></tr></thead><tbody>'+rows+'</tbody></table></div>':"")+
     '<div class="card-foot"><small>'+esc(patients+" patients on treatment at the sites these shipments resupply · "+portfolio.batches.length+" batches and "+portfolio.shipments.length+" shipments checked")+'</small></div></section>';
 }
+// Spain (fictional): an early warning, months before the new rule applies.
+function spainImpactCard() {
+  if(!spain||!portfolio||!caseOpen("es")) return "";
+  const {affected,all,first,missing}=spainImpact();
+  const rows=affected.map(item=>{
+    const days=daysFrom(item.prepareBy);
+    return '<tr><td><strong>'+esc(item.id)+'</strong><span class="sub">'+esc(item.kind)+'</span></td><td>'+esc(item.site.city)+'<span class="sub">'+esc(item.site.hospital)+'</span></td>'+
+      '<td class="nowrap">'+esc(displayDay(item.dispatch))+'<span class="sub">Delivery '+esc(displayDay(item.delivery))+'</span></td><td class="nowrap">'+esc(displayDay(item.prepareBy))+'<span class="sub">Notice by '+esc(displayDay(item.noticeBy))+'</span></td>'+
+      '<td>'+badge(days+" days",days<=30?"amber":"")+'</td><td>'+badge(item.status,item.status==="Insufficient information"?"red":"amber")+'</td></tr>';
+  }).join("");
+  const headline='<p class="impact-headline">From <strong>'+esc(displayDay(esCase.effective))+'</strong>, in '+daysFrom(esCase.effective)+' days, shipments to Spanish sites need a delivery note in Spanish and a notice to the hospital pharmacy 3 business days ahead. For '+esc(spain.trial.id)+', <strong>'+affected.length+' of '+all.length+'</strong> planned shipments are affected'+
+    (first?'. The first must be prepared by <strong>'+esc(displayDay(first.prepareBy))+'</strong>, in '+daysFrom(first.prepareBy)+' days':'')+
+    (missing.length?', and <strong>'+missing.length+'</strong> sites have no hospital pharmacy code yet.':'.')+'</p>';
+  return '<section class="card portfolio-impact"><div class="card-head"><div><h2>Spain shipping-document change · early warning</h2><p>Fictional information note published '+esc(displayDay(spain.notice.published))+' · fictional trial '+esc(spain.trial.id)+'</p></div>'+trigger("Open the Spain case","open-case","es","primary","arrow")+'</div>'+
+    '<div class="case-pad">'+headline+'</div>'+
+    (rows?'<div class="table-wrap" tabindex="0"><table><caption class="sr">Shipments to Spanish sites that need the new documents</caption><thead><tr><th>Shipment</th><th>Site</th><th>Dispatch</th><th>Prepare by</th><th>Time left</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div>':"")+
+    '<div class="card-foot"><small>'+esc(all.length+" shipments to "+spain.trial.sites.length+" Spanish sites checked · "+(all.length-affected.length)+" can follow the earlier procedure · business days skip weekends only")+'</small></div></section>';
+}
+// Open changes counted by where they apply, for the Overview tile.
+function changeScopes() {
+  const names={UK:"UK",GB:"GB",ES:"Spain",EU:"shared EU"};
+  const order=Object.values(names);
+  const counts=openChanges().reduce((all,change)=>{const name=names[change.scope]??change.scope;all[name]=(all[name]??0)+1;return all;},{});
+  return Object.entries(counts).sort(([a],[b])=>order.indexOf(a)-order.indexOf(b)).map(([name,count])=>count+" "+name).join(" · ");
+}
 function overview() {
   return heading("Regulatory monitor","Open a change to see its evidence, impact and next action.",'<button id="replay" class="btn primary" type="button" data-act="replay">'+icon("retry")+'Replay checks</button>')+
     '<div class="runbar"><div class="runbar-left">'+icon("clock")+'<strong>Replay '+String(scheduleState.runCount).padStart(2,"0")+'</strong><span class="separator">·</span><span>'+ (scheduleState.lastAt?"Last replay "+scheduleDate(scheduleState.lastAt):"Historical sample · "+replayDate) +'</span></div><div class="actions">'+badge("Completed with 1 retry needed","amber")+badge(scheduleState.enabled?cadence(scheduleState.days)+" · demo":"Schedule paused",scheduleState.enabled?"blue":"")+'</div></div>'+
     '<div class="tiles" aria-label="Replay summary">'+
       tile("Countries with open changes",openCountries().length,"Plus 1 shared EU update","countries")+
-      tile("Open changes",openChanges().length,(ukOpen()?"2 UK or GB":"1 GB")+" · 1 shared EU","changes")+
+      tile("Open changes",openChanges().length,changeScopes(),"changes")+
       tile("Studies to review",ukOpen()?studies.filter(study=>study.status==="Batch review").length:0,portfolio?"Of "+studies.length+" checked · UK labeling":"UK labeling · fictional portfolio","studies")+
       tile("Checks to retry",retryCount,"Coverage gap in Great Britain","alert","retry-filter")+
-    '</div>'+portfolioImpactCard()+regionCard();
+    '</div>'+portfolioImpactCard()+spainImpactCard()+regionCard();
 }
 function tile(title,value,hint,symbol,target) {
   const body='<div class="tile-top"><span class="tile-icon">'+icon(symbol)+'</span>'+title+'</div><strong>'+value+'</strong><small>'+hint+'</small>';
@@ -597,7 +725,7 @@ function tile(title,value,hint,symbol,target) {
 }
 function changeRow(change) {
   return '<button type="button" class="change" data-act="open-case" data-value="'+change.id+'"><span class="change-mark">'+icon("changes")+'</span><span><span class="change-top"><strong>'+change.title+'</strong>'+
-    badge(...(change.id==="uk"?caseStatus():[change.status,change.tone]))+'</span><small>'+change.scope+' · '+change.kind+' · '+change.when+'</small><span class="change-summary">'+change.summary+'</span></span>'+icon("chevron")+'</button>';
+    badge(...(isGoverned(change.id)?caseStatus(change.id):[change.status,change.tone]))+'</span><small>'+change.scope+' · '+change.kind+' · '+change.when+'</small><span class="change-summary">'+change.summary+'</span></span>'+icon("chevron")+'</button>';
 }
 function regionCard() {
   const content=regions.map(region=>{
@@ -623,32 +751,46 @@ function addMonths(day,months) {
   return date.toISOString().slice(0,10);
 }
 const sectionById = id => specSections.find(section=>section.id===id);
-// The specification as it stands now: approving the UK case publishes a new version between scheduled updates.
+// The governed case that edits a country's specification, if any.
+const caseForCountry = countryId => Object.values(governedCases).find(item=>item.country===countryId);
+// A case's edits for one section: what was published, or what is proposed now.
+function sectionEdits(caseId,sectionId) {
+  const state=workflows[caseId];
+  return (state.publication?.sectionEdits??governedCases[caseId].edits(state)).filter(edit=>edit.section===sectionId);
+}
+// The specification as it stands now: approving a case publishes a new version between scheduled updates.
 function specFor(countryId) {
   const spec=countrySpecs[countryId];
   if(!spec) return null;
-  const published=countryId==="uk" && workflow.publication;
-  return {...spec,version:published?spec.version+1:spec.version,published:published?workflow.publication.at.slice(0,10):spec.published,betweenUpdates:Boolean(published),previousVersion:spec.version};
+  const governed=caseForCountry(countryId);
+  const publication=governed&&workflows[governed.key].publication;
+  return {...spec,version:publication?spec.version+1:spec.version,published:publication?publication.at.slice(0,10):spec.published,betweenUpdates:Boolean(publication),previousVersion:spec.version,caseId:governed?.id};
 }
 // One section's current text, owner and check dates.
 function specSection(countryId,sectionId) {
   const section=countrySpecs[countryId]?.sections[sectionId];
   if(!section) return null;
-  if(section.case==="uk" && workflow.publication) {
-    const on=workflow.publication.at.slice(0,10);
-    return {...section,items:[workflow.publication.policy,"Supply instruction: "+workflow.publication.instruction,...section.items.slice(1)],previousItems:section.items,
-      checked:on,checkedBy:(workflow.decision?.actor??"Regulatory SME")+", approved in "+ukCase.id,review:addMonths(on,3)};
+  const state=section.case&&workflows[section.case];
+  const edits=state?.publication?sectionEdits(section.case,sectionId):[];
+  if(edits.length) {
+    const on=state.publication.at.slice(0,10);
+    return {...section,items:applyEdits(section.items,edits),previousItems:section.items,
+      checked:on,checkedBy:(state.decision?.actor??"Regulatory SME")+", approved in "+governedCases[section.case].id,review:addMonths(on,3)};
   }
   return {...section,checkedBy:section.owner};
 }
-// Current, Change to assess (an open change may alter it) or Edit suggested (out of date, edit waiting for approval).
+// Current, Change to assess (an open change may alter it) or Edit suggested (an edit is waiting for approval).
 function sectionState(countryId,sectionId) {
   const section=countrySpecs[countryId]?.sections[sectionId];
   if(!section) return {label:"Not in this demo",tone:"",key:"empty",note:""};
-  if(section.case==="uk" && !workflow.publication) {
-    const rejected=workflow.stage==="rejected";
-    return {label:"Edit suggested",tone:"red",key:"edit",change:"uk",
-      note:"Out of date since 28 Apr 2026, when the amended Part 7 came into force. "+(rejected?"The suggested edit was rejected in case "+ukCase.id+", so this section still has the earlier text.":"RegChain drafted an edit from the official sources. It is waiting for approval in case "+ukCase.id+".")};
+  const governed=section.case&&governedCases[section.case];
+  const state=governed&&workflows[governed.key];
+  if(state && !state.publication && sectionEdits(governed.key,sectionId).length) {
+    const rejected=state.stage==="rejected";
+    const why=governed.key==="uk"?"Out of date since 28 Apr 2026, when the amended Part 7 came into force. ":
+      "A new rule applies from "+displayDay(governed.effective)+", set by an information note published on "+displayDay(spain.notice.published)+". ";
+    return {label:"Edit suggested",tone:"red",key:"edit",change:governed.key,caseId:governed.id,
+      note:why+(rejected?"The suggested edit was rejected in case "+governed.id+", so this section keeps its current text.":"RegChain drafted an edit from "+(governed.key==="uk"?"the official sources":"the note")+". It is waiting for approval in case "+governed.id+".")};
   }
   const change=openChanges().find(item=>item.id===section.change);
   if(change) return {label:"Change to assess",tone:"amber",key:"changing",change:change.id,note:"An open change may alter this section: "+change.title+" ("+change.when+"). Regulatory Affairs is assessing it."};
@@ -658,8 +800,8 @@ function sectionCheck(countryId,sectionId) {
   const section=specSection(countryId,sectionId);
   const state=sectionState(countryId,sectionId);
   const overdue=state.key!=="edit" && section.review<libraryToday;
-  const review=state.key==="edit"?"Edit in review in "+ukCase.id:displayDay(section.review)+(overdue?" (overdue)":"");
-  return {overdue,review,line:"Checked "+displayDay(section.checked)+" by "+section.checkedBy+" · "+(state.key==="edit"?"Edit in review in "+ukCase.id:"Next check "+review)};
+  const review=state.key==="edit"?"Edit in review in "+state.caseId:displayDay(section.review)+(overdue?" (overdue)":"");
+  return {overdue,review,line:"Checked "+displayDay(section.checked)+" by "+section.checkedBy+" · "+(state.key==="edit"?review:"Next check "+review)};
 }
 // How each section is kept current: watched public sources, public sources not watched yet, or internal only.
 function watchBadge(countryId,sectionId) {
@@ -675,8 +817,9 @@ function watchText(countryId,sectionId) {
   const retry=watched.filter(source=>source.status==="Retry needed").length;
   return plural(watched.length,"source")+" watched · checked "+replayDate+(retry?" · "+retry+" needs a retry":"");
 }
-const countryCodes = {uk:"GB",de:"DE",fr:"FR",us:"US",jp:"JP",au:"AU",br:"BR",za:"ZA"};
-// Active trials, sites, patients and planned shipments in one country of the demo portfolio.
+const countryCodes = {uk:"GB",de:"DE",fr:"FR",es:"ES",us:"US",jp:"JP",au:"AU",br:"BR",za:"ZA"};
+// Active trials, sites, patients and planned shipments in one country of the demo portfolio,
+// plus the fictional Spain scenario's trial for Spain.
 function countryPortfolio(countryId) {
   if(!portfolio) return null;
   const code=countryCodes[countryId];
@@ -684,9 +827,17 @@ function countryPortfolio(countryId) {
   const trialIds=[...new Set(portfolio.study_countries.filter(item=>item.country_code===code && active.has(item.study_id)).map(item=>item.study_id))];
   const sites=portfolio.sites.filter(site=>site.country_code===code && active.has(site.study_id));
   const siteIds=new Set(sites.map(site=>site.id));
-  const shipments=portfolio.shipments.filter(shipment=>siteIds.has(shipment.site_id)).sort((a,b)=>a.planned_dispatch_date.localeCompare(b.planned_dispatch_date));
+  const shipments=portfolio.shipments.filter(shipment=>siteIds.has(shipment.site_id));
+  if(countryId==="es" && spain) {
+    trialIds.unshift(spain.trial.id);
+    sites.push(...spain.trial.sites.map(site=>({id:site.id,study_id:spain.trial.id,country_code:"ES",city:site.city,patients_on_treatment:0})));
+    shipments.push(...spain.trial.shipments.map(shipment=>({id:shipment.id,site_id:shipment.site,planned_dispatch_date:shipment.dispatch})));
+  }
+  shipments.sort((a,b)=>a.planned_dispatch_date.localeCompare(b.planned_dispatch_date));
   return {trialIds,sites,shipments,patients:sites.reduce((sum,site)=>sum+(site.patients_on_treatment||0),0)};
 }
+const studyTitle = id => portfolio?.studies.find(study=>study.id===id)?.title??(spain&&id===spain.trial.id?spain.trial.title:id);
+const daysFrom = day => Math.round((Date.parse(day)-Date.parse(libraryToday))/86400000);
 // Which of our trials a section touches, in its country.
 function sectionExposure(countryId,sectionId) {
   const country=countryById(countryId);
@@ -707,6 +858,15 @@ function sectionExposure(countryId,sectionId) {
       impact.patients+" patients on treatment at the sites those shipments resupply"]};
   }
   if(sectionId==="import" && countryId==="uk") return {trials,chip,lines:[where,"The supply data does not record where shipments come from, so imported batches cannot be identified yet."]};
+  if(countryId==="es" && spain && ["invoice","logistics","contacts","ior","carriers"].includes(sectionId)) {
+    const impact=spainImpact();
+    const first=impact.first;
+    return {trials,chip:[impact.affected.length+" of "+impact.all.length+" shipments affected","amber"],lines:[
+      spain.trial.id+": "+impact.affected.length+" of "+impact.all.length+" planned shipments to Spanish sites need the new documents",
+      ...(first?["First to prepare: "+first.id+" by "+displayDay(first.prepareBy)+", in "+daysFrom(first.prepareBy)+" days"]:[]),
+      ...(impact.missing.length?[plural(impact.missing.length,"site")+" without a hospital pharmacy code: "+impact.missing.map(site=>site.city).join(", ")]:[]),
+      where]};
+  }
   if(sectionId==="contacts" || sectionId==="notes") return null;
   if(["logistics","carriers","ports","ior","invoice"].includes(sectionId)) {
     const list=base.shipments;
@@ -751,7 +911,8 @@ function countrySpecification() {
   const states=Object.fromEntries(ids.map(id=>[id,sectionState(country.id,id)]));
   const overdue=ids.filter(id=>sectionCheck(country.id,id).overdue);
   const count=key=>ids.filter(id=>states[id].key===key).length;
-  const summary=[["edit","edit suggested","red"],["changing","change to assess","amber"],["current","current","green"]].filter(([key])=>count(key)).map(([key,label,tone])=>badge(count(key)+" "+label,tone)).join("")+
+  const summary=[["edit","edit suggested","edits suggested","red"],["changing","change to assess","changes to assess","amber"],["current","current","current","green"]].filter(([key])=>count(key))
+    .map(([key,one,many,tone])=>badge(count(key)+" "+(count(key)===1?one:many),tone)).join("")+
     (overdue.length?badge(plural(overdue.length,"check")+" overdue","red"):"");
   const attention=ids.filter(id=>states[id].key!=="current");
   const publicIds=ids.filter(id=>sectionById(id).watch!=="internal");
@@ -811,12 +972,14 @@ function sectionDetail(id) {
   const alert=state.note?'<section class="record-alert'+(state.tone==="red"?"":" warn")+'"><p>'+esc(state.note)+'</p>'+trigger(state.key==="edit"?"Review the edit":"Open the change",state.key==="edit"?"case-proposal":"open-case",state.change,state.key==="edit"?"primary":"","arrow")+'</section>':"";
   let edit="";
   if(state.key==="edit") {
-    const origin=workflow.draftSource==="ai"?"Drafted by the AI check from the official sources after all its checks passed.":workflow.draftSource==="sme"?"Edited by the Regulatory SME.":"Example text until a passing AI check replaces it with a checked draft.";
+    const caseState=workflows[state.change];
+    const origin=caseState.draftSource==="ai"?"Drafted by the AI check from "+(state.change==="uk"?"the official sources":"the note")+" after all its checks passed.":caseState.draftSource==="sme"?"Edited by the Regulatory SME.":"Example text until a passing AI check replaces it with a checked draft.";
     edit='<section class="drawer-block"><div class="block-head"><h3>Suggested edit</h3>'+badge("Awaiting approval","amber")+'</div><ul class="redline">'+
-      '<li class="del">'+esc(section.items[0])+'</li><li class="add">'+esc(workflow.policy??ukCase.policy)+'</li><li class="add">Supply instruction: '+esc(workflow.draft)+'</li></ul><p class="note-line">'+esc(origin)+'</p></section>';
+      sectionEdits(state.change,id).map(change=>(change.replaces?'<li class="del">'+esc(change.replaces)+'</li>':'')+'<li class="add">'+esc(change.text)+'</li>').join("")+
+      '</ul><p class="note-line">'+esc(origin)+'</p></section>';
   }
   const published=section.previousItems?'<section class="drawer-block"><div class="block-head"><h3>Published between scheduled updates</h3>'+badge("v"+spec.version,"green")+'</div><p>'+
-    esc("Version "+spec.version+" was published on "+displayDay(spec.published)+" after approval in "+ukCase.id+". The next scheduled update stays on "+displayDay(spec.next)+".")+'</p>'+
+    esc("Version "+spec.version+" was published on "+displayDay(spec.published)+" after approval in "+spec.caseId+". The next scheduled update stays on "+displayDay(spec.next)+".")+'</p>'+
     '<details class="source-notes"><summary>Text in version '+spec.previousVersion+'</summary><ul class="case-list">'+section.previousItems.map(item=>'<li>'+esc(item)+'</li>').join("")+'</ul></details></section>':"";
   const content='<section class="drawer-block"><h3>Section text · v'+spec.version+'</h3><ul class="case-list">'+section.items.map(item=>'<li>'+esc(item)+'</li>').join("")+'</ul></section>';
   const exposureBlock=exposure?'<section class="drawer-block"><div class="block-head"><h3>Our trials in '+esc(country.name)+'</h3>'+badge(...exposure.chip)+'</div><ul class="exposure-lines">'+exposure.lines.map(line=>'<li>'+esc(line)+'</li>').join("")+'</ul>'+
@@ -837,19 +1000,24 @@ function sectionTrials(id) {
   const base=countryPortfolio(country.id);
   if(!base) return sectionDetail(id);
   const ukLabel=country.id==="uk" && id==="regulatory";
-  const order=studyId=>{const index=studies.findIndex(study=>study.id===studyId);return index<0?studies.length:index;};
+  const spainEdit=country.id==="es" && spain && sectionEdits("es",id).length>0;
+  const impact=spainEdit?spainImpact():null;
+  const order=studyId=>{const index=studies.findIndex(study=>study.id===studyId);return spainEdit&&studyId===spain.trial.id?-1:index<0?studies.length:index;};
   const items=[...base.trialIds].sort((a,b)=>order(a)-order(b)||a.localeCompare(b)).map(studyId=>{
-    const study=portfolio.studies.find(item=>item.id===studyId);
     const sites=base.sites.filter(site=>site.study_id===studyId);
     const assessed=ukLabel?studies.find(item=>item.id===studyId):null;
     const patients=sites.reduce((sum,site)=>sum+(site.patients_on_treatment||0),0);
-    return '<li><div class="block-head"><strong>'+esc(studyId+" · "+study.title)+'</strong>'+(assessed?badge(assessed.status,assessed.tone):badge("In scope","blue"))+'</div>'+
-      '<small>'+esc((sites.map(site=>site.city).join(", ")||"No sites listed")+" · "+plural(patients,"patient")+" on treatment"+(assessed?" · "+assessed.reason:""))+'</small></li>';
+    const spainStatus=!spainEdit?null:studyId===spain.trial.id?[plural(impact.affected.length,"shipment")+" affected","amber",plural(spain.trial.sites.length,"site")+" opening from Feb 2027 · first to prepare "+impact.first.id+" by "+displayDay(impact.first.prepareBy)]:
+      ["No shipments planned","","No shipments to Spain planned in the data. Future shipments need the new documents."];
+    const status=assessed?badge(assessed.status,assessed.tone):spainStatus?badge(spainStatus[0],spainStatus[1]):badge("In scope","blue");
+    const detail=spainStatus&&studyId===spain.trial.id?spainStatus[2]:(sites.map(site=>site.city).join(", ")||"No sites listed")+" · "+plural(patients,"patient")+" on treatment"+(assessed?" · "+assessed.reason:spainStatus?" · "+spainStatus[2]:"");
+    return '<li><div class="block-head"><strong>'+esc(studyId+" · "+studyTitle(studyId))+'</strong>'+status+'</div><small>'+esc(detail)+'</small></li>';
   }).join("");
+  const caseId=ukLabel?"uk":spainEdit?"es":null;
   drawer(country.name+" Country Specification","Our trials affected by “"+sectionById(id).name+"”",
-    '<p>'+esc(plural(base.trialIds.length,"active trial")+" in "+country.name+" in the demo portfolio"+(ukLabel?", ordered by what needs action first.":"."))+'</p>'+
+    '<p>'+esc(plural(base.trialIds.length,"active trial")+" in "+country.name+" in the demo portfolio"+(caseId?", ordered by what needs action first.":"."))+'</p>'+
     '<ul class="case-list" style="width:100%">'+items+'</ul>'+
-    '<div class="actions">'+trigger("Back to the section","spec-section",id,"","arrow")+(ukLabel&&ukOpen()?trigger("Open the UK case","open-case","uk","primary","arrow"):"")+'</div>');
+    '<div class="actions">'+trigger("Back to the section","spec-section",id,"","arrow")+(caseId&&caseOpen(caseId)?trigger("Open the "+(caseId==="uk"?"UK":"Spain")+" case","open-case",caseId,"primary","arrow"):"")+'</div>');
 }
 function monitoringSchedule() {
   return heading("Monitoring schedule","Set the interval for automatic checks.")+
@@ -871,7 +1039,7 @@ function tableMatches(source) {
   return matchStatus&&haystack.includes(sourceSearch.trim().toLowerCase());
 }
 function sourceCard() {
-  const filters='<div class="filters"><label class="field">Find a page<input id="source-search" type="search" placeholder="Page or authority" value="'+esc(sourceSearch)+'"></label><label class="field">Check status<select id="source-filter">'+options([["all","All statuses"],...["Changed","Unchanged","Retry needed"].map(status=>[status,status])],sourceFilter)+'</select></label></div>';
+  const filters='<div class="filters"><label class="field">Find a page<input id="source-search" type="search" placeholder="Page or authority" value="'+esc(sourceSearch)+'"></label><label class="field">Check status<select id="source-filter">'+options([["all","All statuses"],...[...new Set(sources.map(source=>source.status))].map(status=>[status,status])],sourceFilter)+'</select></label></div>';
   return '<section class="card"><div class="card-head">'+filters+'</div><div id="source-results">'+sourceTable(sources.filter(tableMatches))+'</div></section>';
 }
 function studyCard() {
@@ -901,7 +1069,7 @@ function caseRoleSelect() {
 }
 function workflowNavigation() {
   const tabs=[["impact","Evidence & impact"]];
-  if(currentChange==="uk"){
+  if(isGoverned(currentChange)){
     tabs.push(["proposal","SME decision"],["history","Country specification"]);
     if(workflow.task) tabs.push(["follow-up","Quality follow-up"]);
   }
@@ -909,6 +1077,14 @@ function workflowNavigation() {
     '<button type="button" data-act="workflow-tab" data-value="'+id+'" aria-pressed="'+(workflowTab===id)+'">'+title+'</button>').join("")+'</div>':"";
 }
 function workflowEvidence() {
+  if(currentChange==="es") {
+    const note=sources.find(source=>source.id===spain.notice.id);
+    const rows=esCase.evidence.map(item=>'<div class="evidence-item">'+badge(item.locator,"purple")+'<p lang="es">“'+esc(item.excerpt)+'”</p></div>').join("");
+    return panel("Evidence","Fictional information note, quoted in Spanish",casePad(
+      factlist([["Note",spain.notice.titleEn],["Published",displayDay(spain.notice.published)],["Applies from",displayDay(esCase.effective)],["Earlier procedure until","Dispatched before 1 Mar 2027 and delivered by "+displayDay(spain.case.transitionDeliveredBy)]])+
+      '<p>The note adds a Spanish delivery note and an advance notice to the hospital pharmacy. It does not change labeling.</p>'+rows+
+      '<button type="button" class="quiet small-action" data-act="source-detail" data-value="'+note.id+'">Read the whole note'+icon("arrow")+'</button>'));
+  }
   const rows=ukCase.evidence.map(item=>{
     const source=sources.find(entry=>entry.id===item.source);
     return '<div class="evidence-item">'+badge("Tier "+item.tier,item.tier===1?"blue":"purple")+
@@ -956,33 +1132,58 @@ function workflowProposal() {
   const published=workflow.publication;
   const origin=workflow.draftSource==="ai"?"Drafted by the AI check ("+(workflow.aiModel||"AI")+", "+scheduleDate(Date.parse(workflow.aiRunAt))+") after all checks passed. The SME decides.":
     workflow.draftSource==="sme"?"Edited by the Regulatory SME.":"Example text written for the demo. A passing AI check replaces it with a checked draft.";
-  const conditions=workflow.conditions??ukCase.conditions;
-  const proposed=panel("Country Specification edit","UK · Regulatory requirements · "+ukCase.requirement+" · Proposal revision "+workflow.revision,
-    compareValues("Current text · specification v"+countrySpecs.uk.version,ukCase.baseline,published?"Approved text · v"+(countrySpecs.uk.version+1):"Suggested text",published?.policy??workflow.policy??ukCase.policy)+
+  const governed=activeCase();
+  const spec=countrySpecs[governed.country];
+  const country=specCountryName(governed.country);
+  const conditions=workflow.conditions??governed.conditions;
+  const edits=published?.sectionEdits??governed.edits(workflow);
+  const editList=governed.key==="uk"?compareValues("Current text · specification v"+spec.version,governed.baseline,published?"Approved text · v"+(spec.version+1):"Suggested text",published?.policy??workflow.policy??governed.policy):
+    casePad('<p>'+esc(published?.policy??workflow.policy??governed.policy)+'</p>'+[...new Set(edits.map(edit=>edit.section))].map(section=>'<h3>'+esc(specSectionNames[section])+'</h3><ul class="redline">'+
+      edits.filter(edit=>edit.section===section).map(edit=>(edit.replaces?'<li class="del">'+esc(edit.replaces)+'</li>':'')+'<li class="add">'+esc(edit.text)+'</li>').join("")+'</ul>').join(""));
+  const sectionList=[...new Set(edits.map(edit=>edit.section))].map(id=>specSectionNames[id]).join(", ");
+  const proposed=panel("Country Specification edit",country+" · "+sectionList+" · "+governed.requirement+" · Proposal revision "+workflow.revision,
+    editList+
     '<div class="case-pad" style="padding-top:11px"><div class="inline-note">'+icon("info")+'<span>'+esc(origin)+'</span></div><h3>Scope and conditions</h3>'+
     (conditions.length?listItems(conditions.map(esc)):'<p>No scope or transition conditions in the draft.</p>')+'<h3>Operational instruction</h3><p>'+esc(workflow.draft)+'</p></div>');
-  const confidence=panel("Confidence by dimension","Qualitative evidence assessment",casePad(factlist([
+  const confidence=panel("Confidence by dimension","Qualitative evidence assessment",casePad(factlist(governed.key==="uk"?[
     ["Detection","High · instrument and MHRA sources agree on commencement"],["Extraction","High · cited provisions and guidance are available"],
     ["Applicability","Mixed · missing QP date and cutoff-day case"],["Interpretation",published?"Approved for the UK Country Specification in this demo":"Requires authorized SME decision"]
+  ]:[
+    ["Detection","High · new note found on its publication day"],["Extraction","High · six numbered points with one date and one transition"],
+    ["Applicability","Mixed · "+plural(spainImpact().missing.length,"site")+" without a hospital pharmacy code"],["Interpretation",published?"Approved for the Spain Country Specification in this demo":"Requires authorized SME decision"]
   ])));
   return '<div class="case-layout"><div class="case-stack">'+proposed+decision+'</div>'+confidence+'</div>';
 }
 function workflowHistory() {
+  const governed=activeCase();
+  const spec=countrySpecs[governed.country];
+  const country=specCountryName(governed.country);
   const publication=workflow.publication;
-  const history=publication?compareValues("Specification v"+countrySpecs.uk.version+" · earlier text",ukCase.baseline,"Specification v"+(countrySpecs.uk.version+1)+" · published text",publication.policy+" Supply instruction: "+publication.instruction):
-    casePad('<p>'+esc(ukCase.baseline)+'</p>');
-  const receipt=publication?casePad(factlist([["Receipt","LOCAL-REC-02"],["Specification","UK v"+(countrySpecs.uk.version+1)+" · Regulatory requirements"],["Approved revision",publication.revision],["Published",scheduleDate(publication.at)],
+  const edits=publication?.sectionEdits??governed.edits(workflow);
+  const sections=[...new Set(edits.map(edit=>edit.section))];
+  const history=governed.key==="uk"?(publication?compareValues("Specification v"+spec.version+" · earlier text",governed.baseline,"Specification v"+(spec.version+1)+" · published text",publication.policy+" Supply instruction: "+publication.instruction):
+    casePad('<p>'+esc(governed.baseline)+'</p>')):
+    casePad(sections.map(section=>{
+      const before=spec.sections[section].items;
+      const after=applyEdits(before,edits.filter(edit=>edit.section===section));
+      return '<h3>'+esc(specSectionNames[section])+'</h3>'+(publication?compareValues("v"+spec.version+" · earlier text",before.join(" "),"v"+(spec.version+1)+" · published text",after.join(" ")):'<p>'+esc(before.join(" "))+'</p>');
+    }).join(""));
+  const receipt=publication?casePad(factlist([["Receipt",governed.receipt],["Specification",country+" v"+(spec.version+1)+" · "+sections.map(id=>specSectionNames[id]).join(", ")],["Approved revision",publication.revision],["Published",scheduleDate(publication.at)],
     ["Effective date",displayDay(publication.effective)],["Evidence",publication.evidenceIds.join(", ")]])):
-    casePad('<p>Specification v'+countrySpecs.uk.version+' is the published version. Approving the edit publishes v'+(countrySpecs.uk.version+1)+' without waiting for the next scheduled update.</p>');
-  const query=casePad('<label class="field">Ordinary cohort date<input type="date" id="record-as-of" value="'+ukCase.effective+'"></label><p id="record-as-of-result" aria-live="polite">'+asOfText(ukCase.effective)+'</p><p>Use the batch assessment for Schedule 14 transition checks.</p>');
-  return '<div class="case-layout"><div class="case-stack">'+panel("Version history","UK Country Specification · Regulatory requirements · "+ukCase.requirement,history,trigger("Open the section","open-spec","uk:regulatory","","arrow"))+panel("Look up an applicable version","Ordinary cohort",query)+'</div>'+
+    casePad('<p>Specification v'+spec.version+' is the published version. Approving the edit publishes v'+(spec.version+1)+' without waiting for the next scheduled update on '+esc(displayDay(spec.next))+'.</p>');
+  const uk=governed.key==="uk";
+  const query=casePad('<label class="field">'+(uk?"Ordinary cohort date":"Dispatch date")+'<input type="date" id="record-as-of" value="'+governed.effective+'"></label><p id="record-as-of-result" aria-live="polite">'+asOfText(governed.effective)+'</p><p>'+
+    (uk?"Use the batch assessment for Schedule 14 transition checks.":"Shipments dispatched before 1 Mar 2027 and delivered by 8 Mar 2027 can follow the earlier procedure.")+'</p>');
+  return '<div class="case-layout"><div class="case-stack">'+panel("Version history",country+" Country Specification · "+sections.map(id=>specSectionNames[id]).join(", ")+" · "+governed.requirement,history,trigger("Open the section","open-spec",governed.country+":"+sections[0],"","arrow"))+panel("Look up an applicable version",uk?"Ordinary cohort":"Shipments to Spanish sites",query)+'</div>'+
     '<div class="case-stack">'+panel("Publication receipt","Local country platform simulation",receipt)+'</div></div>';
 }
 function asOfText(day) {
+ const governed=activeCase();
+ const version=countrySpecs[governed.country].version;
  if(!day) return "Choose an operational date.";
- if(workflow.publication && day>=workflow.publication.effective) return "Specification v"+(countrySpecs.uk.version+1)+" applies to the ordinary cohort on this date.";
- if(day>=ukCase.effective) return "The amended rule applies, but specification v"+countrySpecs.uk.version+" still has the earlier text. No update is published yet in the demo.";
- return "The earlier labeling text applies on this date.";
+ if(workflow.publication && day>=workflow.publication.effective) return "Specification v"+(version+1)+" applies on this date.";
+ if(day>=governed.effective) return "The new rule applies, but specification v"+version+" still has the earlier text. No update is published yet in the demo.";
+ return governed.key==="uk"?"The earlier labeling text applies on this date.":"The earlier procedure applies on this date.";
 }
 function taskStateLabel(status) {
   return {assigned:"Assigned",acknowledged:"Acknowledged",submitted:"Evidence submitted",verified:"Verified"}[status];
@@ -991,9 +1192,11 @@ function workflowFollowUp() {
   const task=workflow.task;
   let content='<p>The mock task appears after the country update is published.</p>';
   if(task) {
-    content=factlist([["Owner",task.owner],["Sample due date",displayDay(task.dueOn)],["Published specification","UK v"+(countrySpecs.uk.version+1)+" · proposal revision "+task.revision],
+    const governed=activeCase();
+    content=factlist([["Owner",task.owner],["Sample due date",displayDay(task.dueOn)],["Published specification",specCountryName(governed.country)+" v"+(countrySpecs[governed.country].version+1)+" · proposal revision "+task.revision],
       ["Status",taskStateLabel(task.status)],["Case",workflow.stage==="closed"?"Closed":"Open"],["Studies",task.studyIds.join(", ")],
-      ["Batches",task.batchIds.join(", ")],["Shipments to assess",task.shipmentIds.join(", ")],
+      ...(task.batchIds?.length?[["Batches",task.batchIds.join(", ")]]:[]),["Shipments to assess",task.shipmentIds.join(", ")],
+      ...(task.siteIds?.length?[["Sites missing a pharmacy code",task.siteIds.join(", ")]]:[]),
       ...(task.evidence?[["Last submitted evidence",task.evidence.reference]]:[])]);
     if(task.status==="assigned"&&workflowRole==="owner") content+=actionForm("",[["ack","Acknowledge task","primary"]]);
     else if(task.status==="acknowledged"&&workflowRole==="owner") content+=actionForm(reasonField("Mock implementation evidence reference"),[["implement","Submit evidence","primary"]]);
@@ -1007,7 +1210,10 @@ function auditPanel() {
     trigger("Export audit JSON","export-workflow","","","file")+' '+trigger("Reset demo case","reset-workflow","","","retry")+'</div>'+
     listItems([...workflow.events].reverse().map(event=>'<strong>'+esc(event.type.replaceAll("."," · ").replaceAll("_"," "))+'</strong><small>'+esc(event.actor+" · "+scheduleDate(event.at)+" · revision "+event.revision)+'</small><small>'+esc(event.detail)+'</small>'))+'</div></details>';
 }
-let aiState = {phase:location.protocol.startsWith("http")?"idle":"offline",status:null,result:null,error:"",fresh:false};
+// One AI state per governed case; `aiState` is the one for the case on screen.
+const aiStates = Object.fromEntries(Object.keys(governedCases).map(id=>[id,{phase:location.protocol.startsWith("http")?"idle":"offline",status:null,result:null,error:"",fresh:false}]));
+let aiState = aiStates.uk;
+const aiPath = (path,caseId) => path+"?case="+encodeURIComponent(caseId);
 async function aiRequest(path,options={}) {
   const response=await fetch(path,{cache:"no-store",...options});
   const body=await response.json().catch(()=>({}));
@@ -1015,12 +1221,13 @@ async function aiRequest(path,options={}) {
   return body;
 }
 const aiBlocked = () => Boolean(aiState.result && !aiState.result.verification.verified);
-function applyAiDraft() {
-  if(!aiState.result) return false;
-  const next=structuredClone(readWorkflow(workflow));
-  if(!adoptAiDraft(next,aiState.result,new Date().toISOString())) return false;
-  workflow=next;
-  saveWorkflow(workflow);
+function applyAiDraft(caseId=isGoverned(currentChange)?currentChange:"uk") {
+  const state=aiStates[caseId];
+  if(!state.result) return false;
+  const next=structuredClone(readWorkflow(caseId,workflows[caseId]));
+  if(!adoptAiDraft(next,state.result,new Date().toISOString())) return false;
+  setWorkflow(next);
+  saveWorkflow(next);
   return true;
 }
 function aiAdoptionNote(result) {
@@ -1033,29 +1240,37 @@ function aiAdoptionNote(result) {
 }
 function refreshAi() {const card=byId("ai-card");if(card) card.outerHTML=aiCard();}
 async function loadAi() {
-  if(aiState.phase==="offline") return;
-  try {
-    aiState.status=await aiRequest("/api/ai/status");
-    if(aiState.status.recorded) aiState.result=await aiRequest("/api/ai/analysis");
-  } catch {aiState.phase="offline";}
-  if(applyAiDraft()) render();
+  let adopted=false;
+  for(const caseId of Object.keys(governedCases)) {
+    const state=aiStates[caseId];
+    if(state.phase==="offline") continue;
+    try {
+      state.status=await aiRequest(aiPath("/api/ai/status",caseId));
+      if(state.status.recorded) state.result=await aiRequest(aiPath("/api/ai/analysis",caseId));
+    } catch {state.phase="offline";}
+    if(applyAiDraft(caseId)) adopted=true;
+  }
+  if(adopted) render();
   else refreshAi();
 }
 async function runAi() {
-  aiState={...aiState,phase:"running",error:""};
+  const caseId=currentChange;
+  const state=aiStates[caseId];
+  state.phase="running";
+  state.error="";
   refreshAi();
-  notify("Fetching the official sources and asking the AI. This can take a minute.");
+  notify(caseId==="uk"?"Fetching the official sources and asking the AI. This can take a minute.":"Sending the note and the current specification to the AI. This can take a minute.");
   try {
-    aiState.result=await aiRequest("/api/ai/analyze",{method:"POST"});
-    aiState.fresh=true;
+    state.result=await aiRequest(aiPath("/api/ai/analyze",caseId),{method:"POST"});
+    state.fresh=true;
   } catch(error) {
-    aiState.error=error.message;
+    state.error=error.message;
   }
-  aiState.phase="idle";
-  const adopted=!aiState.error&&applyAiDraft();
+  state.phase="idle";
+  const adopted=!state.error&&applyAiDraft(caseId);
   if(adopted) render();
   else refreshAi();
-  notify(aiState.error?"AI check failed.":!aiState.result.verification.verified?"AI check complete. Some checks failed, so SME approval is blocked.":
+  notify(state.error?"AI check failed.":!state.result.verification.verified?"AI check complete. Some checks failed, so SME approval is blocked.":
     adopted?"AI check complete. All checks passed, and the AI draft is now the proposal for SME review.":"AI check complete. All checks passed.");
   byId("ai-run")?.focus();
 }
@@ -1075,19 +1290,25 @@ function aiResult(result) {
   const titleOf=id=>read.find(source=>source.id===id)?.title||id;
   const claims=listItems(verification.claims.map(claim=>'<div class="ai-claim">'+badge(claim.found?"Found in source":"Not found",claim.found?"green":"red")+esc(claim.statement)+'</div>'+
     '<p class="ai-quote">“'+esc(claim.quote)+'”</p><small>'+esc(titleOf(claim.sourceId))+(claim.found?"":" · "+esc(claim.reason))+'</small>'));
-  const rows=read.map(source=>'<tr><td><a href="'+esc(source.url)+'" target="_blank" rel="noopener noreferrer">'+esc(source.title)+'</a><span class="sub">'+esc(source.authority)+'</span></td>'+
+  const origins={live:["Fetched","blue"],cache:["Cached copy","amber"],"demo file":["Demo file",""]};
+  const rows=read.map(source=>'<tr><td>'+(source.url?'<a href="'+esc(source.url)+'" target="_blank" rel="noopener noreferrer">'+esc(source.title)+'</a>':esc(source.title))+'<span class="sub">'+esc(source.authority)+'</span></td>'+
     '<td class="nowrap">'+esc(source.validFrom?displayDay(source.validFrom.slice(0,10)):"Unknown")+(source.validUntil?' to '+esc(displayDay(source.validUntil.slice(0,10))):"")+'</td>'+
-    '<td class="mono">'+esc(source.hash?source.hash.slice(0,12):"—")+'</td><td>'+badge(source.origin==="live"?"Fetched":source.origin==="cache"?"Cached copy":"Missing",source.origin==="live"?"blue":source.origin==="cache"?"amber":"red")+'</td></tr>').join("");
-  const changed=diff.lines.filter(line=>line.type!=="same");
-  const diffView='<details class="diff"><summary>What changed in regulation 46 · '+diff.added+' lines added, '+diff.removed+' removed</summary><ol>'+
-    changed.map(line=>'<li class="'+(line.type==="added"?"add":"del")+'">'+(line.type==="added"?"+ ":"− ")+esc(line.text)+'</li>').join("")+'</ol></details>';
+    '<td class="mono">'+esc(source.hash?source.hash.slice(0,12):"—")+'</td><td>'+badge(...(origins[source.origin]??["Missing","red"]))+'</td></tr>').join("");
+  const changed=diff?.lines.filter(line=>line.type!=="same")??[];
+  const diffView=diff?'<details class="diff"><summary>What changed in regulation 46 · '+diff.added+' lines added, '+diff.removed+' removed</summary><ol>'+
+    changed.map(line=>'<li class="'+(line.type==="added"?"add":"del")+'">'+(line.type==="added"?"+ ":"− ")+esc(line.text)+'</li>').join("")+'</ol></details>':"";
   const transition=draft.transition||{applies:false,conditions:[]};
+  const governed=governedCases[result.case??"uk"]??ukCase;
+  const edits=Array.isArray(draft.sectionEdits)?draft.sectionEdits:[];
+  const proposal=governed.key==="uk"?compareValues("Current company record · v1",governed.baseline,"AI draft · not yet approved",draft.proposedRequirement):
+    '<h3>Edits to the Spain Country Specification · not yet approved</h3><ul class="redline">'+edits.map(edit=>'<li class="add"><strong>'+esc(specSectionNames[edit.section]??edit.section)+':</strong> '+esc(edit.text)+(edit.replaces?'<br><small>Replaces: '+esc(edit.replaces)+'</small>':'')+'</li>').join("")+'</ul>'+
+    '<h3>Operational instruction</h3><p>'+esc(draft.proposedRequirement)+'</p>';
   return gate+aiAdoptionNote(result)+checks+
     '<h3>Sources read</h3><div class="table-wrap ai-sources"><table><thead><tr><th>Source</th><th>Version</th><th>Fingerprint</th><th>Copy</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+diffView+
     '<h3>AI draft for '+esc(result.rule.requirement)+'</h3><p>'+esc(draft.summary)+'</p>'+
     factlist([["Change status",draft.status],["Effective date",draft.effectiveDate],["Scope",draft.scope],["Transition",transition.applies?"Earlier rules can continue under conditions":"No transition found"]])+
     (transition.conditions.length?listItems(transition.conditions.map(esc)):"")+
-    compareValues("Current company record · v1",ukCase.baseline,"AI draft · not yet approved",draft.proposedRequirement)+
+    proposal+
     '<h3>Claims and their quotes</h3>'+claims+
     (draft.uncertainties.length?'<h3>For the SME to confirm</h3>'+listItems(draft.uncertainties.map(esc)):"")+
     '<div class="card-foot"><small>'+esc((aiState.fresh?"Live check":"Recorded check")+" · "+scheduleDate(Date.parse(result.at))+" · "+result.model)+'</small></div>';
@@ -1098,13 +1319,37 @@ function aiCard() {
   const result=aiState.result;
   const mode=busy?badge("Running","blue"):offline?badge("Needs the local server"):result?badge(aiState.fresh?"Live":"Recorded",aiState.fresh?"blue":""):badge("Not run yet");
   const action=offline?mode:'<div class="actions">'+mode+'<button id="ai-run" type="button" class="btn primary" data-act="ai-run"'+(busy?" disabled":"")+'>'+icon("retry")+(busy?"Checking…":result?"Run again":"Run AI check")+'</button></div>';
-  const intro='<p>Claude reads the official versions of regulation 46 before and after 28 April 2026, Schedule 14 paragraph 6 and the MHRA labelling guidance, then drafts the change. RegChain checks every quote against the source text and the effective date against the recorded rule. A failed check blocks SME approval.</p>';
+  const uk=currentChange!=="es";
+  const intro=uk?'<p>Claude reads the official versions of regulation 46 before and after 28 April 2026, Schedule 14 paragraph 6 and the MHRA labelling guidance, then drafts the change. RegChain checks every quote against the source text and the effective date against the recorded rule. A failed check blocks SME approval.</p>':
+    '<p>Claude reads the new information note in Spanish and the current Spain Country Specification, then drafts the edits in English. RegChain checks that every quote appears word for word in the note (in Spanish, never translated), that the effective date matches the recorded rule, and that every edit targets a real line of the specification. A failed check blocks SME approval.</p>';
   const body=offline?'<p>Open the dashboard with Start-RegChain.cmd to use the AI check. It needs the local server.</p>':
     aiSetupHints()+(aiState.error?'<p class="form-feedback" role="alert">'+esc(aiState.error)+'</p>':"")+(result?aiResult(result):"");
-  return '<div id="ai-card" class="ai-card">'+panel("AI reading of the source change","Official texts fetched live · checked by RegChain, decided by the SME",casePad(intro+body),action)+'</div>';
+  return '<div id="ai-card" class="ai-card">'+panel("AI reading of the source change",uk?"Official texts fetched live · checked by RegChain, decided by the SME":"Fictional note in Spanish · checked by RegChain, decided by the SME",casePad(intro+body),action)+'</div>';
+}
+// Spain (fictional): the trials with Spanish sites and every planned shipment to them.
+function spainCaseImpact() {
+  const {all,affected,first,missing}=spainImpact();
+  const base=countryPortfolio("es");
+  const facts=[
+    ["Severity","High · non-compliant shipments are refused and returned"],
+    ["Operational urgency",first?"Prepare "+first.id+" by "+displayDay(first.prepareBy)+", in "+daysFrom(first.prepareBy)+" days":"No affected shipment"],
+    ["Date basis","Dispatch date and delivery date of each shipment"],
+    ["Portfolio scope",(base?plural(base.trialIds.length,"trial")+" with Spanish sites · ":"")+affected.length+" of "+all.length+" shipments of "+spain.trial.id+" affected"]
+  ];
+  const context=panel("Assessment",esCase.snapshot,casePad(factlist(facts)+'<h3>Inputs to check</h3><p>'+esc(selectedChange().need)+'</p>'));
+  const trials=base?base.trialIds.map(id=>[id+" · "+studyTitle(id),id===spain.trial.id?plural(spain.trial.sites.length,"site")+" opening from Feb 2027":base.sites.filter(site=>site.study_id===id).map(site=>site.city).join(", ")||"No Spanish sites listed",
+    id===spain.trial.id?affected.length+" of "+all.length+" shipments need the new documents":"No shipments to Spain planned in the data"]):[];
+  return aiCard()+'<div class="case-layout">'+workflowEvidence()+context+'</div><div class="case-stack space">'+
+    (trials.length?impactTable("Trials with Spanish sites","Demo portfolio and the fictional trial "+spain.trial.id,["Trial","Spanish sites","Assessment"],trials):"")+
+    impactTable("Shipments to Spanish sites",spain.trial.id+" · depot "+spain.trial.depot+" · prepare "+spain.trial.standardLeadBusinessDays+" business days before dispatch, notify 3 business days before delivery",
+      ["Shipment","Site","Dispatch","Delivery","Prepare by","Notice by","Assessment","Basis"],
+      all.map(item=>[item.id+" · "+item.kind,item.site.city+" · "+item.site.hospital+(item.site.pharmacyCode?" · "+item.site.pharmacyCode:" · no pharmacy code"),displayDay(item.dispatch),displayDay(item.delivery),
+        item.affected?displayDay(item.prepareBy):"—",item.affected?displayDay(item.noticeBy):"—",item.status,item.reason]))+
+    (missing.length?'<div class="inline-note">'+icon("info")+'<span>'+esc(plural(missing.length,"site")+" ("+missing.map(site=>site.hospital).join(", ")+") have no hospital pharmacy code, so their delivery notes cannot be completed yet.")+'</span></div>':"")+'</div>';
 }
 function caseImpact() {
   const change=selectedChange();
+  if(change.id==="es") return spainCaseImpact();
   const evidence=change.id==="uk"?workflowEvidence():panel("Regulatory evidence",change.authority+" · "+change.when,casePad(
     compareValues("Previous reference",change.before,"What changed",change.after)+
     '<div class="evidence-item"><h3>Supporting sources</h3><div class="actions">'+change.evidence.map(id=>trigger(sources.find(source=>source.id===id).title,"source-detail",id,"","file")).join("")+'</div></div>'));
@@ -1120,9 +1365,10 @@ function caseImpact() {
 function changeWorkspace() {
   const change=selectedChange();
   const content={impact:caseImpact,proposal:workflowProposal,history:workflowHistory,"follow-up":workflowFollowUp};
-  const status=change.id==="uk"?caseStatus():[change.status,change.tone];
-  return heading(esc(change.title),esc((change.id==="uk"?ukCase.id+" · ":"")+change.scope+" · "+change.kind+" · "+change.when),badge(...status))+
-    workflowNavigation()+content[workflowTab]()+(change.id==="uk"?auditPanel():"");
+  const governed=isGoverned(change.id);
+  const status=governed?caseStatus(change.id):[change.status,change.tone];
+  return heading(esc(change.title),esc((governed?governedCases[change.id].id+" · ":"")+change.scope+" · "+change.kind+" · "+change.when),badge(...status))+
+    workflowNavigation()+content[workflowTab]()+(governed?auditPanel():"");
 }
 function impactTable(title,description,columns,rows) {
  return panel(title,description,'<div class="table-wrap" tabindex="0" aria-label="'+esc(title)+'"><table><thead><tr>'+
@@ -1168,7 +1414,8 @@ function sourceDetail(id) {
   drawer("Source check",source.title,badge(source.status,source.tone)+factlist([
     ["Authority",source.authority],["Scope",source.scope],["Check time",replayDate+" · "+source.checked+" UTC (replay)"],
     ["Source edition",source.edition],["Compared section",source.status==="Retry needed"?"Comparison pending":source.section]
-  ])+block("Check result",source.result)+'<section><h3>Page URL</h3><a class="url" href="'+esc(source.url)+'" target="_blank" rel="noopener noreferrer">'+esc(source.url)+'</a></section>'+
+  ])+block("Check result",source.result)+(source.url?'<section><h3>Page URL</h3><a class="url" href="'+esc(source.url)+'" target="_blank" rel="noopener noreferrer">'+esc(source.url)+'</a></section>':
+    '<section class="drawer-block"><h3>Text of the note (fictional, in Spanish)</h3><p class="note-text" lang="es">'+esc(source.text??"")+'</p></section>')+
   (source.change && page==="sources"?'<div>'+trigger("View related change","open-case",source.change,"","arrow")+'</div>':""));
 }
 function studyDetail(id) {
@@ -1186,6 +1433,10 @@ function studyDetail(id) {
 }
 function selectChange(id) {
   currentChange=id;
+  if(isGoverned(id)) {
+    workflow=workflows[id];
+    aiState=aiStates[id];
+  }
   studyView=studies.some(study=>study.changes.includes(id))?"portfolio":"registry";
 }
 function updateStudies() {
@@ -1193,7 +1444,7 @@ function updateStudies() {
 }
 function replay(reason="manual") {
   if (replaying) return;
-  replaying=true;updateRun();notify("Replaying the six recorded checks.");
+  replaying=true;updateRun();notify("Replaying the "+sources.length+" recorded checks.");
   window.setTimeout(()=>{
     scheduleState=readScheduleOrCurrent();
     if (reason==="scheduled" && (!scheduleState.enabled || scheduleState.nextAt>Date.now())) {
@@ -1222,7 +1473,7 @@ function replay(reason="manual") {
         updateRun();
       }
     }
-    notify("Replay complete. Three sample changes reviewed. One source check needs retry.");
+    notify("Replay complete. "+changes.length+" sample changes reviewed. "+(retryCount===1?"One source check needs":retryCount+" source checks need")+" retry.");
   },350);
 }
 function readScheduleOrCurrent() {
@@ -1231,15 +1482,17 @@ function readScheduleOrCurrent() {
 }
 function checkDue() {
   scheduleState=readScheduleOrCurrent();
-  const latest=readWorkflow(workflow);
-  if(latest.stage==="deferred" && latest.decision?.reviewOn<=athensDay()) {
-    latest.revision++;
-    latest.stage="review";
-    latest.decision=null;
-    appendWorkflowEvent(latest,"proposal.returned_on_due_date","scheduler",new Date().toISOString(),"Deferred case returned to the review queue on its scheduled date.");
-    workflow=latest;
-    saveWorkflow(workflow);
-    if(!byId("drawer").open && !byId("schedule-form")?.contains(document.activeElement)) render();
+  for(const caseId of Object.keys(governedCases)) {
+    const latest=readWorkflow(caseId,workflows[caseId]);
+    if(latest.stage==="deferred" && latest.decision?.reviewOn<=athensDay()) {
+      latest.revision++;
+      latest.stage="review";
+      latest.decision=null;
+      appendWorkflowEvent(latest,"proposal.returned_on_due_date","scheduler",new Date().toISOString(),"Deferred case returned to the review queue on its scheduled date.");
+      setWorkflow(latest);
+      saveWorkflow(latest);
+      if(!byId("drawer").open && !byId("schedule-form")?.contains(document.activeElement)) render();
+    }
   }
   if(scheduleState.enabled && scheduleState.nextAt<=Date.now() && !replaying) replay("scheduled");
 }
@@ -1251,16 +1504,17 @@ function openCase(id,tab) {
   if(byId("drawer").open) byId("drawer").close();
   drawerOrigin=null;
   selectChange(id);
-  workflowTab=tab??(id==="uk"&&workflow.task&&workflow.stage!=="closed"?"follow-up":"impact");
+  workflowTab=tab??(isGoverned(id)&&workflow.task&&workflow.stage!=="closed"?"follow-up":"impact");
   navigate("case");
 }
 function exportWorkflow() {
-  const data={caseId:ukCase.id,requirementId:ukCase.requirement,assessmentSnapshot:ukCase.snapshot,mode:"historical demo",
-    evidence:ukCase.evidence.map(item=>({...item,url:sources.find(source=>source.id===item.source).url})),...workflow};
+  const governed=activeCase();
+  const data={...workflow,caseId:governed.id,requirementId:governed.requirement,assessmentSnapshot:governed.snapshot,mode:"historical demo",
+    evidence:governed.evidence.map(item=>({...item,url:sources.find(source=>source.id===item.source)?.url??null}))};
   const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));
   const anchor=document.createElement("a");
   anchor.href=url;
-  anchor.download="RegChain-RC-UK-001-Audit.json";
+  anchor.download="RegChain-"+governed.id+"-Audit.json";
   document.body.append(anchor);
   anchor.click();
   anchor.remove();
@@ -1289,15 +1543,17 @@ const actions={
   "case-history":id=>openCase(id,"history"),
   "workflow-tab":tab=>{workflowTab=tab;render();byId("view").querySelector('[data-act="workflow-tab"][data-value="'+tab+'"]').focus();},
   "export-workflow":exportWorkflow,
-  "reset-workflow":()=>drawer("Historical demo","Reset the UK case?",
+  "reset-workflow":()=>drawer("Historical demo","Reset the "+(currentChange==="es"?"Spain":"UK")+" case?",
     '<p>Clear locally recorded decisions, publication and Quality follow-up for this demo case.</p><div>'+trigger("Reset demo case","confirm-reset-workflow","","primary","retry")+'</div>'),
   "confirm-reset-workflow":()=>{
-    workflow=initialWorkflow();
-    saveWorkflow(workflow);
-    applyAiDraft();
+    const caseId=isGoverned(currentChange)?currentChange:"uk";
+    const fresh=initialWorkflow(caseId);
+    setWorkflow(fresh);
+    saveWorkflow(fresh);
+    applyAiDraft(caseId);
     reviewDecision="approve";
-    openCase("uk","proposal");
-    notify("UK demo case reset.");
+    openCase(caseId,"proposal");
+    notify((caseId==="es"?"Spain":"UK")+" demo case reset.");
   },
   "source-detail":sourceDetail,
   "study-detail":studyDetail,
@@ -1361,13 +1617,13 @@ document.addEventListener("submit",event=>{
       byId("workflow-error").textContent="The latest AI check failed, so approval is blocked. Re-run the AI check, reject, or request an investigation.";
       return;
     }
-    const next=structuredClone(readWorkflow(workflow));
+    const next=structuredClone(readWorkflow(currentChange,workflow));
     try {workflowStep(next,command,workflowRole,new Date().toISOString());}
     catch(error){byId("workflow-error").textContent=error.message;return;}
-    workflow=next;
+    setWorkflow(next);
     if(["approve","edit"].includes(command.action)) workflowTab="follow-up";
     if(command.action==="resume") reviewDecision="approve";
-    const saved=saveWorkflow(workflow);
+    const saved=saveWorkflow(next);
     render();
     byId("page-title").focus({preventScroll:true});
     notify(saved?"Demo workflow updated.":"Workflow updated for this tab. Browser storage is unavailable.");
@@ -1390,12 +1646,13 @@ document.addEventListener("submit",event=>{
 });
 byId("drawer").addEventListener("close",()=>{if(drawerOrigin?.isConnected) drawerOrigin.focus();drawerOrigin=null;});
 window.addEventListener("storage",event=>{
-  if(event.key!==workflowKey) return;
-  if(byId("workflow-form")?.contains(document.activeElement)) {
+  const caseId=Object.keys(governedCases).find(id=>governedCases[id].storageKey===event.key);
+  if(!caseId) return;
+  if(caseId===currentChange && byId("workflow-form")?.contains(document.activeElement)) {
     notify("Case changed in another tab. Review the latest revision before submitting.");
     return;
   }
-  workflow=readWorkflow();
+  setWorkflow(readWorkflow(caseId));
   if(!byId("drawer").open) render();
 });
 render();

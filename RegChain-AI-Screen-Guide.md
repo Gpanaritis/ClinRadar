@@ -116,12 +116,25 @@ Opening the UK regulatory section shows the **suggested edit** as a redline: the
 
 **Real or simulated:** it replays the sample in the open browser tab only. Nothing is fetched on a schedule.
 
+### 13. Spain case · early warning (fictional)
+
+![Spain early warning](screens/16-spain-early-warning.png)
+
+**Shows:** a second case, this time **before** a rule applies. A fictional Spanish information note, published on 10 Nov 2026, requires a delivery note in Spanish and a notice to the hospital pharmacy 3 business days before each delivery from 1 Mar 2027. The Overview card counts the days left (107), the shipments of the fictional trial CTP-7842-201 that are affected (6 of 10), the first preparation date (19 Feb 2027, in 97 days) and the sites without a hospital pharmacy code (2).
+
+![Spain specification edit](screens/17-spain-edit.png)
+
+The Spain case has the same steps as the UK case. The AI panel reads the note in Spanish and quotes it without translating. The shipments table shows each result and its reason, including three boundary cases. The SME decision is a redline across three sections of the Spain Country Specification (invoice statements, logistics constraints, local contacts). Approval publishes Spain v5 between scheduled updates and creates a Quality task due 19 Feb 2027.
+
+**Real or simulated:** the whole scenario is fictional (note, authority, trial, sites and people) and lives in `demo-data/spain-scenario.json`. The AI check works the same way as in the UK case, plus one extra check: every edit must target a real line of the specification. It has been tested with a stand-in AI only. The story, the numbers and a demo script are in [RegChain-AI-Spain-Scenario.md](RegChain-AI-Spain-Scenario.md).
+
 ## Part 2 · What is missing
 
 **For the demo:**
 
 - [ ] One real AI run with an API key, and a recorded result for the venue in case the internet fails.
 - [x] The SME should approve the AI's draft, not pre-written text (logic gap 1, fixed).
+- [x] A future-dated change that shows the early warning: the fictional Spain case.
 - [x] Country specifications show, section by section, whether each is current, how it is kept current, which portfolio trials it touches, and the suggested edit.
 - [ ] The Overview tiles, the Source log and the specifications' countries should match the demo portfolio (17 countries) and the four real sources, or the pitch should say they are samples.
 - [ ] Display names for batch results (the specification and the dashboard still differ; see the project plan, step 1).

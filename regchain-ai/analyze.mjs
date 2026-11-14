@@ -1,13 +1,14 @@
-// AI step for the UK IMP labeling case: Claude reads the two official
-// versions of regulation 46 and the supporting sources, and drafts the change.
-// RegChain then checks the draft itself: every quote must appear in the
-// source it cites, and the effective date must match the recorded rule.
+// AI step: Claude reads the sources for a case and drafts the change.
+// UK case: the two official versions of regulation 46 and the supporting sources.
+// Spain case (fictional): a new information note in Spanish and the current Spain Country Specification.
+// RegChain then checks the draft itself: every quote must appear in the source it cites,
+// and the effective date must match the recorded rule.
 
 import { normalise } from "./sources.mjs";
 
 export const MODEL = "claude-opus-5-5";
 
-const SYSTEM = `You support a Regulatory Affairs expert in a clinical supply team.
+const UK_SYSTEM = `You support a Regulatory Affairs expert in a clinical supply team.
 You compare two official versions of a UK regulation, with supporting official sources, and draft what changed for the company's country record.
 
 Rules:
@@ -17,7 +18,7 @@ Rules:
 - When the sources do not settle something, put it in uncertainties instead of guessing.
 - You draft; a named expert decides. Do not state that anything is approved.`;
 
-const TASK = `Draft the change for the company requirement GB/IMP_LABELING:
+const UK_TASK = `Draft the change for the company requirement GB/IMP_LABELING:
 1. status: "material" if the legal obligations changed, "cosmetic" if only wording or layout changed, "no_change" if nothing changed.
 2. summary: two or three plain sentences on what changed.
 3. effectiveDate: the date the new version applies.
@@ -28,43 +29,86 @@ const TASK = `Draft the change for the company requirement GB/IMP_LABELING:
 8. claims: between four and eight claims that support the points above, each with its quote and source id.
 9. uncertainties: what an expert still needs to confirm.`;
 
-function schemaFor(sourceIds) {
-  return {
-    type: "object",
-    additionalProperties: false,
-    required: ["status", "summary", "effectiveDate", "scope", "transition", "requirementStatement", "proposedRequirement", "claims", "uncertainties"],
-    properties: {
-      status: { type: "string", enum: ["material", "cosmetic", "no_change"] },
-      summary: { type: "string" },
-      effectiveDate: { type: "string" },
-      scope: { type: "string" },
-      transition: {
+const ES_SYSTEM = `You support a Regulatory Affairs expert in a clinical supply team.
+You read a new information note from a national medicines authority, written in Spanish, together with the company's current Country Specification for Spain, and draft the edits the specification needs.
+
+Rules:
+- Use only the sources provided. Do not rely on memory of the law.
+- Write every statement in English. Copy every quote character for character from a single source in its original language. Never translate a quote.
+- Every claim must carry one exact quote of at least eight words that proves the claim on its own, with that source's id.
+- Write dates as YYYY-MM-DD.
+- When the sources do not settle something, put it in uncertainties instead of guessing.
+- You draft; a named expert decides. Do not state that anything is approved.`;
+
+const ES_TASK = `Draft the change for the company requirement ES/IMP_SHIPPING_DOCUMENTS:
+1. status: "material" if the note changes what the company must do, "cosmetic" if it only rewords existing practice, "no_change" if nothing changes.
+2. summary: two or three plain sentences in English on what changes.
+3. effectiveDate: the date the new requirements apply.
+4. scope: which shipments the requirements apply to.
+5. transition: whether shipments can still follow the earlier procedure, and each condition for that.
+6. requirementStatement: one sentence stating the requirement as the Spain Country Specification should publish it.
+7. proposedRequirement: the operational instruction for the supply team, in two to four sentences.
+8. sectionEdits: one entry per specification line to change or add. "section" is the section id shown in square brackets in the specification. "replaces" is the exact current line it replaces, without the leading dash, or an empty string when the line is new. "text" is the new line in English.
+9. claims: between four and eight claims that support the points above, each with its quote and source id.
+10. uncertainties: what an expert still needs to confirm.`;
+
+const SPEC_SECTIONS = ["regulatory", "import", "permits", "controlled", "invoice", "ports", "logistics", "carriers", "ior", "contacts", "notes"];
+
+export const PROFILES = {
+  uk: { system: UK_SYSTEM, task: UK_TASK, sectionEdits: false },
+  es: { system: ES_SYSTEM, task: ES_TASK, sectionEdits: true },
+};
+
+function schemaFor(sourceIds, profile) {
+  const properties = {
+    status: { type: "string", enum: ["material", "cosmetic", "no_change"] },
+    summary: { type: "string" },
+    effectiveDate: { type: "string" },
+    scope: { type: "string" },
+    transition: {
+      type: "object",
+      additionalProperties: false,
+      required: ["applies", "conditions"],
+      properties: {
+        applies: { type: "boolean" },
+        conditions: { type: "array", items: { type: "string" } },
+      },
+    },
+    requirementStatement: { type: "string" },
+    proposedRequirement: { type: "string" },
+    claims: {
+      type: "array",
+      items: {
         type: "object",
         additionalProperties: false,
-        required: ["applies", "conditions"],
+        required: ["statement", "sourceId", "quote"],
         properties: {
-          applies: { type: "boolean" },
-          conditions: { type: "array", items: { type: "string" } },
+          statement: { type: "string" },
+          sourceId: { type: "string", enum: sourceIds },
+          quote: { type: "string" },
         },
       },
-      requirementStatement: { type: "string" },
-      proposedRequirement: { type: "string" },
-      claims: {
-        type: "array",
-        items: {
-          type: "object",
-          additionalProperties: false,
-          required: ["statement", "sourceId", "quote"],
-          properties: {
-            statement: { type: "string" },
-            sourceId: { type: "string", enum: sourceIds },
-            quote: { type: "string" },
-          },
-        },
-      },
-      uncertainties: { type: "array", items: { type: "string" } },
     },
+    uncertainties: { type: "array", items: { type: "string" } },
   };
+  const required = ["status", "summary", "effectiveDate", "scope", "transition", "requirementStatement", "proposedRequirement", "claims", "uncertainties"];
+  if (profile.sectionEdits) {
+    properties.sectionEdits = {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["section", "replaces", "text"],
+        properties: {
+          section: { type: "string", enum: SPEC_SECTIONS },
+          replaces: { type: "string" },
+          text: { type: "string" },
+        },
+      },
+    };
+    required.splice(7, 0, "sectionEdits");
+  }
+  return { type: "object", additionalProperties: false, required, properties };
 }
 
 function sourceBlock(source) {
@@ -73,7 +117,7 @@ function sourceBlock(source) {
     `Title: ${source.title}`,
     `Authority: ${source.authority}`,
     `Version: ${source.validFrom ?? "unknown"}${source.validUntil ? ` until ${source.validUntil}` : ""}`,
-    `URL: ${source.url}`,
+    ...(source.url ? [`URL: ${source.url}`] : []),
     "",
     source.text,
     "</source>",
@@ -85,11 +129,15 @@ async function defaultClient() {
   return new Anthropic();
 }
 
-// Calls Claude once. `client` can be passed in for tests.
-export async function draftChange(sources, { client } = {}) {
+// Calls Claude once. `client` can be passed in for tests; `profile` picks the case ("uk" or "es").
+export async function draftChange(sources, { client, profile = "uk" } = {}) {
+  const settings = PROFILES[profile];
+  if (!settings) throw new Error(`Unknown case: ${profile}`);
   const usable = sources.filter(source => source.text);
   if (!usable.some(source => source.role === "before") || !usable.some(source => source.role === "after")) {
-    throw new Error("Both versions of regulation 46 are needed. Check the internet connection and fetch the sources again.");
+    throw new Error(profile === "uk"
+      ? "Both versions of regulation 46 are needed. Check the internet connection and fetch the sources again."
+      : "The note and the current specification are both needed.");
   }
   const api = client ?? (await defaultClient());
   const response = await api.beta.messages.create({
@@ -100,10 +148,10 @@ export async function draftChange(sources, { client } = {}) {
     thinking: { type: "adaptive" },
     output_config: {
       effort: "high",
-      format: { type: "json_schema", schema: schemaFor(usable.map(source => source.id)) },
+      format: { type: "json_schema", schema: schemaFor(usable.map(source => source.id), settings) },
     },
-    system: SYSTEM,
-    messages: [{ role: "user", content: `${usable.map(sourceBlock).join("\n\n")}\n\n${TASK}` }],
+    system: settings.system,
+    messages: [{ role: "user", content: `${usable.map(sourceBlock).join("\n\n")}\n\n${settings.task}` }],
   });
   if (response.stop_reason === "refusal") throw new Error("The model declined this request.");
   if (response.stop_reason === "max_tokens") throw new Error("The model's answer was cut off. Try again.");
@@ -118,6 +166,8 @@ export async function draftChange(sources, { client } = {}) {
 }
 
 // RegChain's own checks on the draft. Nothing here trusts the model.
+// `rule` holds the recorded effective date; for the Spain case it also holds the
+// current specification lines, so every edit can be checked against a real line.
 export function verifyDraft(draft, sources, rule) {
   const byId = new Map(sources.map(source => [source.id, normalise(source.text)]));
   const claims = (Array.isArray(draft?.claims) ? draft.claims : []).map(claim => {
@@ -138,9 +188,9 @@ export function verifyDraft(draft, sources, rule) {
   const checks = [
     {
       id: "sources",
-      label: "Both official versions were read",
+      label: rule.sourcesLabel ?? "Both official versions were read",
       ok: Boolean(before?.hash && after?.hash),
-      detail: before?.hash && after?.hash ? "Regulation 46 before and after 28 April 2026" : "A version of regulation 46 is missing",
+      detail: before?.hash && after?.hash ? (rule.sourcesDetail ?? "Regulation 46 before and after 28 April 2026") : "A source is missing",
     },
     {
       id: "quotes",
@@ -161,5 +211,20 @@ export function verifyDraft(draft, sources, rule) {
       detail: `Text ${before?.hash !== after?.hash ? "changed" : "unchanged"} · AI says ${draft?.status ?? "nothing"}`,
     },
   ];
+  if (rule.sections) {
+    const edits = Array.isArray(draft?.sectionEdits) ? draft.sectionEdits : [];
+    const misplaced = edits.filter(edit => {
+      const lines = rule.sections[edit?.section];
+      if (!lines || !String(edit?.text ?? "").trim()) return true;
+      const replaces = normalise(edit?.replaces);
+      return replaces !== "" && !lines.some(line => normalise(line) === replaces);
+    });
+    checks.push({
+      id: "edits",
+      label: "Every edit targets a real line of the specification",
+      ok: edits.length > 0 && misplaced.length === 0,
+      detail: edits.length === 0 ? "No edits returned" : misplaced.length === 0 ? `${edits.length} of ${edits.length} edits match a section` : `${misplaced.length} of ${edits.length} edits name a missing section or line`,
+    });
+  }
   return { claims, checks, verified: checks.every(check => check.ok) };
 }
