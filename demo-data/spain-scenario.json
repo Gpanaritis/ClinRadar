@@ -48,6 +48,12 @@
     "depot": "Central EU depot, Belgium",
     "standardLeadBusinessDays": 5,
     "expeditedLeadBusinessDays": 2,
+    "labelSpec": {"id": "XZ417-BKL-v1", "type": "Multilingual booklet label", "languages": ["de", "es", "it", "pl", "en"]},
+    "batches": [
+      {"id": "XZ417-26A", "qp": "2027-01-12"},
+      {"id": "XZ417-26B", "qp": "2027-02-15"},
+      {"id": "XZ417-26C", "qp": null}
+    ],
     "sites": [
       {"id": "ES-01", "city": "Madrid", "hospital": "Hospital pharmacy, site ES-01", "pharmacyCode": "FH-28-0101", "plannedPatients": 12},
       {"id": "ES-02", "city": "Madrid", "hospital": "Hospital pharmacy, site ES-02", "pharmacyCode": "FH-28-0207", "plannedPatients": 10},
@@ -59,16 +65,16 @@
       {"id": "ES-08", "city": "Málaga", "hospital": "Hospital pharmacy, site ES-08", "pharmacyCode": null, "plannedPatients": 6}
     ],
     "shipments": [
-      {"id": "SHP-ES-01", "site": "ES-01", "kind": "Initial site supply", "dispatch": "2027-02-01", "delivery": "2027-02-03", "kits": 12},
-      {"id": "SHP-ES-02", "site": "ES-03", "kind": "Initial site supply", "dispatch": "2027-02-02", "delivery": "2027-02-04", "kits": 12},
-      {"id": "SHP-ES-03", "site": "ES-05", "kind": "Initial site supply", "dispatch": "2027-02-08", "delivery": "2027-02-10", "kits": 12},
-      {"id": "SHP-ES-04", "site": "ES-02", "kind": "Initial site supply", "dispatch": "2027-02-15", "delivery": "2027-02-17", "kits": 12},
-      {"id": "SHP-ES-05", "site": "ES-04", "kind": "Initial site supply, held for the site initiation visit", "dispatch": "2027-02-26", "delivery": "2027-03-09", "kits": 12},
-      {"id": "SHP-ES-06", "site": "ES-07", "kind": "Initial site supply", "dispatch": "2027-03-01", "delivery": "2027-03-03", "kits": 12},
-      {"id": "SHP-ES-07", "site": "ES-01", "kind": "Resupply forecast", "dispatch": "2027-03-04", "delivery": "2027-03-08", "kits": 6},
-      {"id": "SHP-ES-08", "site": "ES-06", "kind": "Initial site supply", "dispatch": "2027-03-08", "delivery": "2027-03-10", "kits": 12},
-      {"id": "SHP-ES-09", "site": "ES-03", "kind": "Resupply forecast", "dispatch": "2027-03-15", "delivery": "2027-03-17", "kits": 6},
-      {"id": "SHP-ES-10", "site": "ES-08", "kind": "Initial site supply", "dispatch": "2027-03-22", "delivery": "2027-03-24", "kits": 12}
+      {"id": "SHP-ES-01", "batch": "XZ417-26A", "carrier": "EU logistics partner", "site": "ES-01", "kind": "Initial site supply", "dispatch": "2027-02-01", "delivery": "2027-02-03", "kits": 12},
+      {"id": "SHP-ES-02", "batch": "XZ417-26A", "carrier": "EU logistics partner", "site": "ES-03", "kind": "Initial site supply", "dispatch": "2027-02-02", "delivery": "2027-02-04", "kits": 12},
+      {"id": "SHP-ES-03", "batch": "XZ417-26A", "carrier": "EU logistics partner", "site": "ES-05", "kind": "Initial site supply", "dispatch": "2027-02-08", "delivery": "2027-02-10", "kits": 12},
+      {"id": "SHP-ES-04", "batch": "XZ417-26A", "carrier": "EU logistics partner", "site": "ES-02", "kind": "Initial site supply", "dispatch": "2027-02-15", "delivery": "2027-02-17", "kits": 12},
+      {"id": "SHP-ES-05", "batch": "XZ417-26B", "carrier": "EU logistics partner", "site": "ES-04", "kind": "Initial site supply, held for the site initiation visit", "dispatch": "2027-02-26", "delivery": "2027-03-09", "kits": 12},
+      {"id": "SHP-ES-06", "batch": "XZ417-26B", "carrier": "EU logistics partner", "site": "ES-07", "kind": "Initial site supply", "dispatch": "2027-03-01", "delivery": "2027-03-03", "kits": 12},
+      {"id": "SHP-ES-07", "batch": "XZ417-26B", "carrier": "EU logistics partner", "site": "ES-01", "kind": "Resupply forecast", "dispatch": "2027-03-04", "delivery": "2027-03-08", "kits": 6},
+      {"id": "SHP-ES-08", "batch": "XZ417-26B", "carrier": "EU logistics partner", "site": "ES-06", "kind": "Initial site supply", "dispatch": "2027-03-08", "delivery": "2027-03-10", "kits": 12},
+      {"id": "SHP-ES-09", "batch": "XZ417-26C", "carrier": "EU logistics partner", "site": "ES-03", "kind": "Resupply forecast", "dispatch": "2027-03-15", "delivery": "2027-03-17", "kits": 6},
+      {"id": "SHP-ES-10", "batch": "XZ417-26C", "carrier": "EU logistics partner", "site": "ES-08", "kind": "Initial site supply", "dispatch": "2027-03-22", "delivery": "2027-03-24", "kits": 12}
     ]
   },
   "specification": {
