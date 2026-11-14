@@ -2,7 +2,7 @@
 
 Status on 14 November 2026. The screens were captured from `main` with the demo portfolio loaded. The AI panel shows the test run from `scripts/check-ai-step.mjs`, which uses a stand-in instead of Claude and is labelled as such on screen; no real AI run has been done yet.
 
-**In short:** the dashboard tells the story end to end, from one regulation change to the trials, batches and shipments it affects, then the expert's decision, the updated country record and the Quality task. Three things weaken it today: the expert approves pre-written text rather than the AI's draft, the quote check proves words exist but not that they support the claim, and the system only watches four known pages, so it would miss a brand-new regulation or guidance page.
+**In short:** the dashboard tells the story end to end, from one regulation change to the trials, batches and shipments it affects, then the expert's decision, the updated country record and the Quality task. Two things weaken it today: the quote check proves words exist but not that they support the claim, and the system only watches four known pages, so it would miss a brand-new regulation or guidance page. (A third, the expert approving pre-written text instead of the AI's draft, is now fixed; see logic gap 1.)
 
 ## Part 1 · The screens
 
@@ -60,7 +60,7 @@ Status on 14 November 2026. The screens were captured from `main` with the demo 
 
 **Shows:** the current company record next to the proposed one, the scope and conditions, confidence by dimension, and the decision form for the Regulatory SME (approve, edit and approve, reject, request investigation, defer). Here approval is blocked because the AI check failed.
 
-**Real or simulated:** the proposed text is written into the page. It is not the AI's draft (see logic gap 1). Roles are picked from a dropdown.
+**Real or simulated:** in this capture the proposal is example text written into the page, because the only AI result failed its checks. A passing AI check now replaces it with the AI's draft as a new revision, and a note above the conditions says where the text came from. Roles are picked from a dropdown.
 
 ### 7. Quality follow-up
 
@@ -113,7 +113,7 @@ Status on 14 November 2026. The screens were captured from `main` with the demo 
 **For the demo:**
 
 - [ ] One real AI run with an API key, and a recorded result for the venue in case the internet fails.
-- [ ] The SME should approve the AI's draft, not pre-written text (logic gap 1).
+- [x] The SME should approve the AI's draft, not pre-written text (logic gap 1, fixed).
 - [ ] The Overview tiles, the Source log and Country requirements should match the demo portfolio and the four real sources, or the pitch should say they are samples.
 - [ ] Display names for batch results (the specification and the dashboard still differ; see the project plan, step 1).
 
@@ -131,7 +131,7 @@ Ordered by how much they matter for the pitch.
 
 | # | Gap | Example | Fix |
 | --- | --- | --- | --- |
-| 1 | **The SME approves pre-written text, not the AI draft.** The AI check only blocks; the proposal and the published version come from text written into the page. | Screen 6 shows the proposal as fixed text, whatever the AI drafted. | When all checks pass, the AI's proposed requirement becomes the proposal, and the SME can edit it before approving. |
+| 1 | **Fixed: the SME now decides on the AI draft.** Before, the AI check could only block, and the published version came from text written into the page. | Screen 6 shows the old example text, because the AI result in that capture failed. | When all checks pass, the AI's requirement statement, scope, conditions and instruction become a new proposal revision, logged as "AI draft adopted". An SME edit is never overwritten, a case past review is never changed, and a failed check leaves the proposal as it is and blocks approval. |
 | 2 | **The quote check proves the words exist, not that they support the claim.** | In screen 2, a real but unrelated phrase from regulation 46 is marked "Found in source" for the claim "The new regulation 46 sets the labelling rules". | A second check (a separate AI call or a rule) that the quote supports the claim; show the surrounding text; the SME reads each quote. |
 | 3 | **The date check is circular.** It compares the AI's date with a date we already recorded. A new change has no recorded date. | The check passes because both say 28 April 2026. | Compare with the official "in force from" date in the legislation data, which the server already fetches (2026-04-28 for the new regulation 46). |
 | 4 | **The batch rule is hand-coded and uses the recorded cutoff, not the AI's findings.** Each new regulation would need new code. | The cutoff is fixed in the page as 2026-04-28. | Store rules as data the AI proposes and the SME approves: jurisdiction, date field, cutoff, conditions. |
