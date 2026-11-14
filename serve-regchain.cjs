@@ -13,26 +13,51 @@ const origin = "http://" + host + ":" + port;
 const allowedOrigins = [origin, "http://localhost:" + port];
 const identity = "regchain-dashboard";
 const dashboardHtml = readFileSync(join(__dirname, "RegChain-AI-Dashboard.html"), "utf8");
-const portfolioFile = join(__dirname, "demo-data", "uk-labelling-portfolio.json");
-
-// The page gets the fictional demo portfolio as JSON inside a data script tag.
-// The file is read on every request, so a rebuilt portfolio shows on reload.
+// Fictional demo data the page gets as JSON inside data script tags:
+// the trial portfolio for the UK case and the Spain scenario (note, trial and specification).
+// The files are read on every request, so rebuilt data shows on reload.
+const dataFiles = [
+  { id: "portfolio-data", file: join(__dirname, "demo-data", "uk-labelling-portfolio.json"), name: "Demo portfolio" },
+  { id: "spain-data", file: join(__dirname, "demo-data", "spain-scenario.json"), name: "Spain scenario" },
+];
 function dashboardPage() {
   let page = dashboardHtml;
-  try {
-    const data = readFileSync(portfolioFile, "utf8");
-    JSON.parse(data);
-    const tag = '<script id="portfolio-data" type="application/json">' + data.replace(/</g, "\\u003c") + "</script>\n";
-    page = page.replace('<script id="dashboard-data">', tag + '<script id="dashboard-data">');
-  } catch (error) {
-    if (error.code !== "ENOENT") console.error("Demo portfolio not loaded: " + error.message);
+  for (const { id, file, name } of dataFiles) {
+    try {
+      const data = readFileSync(file, "utf8");
+      JSON.parse(data);
+      const tag = '<script id="' + id + '" type="application/json">' + data.replace(/</g, "\\u003c") + "</script>\n";
+      page = page.replace('<script id="dashboard-data">', tag + '<script id="dashboard-data">');
+    } catch (error) {
+      if (error.code !== "ENOENT") console.error(name + " not loaded: " + error.message);
+    }
   }
   return Buffer.from(page);
 }
 const wantBrowser = process.argv.includes("--open");
 
-// The recorded company rule the AI draft is checked against (mirrors ukCase in the dashboard).
+// The recorded company rule the UK AI draft is checked against (mirrors ukCase in the dashboard).
 const RULE = { requirement: "GB/IMP_LABELING", effective: "2026-04-28" };
+
+// Each case the AI can check: where its sources come from, its recorded rule and where its result is kept.
+const CASES = {
+  uk: {
+    file: "analysis-latest.json",
+    sources: async () => (await loadModule("sources.mjs")).loadSources(__dirname, { refresh: true }),
+    rule: async () => RULE,
+    diff: true,
+  },
+  es: {
+    file: "analysis-es-latest.json",
+    sources: async () => (await loadModule("spain.mjs")).loadSpainSources(__dirname),
+    rule: async () => (await loadModule("spain.mjs")).spainRule(__dirname),
+    diff: false,
+  },
+};
+function caseFrom(url) {
+  const id = new URL(url, origin).searchParams.get("case") || "uk";
+  return Object.hasOwn(CASES, id) ? id : null;
+}
 
 // An Anthropic API key can live in a local .env file, which git ignores.
 const envFile = join(__dirname, ".env");
@@ -79,43 +104,51 @@ async function sdkInstalled() {
   }
 }
 
-async function latestAnalysis() {
+async function latestAnalysis(caseId) {
   const { cacheDir } = await loadModule("sources.mjs");
   try {
-    return JSON.parse(await readFile(join(cacheDir(__dirname), "analysis-latest.json"), "utf8"));
+    return JSON.parse(await readFile(join(cacheDir(__dirname), CASES[caseId].file), "utf8"));
   } catch {
     return null;
   }
 }
 
-async function runAnalysis() {
-  const { loadSources, diffLines, cacheDir } = await loadModule("sources.mjs");
+async function runAnalysis(caseId) {
+  const settings = CASES[caseId];
+  const { diffLines, cacheDir } = await loadModule("sources.mjs");
   const { draftChange, verifyDraft } = await loadModule("analyze.mjs");
-  const sources = await loadSources(__dirname, { refresh: true });
+  const sources = await settings.sources();
+  const rule = await settings.rule();
   const before = sources.find(source => source.role === "before");
   const after = sources.find(source => source.role === "after");
-  const diff = diffLines(before.text || "", after.text || "");
-  const { draft, model, usage } = await draftChange(sources);
-  const verification = verifyDraft(draft, sources, RULE);
+  const diff = settings.diff ? diffLines(before.text || "", after.text || "") : null;
+  const { draft, model, usage } = await draftChange(sources, { profile: caseId });
+  const verification = verifyDraft(draft, sources, rule);
   const result = {
     at: new Date().toISOString(),
+    case: caseId,
     model,
-    rule: RULE,
+    rule: { requirement: rule.requirement, effective: rule.effective },
     sources: sources.map(({ text, ...meta }) => ({ ...meta, characters: text.length })),
-    diff: { added: diff.added, removed: diff.removed, lines: diff.lines },
+    diff: diff ? { added: diff.added, removed: diff.removed, lines: diff.lines } : null,
     draft,
     verification,
     usage
   };
   const dir = cacheDir(__dirname);
   await mkdir(dir, { recursive: true });
-  await writeFile(join(dir, "analysis-latest.json"), JSON.stringify(result, null, 2));
+  await writeFile(join(dir, settings.file), JSON.stringify(result, null, 2));
   return result;
 }
 
 async function handleApi(request, response, path) {
+  const caseId = caseFrom(request.url);
+  if (!caseId) {
+    sendJson(response, 400, { error: "Unknown case." });
+    return;
+  }
   if (path === "/api/ai/status" && request.method === "GET") {
-    const recorded = await latestAnalysis();
+    const recorded = await latestAnalysis(caseId);
     sendJson(response, 200, {
       model: (await loadModule("analyze.mjs")).MODEL,
       keySet: Boolean(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN),
@@ -125,7 +158,7 @@ async function handleApi(request, response, path) {
     return;
   }
   if (path === "/api/ai/analysis" && request.method === "GET") {
-    const recorded = await latestAnalysis();
+    const recorded = await latestAnalysis(caseId);
     if (recorded) sendJson(response, 200, recorded);
     else sendJson(response, 404, { error: "No AI check has been run on this computer yet." });
     return;
@@ -146,7 +179,7 @@ async function handleApi(request, response, path) {
     }
     analysisRunning = true;
     try {
-      sendJson(response, 200, await runAnalysis());
+      sendJson(response, 200, await runAnalysis(caseId));
     } catch (error) {
       const status = error.status === 401 ? 401 : error.status ? 502 : 500;
       const message = error.status === 401
