@@ -27,6 +27,9 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 @media(max-width:560px){.content,.top{padding-left:12px;padding-right:12px}.content{padding-top:17px}.top{min-height:54px}.tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.tile{padding:9px}.card-head{padding:11px}.card-foot{padding:9px 11px}.resource-grid{grid-template-columns:1fr}.study-tabs{max-width:100%;flex-wrap:wrap}}
 .region-list{display:grid}.region{border-top:1px solid #edf1f7}.region summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:12px 14px}.region summary::-webkit-details-marker{display:none}.region summary:hover{background:#f5f9ff}.region summary>svg:first-child{width:13px;color:#496795}.region[open] summary>svg:first-child{transform:rotate(90deg)}.region-label{min-width:0;flex:1}.region-label strong,.region-label small{display:block}.region-label small{color:var(--muted);font-size:11px;margin-top:2px}.region-child{display:flex;justify-content:space-between;gap:9px;padding:9px 12px 9px 39px;background:#f7faff;border-top:1px solid #eef2f9;align-items:center}.region-child .badge{flex:none}.country-control{border:0;color:#174485;background:none;padding:0;text-align:left;font-weight:700}.country-control:hover{text-decoration:underline}.country-row{display:flex;gap:10px;align-items:center;padding:11px 13px;width:100%;text-align:left;border:0;border-top:1px solid #edf1f7;background:white;color:var(--ink)}.country-row:hover,.country-row[aria-pressed=true]{background:#edf4ff}.country-row>span:first-child{flex:1}.country-row svg{width:13px;color:#496795}.library-layout{display:grid;grid-template-columns:minmax(230px,.62fr) minmax(0,1.38fr);gap:14px;align-items:start}.library-layout .card-head input{width:100%}.section-label{font-size:12px;color:var(--muted);font-weight:750;padding:8px 13px;background:#f5f8fc;border-top:1px solid var(--line)}.req-list{padding:0 14px 4px}.req-row{width:100%;display:flex;justify-content:space-between;gap:12px;align-items:center;background:white;border:0;border-top:1px solid #edf1f7;padding:11px 0;color:var(--ink);text-align:left}.req-row:hover strong{color:var(--blue);text-decoration:underline}.req-row svg{color:#5b76a0;width:14px}.req-row>span:first-child{flex:1}.req-row strong{display:block}.settings{padding:0 15px 15px}.settings form{display:grid;gap:13px}.settings .field input{width:96px}.settings label.toggle{display:flex;gap:8px;align-items:center;font-weight:700}.settings .inline-note{margin-top:14px;border:0;border-radius:8px;padding:9px}.settings .actions{margin-top:4px}.small-action{font-size:12px;font-weight:700}.nowrap-badge{text-align:right}
 @media(max-width:760px){.library-layout{grid-template-columns:minmax(0,1fr)}}
+.case-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr);gap:15px;align-items:start}.case-stack{display:grid;gap:15px;min-width:0}.case-pad{padding:0 15px 15px}.case-pad p{color:var(--muted);margin:5px 0 10px}.case-pad .facts{margin-bottom:8px}.workflow-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:15px}.workflow-steps button{padding:11px 12px;background:white;color:var(--ink);border:0;text-align:left;font-weight:700}.workflow-steps button+button{border-left:1px solid var(--line)}.workflow-steps button[aria-pressed=true]{background:#edf4ff;color:var(--deep);box-shadow:inset 0 -2px var(--blue)}.workflow-steps .sub{margin-top:3px}.compare{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.compare>div{padding:13px 15px;min-width:0}.compare>div+div{border-left:1px solid var(--line);background:#f5f9ff}.compare h3,.case-pad h3{font-size:13px}.compare p{margin-top:5px;font-size:13px;overflow-wrap:anywhere}.review-form{display:grid;gap:11px}.review-form textarea{font:inherit;line-height:1.4;resize:vertical;padding:8px;border:1px solid #d5e2f1;border-radius:7px;color:var(--ink);width:100%;min-height:70px}.review-form textarea:focus-visible{outline:3px solid #3b72ef;outline-offset:3px}.form-feedback{font-size:12px;color:#9f2c42}.form-feedback:empty{display:none}.case-list{list-style:none;padding:0;margin:8px 0 0}.case-list li{border-top:1px solid var(--line);padding:8px 0;overflow-wrap:anywhere}.case-list small{color:var(--muted);display:block}.evidence-item{padding:10px 0;border-top:1px solid var(--line)}.evidence-item p{font-size:12px;margin:5px 0}.evidence-item h3{margin-top:5px}.case-title{overflow-wrap:anywhere}
+@media(max-width:900px){.case-layout{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:480px){.compare{grid-template-columns:1fr}.compare>div+div{border-left:0;border-top:1px solid var(--line)}.workflow-steps button{padding:8px 6px;font-size:12px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -89,6 +92,158 @@ const requirements = [
  {id:"us-import",scope:"United States",country:"us",topic:topics[1],title:"Importing investigational new drugs",basis:"FDA guidance page",when:"See linked FDA source",status:"Example baseline",summary:"FDA describes the IND, U.S. consignee and labeling evidence for imports under an active IND. Check applicability and exemptions against the governing provisions.",locator:"FDA, Importing Investigational New Drugs",url:"https://www.fda.gov/drugs/human-drug-imports/importing-investigational-new-drugs"}
 ];
 </script>
+<script id="workflow-model">
+"use strict";
+const ukCase = {
+ id:"RC-UK-001", requirement:"GB/IMP_LABELING", effective:"2026-04-28", snapshot:"PORTFOLIO-01",
+ baseline:"Use the pre-amendment Part 7 reference for the legacy cohort.",
+ policy:"Apply amended Part 7 from 28 April 2026, with the Schedule 14 paragraph 6 transition where its conditions are met.",
+ initialText:"For each applicable UK IMP batch, record the finished-IMP QP date, trial cohort, intended use and approved label reference. Route missing dates, cutoff-day batches and unresolved variations to Regulatory Affairs.",
+ evidence:[
+  {id:"EV-01",source:"statute",tier:1,kind:"Binding instrument",locator:"Regulation 32 and Schedule 14 paragraph 6",excerpt:"labelled in accordance with regulation 46 of the old rules"},
+  {id:"EV-02",source:"transition",tier:2,kind:"Official guidance",locator:"Transition for labeling of IMPs",excerpt:"the date of QP batch certification of the finished IMP"}
+ ],
+ conditions:[
+  "UK trial and investigational medicinal product in scope",
+  "Legacy pathway requires a pre-cutoff finished-IMP QP date, old-rules trial cohort, old-rules labeling and intended trial use",
+  "Confirm any applicable exemption or approved variation. Escalate exact cutoff-day cases in this demo."
+ ]
+};
+const demoBatches = [
+ {id:"A-101",study:"STUDY-001",scope:"UK",qp:"2026-04-20",label:"Legacy",oldRules:true,intended:true,legacyEvidence:true},
+ {id:"B-102",study:"STUDY-003",scope:"UK",qp:"2026-05-05",made:"2026-04-20",label:"Legacy"},
+ {id:"C-103",study:"STUDY-003",scope:"UK",qp:"2026-05-05",label:"Updated"},
+ {id:"D-104",study:"STUDY-001",scope:"UK",qp:null,label:"Legacy"},
+ {id:"E-105",study:"STUDY-002",scope:"DE",qp:"2026-05-05",label:"Legacy"},
+ {id:"F-106",study:"STUDY-003",scope:"UK",qp:"2026-04-28",label:"Legacy"}
+];
+function batchFinding(batch) {
+ if(batch.scope!=="UK") return ["Out of scope","Germany-only study and batch."];
+ if(!batch.qp) return ["Insufficient information","Finished-IMP QP certification date is missing."];
+ if(batch.qp===ukCase.effective) return ["Needs SME assessment","QP certification is on the cutoff date."];
+ if(batch.qp<ukCase.effective) return batch.oldRules&&batch.intended&&batch.legacyEvidence
+  ? ["Potential transition eligibility","Pre-cutoff QP, old-rules cohort, intended use and legacy labeling evidence are present."]
+  : ["Insufficient information","Confirm the old-rules trial, intended use and labeling evidence."];
+ if(batch.label==="Legacy") return ["Labeling review required","Post-cutoff QP certification and a legacy label reference."];
+ return ["Verify specification","Post-cutoff QP certification. Check the approved specification and applicable conditions."];
+}
+const assessedBatches = demoBatches.map(batch=>{
+ const [status,reason]=batchFinding(batch);
+ return {...batch,status,reason,evidenceIds:batch.scope==="UK"?["EV-01","EV-02"]:["EV-01"]};
+});
+const demoShipments = [
+ {id:"SHP-01",batch:"B-102",destination:"UK",date:"2026-11-22",partner:"Demo labeling vendor",leadDays:5},
+ {id:"SHP-02",batch:"D-104",destination:"UK",date:"2026-11-25",partner:"Demo UK depot",leadDays:5},
+ {id:"SHP-03",batch:"E-105",destination:"Germany",date:"2026-11-23",partner:"Demo EU depot",leadDays:5}
+];
+function shipmentFindings() {
+ return demoShipments.map(shipment=>{
+  const batch=assessedBatches.find(item=>item.id===shipment.batch);
+  const due=Date.parse(shipment.date)-shipment.leadDays*86400000;
+  const status=batch.status==="Out of scope"?"Out of scope":batch.status==="Insufficient information"?"Insufficient information":"Potentially affected";
+  return {...shipment,status,preparationDate:new Date(due).toISOString().slice(0,10),reason:batch.reason};
+ });
+}
+const workflowRoles = {viewer:"Clinical Supply viewer",reviewer:"Regulatory SME",owner:"Quality action owner",verifier:"Quality verifier"};
+const workflowKey = "regchain-governed-uk-workflow-v1";
+function initialWorkflow() {
+ return {schema:1,stage:"review",revision:1,draft:ukCase.initialText,decision:null,publication:null,task:null,events:[{
+  eventId:"RC-UK-001-01",type:"case.prepared",actor:"Historical replay",at:"2026-11-14T09:42:00Z",
+  revision:1,detail:"Source evidence compared and fictional portfolio assessment prepared."
+ }]};
+}
+function readWorkflow(fallback=initialWorkflow()) {
+ try {
+  const raw=localStorage.getItem(workflowKey);
+  if(!raw) return fallback;
+  const saved=JSON.parse(raw);
+  if(saved?.schema===1 && Array.isArray(saved.events) && Number.isInteger(saved.revision)) return saved;
+ } catch {}
+ return fallback;
+}
+function saveWorkflow(state) {
+ try {localStorage.setItem(workflowKey,JSON.stringify(state));return true;}
+ catch {return false;}
+}
+function appendWorkflowEvent(state,type,role,now,detail) {
+ const eventId=ukCase.id+"-"+String(state.events.length+1).padStart(2,"0");
+ state.events.push({eventId,type,actor:workflowRoles[role]??(role==="scheduler"?"Demo scheduler":"Demo publisher"),at:now,revision:state.revision,detail});
+}
+function workflowStep(state,command,role,now) {
+ const {action,revision}=command;
+ const reason=String(command.reason??"").trim();
+ if(revision!==state.revision) throw Error("This proposal revision changed. Review the latest version.");
+ if(["approve","edit","reject","investigate","defer","resume"].includes(action)) {
+  if(role!=="reviewer") throw Error("Select the Regulatory SME demo role to record a review decision.");
+  if(action==="resume"){
+   if(!["investigating","deferred"].includes(state.stage)) throw Error("There is no held proposal to resume.");
+   if(!reason) throw Error("Record what changed or why review should resume.");
+   state.revision++;
+   state.stage="review";
+   state.decision=null;
+   appendWorkflowEvent(state,"proposal.review_resumed",role,now,reason);
+   return;
+  }
+  if(state.stage!=="review") throw Error("This revision is no longer awaiting a decision.");
+  if(!reason) throw Error("Enter a decision rationale.");
+  const instruction=String(command.instruction??"").trim();
+  if(action==="edit") {
+   if(!instruction||instruction===state.draft) throw Error("Edit the operational instruction before choosing Edit & approve.");
+   state.revision++;
+   state.draft=instruction;
+   appendWorkflowEvent(state,"proposal.edited",role,now,instruction);
+  }
+  const reviewOn=command.reviewOn;
+  if(action==="defer" && (!/^\d{4}-\d{2}-\d{2}$/.test(reviewOn??"") || reviewOn<=(command.today??now.slice(0,10)))) throw Error("Choose a future return-to-review date.");
+  if(action==="approve" && instruction!==state.draft) throw Error("Use Edit & approve to publish a modified instruction.");
+  state.decision={action,rationale:reason,actor:workflowRoles[role],time:now,revision:state.revision,reviewOn:action==="defer"?reviewOn:null};
+  appendWorkflowEvent(state,"proposal."+({approve:"approved",edit:"approved",reject:"rejected",investigate:"investigation_requested",defer:"deferred"}[action]),role,now,reason+(action==="defer"?" · Return "+reviewOn:""));
+  if(action==="reject" || action==="investigate" || action==="defer") {
+   state.stage={reject:"rejected",investigate:"investigating",defer:"deferred"}[action];
+   return;
+  }
+  state.stage="published";
+  state.publication={version:2,previousVersion:1,revision:state.revision,at:now,effective:ukCase.effective,policy:ukCase.policy,instruction:state.draft,evidenceIds:ukCase.evidence.map(item=>item.id)};
+  appendWorkflowEvent(state,"country_record.published","publisher",now,"GB/IMP_LABELING v2 · Receipt LOCAL-REC-02");
+  const nextReview=shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").map(shipment=>shipment.preparationDate).sort()[0];
+  state.task={id:"QMS-DEMO-001",owner:workflowRoles.owner,status:"assigned",evidence:null,assignedAt:now,dueOn:nextReview,
+   version:2,revision:state.revision,studyIds:["STUDY-001","STUDY-003"],
+   batchIds:assessedBatches.filter(batch=>batch.scope==="UK").map(batch=>batch.id),
+   shipmentIds:shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").map(shipment=>shipment.id)};
+  appendWorkflowEvent(state,"quality_task.assigned","publisher",now,"Mock Quality task assigned for "+state.task.studyIds.join(", ")+".");
+  return;
+ }
+ const task=state.task;
+ if(!task || state.stage!=="published") throw Error("A published country record and an open Quality task are required.");
+ if(action==="ack" && role==="owner" && task.status==="assigned") {
+  task.status="acknowledged";
+  appendWorkflowEvent(state,"quality_task.acknowledged",role,now,"Owner acknowledged receipt. Implementation is pending.");
+  return;
+ }
+ if(action==="implement" && role==="owner" && task.status==="acknowledged") {
+  if(!reason) throw Error("Enter the mock implementation evidence reference.");
+  task.evidence={reference:reason,at:now,submittedBy:workflowRoles[role]};
+  task.status="submitted";
+  appendWorkflowEvent(state,"quality_task.evidence_submitted",role,now,reason);
+  return;
+ }
+ if(action==="return" && role==="verifier" && task.status==="submitted") {
+  if(!reason) throw Error("Record why the evidence needs revision.");
+  task.status="acknowledged";
+  appendWorkflowEvent(state,"quality_task.evidence_returned",role,now,reason);
+  return;
+ }
+ if(action==="verify" && role==="verifier" && task.status==="submitted" && task.evidence) {
+  if(!reason) throw Error("Enter the basis for verifying the evidence.");
+  task.status="verified";
+  appendWorkflowEvent(state,"quality_task.verified",role,now,reason);
+  state.stage="closed";
+  appendWorkflowEvent(state,"case.closed","publisher",now,"Local publication reconciled and mock Quality evidence verified.");
+  return;
+ }
+ throw Error("This action is unavailable for the selected role and task status.");
+}
+</script>
 <script id="dashboard-ui">
 "use strict";
 const icons = {
@@ -107,9 +262,10 @@ const icons = {
   alert:'<path d="M8 2.5 14 13H2ZM8 6v3m0 1.8h.01"/>',
   external:'<path d="M9 3h4v4m0-4L7 9m0-5H3v9h9V9"/>',
   countries:'<path d="M3 14V2.5m0 1c2-1.5 3.3-.5 5 0 1.8.5 3 .7 5-1v7c-2 1.7-3.2 1.5-5 1-1.7-.5-3-1.5-5 0"/>',
-  schedule:'<rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/><path d="M5.5 2.5v3m5-3v3M2.5 7h11M6 10.5h3.5"/>'
+  schedule:'<rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/><path d="M5.5 2.5v3m5-3v3M2.5 7h11M6 10.5h3.5"/>',
+  review:'<path d="M5 2.5h6l2 2v9H3v-11h2zm.5 6 1.6 1.6 3.5-3.5"/>'
 };
-const navItems = {overview:"Overview",countries:"Country requirements",changes:"Detected changes",studies:"Study impact",schedule:"Monitoring schedule",sources:"Source log",research:"Data & use cases"};
+const navItems = {overview:"Overview",countries:"Country requirements",changes:"Detected changes",studies:"Study impact",review:"Review & follow-up",schedule:"Monitoring schedule",sources:"Source log",research:"Data & use cases"};
 const byId = id => document.getElementById(id);
 const esc = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const icon = name => '<svg viewBox="0 0 16 16" aria-hidden="true">'+icons[name]+'</svg>';
@@ -123,6 +279,9 @@ let studyView = "portfolio";
 let sourceFilter = "all";
 let sourceSearch = "";
 let currentCountry = "uk";
+let workflow = readWorkflow();
+let workflowRole = "viewer";
+let workflowTab = "proposal";
 let countrySearch = "";
 let countryTopic = "all";
 let countryScope = "all";
@@ -137,7 +296,14 @@ let drawerOrigin = null;
 const selectedChange = () => changes.find(change=>change.id===currentChange);
 const filteredStudies = () => studyView === "portfolio" ? studies.filter(study=>study.changes.includes(currentChange)) : publicStudies.filter(study=>study.countries.includes(selectedChange().scope));
 const retryCount = sources.filter(source=>source.status==="Retry needed").length;
-const currentOpenCountries = countries.filter(country=>country.changes?.length);
+const ukOpen = () => !["closed","rejected"].includes(workflow.stage);
+const openChanges = () => changes.filter(change=>change.id!=="uk"||ukOpen());
+const openChangeIds = country => (country.changes??[]).filter(id=>id!=="uk"||ukOpen());
+const openCountries = () => countries.filter(country=>openChangeIds(country).length);
+function caseStatus() {
+  return {review:["SME review","amber"],investigating:["Investigation requested","amber"],deferred:["Deferred","amber"],
+    rejected:["Rejected",""],published:["Published · follow-up open","blue"],closed:["Closed · mock evidence verified","green"]}[workflow.stage];
+}
 
 function readSchedule() {
   const fallback={enabled:false,days:1,nextAt:null,lastAt:null,lastReason:null,runCount:1};
@@ -155,7 +321,7 @@ function storeSchedule() {
   return true;
 }
 function cadence(days) {return days===1?"Every day":"Every "+days+" days";}
-function scheduleDate(value) {return value ? athens.format(value)+" Athens time" : "—";}
+function scheduleDate(value) {return value ? athens.format(new Date(value))+" Athens time" : "—";}
 function runStatus() {
   const next=scheduleState.enabled?scheduleDate(scheduleState.nextAt):"Paused";
   const last=scheduleState.lastAt?scheduleDate(scheduleState.lastAt)+" · "+(scheduleState.lastReason==="scheduled"?"Scheduled replay":"Manual replay"):"Historical sample · "+replayDate;
@@ -179,12 +345,13 @@ function updateRun() {
   }
 }
 function overview() {
+  if(!openChanges().some(change=>change.id===currentChange)) selectChange(openChanges()[0].id);
   return heading("Regulatory monitor","Track open changes by region, then review the country requirements and affected studies.",'<div class="actions">'+trigger("Monitoring schedule","nav","schedule","","schedule")+'<button id="replay" class="btn primary" type="button" data-act="replay">'+icon("retry")+'Replay checks</button></div>')+
     '<div class="runbar"><div class="runbar-left">'+icon("clock")+'<strong>Replay '+String(scheduleState.runCount).padStart(2,"0")+'</strong><span class="separator">·</span><span>'+ (scheduleState.lastAt?"Last replay "+scheduleDate(scheduleState.lastAt):"Historical sample · "+replayDate) +'</span></div><div class="actions">'+badge("Completed with 1 retry needed","amber")+badge(scheduleState.enabled?cadence(scheduleState.days)+" · demo":"Schedule paused",scheduleState.enabled?"blue":"")+'</div></div>'+
     '<div class="tiles" aria-label="Replay summary">'+
-      tile("Countries with open changes",currentOpenCountries.length,"Plus 1 shared EU update","countries","regions")+
-      tile("Open changes",changes.length,"2 UK or GB · 1 shared EU","changes","changes")+
-      tile("Studies to review",studies.filter(study=>study.status==="Batch review").length,"UK labeling · fictional portfolio","studies","studies")+
+      tile("Countries with open changes",openCountries().length,"Plus 1 shared EU update","countries","regions")+
+      tile("Open changes",openChanges().length,(ukOpen()?"2 UK or GB":"1 GB")+" · 1 shared EU","changes","changes")+
+      tile("Studies to review",ukOpen()?studies.filter(study=>study.status==="Batch review").length:0,"UK labeling · fictional portfolio","studies","studies")+
       tile("Checks to retry",retryCount,"Coverage gap in Great Britain","alert","retry-filter")+
     '</div><div class="layout">'+regionCard()+changeCard(true)+'</div><div class="space" id="study-card">'+studyCard(true)+'</div>';
 }
@@ -193,10 +360,10 @@ function tile(title,value,hint,symbol,target) {
 }
 function regionCard() {
   const content=regions.map(region=>{
-    const local=currentOpenCountries.filter(country=>country.region===region);
+    const local=openCountries().filter(country=>country.region===region);
     const shared=region==="Europe"?changes.filter(change=>change.scope==="EU"):[];
     const summary=local.length ? local.length+(local.length===1?" country":" countries")+" with open changes" : shared.length ? "Shared updates" : "Outside replay coverage";
-    const countryLinks=local.map(country=>'<div class="region-child"><button type="button" class="country-control" data-act="country-page" data-value="'+country.id+'">'+country.name+'<small class="sub">UK and Great Britain scopes</small></button>'+badge(country.changes.length+" open changes","amber")+'</div>').join("");
+    const countryLinks=local.map(country=>{const count=openChangeIds(country).length;return '<div class="region-child"><button type="button" class="country-control" data-act="country-page" data-value="'+country.id+'">'+country.name+'<small class="sub">'+(ukOpen()?"UK and Great Britain scopes":"Great Britain scope")+'</small></button>'+badge(count===1?"1 open change":count+" open changes","amber")+'</div>';}).join("");
     const sharedLinks=shared.map(change=>'<div class="region-child"><button type="button" class="country-control" data-act="change-detail" data-value="'+change.id+'">European Union<small class="sub">'+change.title+'</small></button>'+badge("Shared update","blue")+'</div>').join("");
     return '<details class="region" data-region="'+region+'"'+(expandedRegions.has(region)?" open":"")+'><summary>'+icon("chevron")+'<span class="region-label"><strong>'+region+'</strong><small>'+summary+'</small></span></summary>'+
       (countryLinks+sharedLinks || '<div class="region-child"><small>This replay contains no checks for this region.</small></div>')+'</details>';
@@ -204,7 +371,16 @@ function regionCard() {
   return '<section id="regions" class="card" aria-labelledby="regions-title"><div class="card-head"><div><h2 id="regions-title" tabindex="-1">Changes by region</h2><p>Countries with open changes in the replay</p></div>'+quiet("Open country library","countries")+'</div><div class="region-list">'+content+'</div></section>';
 }
 const countryById = id => countries.find(country=>country.id===id);
-const recordsFor = country => requirements.filter(record=>record.country===country.id || (record.shared && country.shared));
+function publishedRecord(record) {
+  if(record.id!=="uk-label") return record;
+  const current=workflow.publication;
+  return {...record,title:current?record.title:"UK IMP labeling reference",
+    status:current?"Published country record · v2":"Seeded baseline · v1",
+    when:current?"Effective 28 Apr 2026":"Legacy cohort reference",
+    ...(current?{}:{source:null,basis:"Earlier UK regulation",locator:"Pre-amendment Part 7, regulation 46",url:"https://www.legislation.gov.uk/cy/uksi/2004/1031/body/2025-07-23"}),
+    summary:current?current.policy+" "+current.instruction:ukCase.baseline};
+}
+const recordsFor = country => requirements.filter(record=>record.country===country.id || (record.shared && country.shared)).map(publishedRecord);
 function countryList() {
   const query=countrySearch.trim().toLowerCase();
   const groups=regions.map(region=>{
@@ -212,7 +388,7 @@ function countryList() {
     if (!matches.length) return "";
     return '<div class="section-label">'+region+'</div>'+matches.map(country=>{
       const count=recordsFor(country).length;
-      const status=country.changes?"Open changes":count?"Sample coverage":"Not assessed";
+      const status=openChangeIds(country).length?"Open changes":count?"Sample coverage":"Not assessed";
       return '<button type="button" class="country-row" data-act="pick-country" data-value="'+country.id+'" aria-pressed="'+(currentCountry===country.id)+'"><span><strong>'+country.name+'</strong><small class="sub">'+status+'</small></span>'+icon("chevron")+'</button>';
     }).join("");
   }).join("");
@@ -227,7 +403,7 @@ function countryRequirements() {
   const filtered=all.filter(record=>(countryTopic==="all"||record.topic===countryTopic) && (countryScope==="all"||(countryScope==="shared"?record.shared:!record.shared)));
   const hasLocal=all.some(record=>!record.shared);
   const coverage=hasLocal ? "Sample country coverage" : all.length ? "Shared EU coverage only" : "Not assessed";
-  const links=[...(country.changes??[]),...(country.shared??[])].map(id=>{
+  const links=[...openChangeIds(country),...(country.shared??[])].map(id=>{
     const change=changes.find(item=>item.id===id);
     return trigger(change.title,"change-detail",id,"","file");
   });
@@ -245,13 +421,13 @@ function countryLibrary() {
     '<div class="library-layout"><section class="card"><div class="card-head"><label class="field" style="width:100%">Find a country<input id="country-search" type="search" placeholder="Country or continent" value="'+esc(countrySearch)+'"></label></div><div id="country-list">'+countryList()+'</div></section><div id="country-requirements">'+countryRequirements()+'</div></div>';
 }
 function requirementDetail(id) {
-  const record=requirements.find(item=>item.id===id);
+  const record=publishedRecord(requirements.find(item=>item.id===id));
   const source=sources.find(item=>item.id===record.source);
   drawer("Country requirements library",record.title,badge(record.status,"blue")+
     factlist([["Jurisdiction",record.scope],["Topic",record.topic],["Source type",record.basis],["Date or edition",record.when],["Source provision",record.locator]])+
     block("Requirement summary",record.summary)+
     '<div class="actions">'+openLink("Open official source",source?.url??record.url,"primary")+
-    (record.related?trigger("View related change","change-detail",record.related,"","arrow"):"")+'</div>');
+    (record.id==="uk-label"?trigger("View versions","open-workflow","history","","arrow"):record.related?trigger("View related change","change-detail",record.related,"","arrow"):"")+'</div>');
 }
 function monitoringSchedule() {
   return heading("Monitoring schedule","Set the interval for automatic checks.")+
@@ -278,8 +454,10 @@ function sourceCard(compact) {
   return '<section class="card" aria-labelledby="sources-title"><div class="card-head"><div><h2 id="sources-title">Pages checked</h2><p>Latest replay attempts by source page</p></div>'+filters+'</div><div id="source-results">'+sourceTable(compact?sources:sources.filter(tableMatches),compact)+'</div></section>';
 }
 function changeCard(compact) {
-  const entries=changes.map(change=>'<button type="button" class="change" data-act="'+(compact?"select-change":"change-detail")+'" data-value="'+change.id+'"'+(compact?' aria-pressed="'+(currentChange===change.id)+'"':'')+'><span class="change-mark">'+icon("changes")+'</span><span><span class="change-top"><strong>'+change.title+'</strong>'+badge(change.status,change.tone)+'</span><small>'+change.scope+' · '+change.kind+' · '+change.when+'</small><span class="change-summary">'+change.summary+'</span></span>'+icon("chevron")+'</button>').join("");
-  return '<section class="card"><div class="card-head"><div><h2>Detected changes</h2><p>'+(compact?"Select a change to see its study screen.":"Historical source changes used in this replay.")+'</p></div>'+(compact?quiet("View queue","changes"):"")+'</div><div class="change-list">'+entries+'</div>'+(compact?'<div class="card-foot">'+trigger("View change evidence","change-detail",currentChange,"","file")+'</div>':'')+'</section>';
+  const visible=compact?openChanges():changes;
+  const active=visible.find(change=>change.id===currentChange)??visible[0];
+  const entries=visible.map(change=>'<button type="button" class="change" data-act="'+(compact?"select-change":"change-detail")+'" data-value="'+change.id+'"'+(compact?' aria-pressed="'+(active.id===change.id)+'"':'')+'><span class="change-mark">'+icon("changes")+'</span><span><span class="change-top"><strong>'+change.title+'</strong>'+badge(...(change.id==="uk"?caseStatus():[change.status,change.tone]))+'</span><small>'+change.scope+' · '+change.kind+' · '+change.when+'</small><span class="change-summary">'+change.summary+'</span></span>'+icon("chevron")+'</button>').join("");
+  return '<section class="card"><div class="card-head"><div><h2>'+(compact?"Open changes":"Detected changes")+'</h2><p>'+(compact?"Select a change to see its study screen.":"Historical source changes and review status.")+'</p></div>'+(compact?quiet("View queue","changes"):"")+'</div><div class="change-list">'+entries+'</div>'+(compact?'<div class="card-foot">'+trigger("View change evidence","change-detail",active.id,"","file")+'</div>':'')+'</section>';
 }
 function studyCard(compact) {
   const change=selectedChange();
@@ -300,14 +478,135 @@ function research() {
     '<h2 class="research-lead">Regulatory use cases</h2>'+changeCard(false)+
     '<div class="space">'+resourceCard("EU Annex VI immediate packaging","Assess whether an eligible inner package can omit the expiry or retest date. The decision depends on the internal packaging configuration and applicable conditions.",sources.find(source=>source.id==="annex").url,"Open EUR-Lex")+'</div>';
 }
+function panel(title,description,body,action="") {
+  return '<section class="card"><div class="card-head"><div><h2>'+esc(title)+'</h2>'+(description?'<p>'+esc(description)+'</p>':"")+'</div>'+action+'</div>'+body+'</section>';
+}
+const casePad = body => '<div class="case-pad">'+body+'</div>';
+const listItems = items => '<ul class="case-list">'+items.map(item=>'<li>'+item+'</li>').join("")+'</ul>';
+const displayDay = day => day ? new Intl.DateTimeFormat("en-GB",{dateStyle:"medium",timeZone:"UTC"}).format(new Date(day)) : "Unknown";
+function caseRoleSelect() {
+  return '<label class="field">Demo role<select id="workflow-role">'+options(Object.entries(workflowRoles),workflowRole)+'</select></label>';
+}
+function workflowNavigation() {
+  const tabs=[["proposal","Review proposal",caseStatus()[0]],["history","Country record",workflow.publication?"Version 2 published":"Version 1 published"],["follow-up","Quality follow-up",workflow.task?taskStateLabel(workflow.task.status):"Awaiting publication"]];
+  return '<div class="workflow-steps card" role="group" aria-label="Case stages">'+tabs.map(([id,title,subtitle])=>
+    '<button type="button" data-act="workflow-tab" data-value="'+id+'" aria-pressed="'+(workflowTab===id)+'">'+title+'<span class="sub">'+esc(subtitle)+'</span></button>').join("")+'</div>';
+}
+function workflowEvidence() {
+  const rows=ukCase.evidence.map(item=>{
+    const source=sources.find(entry=>entry.id===item.source);
+    return '<div class="evidence-item">'+badge("Tier "+item.tier,item.tier===1?"blue":"purple")+
+      '<h3>'+esc(item.kind)+' · '+esc(item.locator)+'</h3><p>“'+esc(item.excerpt)+'”</p>'+
+      '<button type="button" class="quiet small-action" data-act="source-detail" data-value="'+source.id+'">'+esc(source.authority+' · '+source.edition)+icon("arrow")+'</button></div>';
+  }).join("");
+  const before=sources.find(source=>source.id==="statute");
+  return panel("Regulatory evidence","Official excerpts and source versions",casePad(
+    factlist([["Instrument",before.edition+" · S.I. 2025/538"],["Commencement",displayDay(ukCase.effective)],["Guidance edition","15 Jul 2026"]])+
+    '<p>Regulation 32 replaced the earlier Part 7. Schedule 14 preserves the legacy pathway under defined conditions.</p>'+rows));
+}
+function compareValues(leftTitle,left,rightTitle,right) {
+  return '<div class="compare"><div><h3>'+esc(leftTitle)+'</h3><p>'+esc(left)+'</p></div><div><h3>'+esc(rightTitle)+'</h3><p>'+esc(right)+'</p></div></div>';
+}
+function actionForm(fields,buttons) {
+ return '<form id="workflow-form" class="review-form" data-revision="'+workflow.revision+'">'+fields+
+   '<div class="actions">'+buttons.map(([value,title,tone])=>'<button type="submit" name="action" value="'+value+'" class="btn '+(tone??"")+'">'+esc(title)+'</button>').join("")+'</div><div id="workflow-error" class="form-feedback" role="alert"></div></form>';
+}
+const reasonField = label => '<label class="field">'+esc(label)+'<textarea name="reason" maxlength="2000" required></textarea></label>';
+function workflowDecision() {
+  const decision=workflow.decision;
+  if(workflow.stage==="review") {
+    if(workflowRole!=="reviewer") return '<p>Choose the Regulatory SME demo role to record a decision.</p>';
+    return actionForm('<label class="field">Operational instruction<textarea name="instruction" maxlength="2000">'+esc(workflow.draft)+'</textarea></label>'+reasonField("Decision rationale")+
+      '<label class="field">Return-to-review date (for deferral)<input type="date" name="reviewOn"></label>',
+      [["approve","Approve & publish","primary"],["edit","Edit & approve"],["reject","Reject"],["investigate","Request investigation"],["defer","Defer"]]);
+  }
+  const details=decision?factlist([["Decision by",decision.actor],["Rationale",decision.rationale],["Recorded",scheduleDate(decision.time)],
+    ...(decision.reviewOn?[["Return to review",displayDay(decision.reviewOn)]]:[])]):"";
+  const canResume=["investigating","deferred"].includes(workflow.stage)&&workflowRole==="reviewer";
+  return details+(canResume?actionForm(reasonField("Reason to resume review"),[["resume","Resume as new revision","primary"]]):"");
+}
+function workflowProposal() {
+  const nextShipment=shipmentFindings().find(shipment=>shipment.id==="SHP-01");
+  const decision=panel("SME decision","Demo role and rationale are recorded in the case history.",casePad(workflowDecision()));
+  const proposed=panel("Country requirement comparison",ukCase.requirement+" · Proposal revision "+workflow.revision,
+    compareValues("Seeded baseline · v1",ukCase.baseline,"Proposed country value",ukCase.policy)+
+    '<div class="case-pad" style="padding-top:11px"><h3>Scope and conditions</h3>'+listItems(ukCase.conditions.map(esc))+'<p>'+esc(workflow.draft)+'</p></div>');
+  const assessment=panel("Impact and timing","Controlled example · "+ukCase.snapshot,casePad(
+    factlist([["Severity","High · potential labeling or supply disruption"],["Operational urgency","Priority · sample review by "+displayDay(nextShipment.preparationDate)],["Legal date basis","Effective "+displayDay(ukCase.effective)+" · finished-IMP QP date for batch screening"],["Portfolio scope","2 UK studies · 5 UK batches · 2 potentially relevant shipments"]])+
+    trigger("View studies, batches & shipments","go-impact","uk","","arrow")));
+  const confidence=panel("Confidence by dimension","Qualitative evidence assessment",casePad(factlist([
+    ["Detection","High · instrument and MHRA sources agree on commencement"],["Extraction","High · cited provisions and guidance are available"],
+    ["Applicability","Mixed · missing QP date and cutoff-day case"],["Interpretation","Requires authorized SME decision"]
+  ])));
+  return '<div class="case-layout"><div class="case-stack">'+proposed+decision+'</div><div class="case-stack">'+workflowEvidence()+assessment+confidence+'</div></div>';
+}
+function workflowHistory() {
+  const publication=workflow.publication;
+  const history=publication?compareValues("Previous record · v1",ukCase.baseline,"Published record · v2",publication.policy+" "+publication.instruction):
+    casePad('<p>'+esc(ukCase.baseline)+'</p>');
+  const receipt=publication?casePad(factlist([["Receipt","LOCAL-REC-02"],["Approved revision",publication.revision],["Published",scheduleDate(publication.at)],
+    ["Effective date",displayDay(publication.effective)],["Evidence",publication.evidenceIds.join(", ")]])):
+    casePad('<p>Version 1 is the published demo baseline. A new version appears after SME approval.</p>');
+  const query=casePad('<label class="field">Ordinary cohort date<input type="date" id="record-as-of" value="'+ukCase.effective+'"></label><p id="record-as-of-result" aria-live="polite">'+asOfText(ukCase.effective)+'</p><p>Use the batch assessment for Schedule 14 transition checks.</p>');
+  return '<div class="case-layout"><div class="case-stack">'+panel("Version history",ukCase.requirement,history)+panel("Look up an applicable version","Ordinary cohort",query)+'</div>'+
+    '<div class="case-stack">'+panel("Publication receipt","Local country platform simulation",receipt)+workflowEvidence()+'</div></div>';
+}
+function asOfText(day) {
+ if(!day) return "Choose an operational date.";
+ if(workflow.publication && day>=workflow.publication.effective) return "Version 2 is effective for the ordinary cohort.";
+ if(day>=ukCase.effective) return "Version 1 is the published baseline. No update has been published for this date in the demo.";
+ return "Version 1 is the pre-amendment record.";
+}
+function taskStateLabel(status) {
+  return {assigned:"Assigned",acknowledged:"Acknowledged",submitted:"Evidence submitted",verified:"Verified"}[status];
+}
+function workflowFollowUp() {
+  const task=workflow.task;
+  let content='<p>The mock task appears after the country update is published.</p>';
+  if(task) {
+    content=factlist([["Owner",task.owner],["Sample due date",displayDay(task.dueOn)],["Published record","Version "+task.version+" · proposal revision "+task.revision],
+      ["Status",taskStateLabel(task.status)],["Case",workflow.stage==="closed"?"Closed":"Open"],["Studies",task.studyIds.join(", ")],
+      ["Batches",task.batchIds.join(", ")],["Shipments to assess",task.shipmentIds.join(", ")],
+      ...(task.evidence?[["Last submitted evidence",task.evidence.reference]]:[])]);
+    if(task.status==="assigned"&&workflowRole==="owner") content+=actionForm("",[["ack","Acknowledge task","primary"]]);
+    else if(task.status==="acknowledged"&&workflowRole==="owner") content+=actionForm(reasonField("Mock implementation evidence reference"),[["implement","Submit evidence","primary"]]);
+    else if(task.status==="submitted"&&workflowRole==="verifier") content+=actionForm(reasonField("Verification rationale"),[["verify","Verify & close case","primary"],["return","Return evidence"]]);
+    else if(task.status!=="verified") content+='<p>Select '+(task.status==="submitted"?"Quality verifier":"Quality action owner")+' to continue the mock handoff.</p>';
+  }
+  return '<div class="case-layout">'+panel("Quality follow-up",task?task.id+" · Simulated QMS task":"Awaiting publication",casePad(content))+
+    panel("Audit trail",ukCase.id,casePad(listItems([...workflow.events].reverse().map(event=>'<strong>'+esc(event.type.replaceAll("."," · ").replaceAll("_"," "))+'</strong><small>'+esc(event.actor+" · "+scheduleDate(event.at)+" · revision "+event.revision)+'</small><small>'+esc(event.detail)+'</small>'))),trigger("Export audit JSON","export-workflow","","","file"))+'</div>';
+}
+function reviewWorkspace() {
+  const content={proposal:workflowProposal,history:workflowHistory,"follow-up":workflowFollowUp};
+  return heading("Review & follow-up",ukCase.id+" · UK investigational medicinal product labeling",caseRoleSelect())+
+    '<div class="runbar"><div class="runbar-left">'+icon("review")+'<strong>Historical case</strong><span class="separator">·</span><span>Local demo roles and records</span></div>'+badge(...caseStatus())+'</div>'+
+    workflowNavigation()+content[workflowTab]()+
+    '<div class="actions space">'+trigger("Reset UK case","reset-workflow","","","retry")+'</div>';
+}
+function impactTable(title,description,columns,rows) {
+ return panel(title,description,'<div class="table-wrap" tabindex="0" aria-label="'+esc(title)+'"><table><thead><tr>'+
+   columns.map(column=>'<th scope="col">'+esc(column)+'</th>').join("")+'</tr></thead><tbody>'+
+   rows.map(row=>'<tr>'+row.map(cell=>'<td>'+esc(cell)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>');
+}
+function operationalImpact() {
+  if(currentChange!=="uk"||studyView!=="portfolio") return "";
+  const shipments=shipmentFindings();
+  return '<div class="case-stack space">'+impactTable("Batch applicability","Fictional portfolio · finished-IMP QP certification drives the date comparison",
+    ["Batch","Study","QP date","Label","Assessment","Basis"],assessedBatches.map(batch=>[batch.id,batch.study,displayDay(batch.qp),batch.label,batch.status,
+      (batch.made?"Physical manufacture "+displayDay(batch.made)+". ":"")+batch.reason]))+
+    impactTable("Shipments and partners","Planning dates set preparation priority. Labeling applicability comes from the linked batch.",
+      ["Shipment / batch","Destination","Planned dispatch","Prep target","Partner","Assessment"],shipments.map(shipment=>[shipment.id+" / "+shipment.batch,shipment.destination,displayDay(shipment.date),
+        shipment.status==="Out of scope"?"—":displayDay(shipment.preparationDate),shipment.partner,shipment.status]))+'</div>';
+}
 const views = {
   overview,
   countries:countryLibrary,
   schedule:monitoringSchedule,
+  review:reviewWorkspace,
   sources:()=>heading("Pages checked","Inspect each page, its retrieval result, the section compared and the linked evidence.")+sourceCard(false),
   changes:()=>heading("Detected changes","Inspect a change, its source evidence and the inputs needed for study screening.")+changeCard(false),
   studies:()=>heading("Study impact","Explore the portfolio assessment or public matches for the selected change.")+
-    '<div class="runbar"><label class="field">Regulatory change<select id="study-change">'+changes.map(change=>'<option value="'+change.id+'"'+(change.id===currentChange?' selected':'')+'>'+change.title+'</option>').join("")+'</select></label><div class="actions">'+trigger("View change evidence","change-detail",currentChange,"","file")+(currentChange==="uk"?'<a class="btn" href="./RegChain-AI-Prototype.html">Open approval demo '+icon("arrow")+'</a>':"")+'</div></div><div id="study-card">'+studyCard(false)+'</div>',
+    '<div class="runbar"><label class="field">Regulatory change<select id="study-change">'+changes.map(change=>'<option value="'+change.id+'"'+(change.id===currentChange?' selected':'')+'>'+change.title+'</option>').join("")+'</select></label><div class="actions">'+trigger("View change evidence","change-detail",currentChange,"","file")+(currentChange==="uk"?trigger("Open SME review","open-workflow","proposal","primary","arrow"):"")+'</div></div><div id="study-card">'+studyCard(false)+operationalImpact()+'</div>',
   research
 };
 function render() {shell();byId("view").innerHTML=views[page]();updateRun();}
@@ -337,10 +636,11 @@ function sourceDetail(id) {
 }
 function changeDetail(id) {
   const change=changes.find(item=>item.id===id);
-  drawer("Detected change",change.title,badge(change.status,change.tone)+factlist([["Authority",change.authority],["Scope",change.scope],["Date basis",change.when]])+
+  drawer("Detected change",change.title,badge(...(id==="uk"?caseStatus():[change.status,change.tone]))+factlist([["Authority",change.authority],["Scope",change.scope],["Date basis",change.when]])+
     block("Previous reference",change.before)+block("What changed",change.after)+block("Study data needed",change.need)+
     '<section><h3>Supporting sources</h3><div class="actions">'+change.evidence.map(id=>trigger(sources.find(source=>source.id===id).title,"source-detail",id,"","file")).join("")+'</div></section>'+
-    '<div>'+trigger("View study impact","go-impact",id,"primary","arrow")+'</div>');
+    '<div class="actions">'+trigger("View study impact","go-impact",id,"","arrow")+
+    (id==="uk"?trigger("Open SME review","open-workflow","proposal","primary","review"):"")+'</div>');
 }
 function studyDetail(id) {
   const isPublic=id.startsWith("NCT");
@@ -359,7 +659,10 @@ function selectChange(id) {
   currentChange=id;
   studyView=studies.some(study=>study.changes.includes(id))?"portfolio":"registry";
 }
-function updateStudies() {byId("study-card").innerHTML=studyCard(page==="overview");}
+function updateStudies() {
+  const overviewPage=page==="overview";
+  byId("study-card").innerHTML=studyCard(overviewPage)+(overviewPage?"":operationalImpact());
+}
 function replay(reason="manual") {
   if (replaying) return;
   replaying=true;updateRun();notify("Replaying the six recorded checks.");
@@ -391,7 +694,7 @@ function replay(reason="manual") {
         updateRun();
       }
     }
-    notify("Replay complete. Three changes detected. One source check needs retry.");
+    notify("Replay complete. Three sample changes reviewed. One source check needs retry.");
   },350);
 }
 function readScheduleOrCurrent() {
@@ -400,7 +703,39 @@ function readScheduleOrCurrent() {
 }
 function checkDue() {
   scheduleState=readScheduleOrCurrent();
+  const latest=readWorkflow(workflow);
+  if(latest.stage==="deferred" && latest.decision?.reviewOn<=athensDay()) {
+    latest.revision++;
+    latest.stage="review";
+    latest.decision=null;
+    appendWorkflowEvent(latest,"proposal.returned_on_due_date","scheduler",new Date().toISOString(),"Deferred case returned to the review queue on its scheduled date.");
+    workflow=latest;
+    saveWorkflow(workflow);
+    if(!byId("drawer").open && !byId("schedule-form")?.contains(document.activeElement)) render();
+  }
   if(scheduleState.enabled && scheduleState.nextAt<=Date.now() && !replaying) replay("scheduled");
+}
+function athensDay() {
+  const parts=new Intl.DateTimeFormat("en-GB",{year:"numeric",month:"2-digit",day:"2-digit",timeZone:"Europe/Athens"}).formatToParts(new Date());
+  return ["year","month","day"].map(type=>parts.find(part=>part.type===type).value).join("-");
+}
+function openWorkflow(tab) {
+  if(byId("drawer").open) byId("drawer").close();
+  drawerOrigin=null;
+  workflowTab=tab;
+  navigate("review");
+}
+function exportWorkflow() {
+  const data={caseId:ukCase.id,requirementId:ukCase.requirement,assessmentSnapshot:ukCase.snapshot,mode:"historical demo",
+    evidence:ukCase.evidence.map(item=>({...item,url:sources.find(source=>source.id===item.source).url})),...workflow};
+  const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));
+  const anchor=document.createElement("a");
+  anchor.href=url;
+  anchor.download="RegChain-RC-UK-001-Audit.json";
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+  window.setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 function openCountry(id) {
   currentCountry=id;
@@ -429,6 +764,17 @@ const actions={
     focusTarget.focus();
   },
   requirement:requirementDetail,
+  "open-workflow":openWorkflow,
+  "workflow-tab":tab=>{workflowTab=tab;render();byId("view").querySelector('[data-act="workflow-tab"][data-value="'+tab+'"]').focus();},
+  "export-workflow":exportWorkflow,
+  "reset-workflow":()=>drawer("Historical demo","Reset the UK case?",
+    '<p>Clear locally recorded decisions, publication and Quality follow-up for this demo case.</p><div>'+trigger("Reset demo case","confirm-reset-workflow","","primary","retry")+'</div>'),
+  "confirm-reset-workflow":()=>{
+    workflow=initialWorkflow();
+    saveWorkflow(workflow);
+    openWorkflow("proposal");
+    notify("UK demo case reset.");
+  },
   "source-detail":sourceDetail,
   "change-detail":changeDetail,
   "study-detail":studyDetail,
@@ -458,6 +804,12 @@ document.addEventListener("input",event=>{
   }
 });
 document.addEventListener("change",event=>{
+  if(event.target.id==="workflow-role") {
+    workflowRole=event.target.value;
+    render();
+    byId("workflow-role").focus();
+  }
+  if(event.target.id==="record-as-of") byId("record-as-of-result").textContent=asOfText(event.target.value);
   if(event.target.id==="source-filter"){
     sourceFilter=event.target.value;
     byId("source-results").innerHTML=sourceTable(sources.filter(tableMatches),false);
@@ -482,6 +834,22 @@ document.addEventListener("toggle",event=>{
   else expandedRegions.delete(region);
 },true);
 document.addEventListener("submit",event=>{
+  if(event.target.id==="workflow-form"){
+    event.preventDefault();
+    if(!event.submitter) return;
+    const fields=new FormData(event.target);
+    const command={action:event.submitter.value,revision:Number(event.target.dataset.revision),
+      reason:fields.get("reason"),instruction:fields.get("instruction"),reviewOn:fields.get("reviewOn"),today:athensDay()};
+    const next=structuredClone(readWorkflow(workflow));
+    try {workflowStep(next,command,workflowRole,new Date().toISOString());}
+    catch(error){byId("workflow-error").textContent=error.message;return;}
+    workflow=next;
+    const saved=saveWorkflow(workflow);
+    render();
+    byId("page-title").focus({preventScroll:true});
+    notify(saved?"Demo workflow updated.":"Workflow updated for this tab. Browser storage is unavailable.");
+    return;
+  }
   if(event.target.id!=="schedule-form") return;
   event.preventDefault();
   scheduleState=readScheduleOrCurrent();
@@ -498,6 +866,15 @@ document.addEventListener("submit",event=>{
   checkDue();
 });
 byId("drawer").addEventListener("close",()=>{if(drawerOrigin?.isConnected) drawerOrigin.focus();drawerOrigin=null;});
+window.addEventListener("storage",event=>{
+  if(event.key!==workflowKey) return;
+  if(byId("workflow-form")?.contains(document.activeElement)) {
+    notify("Case changed in another tab. Review the latest revision before submitting.");
+    return;
+  }
+  workflow=readWorkflow();
+  if(!byId("drawer").open) render();
+});
 render();
 checkDue();
 window.setInterval(checkDue,15000);
