@@ -30,6 +30,7 @@ To turn it on:
 
 - [Project plan: what is done and what is next](RegChain-AI-Project-Plan.md)
 - [Demo scenario: one UK rule change, seven trials affected](RegChain-AI-Demo-Scenario.md)
+- [Screen guide and gap review](RegChain-AI-Screen-Guide.md)
 - [Dashboard mockup](RegChain-AI-Dashboard-Mockup.png)
 - [Research notes](RegChain-AI-Dashboard-Research.md)
 - [Master specification](RegChain-AI-Master-Specification.md)

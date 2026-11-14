@@ -156,6 +156,7 @@ The server reads `.env` only when it starts, so restart the launcher after chang
 | `README.md` | Short introduction and how to run |
 | `RegChain-AI-Project-Plan.md` | This plan |
 | `RegChain-AI-Demo-Scenario.md` | The demo story: one UK rule change, seven trials affected |
+| `RegChain-AI-Screen-Guide.md`, `screens/` | Every screen explained, what is missing, logic gaps, change frequency and impact |
 | `demo-data/` | Fictional portfolio (seed) and its expected impact (test answer key) |
 | `scripts/build-demo-portfolio.mjs` | Builds both demo data files |
 | `RegChain-AI-Master-Specification.md` | Full product specification and hackathon brief |
