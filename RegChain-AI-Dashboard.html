@@ -52,6 +52,7 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 .tile:not(button):hover{border-color:var(--line);background:white}.rail .nav[aria-current="location"]{background:#e9f1ff;color:#1644ad;font-weight:750}
 @media(forced-colors:active){.field select,.field select::picker(select){appearance:auto;background:Canvas;color:CanvasText}.field select:focus-visible{outline-color:Highlight}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.ai-card{margin-bottom:15px}.ai-card .case-pad>p{max-width:780px}.ai-gate{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:2px 0 10px}.ai-card h3{font-size:13px;margin-top:14px}.ai-quote{margin:4px 0 2px!important;font-size:12px;border-left:3px solid var(--line);padding-left:8px;color:var(--ink)!important}.ai-claim .badge{margin-right:6px}.ai-sources{margin-top:6px}.ai-sources td{vertical-align:top}.mono{font-family:ui-monospace,Consolas,monospace;font-size:11px}.diff{margin-top:12px}.diff summary{cursor:pointer;font-weight:700;font-size:13px}.diff ol{list-style:none;padding:0;margin:8px 0 0;max-height:320px;overflow:auto;border:1px solid var(--line);border-radius:8px;font-size:12px}.diff li{padding:4px 10px;border-top:1px solid #f0f3f8;overflow-wrap:anywhere}.diff li:first-child{border-top:0}.diff .add{background:#e7f6ef;color:#196449}.diff .del{background:#fcecf0;color:#9f2c42;text-decoration:line-through}
 </style>
 </head>
 <body>
@@ -546,6 +547,7 @@ function workflowDecision() {
     if(workflowRole!=="reviewer") return '<p>Choose the Regulatory SME demo role to record a decision.</p>';
     const fields=decisionFields();
     return '<form id="workflow-form" class="review-form" data-revision="'+workflow.revision+'">'+
+      (aiBlocked()?'<p class="form-feedback">The latest AI check failed, so Approve and Edit &amp; approve are blocked. Re-run the AI check, reject, or request an investigation.</p>':"")+
       '<label class="field">Decision<select id="review-decision" name="decision">'+options(reviewDecisions,reviewDecision)+'</select></label>'+
       '<div id="decision-fields"'+(fields?"":" hidden")+'>'+fields+'</div>'+reasonField("Decision rationale")+
       '<div class="actions"><button id="record-decision" type="submit" name="action" value="'+reviewDecision+'" class="btn primary">'+reviewDecisions.find(([id])=>id===reviewDecision)[1]+'</button></div>'+
@@ -608,6 +610,83 @@ function auditPanel() {
     trigger("Export audit JSON","export-workflow","","","file")+' '+trigger("Reset demo case","reset-workflow","","","retry")+'</div>'+
     listItems([...workflow.events].reverse().map(event=>'<strong>'+esc(event.type.replaceAll("."," · ").replaceAll("_"," "))+'</strong><small>'+esc(event.actor+" · "+scheduleDate(event.at)+" · revision "+event.revision)+'</small><small>'+esc(event.detail)+'</small>'))+'</div></details>';
 }
+let aiState = {phase:location.protocol.startsWith("http")?"idle":"offline",status:null,result:null,error:"",fresh:false};
+async function aiRequest(path,options={}) {
+  const response=await fetch(path,{cache:"no-store",...options});
+  const body=await response.json().catch(()=>({}));
+  if(!response.ok) throw Error(body.error||"Request failed ("+response.status+")");
+  return body;
+}
+const aiBlocked = () => Boolean(aiState.result && !aiState.result.verification.verified);
+function refreshAi() {const card=byId("ai-card");if(card) card.outerHTML=aiCard();}
+async function loadAi() {
+  if(aiState.phase==="offline") return;
+  try {
+    aiState.status=await aiRequest("/api/ai/status");
+    if(aiState.status.recorded) aiState.result=await aiRequest("/api/ai/analysis");
+  } catch {aiState.phase="offline";}
+  refreshAi();
+}
+async function runAi() {
+  aiState={...aiState,phase:"running",error:""};
+  refreshAi();
+  notify("Fetching the official sources and asking the AI. This can take a minute.");
+  try {
+    aiState.result=await aiRequest("/api/ai/analyze",{method:"POST"});
+    aiState.fresh=true;
+    notify(aiState.result.verification.verified?"AI check complete. All checks passed.":"AI check complete. Some checks failed, so SME approval is blocked.");
+  } catch(error) {
+    aiState.error=error.message;
+    notify("AI check failed.");
+  }
+  aiState.phase="idle";
+  refreshAi();
+  byId("ai-run")?.focus();
+}
+function aiSetupHints() {
+  const status=aiState.status;
+  if(!status) return "";
+  const hints=[];
+  if(!status.sdk) hints.push("Run npm install once in the RegChain folder, then restart the launcher.");
+  if(!status.keySet) hints.push("Add ANTHROPIC_API_KEY to a .env file next to serve-regchain.cjs.");
+  return hints.length?'<div class="inline-note">'+icon("info")+'<span>'+esc(hints.join(" "))+'</span></div>':"";
+}
+function aiResult(result) {
+  const {draft,verification,sources:read,diff}=result;
+  const failed=verification.checks.filter(check=>!check.ok).length;
+  const gate='<div class="ai-gate">'+(verification.verified?badge("All checks passed · ready for SME review","green"):badge("SME approval blocked · "+failed+(failed===1?" check":" checks")+" failed","red"))+'</div>';
+  const checks=listItems(verification.checks.map(check=>badge(check.ok?"Pass":"Fail",check.ok?"green":"red")+' <strong>'+esc(check.label)+'</strong><small>'+esc(check.detail)+'</small>'));
+  const titleOf=id=>read.find(source=>source.id===id)?.title||id;
+  const claims=listItems(verification.claims.map(claim=>'<div class="ai-claim">'+badge(claim.found?"Found in source":"Not found",claim.found?"green":"red")+esc(claim.statement)+'</div>'+
+    '<p class="ai-quote">“'+esc(claim.quote)+'”</p><small>'+esc(titleOf(claim.sourceId))+(claim.found?"":" · "+esc(claim.reason))+'</small>'));
+  const rows=read.map(source=>'<tr><td><a href="'+esc(source.url)+'" target="_blank" rel="noopener noreferrer">'+esc(source.title)+'</a><span class="sub">'+esc(source.authority)+'</span></td>'+
+    '<td class="nowrap">'+esc(source.validFrom?displayDay(source.validFrom.slice(0,10)):"Unknown")+(source.validUntil?' to '+esc(displayDay(source.validUntil.slice(0,10))):"")+'</td>'+
+    '<td class="mono">'+esc(source.hash?source.hash.slice(0,12):"—")+'</td><td>'+badge(source.origin==="live"?"Fetched":source.origin==="cache"?"Cached copy":"Missing",source.origin==="live"?"blue":source.origin==="cache"?"amber":"red")+'</td></tr>').join("");
+  const changed=diff.lines.filter(line=>line.type!=="same");
+  const diffView='<details class="diff"><summary>What changed in regulation 46 · '+diff.added+' lines added, '+diff.removed+' removed</summary><ol>'+
+    changed.map(line=>'<li class="'+(line.type==="added"?"add":"del")+'">'+(line.type==="added"?"+ ":"− ")+esc(line.text)+'</li>').join("")+'</ol></details>';
+  const transition=draft.transition||{applies:false,conditions:[]};
+  return gate+checks+
+    '<h3>Sources read</h3><div class="table-wrap ai-sources"><table><thead><tr><th>Source</th><th>Version</th><th>Fingerprint</th><th>Copy</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+diffView+
+    '<h3>AI draft for '+esc(result.rule.requirement)+'</h3><p>'+esc(draft.summary)+'</p>'+
+    factlist([["Change status",draft.status],["Effective date",draft.effectiveDate],["Scope",draft.scope],["Transition",transition.applies?"Earlier rules can continue under conditions":"No transition found"]])+
+    (transition.conditions.length?listItems(transition.conditions.map(esc)):"")+
+    compareValues("Current company record · v1",ukCase.baseline,"AI draft · not yet approved",draft.proposedRequirement)+
+    '<h3>Claims and their quotes</h3>'+claims+
+    (draft.uncertainties.length?'<h3>For the SME to confirm</h3>'+listItems(draft.uncertainties.map(esc)):"")+
+    '<div class="card-foot"><small>'+esc((aiState.fresh?"Live check":"Recorded check")+" · "+scheduleDate(Date.parse(result.at))+" · "+result.model)+'</small></div>';
+}
+function aiCard() {
+  const busy=aiState.phase==="running";
+  const offline=aiState.phase==="offline";
+  const result=aiState.result;
+  const mode=busy?badge("Running","blue"):offline?badge("Needs the local server"):result?badge(aiState.fresh?"Live":"Recorded",aiState.fresh?"blue":""):badge("Not run yet");
+  const action=offline?mode:'<div class="actions">'+mode+'<button id="ai-run" type="button" class="btn primary" data-act="ai-run"'+(busy?" disabled":"")+'>'+icon("retry")+(busy?"Checking…":result?"Run again":"Run AI check")+'</button></div>';
+  const intro='<p>Claude reads the official versions of regulation 46 before and after 28 April 2026, Schedule 14 paragraph 6 and the MHRA labelling guidance, then drafts the change. RegChain checks every quote against the source text and the effective date against the recorded rule. A failed check blocks SME approval.</p>';
+  const body=offline?'<p>Open the dashboard with Start-RegChain.cmd to use the AI check. It needs the local server.</p>':
+    aiSetupHints()+(aiState.error?'<p class="form-feedback" role="alert">'+esc(aiState.error)+'</p>':"")+(result?aiResult(result):"");
+  return '<div id="ai-card" class="ai-card">'+panel("AI reading of the source change","Official texts fetched live · checked by RegChain, decided by the SME",casePad(intro+body),action)+'</div>';
+}
 function caseImpact() {
   const change=selectedChange();
   const evidence=change.id==="uk"?workflowEvidence():panel("Regulatory evidence",change.authority+" · "+change.when,casePad(
@@ -620,7 +699,7 @@ function caseImpact() {
     ["Portfolio scope","2 UK studies · 5 UK batches · 2 shipments to assess"]
   ]:[["Applicability","Public registry screening only"]];
   const context=panel("Assessment",change.id==="uk"?ukCase.snapshot:"",casePad(factlist(facts)+'<h3>Inputs to check</h3><p>'+esc(change.need)+'</p>'));
-  return '<div class="case-layout">'+evidence+context+'</div><div id="study-card" class="space">'+studyCard()+operationalImpact()+'</div>';
+  return (change.id==="uk"?aiCard():"")+'<div class="case-layout">'+evidence+context+'</div><div id="study-card" class="space">'+studyCard()+operationalImpact()+'</div>';
 }
 function changeWorkspace() {
   const change=selectedChange();
@@ -777,6 +856,7 @@ const actions={
     if(target==="retry-filter"){sourceFilter="Retry needed";sourceSearch="";navigate("sources");return;}
   },
   replay:()=>replay(),
+  "ai-run":()=>runAi(),
   "pick-country":id=>{
     currentCountry=id;
     countryTopic="all";
@@ -860,6 +940,10 @@ document.addEventListener("submit",event=>{
     const fields=new FormData(event.target);
     const command={action:event.submitter.value,revision:Number(event.target.dataset.revision),
       reason:fields.get("reason"),instruction:fields.get("instruction"),reviewOn:fields.get("reviewOn"),today:athensDay()};
+    if(["approve","edit"].includes(command.action) && aiBlocked()) {
+      byId("workflow-error").textContent="The latest AI check failed, so approval is blocked. Re-run the AI check, reject, or request an investigation.";
+      return;
+    }
     const next=structuredClone(readWorkflow(workflow));
     try {workflowStep(next,command,workflowRole,new Date().toISOString());}
     catch(error){byId("workflow-error").textContent=error.message;return;}
@@ -898,6 +982,7 @@ window.addEventListener("storage",event=>{
   if(!byId("drawer").open) render();
 });
 render();
+loadAi();
 checkDue();
 window.setInterval(checkDue,15000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden) checkDue();});
