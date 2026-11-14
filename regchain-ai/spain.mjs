@@ -26,10 +26,10 @@ export async function loadSpainSources(root) {
   const scenario = await loadSpainScenario(root);
   const spec = scenario.specification;
   const notice = scenario.notice;
-  const make = (meta, text) => ({ ...meta, text, hash: fingerprint(text), origin: "demo file", retrievedAt: new Date().toISOString() });
+  const make = (meta, text) => ({ ...meta, text, hash: fingerprint(text), origin: "file", retrievedAt: new Date().toISOString() });
   return [
-    make({ id: "es-spec-current", role: "before", kind: "company", title: `Spain Country Specification v${spec.version} (fictional)`, authority: "Company record (fictional)",
-      url: null, validFrom: spec.published, validUntil: null }, `Spain Country Specification v${spec.version} (fictional)\n\n${specificationText(spec)}`),
+    make({ id: "es-spec-current", role: "before", kind: "company", title: `Spain Country Specification v${spec.version}`, authority: "Company record",
+      url: null, validFrom: spec.published, validUntil: null }, `Spain Country Specification v${spec.version}\n\n${specificationText(spec)}`),
     make({ id: notice.id, role: "after", kind: "notice", title: notice.title, authority: notice.authority,
       url: null, validFrom: notice.published, validUntil: null, language: notice.language }, notice.text),
   ];

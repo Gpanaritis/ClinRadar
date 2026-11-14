@@ -13,11 +13,12 @@ const origin = "http://" + host + ":" + port;
 const allowedOrigins = [origin, "http://localhost:" + port];
 const identity = "regchain-dashboard";
 const dashboardHtml = readFileSync(join(__dirname, "RegChain-AI-Dashboard.html"), "utf8");
-// Fictional demo data the page gets as JSON inside data script tags:
-// the trial portfolio for the UK case and the Spain scenario (note, trial and specification).
-// The files are read on every request, so rebuilt data shows on reload.
+// Data the page gets as JSON inside data script tags: the trial portfolio for the UK case
+// and the Spain scenario (note, trial and specification). The page carries a copy of both
+// (scripts/embed-data.mjs) for when it is opened as a file; the server replaces that copy with
+// the files as they are now, read on every request, so edited data shows on reload.
 const dataFiles = [
-  { id: "portfolio-data", file: join(__dirname, "demo-data", "uk-labelling-portfolio.json"), name: "Demo portfolio" },
+  { id: "portfolio-data", file: join(__dirname, "demo-data", "uk-labelling-portfolio.json"), name: "Portfolio" },
   { id: "spain-data", file: join(__dirname, "demo-data", "spain-scenario.json"), name: "Spain scenario" },
 ];
 function dashboardPage() {
@@ -26,8 +27,9 @@ function dashboardPage() {
     try {
       const data = readFileSync(file, "utf8");
       JSON.parse(data);
-      const tag = '<script id="' + id + '" type="application/json">' + data.replace(/</g, "\\u003c") + "</script>\n";
-      page = page.replace('<script id="dashboard-data">', tag + '<script id="dashboard-data">');
+      const tag = '<script id="' + id + '" type="application/json">' + data.replace(/</g, "\\u003c") + "</script>";
+      const embedded = new RegExp('<script id="' + id + '" type="application/json">[\\s\\S]*?</script>');
+      page = embedded.test(page) ? page.replace(embedded, () => tag) : page.replace('<script id="dashboard-data">', () => tag + "\n" + '<script id="dashboard-data">');
     } catch (error) {
       if (error.code !== "ENOENT") console.error(name + " not loaded: " + error.message);
     }

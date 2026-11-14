@@ -1,6 +1,6 @@
 # RegChain AI · Spain scenario: an early warning before a rule applies
 
-> **Everything in this scenario is fictional:** the information note, the authority, the trial, the sites, the companies and the people. It shows how RegChain behaves; it is not a real Spanish rule. The trial is based on the synthetic clinical supply agreement the team drafted. Company names now start with "Demo", and the import-permit idea became a shipping-document rule, because shipments between EU countries are generally not treated as imports.
+> **Everything in this scenario is fictional:** the information note, the authority, the trial, the sites and the people. It shows how RegChain behaves; it is not a real Spanish rule. The trial is based on the synthetic clinical supply agreement the team drafted. The screens carry no demo labels; companies and sites have generic names ("Central EU depot, Belgium", "Hospital pharmacy, site ES-04"), and the note itself is marked *illustrative scenario*, because it is an invented regulation and should not be mistaken for a real Spanish rule. The import-permit idea became a shipping-document rule, because shipments between EU countries are generally not treated as imports.
 
 ## The story in one minute
 
@@ -29,11 +29,11 @@ RegChain finds the note on the day it is published. The AI reads it in Spanish, 
 5. Shipments dispatched before 1 Mar 2027 and delivered by 8 Mar 2027 can follow the earlier procedure.
 6. Labeling does not change.
 
-The full Spanish text is in `demo-data/spain-scenario.json`. The dashboard also shows it in the Source log under *Information note 12/2026 (fictional)*.
+The full Spanish text is in `demo-data/spain-scenario.json`. The dashboard also shows it in the Source log under *Information note 12/2026 (illustrative scenario)*.
 
 ## The trial (fictional)
 
-**CTP-7842-201** is a phase III rheumatology study of XZ-417 50 mg film-coated tablets, run in Germany, Spain, Italy and Poland. It plans 64 sites and 480 patients, and its first patient is due on 15 Feb 2027. Supply comes from Demo Central Depot NV in Belgium. Shipments are prepared 5 business days before dispatch, or 2 when expedited. Eight sites are in Spain, and two of them (Sevilla and Málaga) have no hospital pharmacy code on file.
+**CTP-7842-201** is a phase III rheumatology study of XZ-417 50 mg film-coated tablets, run in Germany, Spain, Italy and Poland. It plans 64 sites and 480 patients, and its first patient is due on 15 Feb 2027. Supply comes from the central EU depot in Belgium. Shipments are prepared 5 business days before dispatch, or 2 when expedited. Eight sites are in Spain, and two of them (Sevilla and Málaga) have no hospital pharmacy code on file.
 
 ## What RegChain finds
 
