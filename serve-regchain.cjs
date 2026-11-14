@@ -56,6 +56,13 @@ const CASES = {
     diff: false,
   },
 };
+// Official pages a failed source check can be retried against, with the edition on record.
+const RETRY_SOURCES = {
+  list: {
+    api: "https://www.gov.uk/api/content/government/publications/importing-investigational-medicinal-products-into-great-britain-from-approved-countries/list-of-approved-countries-for-clinical-trials-and-investigational-medicinal-products",
+    edition: "2025-02-12",
+  },
+};
 function caseFrom(url) {
   const id = new URL(url, origin).searchParams.get("case") || "uk";
   return Object.hasOwn(CASES, id) ? id : null;
@@ -157,6 +164,29 @@ async function handleApi(request, response, path) {
       sdk: await sdkInstalled(),
       recorded: recorded ? { at: recorded.at, model: recorded.model, verified: recorded.verification.verified } : null
     });
+    return;
+  }
+  if (path === "/api/sources/retry" && request.method === "POST") {
+    if (request.headers.origin && !allowedOrigins.includes(request.headers.origin)) {
+      sendJson(response, 403, { error: "Requests from other sites are refused." });
+      return;
+    }
+    request.resume();
+    const source = RETRY_SOURCES[new URL(request.url, origin).searchParams.get("id")];
+    if (!source) {
+      sendJson(response, 404, { error: "This source cannot be checked again from here." });
+      return;
+    }
+    try {
+      const reply = await fetch(source.api, { headers: { "user-agent": "RegChain-prototype/0.1 (source check)", accept: "application/json" } });
+      if (!reply.ok) throw new Error("The official site answered " + reply.status + ".");
+      const page = await reply.json();
+      const updated = page.public_updated_at || page.updated_at;
+      if (!updated) throw new Error("The official page has no update date.");
+      sendJson(response, 200, { title: page.title, updated, changed: updated.slice(0, 10) > source.edition, checkedAt: new Date().toISOString() });
+    } catch (error) {
+      sendJson(response, 502, { error: error.message || "The official site could not be reached." });
+    }
     return;
   }
   if (path === "/api/ai/analysis" && request.method === "GET") {

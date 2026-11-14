@@ -7,7 +7,7 @@
     "effective": "2027-03-01",
     "transitionDeliveredBy": "2027-03-08",
     "noticeBusinessDays": 3,
-    "preparedAt": "2026-11-14T09:44:00Z",
+    "preparedAt": "2026-11-10T09:44:00Z",
     "policy": "From 1 Mar 2027, every IMP shipment to a trial site in Spain carries a delivery note in Spanish with the EU trial number, the hospital pharmacy code and each batch number, and the hospital pharmacy gets an electronic notice at least 3 business days before delivery.",
     "instruction": "For each shipment to a Spanish site dispatched from 1 Mar 2027, or delivered after 8 Mar 2027, print the Spanish delivery note at the depot and send the hospital pharmacy notice 3 business days before delivery. Complete the missing hospital pharmacy codes before the first affected shipment.",
     "conditions": [
