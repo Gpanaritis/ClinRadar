@@ -34,8 +34,8 @@ Clarivate's ClaRITA provides a comparable workflow for regulatory alerts, impact
 ## Dashboard workflow
 
 1. **Overview.** Open a change from its region and jurisdiction. The case opens to Evidence & impact, with the supporting sources, outstanding inputs and applicable study assessments together. Resolved cases remain accessible from the overview.
-2. **Case.** For the UK labeling example, use SME decision to record an outcome. Approval opens Quality follow-up. Country record shows the published versions, and the case's audit trail holds the decision and follow-up history.
-3. **Country requirements.** Search by country and filter by topic or scope. Open a record to inspect its summary and official reference or view the history of the UK labeling requirement.
+2. **Case.** For the UK labeling example, use SME decision to record an outcome. Approval opens Quality follow-up. Country specification shows the section's published versions, and the case's audit trail holds the decision and follow-up history.
+3. **Country specifications.** Search by country and filter the sections of its specification. Open a section to see its text, status, owner, check dates, a suggested edit where one exists, the trials it affects and what the official sources say.
 4. **Monitoring.** Use Source log for failed checks and coverage gaps. Use Monitoring schedule to change the cadence of the local replay.
 
 ## Country coverage and cadence

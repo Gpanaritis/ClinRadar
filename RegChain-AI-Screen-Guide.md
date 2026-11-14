@@ -2,7 +2,7 @@
 
 Status on 14 November 2026. The screens were captured from `main` with the demo portfolio loaded. The AI panel shows the test run from `scripts/check-ai-step.mjs`, which uses a stand-in instead of Claude and is labelled as such on screen; no real AI run has been done yet.
 
-**In short:** the dashboard tells the story end to end, from one regulation change to the trials, batches and shipments it affects, then the expert's decision, the updated country record and the Quality task. Two things weaken it today: the quote check proves words exist but not that they support the claim, and the system only watches four known pages, so it would miss a brand-new regulation or guidance page. (A third, the expert approving pre-written text instead of the AI's draft, is now fixed; see logic gap 1.)
+**In short:** the dashboard tells the story end to end, from one regulation change to the trials, batches and shipments it affects, then the expert's decision, the updated Country Specification and the Quality task. Two things weaken it today: the quote check proves words exist but not that they support the claim, and the system only watches four known pages, so it would miss a brand-new regulation or guidance page. (A third, the expert approving pre-written text instead of the AI's draft, is now fixed; see logic gap 1.)
 
 ## Part 1 · The screens
 
@@ -68,11 +68,11 @@ Status on 14 November 2026. The screens were captured from `main` with the demo 
 
 **Shows:** the mock Quality task created on approval: owner, due date (the earliest shipment preparation date), published version, and the studies, batches and shipments in scope. The Quality owner acknowledges and submits evidence; the verifier verifies or returns it, and only then does the case close.
 
-### 8. Country record
+### 8. Country specification (in the case)
 
-![Country record](screens/10-country-record.png)
+![Country specification in the case](screens/10-country-record.png)
 
-**Shows:** version history (v1 before, v2 after), the publication receipt, and a lookup of which version applies on a given date.
+**Shows:** the UK specification's regulatory section before (v12) and after (v13) the SME's approval, the publication receipt, a lookup of which version applies on a given date, and a link to the section on the Country specifications page.
 
 ### 9. Audit trail
 
@@ -80,19 +80,21 @@ Status on 14 November 2026. The screens were captured from `main` with the demo 
 
 **Shows:** every step with who, when, which revision and why, with JSON export and a demo reset.
 
-### 10. Country requirements
+### 10. Country specifications
 
-![Country requirements](screens/12-country-requirements.png)
+![Country specifications](screens/12-country-specifications.png)
 
-**Shows:** the country library: requirements by country, topic and scope, coverage gaps per topic, and links to open changes. Each record now answers three questions:
+**Shows:** the Country Specifications colleagues maintain for each country and update 4 to 7 times a year. The UK example has the 11 sections of a real specification: regulatory requirements, import and export rules, permits and licences, controlled-drug classifications, mandatory invoice statements, ports of entry, logistics constraints, approved carriers, importer of record and consignee, local contacts, and country-specific notes. For each section the screen shows:
 
-- **Is it current?** Every record is *In force*, *Changing* (an open change may alter it) or *Replaced* (the rule changed and the update is not approved yet), with who checked it last, when it is next due and an overdue flag. Before the SME approves the UK case, the UK labeling record shows as replaced on 28 Apr 2026 instead of passing the earlier rule off as current.
-- **Which of our trials does it touch?** Each record shows the trials, sites and patients in that country, and for the UK labeling record, the 7 trials, 12 batches and 6 shipments that need action. "See the trials" lists them, most urgent first.
-- **What do we do?** Opening a record shows practical answers (what the label must show, when a shorter label is allowed, who must oversee imports, who can receive a US shipment), lead times, and what is still to confirm.
+- **Is it current?** *Current*, *Change to assess* (an open change may alter it) or *Edit suggested* (the section is out of date and RegChain has drafted an edit), plus the section owner, when it was last checked and a *Check overdue* flag. The UK specification had a scheduled update on 9 Sep 2026, but its regulatory section was last checked on 2 Feb 2026, so it still describes the labeling rule that changed on 28 Apr 2026.
+- **How is it kept current?** *Watched online* (RegChain watches its official sources), *Public source, not watched yet*, or *Internal, owner confirms* for sections that only change through internal events, such as carriers, importer of record and contacts. The summary says how many sections have changes to review before the next scheduled update and how many public-source sections are watched today (2 of 7 for the UK).
+- **Which of our trials does it touch?** The UK regulatory section shows the 7 trials, 12 batches and 6 shipments that need action. Logistics, carrier, port, invoice and importer sections show the shipments planned for the country.
 
-![Requirement detail](screens/12b-requirement-detail.png)
+![Section with a suggested edit](screens/12b-section-edit.png)
 
-**Real or simulated:** six sample records for the UK, the EU and the US. The practical answers are short paraphrases written on 14 Nov 2026 from the official sources named under each answer: regulation 46 and Schedule 14 on legislation.gov.uk, MHRA's transitional and import guidance, Regulation (EU) 536/2014 as amended by 2022/2239, 21 CFR 312.6, 312.40 and 312.110, and FDA's import page. They are examples, not reviewed regulatory advice. The reviewers' names and check dates are fictional. The trial counts come from the demo portfolio, so they only appear when the dashboard runs through `Start-RegChain.cmd`. The library has records for 4 of the portfolio's 17 countries (UK, Germany, France and the US).
+Opening the UK regulatory section shows the **suggested edit** as a redline: the outdated line struck through, the new text and supply instruction from the UK case, and whether the AI drafted it. **Review the edit** opens the case. Once the SME approves, the specification becomes **v13, published between scheduled updates**, the section shows the new text with the v12 text kept, and the next scheduled update stays on 9 Dec 2026. Each watched section also has **What the official sources say**: short answers paraphrased from the sources (what the label must show, when a shorter label is allowed, who must oversee imports, who can receive a US shipment), with lead times and what is still to confirm.
+
+**Real or simulated:** everything in the specifications is fictional and shaped like a real one. Do not paste a real Country Specification into the repo or into an AI request unless the company's rules allow it. The regulatory lines and the source answers paraphrase official sources checked on 14 Nov 2026 (regulation 46 and Schedule 14 on legislation.gov.uk, MHRA's transitional and import guidance, Regulation (EU) 536/2014 as amended by 2022/2239, 21 CFR 312.6, 312.40 and 312.110, and FDA's import page). They are examples, not reviewed regulatory advice. Carriers, ports, the importer of record, contacts, notes, owners and dates are invented. The UK has all 11 sections; Germany and France have the regulatory section, and the US has regulatory and import. Japan, Australia, Brazil and South Africa have none. Trial counts need the server (`Start-RegChain.cmd`).
 
 ### 11. Source log
 
@@ -120,15 +122,16 @@ Status on 14 November 2026. The screens were captured from `main` with the demo 
 
 - [ ] One real AI run with an API key, and a recorded result for the venue in case the internet fails.
 - [x] The SME should approve the AI's draft, not pre-written text (logic gap 1, fixed).
-- [x] Country requirements show whether each record is current, which portfolio trials it touches, and what to do.
-- [ ] The Overview tiles, the Source log and the library's countries should match the demo portfolio (17 countries) and the four real sources, or the pitch should say they are samples.
+- [x] Country specifications show, section by section, whether each is current, how it is kept current, which portfolio trials it touches, and the suggested edit.
+- [ ] The Overview tiles, the Source log and the specifications' countries should match the demo portfolio (17 countries) and the four real sources, or the pitch should say they are samples.
 - [ ] Display names for batch results (the specification and the dashboard still differ; see the project plan, step 1).
 
 **For a real product:**
 
 - Discovery of new documents, not only known pages (see Part 4).
 - More countries and topics, with sources per country.
-- Practical answers and lead times drafted by the AI from the sources and approved by an expert, instead of written by hand. Authority lead times are not in the watched sources yet.
+- Suggested edits for every watched section, not only UK labeling, drafted by the AI and approved by the section owner. Authority lead times are not in the watched sources yet.
+- Import of the real Country Specifications (format and owners to confirm with the colleagues who maintain them), and a feed for internal changes such as carriers, importer of record and contacts.
 - Site stock and depot stock, not only planned shipments.
 - Real login and roles, saved decisions, and links to the trial database (EDC), Quality system (QMS) and safety database.
 - An inbox for the SME: every open change across countries, by deadline.
