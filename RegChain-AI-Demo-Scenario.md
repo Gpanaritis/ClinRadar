@@ -91,7 +91,7 @@ Together these sites have **101 patients on treatment** whose resupply depends o
 2. **Show the source change:** run the AI check, open the regulation 46 comparison and the quote checks.
 3. **Show the trials:** the 7 trials needing action, the 1 needing a check only, and the 10 excluded with reasons.
 4. **Zoom into one shipment:** SHP-01, where B-102 was made before the cutoff but certified after it.
-5. **Show the expert's decision:** approve the updated country record and create the Quality task.
+5. **Show the expert's decision:** approve the suggested edit, which publishes the UK Country Specification v13 between scheduled updates, and create the Quality task.
 
 ## Files and how to change the data
 

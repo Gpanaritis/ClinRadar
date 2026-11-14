@@ -58,6 +58,9 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 .record-alert{width:100%;border:1px solid #f3c7d1;border-left:4px solid #c2415a;background:#fdf3f5;border-radius:9px;padding:10px 11px;display:grid;gap:8px;justify-items:start}.record-alert.warn{border-color:#f5d9a6;border-left-color:#c27a00;background:#fff8ea}.record-alert p{color:#3f3346!important}
 .block-head{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}.block-head h3{margin:0}.drawer-block .actions{margin-top:9px}
 .practice{list-style:none;padding:0;margin:6px 0 0}.practice li{border-top:1px solid var(--line);padding:9px 0}.practice li:first-child{border-top:0;padding-top:3px}.practice li:last-child{padding-bottom:0}.practice strong{font-size:13px}.practice strong+.badge{margin-left:6px}.practice p{margin:3px 0 2px;font-size:13px;color:#3f597c}.practice small{display:block;color:var(--muted);font-size:11px}.exposure-lines{margin:5px 0 0;padding-left:17px;font-size:13px;color:#3f597c}.exposure-lines li{margin:2px 0}
+.spec-brief{display:flex;gap:7px;align-items:flex-start;margin:0 15px 12px;padding:9px 11px;border-radius:9px;background:#f4f8ff;border:1px solid #dbe7fb;font-size:12px;color:#33507a}.spec-brief svg{width:15px;height:15px;margin-top:1px}.spec-brief strong{color:var(--ink)}.spec-excerpt{color:#3f597c}
+.redline{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:5px;font-size:13px}.redline li{padding:7px 9px;border-radius:7px;overflow-wrap:anywhere}.redline .del{background:#fcecf0;color:#9f2c42;text-decoration:line-through}.redline .add{background:#e7f6ef;color:#14523b}.note-line{margin-top:7px!important;font-size:12px!important;color:var(--muted)!important}
+.source-notes summary{cursor:pointer;font-weight:700;font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.source-notes summary::before{content:"";width:7px;height:7px;border-right:2px solid #496795;border-bottom:2px solid #496795;transform:rotate(-45deg);margin-right:2px;transition:transform .15s}.source-notes[open] summary::before{transform:rotate(45deg)}.source-notes[open] summary{margin-bottom:4px}.lead-head{margin-top:12px}
 </style>
 </head>
 <body>
@@ -85,7 +88,7 @@ const sources = [
  {id:"list",title:"Approved countries for IMP imports",authority:"MHRA",scope:"GB",type:"Country list",path:"GOV.UK / Importing IMPs / Approved country list",checked:"09:37",status:"Retry needed",tone:"red",edition:"12 Feb 2025 · reference page",section:"Section 3 · Approved countries for QP certification",result:"This simulated attempt timed out before comparison. A failed attempt leaves the source coverage incomplete and produces no change conclusion.",url:"https://www.gov.uk/government/publications/importing-investigational-medicinal-products-into-great-britain-from-approved-countries/list-of-approved-countries-for-clinical-trials-and-investigational-medicinal-products",change:"import"}
 ];
 const changes = [
- {id:"uk",title:"UK IMP labeling transition",authority:"MHRA + UK Legislation",scope:"UK",kind:"Labeling",status:"SME review",tone:"amber",when:"Effective 28 Apr 2026",summary:"Apply the amended labeling rules and assess pre-cutoff batch eligibility.",before:"Earlier Part 7 labeling reference in the country record.",after:"Amended Part 7 with a scoped Schedule 14 transition. MHRA uses the finished-IMP QP certification date for this labeling assessment.",need:"Trial cohort, intended use, batch QP dates, and approved label specifications.",evidence:["transition","statute"],studyNote:"Two fictional UK portfolio studies have batches to review. The public registry view shows screening candidates."},
+ {id:"uk",title:"UK IMP labeling transition",authority:"MHRA + UK Legislation",scope:"UK",kind:"Labeling",status:"SME review",tone:"amber",when:"Effective 28 Apr 2026",summary:"Apply the amended labeling rules and assess pre-cutoff batch eligibility.",before:"Earlier Part 7 labeling text in the UK Country Specification.",after:"Amended Part 7 with a scoped Schedule 14 transition. MHRA uses the finished-IMP QP certification date for this labeling assessment.",need:"Trial cohort, intended use, batch QP dates, and approved label specifications.",evidence:["transition","statute"],studyNote:"Two fictional UK portfolio studies have batches to review. The public registry view shows screening candidates."},
  {id:"eu",title:"EU guidance on cryopreserved products",authority:"European Commission",scope:"EU",kind:"Labeling guidance",status:"Assess impact",tone:"blue",when:"July 2026 guidance edition",summary:"A new Q&A addresses labeling for cryopreserved medicinal products.",before:"The preceding guidance edition did not contain the new question listed in the July revision history.",after:"July 2026 Q&A adds question 8.4 for cryopreserved products. Review the guidance alongside applicable legislation.",need:"EU study countries, product presentation, cryopreservation status, and applicable labeling specification.",evidence:["qa","annex"],studyNote:"The public example has EU trial sites. Internal product and packaging data are required to assess whether the guidance is relevant."},
  {id:"import",title:"Great Britain import oversight",authority:"MHRA",scope:"GB",kind:"Import / QP",status:"Assess impact",tone:"blue",when:"Guidance updated 12 Feb 2025",summary:"Review QP evidence for IMPs shipped from approved countries.",before:"Existing GB approved-country oversight guidance.",after:"MHRA updated the guidance to reflect EU CTR implementation relating to EU QP certification.",need:"Shipment destination and origin, UK import authorization holder, QP evidence, and applicable route.",evidence:["imports","list"],studyNote:"GB site presence is a screening signal. Shipment origin and QP evidence are required to establish applicability."}
 ];
@@ -115,21 +118,67 @@ const countries = [
  {id:"br",name:"Brazil",region:"South America"},
  {id:"za",name:"South Africa",region:"Africa"}
 ];
-const topics = ["Labeling & packaging","Import & customs","Release & certification","Storage & distribution","Returns & destruction","Permits & authorizations","Documentation","Controlled products"];
-const requirements = [
- {id:"uk-label",scope:"UK",country:"uk",topic:topics[0],title:"IMP labeling under amended Part 7",basis:"UK regulation",when:"28 Apr 2026",status:"Example baseline",summary:"Use the amended Part 7 requirements for investigational medicinal products where applicable. Confirm the product and trial scope and any applicable authorization, variation or exception.",locator:"Regulation 32, substituting Part 7",source:"statute",related:"uk"},
- {id:"uk-transition",scope:"UK",country:"uk",topic:topics[0],title:"Transitional labeling for qualifying batches",basis:"UK regulation with MHRA guidance",when:"28 Apr 2026",status:"Example baseline",summary:"The earlier rules can continue for qualifying batches made before the relevant day, labeled under the old rules and used in their intended old-rules trials. The MHRA guidance uses finished-IMP QP certification as the manufacturing date for this assessment.",locator:"Schedule 14, paragraph 6 and MHRA transition guidance",source:"transition",related:"uk"},
- {id:"gb-import",scope:"Great Britain",country:"uk",topic:topics[1],title:"Approved-country import oversight",basis:"MHRA guidance",when:"Guidance edition · 12 Feb 2025",status:"Example baseline",summary:"For the approved-country import route, verify the UK import authorization holder and the mechanism for checking certification by a qualified person in an approved country.",locator:"GOV.UK import guidance and approved-country list",source:"imports",related:"import"},
- {id:"eu-pack",scope:"EU",shared:true,topic:topics[0],title:"Immediate packaging and expiry or retest dates",basis:"EU delegated regulation",when:"In force from 5 Dec 2022",status:"Shared EU baseline",summary:"Annex VI allows the period of use to be omitted from the immediate package in specified configurations. Verify the packaging conditions and the other particulars required by Annex VI.",locator:"Delegated Regulation (EU) 2022/2239, Annex, B.6.2 and B.6.3",source:"annex",related:"eu"},
- {id:"us-label",scope:"United States",country:"us",topic:topics[0],title:"Investigational new drug labeling",basis:"U.S. federal regulation",when:"Current eCFR section",status:"Example baseline",summary:"21 CFR 312.6 sets the investigational-use statement for immediate packages of investigational new drugs for human use and addresses misleading or unsupported labeling claims. The section also specifies a limited exception process.",locator:"21 CFR § 312.6",url:"https://www.ecfr.gov/current/title-21/chapter-I/subchapter-D/part-312/subpart-A/section-312.6"},
- {id:"us-import",scope:"United States",country:"us",topic:topics[1],title:"Importing investigational new drugs",basis:"FDA guidance page",when:"Page current as of 15 Jun 2026",status:"Example baseline",summary:"FDA describes the IND, U.S. consignee and labeling evidence for imports under an active IND. Check applicability and exemptions against the governing provisions.",locator:"FDA, Importing Investigational New Drugs",url:"https://www.fda.gov/drugs/human-drug-imports/importing-investigational-new-drugs"}
+// Country Specifications: the document colleagues keep for each country and update 4 to 7 times a year.
+// Everything below is FICTIONAL demo content shaped like a real specification. Never paste a real one here.
+// Regulatory lines paraphrase the official sources named in them (checked 14 Nov 2026).
+// Company details (carriers, ports, importer of record, contacts, notes) and all people are invented.
+const specSections = [
+ {id:"regulatory",name:"Regulatory requirements",watch:"online"},
+ {id:"import",name:"Import and export rules",watch:"online"},
+ {id:"permits",name:"Permits and licences",watch:"partly"},
+ {id:"controlled",name:"Controlled-drug classifications",watch:"online"},
+ {id:"invoice",name:"Mandatory invoice statements",watch:"online"},
+ {id:"ports",name:"Ports of entry",watch:"partly"},
+ {id:"logistics",name:"Logistics constraints",watch:"partly"},
+ {id:"carriers",name:"Approved carriers",watch:"internal"},
+ {id:"ior",name:"Importer of record and consignee",watch:"internal"},
+ {id:"contacts",name:"Local contacts",watch:"internal"},
+ {id:"notes",name:"Country-specific notes",watch:"internal"}
 ];
-// What each record means in practice, who last checked it, and when it is due again.
-// Answers are short paraphrases written from the official sources named in `ref` (checked 14 Nov 2026).
-// The people are fictional demo users. `watch` lists the monitored sources, `change` an open change that may alter the record.
-const recordDetails = {
+const countrySpecs = {
+ uk:{version:12,published:"2026-09-09",next:"2026-12-09",owner:"A. Novak, Regulatory Affairs UK",sections:{
+  regulatory:{owner:"A. Novak, Regulatory Affairs UK",checked:"2026-02-02",review:"2026-05-02",sources:["statute","transition"],case:"uk",notes:["uk-label","uk-transition"],
+   items:["Label IMPs under Part 7 as it stood before the 2025 amendment: regulation 46 applies Article 15 of Directive 2003/94/EC.","Each trial needs MHRA authorisation and a favourable ethics opinion before IMP is released to sites.","Label language: English (company standard)."]},
+  import:{owner:"M. Okafor, Trade Compliance UK",checked:"2026-06-03",review:"2026-09-03",sources:["imports","list"],change:"import",notes:["gb-import"],
+   items:["From approved countries (initially the EU and EEA): the QP of a UK MIA(IMP) holder checks each batch's QP certification before release to the trial. The batch is not certified again.","From any other country: import and QP certification by the UK MIA(IMP) holder.","Each shipment travels with a commercial invoice and the batch's QP certification evidence."]},
+  permits:{owner:"A. Novak, Regulatory Affairs UK",checked:"2026-09-09",review:"2026-12-09",sources:[],
+   items:["MHRA clinical trial authorisation for each trial, tracked in the trial system.","Demo UK depot holds the UK MIA(IMP) used for import oversight. Licence copy filed in the quality system.","Controlled drugs need a Home Office import licence for each shipment."]},
+  controlled:{owner:"A. Novak, Regulatory Affairs UK",checked:"2026-09-09",review:"2026-12-09",sources:[],
+   items:["No IMP in our active UK trials is a controlled drug.","Check every new IMP against the schedules of the Misuse of Drugs Regulations 2001 before its first UK shipment."]},
+  invoice:{owner:"M. Okafor, Trade Compliance UK",checked:"2026-09-09",review:"2026-12-09",sources:[],
+   items:["“No commercial value. Value for customs purposes only.”","“Investigational medicinal product for clinical trial use only.”","The trial reference and the UK importer of record on every invoice."]},
+  ports:{owner:"S. Hughes, Clinical Supply Logistics UK",checked:"2026-09-09",review:"2026-12-09",sources:[],
+   items:["Air: London Heathrow (LHR), for shipments from outside Europe.","Road: Dover, for shipments from the EU depot."]},
+  logistics:{owner:"S. Hughes, Clinical Supply Logistics UK",checked:"2026-09-09",review:"2026-12-09",sources:[],
+   items:["Prepare each shipment 5 calendar days before dispatch.","2–8 °C products: validated shipper, transit under 72 hours.","The depot does not receive deliveries at weekends."]},
+  carriers:{owner:"S. Hughes, Clinical Supply Logistics UK",checked:"2026-09-09",review:"2026-12-09",sources:[],
+   items:["Demo UK logistics: deliveries from the UK depot to sites.","Demo EU logistics: shipments from the EU depot to the UK."]},
+  ior:{owner:"M. Okafor, Trade Compliance UK",checked:"2026-09-09",review:"2026-12-09",sources:[],
+   items:["Importer of record: Demo Pharma UK Ltd.","Consignee: Demo UK depot, the UK MIA(IMP) holder."]},
+  contacts:{owner:"Local affiliate, UK",checked:"2026-06-03",review:"2026-09-03",sources:[],
+   items:["Clinical supply lead: R. Evans","Depot QP: K. Shah","Customs broker: Demo Brokers Ltd"]},
+  notes:{owner:"A. Novak, Regulatory Affairs UK",checked:"2026-09-09",review:"2026-12-09",sources:[],
+   items:["Allow two extra working days for customs clearance in December."]}
+ }},
+ de:{version:8,published:"2026-10-01",next:"2027-01-15",owner:"L. Weber, Regulatory Affairs EU",sections:{
+  regulatory:{owner:"L. Weber, Regulatory Affairs EU",checked:"2026-10-01",review:"2027-04-01",sources:["annex","qa"],change:"eu",notes:["eu-pack"],
+   items:["Label under Annex VI of Regulation (EU) 536/2014. The expiry date may be left off the immediate pack when the outer pack stays with it, or for blisters and small units (B.6.2 and B.6.3).","Label language: German (company standard; Article 69 lets each Member State set it)."]}
+ }},
+ fr:{version:9,published:"2026-09-24",next:"2027-01-08",owner:"L. Weber, Regulatory Affairs EU",sections:{
+  regulatory:{owner:"L. Weber, Regulatory Affairs EU",checked:"2026-09-24",review:"2027-03-24",sources:["annex","qa"],change:"eu",notes:["eu-pack"],
+   items:["Label under Annex VI of Regulation (EU) 536/2014. The expiry date may be left off the immediate pack when the outer pack stays with it, or for blisters and small units (B.6.2 and B.6.3).","Label language: French (company standard; Article 69 lets each Member State set it)."]}
+ }},
+ us:{version:15,published:"2026-08-20",next:"2026-11-20",owner:"J. Carter, Regulatory Affairs US",sections:{
+  regulatory:{owner:"J. Carter, Regulatory Affairs US",checked:"2026-08-20",review:"2027-02-20",sources:[],notes:["us-label"],
+   items:["Immediate package label: “Caution: New Drug—Limited by Federal (or United States) law to investigational use.” (21 CFR 312.6(a))","No label statement may be false or misleading, or present the drug as safe or effective for what is being investigated (21 CFR 312.6(b))."]},
+  import:{owner:"J. Carter, Regulatory Affairs US",checked:"2026-08-20",review:"2027-02-20",sources:[],notes:["us-import"],
+   items:["Import only under an IND in effect, for the investigation it covers (21 CFR 312.110).","Ship to investigators 30 days after FDA receives the IND, or earlier if FDA authorises it (21 CFR 312.40(c)).","Consignee: the sponsor, a qualified investigator named in the IND, or the US agent of a foreign sponsor named in the IND (21 CFR 312.110(a))."]}
+ }}
+};
+// What the official sources say, shown in the specification sections that cite them.
+// Short paraphrases written from the sources named in `ref` (checked 14 Nov 2026), not reviewed advice.
+const sourceNotes = {
  "uk-label":{
-  checked:{on:"2026-02-02",by:"A. Novak, Regulatory Affairs UK"},review:"2026-05-02",watch:["statute"],
   practice:[
    {q:"What must the label show?",a:"For an IMP without a UK marketing authorisation: the words “for clinical trial use only”; a warning to keep it out of the reach and sight of children (not needed if it is only given in a hospital or health centre taking part in the trial); sponsor and contact details; the trial reference; the participant number; active substance, strength, form, contents and batch number; instructions for use, route, expiry date and storage; and in blinded trials, the name of any comparator or placebo.",ref:"Regulation 46(1)"},
    {q:"Is a shorter label allowed?",a:"Yes, for authorised medicines given only in a hospital or health centre taking part in the trial, and for diagnostic radiopharmaceuticals. Authorised medicines can also carry the standard dispensing label instead.",ref:"Regulation 46(2) to (4)"},
@@ -144,7 +193,6 @@ const recordDetails = {
    {label:"MHRA decision on a substantial label change",value:"Not stated in the watched sources",basis:"Add from Regulatory Affairs",open:true}
   ]},
  "uk-transition":{
-  checked:{on:"2026-11-10",by:"A. Novak, Regulatory Affairs UK"},review:"2027-02-10",watch:["transition","statute"],
   practice:[
    {q:"Which date decides old or new rules?",a:"The date of QP certification of the finished IMP, not the date it was physically made.",ref:"MHRA transitional arrangements guidance"},
    {q:"When can a batch keep its old-rules label?",a:"When it was made before 28 Apr 2026, is labelled under the old regulation 46, and is used in the old-rules trial it was made for. Part 7 of the old rules then keeps applying to it.",ref:"Schedule 14, paragraph 6"},
@@ -157,7 +205,6 @@ const recordDetails = {
    {label:"QP certification on 28 Apr 2026 itself",value:"Expert decision",basis:"The guidance speaks of “before” and “after” the date, so RegChain escalates these batches",open:true}
   ]},
  "gb-import":{
-  checked:{on:"2026-06-03",by:"A. Novak, Regulatory Affairs UK"},review:"2026-09-03",watch:["imports","list"],change:"import",
   practice:[
    {q:"Who must oversee imports from approved countries?",a:"A UK MIA(IMP) holder. Its named QP oversees a system that checks each batch was QP certified in a listed country before release to the trial. The batch is not certified again.",ref:"MHRA import guidance, section 2"},
    {q:"Which countries count?",a:"Countries on MHRA's approved-country list, initially all EU and EEA countries. From any other country, import and QP certification by the UK MIA(IMP) holder are still needed.",ref:"MHRA import guidance, section 2 · approved-country list"},
@@ -171,7 +218,6 @@ const recordDetails = {
    {label:"Prepare a UK shipment",value:"5 calendar days",basis:"Company supply data"}
   ]},
  "eu-pack":{
-  checked:{on:"2026-10-01",by:"L. Weber, Regulatory Affairs EU"},review:"2027-04-01",watch:["annex","qa"],change:"eu",
   practice:[
    {q:"When can the expiry date be left off the immediate pack?",a:"When the immediate and outer packs stay together, or when the immediate pack is a blister or a small unit such as an ampoule. The outer pack must then carry all the particulars, and the immediate pack can omit the expiry or retest date.",ref:"Regulation (EU) 536/2014, Annex VI, B.6.2 and B.6.3, as amended by Delegated Regulation (EU) 2022/2239"},
    {q:"Which language must the label use?",a:"The language each Member State sets. A product may be labelled in several languages.",ref:"Regulation (EU) 536/2014, Article 69"},
@@ -179,7 +225,6 @@ const recordDetails = {
   ],
   lead:[]},
  "us-label":{
-  checked:{on:"2026-08-20",by:"J. Carter, Regulatory Affairs US"},review:"2027-02-20",watch:[],
   practice:[
    {q:"What must the immediate package say?",a:"“Caution: New Drug—Limited by Federal (or United States) law to investigational use.”",ref:"21 CFR 312.6(a)"},
    {q:"What must the label avoid?",a:"Anything false or misleading, and any claim that the drug is safe or effective for the purposes being investigated.",ref:"21 CFR 312.6(b)"},
@@ -187,7 +232,6 @@ const recordDetails = {
   ],
   lead:[]},
  "us-import":{
-  checked:{on:"2026-08-20",by:"J. Carter, Regulatory Affairs US"},review:"2027-02-20",watch:[],
   practice:[
    {q:"What is needed to import?",a:"An IND in effect for the drug, unless it is exempt under 21 CFR 312.2. Submit the IND before importing, and import the drug only for the investigation it covers.",ref:"FDA import page · 21 CFR 312.110"},
    {q:"Who can receive the shipment?",a:"The IND sponsor, a qualified investigator named in the IND, or the US agent of a foreign sponsor named in the IND. FDA checks that the entry documents match.",ref:"21 CFR 312.110(a), via the FDA import page"},
@@ -202,7 +246,7 @@ const recordDetails = {
 "use strict";
 const ukCase = {
  id:"RC-UK-001", requirement:"GB/IMP_LABELING", effective:"2026-04-28", snapshot:"PORTFOLIO-01",
- baseline:"Use the pre-amendment Part 7 reference for the legacy cohort.",
+ baseline:countrySpecs.uk.sections.regulatory.items[0],
  policy:"Apply amended Part 7 from 28 April 2026, with the Schedule 14 paragraph 6 transition where its conditions are met.",
  initialText:"For each applicable UK IMP batch, record the finished-IMP QP date, trial cohort, intended use and approved label reference. Route missing dates, cutoff-day batches and unresolved variations to Regulatory Affairs.",
  evidence:[
@@ -334,7 +378,7 @@ function workflowStep(state,command,role,now) {
   state.stage="published";
   state.publication={version:2,previousVersion:1,revision:state.revision,at:now,effective:ukCase.effective,policy:state.policy??ukCase.policy,instruction:state.draft,
    source:state.draftSource??"seed",evidenceIds:ukCase.evidence.map(item=>item.id)};
-  appendWorkflowEvent(state,"country_record.published","publisher",now,"GB/IMP_LABELING v2 · Receipt LOCAL-REC-02");
+  appendWorkflowEvent(state,"country_record.published","publisher",now,"UK Country Specification v"+(countrySpecs.uk.version+1)+" · Regulatory requirements · "+ukCase.requirement+" · Receipt LOCAL-REC-02");
   const nextReview=shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").map(shipment=>shipment.preparationDate).sort()[0];
   state.task={id:"QMS-DEMO-001",owner:workflowRoles.owner,status:"assigned",evidence:null,assignedAt:now,dueOn:nextReview,
    version:2,revision:state.revision,studyIds:[...new Set(assessedBatches.filter(batch=>batch.scope==="UK").map(batch=>batch.study))],
@@ -344,7 +388,7 @@ function workflowStep(state,command,role,now) {
   return;
  }
  const task=state.task;
- if(!task || state.stage!=="published") throw Error("A published country record and an open Quality task are required.");
+ if(!task || state.stage!=="published") throw Error("A published specification update and an open Quality task are required.");
  if(action==="ack" && role==="owner" && task.status==="assigned") {
   task.status="acknowledged";
   appendWorkflowEvent(state,"quality_task.acknowledged",role,now,"Owner acknowledged receipt. Implementation is pending.");
@@ -412,7 +456,7 @@ const icons = {
   schedule:'<rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/><path d="M5.5 2.5v3m5-3v3M2.5 7h11M6 10.5h3.5"/>',
   review:'<path d="M5 2.5h6l2 2v9H3v-11h2zm.5 6 1.6 1.6 3.5-3.5"/>'
 };
-const navItems = {overview:"Overview",countries:"Country requirements",sources:"Source log",schedule:"Monitoring schedule"};
+const navItems = {overview:"Overview",countries:"Country specifications",sources:"Source log",schedule:"Monitoring schedule"};
 const byId = id => document.getElementById(id);
 const esc = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const icon = name => '<svg viewBox="0 0 16 16" aria-hidden="true">'+icons[name]+'</svg>';
@@ -430,8 +474,7 @@ let workflowRole = "viewer";
 let workflowTab = "impact";
 let reviewDecision = "approve";
 let countrySearch = "";
-let countryTopic = "all";
-let countryScope = "all";
+let specFilter = "all";
 const expandedRegions = new Set(countries.filter(country=>country.changes?.length).map(country=>country.region));
 if (changes.some(change=>change.scope==="EU")) expandedRegions.add("Europe");
 const scheduleKey = "regchain-dashboard-schedule-v1";
@@ -571,16 +614,6 @@ function regionCard() {
   return '<section id="regions" class="card" aria-labelledby="regions-title"><div class="card-head"><div><h2 id="regions-title">Changes by region</h2><p>Open monitoring cases</p></div></div><div class="region-list">'+content+'</div>'+history+'</section>';
 }
 const countryById = id => countries.find(country=>country.id===id);
-function publishedRecord(record) {
-  if(record.id!=="uk-label") return record;
-  const current=workflow.publication;
-  return {...record,title:current?record.title:"IMP labeling under the earlier Part 7",
-    status:current?"Published country record · v2":"Seeded baseline · v1",
-    when:current?"Effective 28 Apr 2026":"Until 27 Apr 2026 · after that, qualifying legacy batches only",
-    ...(current?{}:{source:null,basis:"Earlier UK regulation",locator:"Pre-amendment Part 7, regulation 46",url:"https://www.legislation.gov.uk/cy/uksi/2004/1031/body/2025-07-23"}),
-    summary:current?current.policy+" "+current.instruction:ukCase.baseline};
-}
-const recordsFor = country => requirements.filter(record=>record.country===country.id || (record.shared && country.shared)).map(publishedRecord);
 // Library dates follow the demo's assessment day, like the rest of the replay.
 const libraryToday = (portfolio?.assessment_as_of ?? "2026-11-14").slice(0,10);
 const plural = (count,word,many=word+"s") => count+" "+(count===1?word:many);
@@ -589,73 +622,104 @@ function addMonths(day,months) {
   date.setUTCMonth(date.getUTCMonth()+months);
   return date.toISOString().slice(0,10);
 }
-// In force, Changing (an open change may alter it) or Replaced (the rule changed and the update is not approved).
-function recordState(record) {
-  if(record.id==="uk-label" && !workflow.publication) {
-    const rejected=workflow.stage==="rejected";
-    return {label:"Replaced 28 Apr 2026",tone:"red",change:"uk",
-      note:"The rule changed on 28 Apr 2026. This record still describes the earlier rule, which now applies only to qualifying legacy batches. "+
-        (rejected?"The update was rejected in case "+ukCase.id+", so the record has not been replaced yet.":"The updated record is waiting for expert approval in case "+ukCase.id+".")};
+const sectionById = id => specSections.find(section=>section.id===id);
+// The specification as it stands now: approving the UK case publishes a new version between scheduled updates.
+function specFor(countryId) {
+  const spec=countrySpecs[countryId];
+  if(!spec) return null;
+  const published=countryId==="uk" && workflow.publication;
+  return {...spec,version:published?spec.version+1:spec.version,published:published?workflow.publication.at.slice(0,10):spec.published,betweenUpdates:Boolean(published),previousVersion:spec.version};
+}
+// One section's current text, owner and check dates.
+function specSection(countryId,sectionId) {
+  const section=countrySpecs[countryId]?.sections[sectionId];
+  if(!section) return null;
+  if(section.case==="uk" && workflow.publication) {
+    const on=workflow.publication.at.slice(0,10);
+    return {...section,items:[workflow.publication.policy,"Supply instruction: "+workflow.publication.instruction,...section.items.slice(1)],previousItems:section.items,
+      checked:on,checkedBy:(workflow.decision?.actor??"Regulatory SME")+", approved in "+ukCase.id,review:addMonths(on,3)};
   }
-  const change=openChanges().find(item=>item.id===recordDetails[record.id]?.change);
-  if(change) return {label:"Changing",tone:"amber",change:change.id,note:"An open change may alter this record: "+change.title+" ("+change.when+"). Regulatory Affairs is assessing it."};
-  return {label:"In force",tone:"green",note:""};
+  return {...section,checkedBy:section.owner};
 }
-function recordCheck(record) {
-  const replaced=record.id==="uk-label" && !workflow.publication;
-  const details=recordDetails[record.id]??{};
-  const check=record.id==="uk-label" && workflow.publication
-    ? {on:workflow.publication.at.slice(0,10),by:(workflow.decision?.actor??"Regulatory SME")+", approved in "+ukCase.id,review:addMonths(workflow.publication.at.slice(0,10),3)}
-    : {...details.checked,review:details.review};
-  const overdue=!replaced && Boolean(check.review) && check.review<libraryToday;
-  const review=replaced?"Update in review in "+ukCase.id:displayDay(check.review)+(overdue?" (overdue)":"");
-  return {...check,overdue,review,line:"Checked "+displayDay(check.on)+" by "+check.by+" · "+(replaced?review:"Next review "+review)};
+// Current, Change to assess (an open change may alter it) or Edit suggested (out of date, edit waiting for approval).
+function sectionState(countryId,sectionId) {
+  const section=countrySpecs[countryId]?.sections[sectionId];
+  if(!section) return {label:"Not in this demo",tone:"",key:"empty",note:""};
+  if(section.case==="uk" && !workflow.publication) {
+    const rejected=workflow.stage==="rejected";
+    return {label:"Edit suggested",tone:"red",key:"edit",change:"uk",
+      note:"Out of date since 28 Apr 2026, when the amended Part 7 came into force. "+(rejected?"The suggested edit was rejected in case "+ukCase.id+", so this section still has the earlier text.":"RegChain drafted an edit from the official sources. It is waiting for approval in case "+ukCase.id+".")};
+  }
+  const change=openChanges().find(item=>item.id===section.change);
+  if(change) return {label:"Change to assess",tone:"amber",key:"changing",change:change.id,note:"An open change may alter this section: "+change.title+" ("+change.when+"). Regulatory Affairs is assessing it."};
+  return {label:"Current",tone:"green",key:"current",note:""};
 }
-function watchText(record) {
-  const watched=(recordDetails[record.id]?.watch??[]).map(id=>sources.find(source=>source.id===id)).filter(Boolean);
-  if(!watched.length) return "Not on the watch list yet";
+function sectionCheck(countryId,sectionId) {
+  const section=specSection(countryId,sectionId);
+  const state=sectionState(countryId,sectionId);
+  const overdue=state.key!=="edit" && section.review<libraryToday;
+  const review=state.key==="edit"?"Edit in review in "+ukCase.id:displayDay(section.review)+(overdue?" (overdue)":"");
+  return {overdue,review,line:"Checked "+displayDay(section.checked)+" by "+section.checkedBy+" · "+(state.key==="edit"?"Edit in review in "+ukCase.id:"Next check "+review)};
+}
+// How each section is kept current: watched public sources, public sources not watched yet, or internal only.
+function watchBadge(countryId,sectionId) {
+  const section=countrySpecs[countryId].sections[sectionId];
+  const kind=sectionById(sectionId).watch;
+  if(section.sources.length) return badge("Watched online","blue");
+  if(kind==="internal") return badge("Internal · owner confirms","purple");
+  return badge(kind==="partly"?"Public and internal · not watched yet":"Public source · not watched yet","");
+}
+function watchText(countryId,sectionId) {
+  const watched=countrySpecs[countryId].sections[sectionId].sources.map(id=>sources.find(source=>source.id===id)).filter(Boolean);
+  if(!watched.length) return sectionById(sectionId).watch==="internal"?"Internal details: the owner confirms them at each update":"Not on the watch list yet";
   const retry=watched.filter(source=>source.status==="Retry needed").length;
   return plural(watched.length,"source")+" watched · checked "+replayDate+(retry?" · "+retry+" needs a retry":"");
 }
 const countryCodes = {uk:"GB",de:"DE",fr:"FR",us:"US",jp:"JP",au:"AU",br:"BR",za:"ZA"};
-// Active trials, sites and patients in one country of the demo portfolio.
+// Active trials, sites, patients and planned shipments in one country of the demo portfolio.
 function countryPortfolio(countryId) {
   if(!portfolio) return null;
   const code=countryCodes[countryId];
   const active=new Set(portfolio.studies.filter(study=>study.status!=="completed").map(study=>study.id));
   const trialIds=[...new Set(portfolio.study_countries.filter(item=>item.country_code===code && active.has(item.study_id)).map(item=>item.study_id))];
   const sites=portfolio.sites.filter(site=>site.country_code===code && active.has(site.study_id));
-  return {trialIds,sites,patients:sites.reduce((sum,site)=>sum+(site.patients_on_treatment||0),0)};
+  const siteIds=new Set(sites.map(site=>site.id));
+  const shipments=portfolio.shipments.filter(shipment=>siteIds.has(shipment.site_id)).sort((a,b)=>a.planned_dispatch_date.localeCompare(b.planned_dispatch_date));
+  return {trialIds,sites,shipments,patients:sites.reduce((sum,site)=>sum+(site.patients_on_treatment||0),0)};
 }
-// Which of our trials a record touches, in the country being viewed.
-function recordExposure(record) {
-  const country=countryById(currentCountry);
-  const base=countryPortfolio(country.id);
+// Which of our trials a section touches, in its country.
+function sectionExposure(countryId,sectionId) {
+  const country=countryById(countryId);
+  const base=countryPortfolio(countryId);
   if(!base) return null;
   const trials=base.trialIds.length;
   if(!trials) return {chip:["No active trials here",""],lines:["No active trials in the demo portfolio have sites in "+country.name+"."],trials};
   const where=plural(trials,"active trial")+" · "+plural(base.sites.length,"site")+" · "+base.patients+" patients on treatment in "+country.name;
   const chip=[plural(trials,"trial")+" · "+plural(base.sites.length,"site"),""];
-  if(record.id==="uk-label") {
+  if(countryId==="uk" && sectionId==="regulatory") {
     const impact=ukLabelImpact();
+    const uk=assessedBatches.filter(batch=>batch.scope==="UK");
+    const qualify=uk.filter(batch=>batch.status==="Potential transition eligibility").length;
     return {trials,chip:[impact.trials+" of "+trials+" trials need action",impact.trials?"amber":""],lines:[
       impact.trials+" of "+trials+" active UK trials need action",
-      plural(impact.batches,"batch","batches")+" need a labeling review or an expert decision",
+      plural(impact.batches,"batch","batches")+" need a labeling review or an expert decision, and "+qualify+" may keep the old-rules label",
       plural(impact.urgent.length,"UK shipment")+" need work before dispatch"+(impact.first?" · first to prepare: "+impact.first.id+(impact.first.preparationDate===libraryToday?", today":" by "+displayDay(impact.first.preparationDate)):""),
       impact.patients+" patients on treatment at the sites those shipments resupply"]};
   }
-  if(record.id==="uk-transition") {
-    const uk=assessedBatches.filter(batch=>batch.scope==="UK");
-    const qualify=uk.filter(batch=>batch.status==="Potential transition eligibility").length;
-    const missing=uk.filter(batch=>batch.status==="Insufficient information" && batch.qp && batch.qp<ukCase.effective).length;
-    const cutoff=uk.filter(batch=>batch.status==="Needs SME assessment").length;
-    return {trials,chip:[plural(qualify,"batch","batches")+" may qualify","purple"],lines:[
-      plural(qualify,"batch","batches")+" may keep "+(qualify===1?"its":"their")+" old-rules label",
-      plural(missing,"batch","batches")+" certified before 28 Apr 2026 "+(missing===1?"lacks":"lack")+" the evidence to confirm it",
-      plural(cutoff,"batch","batches")+" certified on 28 Apr 2026 "+(cutoff===1?"needs":"need")+" an expert decision",where]};
+  if(sectionId==="import" && countryId==="uk") return {trials,chip,lines:[where,"The supply data does not record where shipments come from, so imported batches cannot be identified yet."]};
+  if(sectionId==="contacts" || sectionId==="notes") return null;
+  if(["logistics","carriers","ports","ior","invoice"].includes(sectionId)) {
+    const list=base.shipments;
+    return {trials,chip:[plural(list.length,"shipment")+" planned",""],lines:[where,list.length?plural(list.length,"shipment")+" planned between "+displayDay(list[0].planned_dispatch_date)+" and "+displayDay(list[list.length-1].planned_dispatch_date):"No shipments planned in the demo portfolio"]};
   }
-  if(record.id==="gb-import") return {trials,chip,lines:[where,"The supply data does not record where shipments come from, so imported batches cannot be identified yet."]};
   return {trials,chip,lines:[where]};
+}
+const specFilters = [["all","All sections"],["attention","Needs attention"],["online","Public sources"],["internal","Internal only"]];
+function sectionMatches(countryId,sectionId) {
+  if(specFilter==="all") return true;
+  if(specFilter==="attention") return sectionState(countryId,sectionId).key!=="current" || sectionCheck(countryId,sectionId).overdue;
+  const kind=sectionById(sectionId).watch;
+  return specFilter==="internal"?kind==="internal":kind!=="internal";
 }
 function countryList() {
   const query=countrySearch.trim().toLowerCase();
@@ -663,8 +727,11 @@ function countryList() {
     const matches=countries.filter(country=>country.region===region && (country.name.toLowerCase().includes(query)||region.toLowerCase().includes(query)));
     if (!matches.length) return "";
     return '<div class="section-label">'+region+'</div>'+matches.map(country=>{
-      const count=recordsFor(country).length;
-      const status=openChangeIds(country).length?"Open changes":count?"Sample coverage":"Not assessed";
+      const spec=specFor(country.id);
+      const ids=spec?Object.keys(spec.sections):[];
+      const edits=ids.filter(id=>sectionState(country.id,id).key==="edit").length;
+      const changing=ids.filter(id=>sectionState(country.id,id).key==="changing").length;
+      const status=!spec?"No specification in this demo":"Specification v"+spec.version+(edits?" · "+plural(edits,"edit")+" suggested":changing?" · "+plural(changing,"change")+" to assess":" · current");
       return '<button type="button" class="country-row" data-act="pick-country" data-value="'+country.id+'" aria-pressed="'+(currentCountry===country.id)+'"><span><strong>'+country.name+'</strong><small class="sub">'+status+'</small></span>'+icon("chevron")+'</button>';
     }).join("");
   }).join("");
@@ -673,42 +740,56 @@ function countryList() {
 function options(values,selected) {
   return values.map(([value,label])=>'<option value="'+esc(value)+'"'+(value===selected?" selected":"")+'>'+esc(label)+'</option>').join("");
 }
-function countryRequirements() {
+function countrySpecification() {
   const country=countryById(currentCountry);
-  const all=recordsFor(country);
-  const filtered=all.filter(record=>(countryTopic==="all"||record.topic===countryTopic) && (countryScope==="all"||(countryScope==="shared"?record.shared:!record.shared)));
-  const hasLocal=all.some(record=>!record.shared);
-  const coverage=hasLocal ? "Sample country coverage" : all.length ? "Shared EU coverage only" : "Not assessed";
+  const spec=specFor(country.id);
+  const base=countryPortfolio(country.id);
+  const people=base?plural(base.trialIds.length,"active trial")+", "+plural(base.sites.length,"site")+" and "+base.patients+" patients in the demo portfolio":"";
+  if(!spec) return '<section class="card"><div class="card-head"><div><h2>'+country.name+'</h2><p>'+country.region+(people?' · '+people:'')+'</p></div>'+badge("No specification","")+'</div>'+
+    '<p class="nothing">This demo has no Country Specification for '+esc(country.name)+'. A real one would have the same '+specSections.length+' sections as the UK example.</p></section>';
+  const ids=specSections.map(section=>section.id).filter(id=>spec.sections[id]);
+  const states=Object.fromEntries(ids.map(id=>[id,sectionState(country.id,id)]));
+  const overdue=ids.filter(id=>sectionCheck(country.id,id).overdue);
+  const count=key=>ids.filter(id=>states[id].key===key).length;
+  const summary=[["edit","edit suggested","red"],["changing","change to assess","amber"],["current","current","green"]].filter(([key])=>count(key)).map(([key,label,tone])=>badge(count(key)+" "+label,tone)).join("")+
+    (overdue.length?badge(plural(overdue.length,"check")+" overdue","red"):"");
+  const attention=ids.filter(id=>states[id].key!=="current");
+  const publicIds=ids.filter(id=>sectionById(id).watch!=="internal");
+  const watched=publicIds.filter(id=>spec.sections[id].sources.length).length;
+  const internal=ids.filter(id=>sectionById(id).watch==="internal").length;
+  const missing=specSections.filter(section=>!spec.sections[section.id]).map(section=>section.name);
+  const before='<div class="spec-brief">'+icon("info")+'<span><strong>Before the next update ('+esc(displayDay(spec.next))+'):</strong> '+
+    (attention.length?plural(attention.length,"section")+" with changes to review ("+attention.map(id=>sectionById(id).name).join(", ")+"). ":
+      watched?"No changes found in the watched sources. ":"No sources are watched yet, so changes only surface at the scheduled update. ")+
+    (overdue.length?plural(overdue.length,"section")+" past the check date. ":"")+
+    (internal?plural(internal,"internal section")+" for the owners to confirm. ":"")+
+    "Watched online: "+watched+" of "+plural(publicIds.length,"section")+" with public sources."+'</span></div>';
+  const rows=ids.filter(id=>sectionMatches(country.id,id)).map(id=>{
+    const section=specSection(country.id,id);
+    const state=states[id];
+    const check=sectionCheck(country.id,id);
+    const exposure=state.key!=="current"||id==="regulatory"?sectionExposure(country.id,id):null;
+    const first=section.items[0]??"";
+    return '<button type="button" class="req-row" data-act="spec-section" data-value="'+id+'"><span><span class="req-top"><strong>'+esc(sectionById(id).name)+'</strong>'+badge(state.label,state.tone)+(check.overdue?badge("Check overdue","red"):"")+'</span>'+
+      '<small class="sub spec-excerpt">'+esc(first.length>150?first.slice(0,147)+"…":first)+'</small><small class="sub">'+esc(check.line)+'</small>'+
+      '<span class="req-chips">'+watchBadge(country.id,id)+(exposure?badge(...exposure.chip):"")+'</span></span>'+icon("chevron")+'</button>';
+  }).join("");
   const links=[...openChangeIds(country),...(country.shared??[])].map(id=>{
     const change=changes.find(item=>item.id===id);
     return trigger(change.title,"open-case",id,"","file");
   });
-  const rows=filtered.map(record=>{
-    const state=recordState(record);
-    const check=recordCheck(record);
-    const exposure=recordExposure(record);
-    return '<button type="button" class="req-row" data-act="requirement" data-value="'+record.id+'"><span><span class="req-top"><strong>'+esc(record.title)+'</strong>'+badge(state.label,state.tone)+(check.overdue?badge("Review overdue","red"):"")+'</span>'+
-      '<small class="sub">'+esc(record.topic+' · '+record.scope+' · '+record.basis+' · '+record.when)+'</small><small class="sub">'+esc(check.line)+'</small>'+
-      (exposure?'<span class="req-chips">'+badge(...exposure.chip)+'</span>':'')+'</span>'+icon("chevron")+'</button>';
-  }).join("");
-  const coveredTopics=new Set(all.map(record=>record.topic));
-  const missing=topics.filter(topic=>!coveredTopics.has(topic));
-  const base=countryPortfolio(country.id);
-  const states=all.map(recordState);
-  const tally=["Replaced","Changing","In force"].map(label=>[label,states.filter(state=>state.label.startsWith(label)).length,states.find(state=>state.label.startsWith(label))?.tone]).filter(([,count])=>count);
-  const overdue=all.filter(record=>recordCheck(record).overdue).length;
-  const summary=tally.map(([label,count,tone])=>badge(count+" "+label.toLowerCase(),tone)).join("")+(overdue?badge(plural(overdue,"review")+" overdue","red"):"");
-  return '<section class="card"><div class="card-head"><div><h2>'+country.name+'</h2><p>'+country.region+' · '+plural(all.length,"sample record")+
-    (base?' · '+plural(base.trialIds.length,"active trial")+', '+plural(base.sites.length,"site")+', '+base.patients+' patients in the demo portfolio':'')+'</p>'+
-    (summary?'<div class="record-summary">'+summary+'</div>':'')+'</div>'+badge(coverage,hasLocal?"blue":all.length?"purple":"")+'</div>'+
-    '<div class="card-foot"><div class="filters"><label class="field">Topic<select id="country-topic">'+options([["all","All topics"],...topics.map(topic=>[topic,topic])],countryTopic)+'</select></label><label class="field">Record scope<select id="country-scope">'+options([["all","All scopes"],["local","Country-specific"],["shared","Shared EU"]],countryScope)+'</select></label></div></div>'+
-    (rows?'<div class="req-list">'+rows+'</div>':'<p class="nothing">'+(all.length?"No records match these filters.":"This prototype has no reviewed records for this country.")+'</p>')+
-    '<div class="inline-note">'+icon("info")+'<span>'+esc((all.length && !hasLocal?"Country-specific requirements are not assessed. ":"")+(missing.length?"No sample coverage for "+missing.join(", ")+".":""))+'</span></div>'+
+  return '<section class="card"><div class="card-head"><div><h2>'+country.name+' · Country Specification v'+spec.version+'</h2>'+
+    '<p>'+(spec.betweenUpdates?'Published '+esc(displayDay(spec.published))+', between scheduled updates':'Last scheduled update '+esc(displayDay(spec.published)))+' · next scheduled update '+esc(displayDay(spec.next))+' · owner '+esc(spec.owner)+'</p>'+
+    (people?'<p>'+esc(people)+'</p>':'')+(summary?'<div class="record-summary">'+summary+'</div>':'')+'</div>'+badge("Fictional demo specification","purple")+'</div>'+
+    before+
+    '<div class="card-foot"><div class="filters"><label class="field">Show<select id="spec-filter">'+options(specFilters,specFilter)+'</select></label></div></div>'+
+    (rows?'<div class="req-list">'+rows+'</div>':'<p class="nothing">No sections match this filter.</p>')+
+    (missing.length?'<div class="inline-note">'+icon("info")+'<span>'+esc("Not filled in this demo: "+missing.join(", ")+".")+'</span></div>':'')+
     (links.length?'<div class="card-foot"><small>Related open changes</small><div class="actions">'+links.join("")+'</div></div>':"")+'</section>';
 }
 function countryLibrary() {
-  return heading("Country requirements","Browse the clinical supply library by country, topic and jurisdiction.")+
-    '<div class="library-layout"><section class="card"><div class="card-head"><label class="field" style="width:100%">Find a country<input id="country-search" type="search" placeholder="Country or continent" value="'+esc(countrySearch)+'"></label></div><div id="country-list">'+countryList()+'</div></section><div id="country-requirements">'+countryRequirements()+'</div></div>';
+  return heading("Country specifications","The specifications colleagues maintain for each country, and what has changed since the last update.")+
+    '<div class="library-layout"><section class="card"><div class="card-head"><label class="field" style="width:100%">Find a country<input id="country-search" type="search" placeholder="Country or continent" value="'+esc(countrySearch)+'"></label></div><div id="country-list">'+countryList()+'</div></section><div id="country-requirements">'+countrySpecification()+'</div></div>';
 }
 function practiceList(items) {
   return '<ul class="practice">'+items.map(item=>'<li><strong>'+esc(item.q)+'</strong>'+(item.open?badge("To confirm","amber"):"")+'<p>'+esc(item.a)+'</p><small>'+esc(item.ref)+'</small></li>').join("")+'</ul>';
@@ -716,50 +797,59 @@ function practiceList(items) {
 function leadList(items) {
   return '<ul class="practice">'+items.map(item=>'<li><strong>'+esc(item.label)+'</strong>'+(item.open?badge("To confirm","amber"):"")+'<p>'+esc(item.value)+'</p><small>'+esc(item.basis)+'</small></li>').join("")+'</ul>';
 }
-function requirementDetail(id) {
-  const record=publishedRecord(requirements.find(item=>item.id===id));
-  const source=sources.find(item=>item.id===record.source);
-  const details=recordDetails[id]??{};
-  const state=recordState(record);
-  const check=recordCheck(record);
-  const exposure=recordExposure(record);
-  const country=countryById(currentCountry);
-  const alert=state.note?'<section class="record-alert'+(state.tone==="red"?"":" warn")+'"><p>'+esc(state.note)+'</p>'+trigger(state.change==="uk"?"Open the UK case":"Open the change","open-case",state.change,"","arrow")+'</section>':"";
-  const replaced=state.label.startsWith("Replaced");
-  const practiceTag=id==="uk-label"?(replaced?badge("Draft · awaiting expert approval","amber"):badge("Approved in "+ukCase.id,"green")):badge("Example · written from the official sources","blue");
-  const exposureBlock='<section class="drawer-block"><div class="block-head"><h3>Our trials in '+esc(country.name)+'</h3>'+(exposure?badge(...exposure.chip):"")+'</div>'+
-    (exposure?'<ul class="exposure-lines">'+exposure.lines.map(line=>'<li>'+esc(line)+'</li>').join("")+'</ul>'+(exposure.trials?'<div class="actions">'+trigger("See the trials","record-trials",id,"","arrow")+'</div>':""):
-      '<p>Start the dashboard with Start-RegChain.cmd to load the demo portfolio and see which trials this record affects.</p>')+'</section>';
-  const practiceBlock=details.practice?.length?'<section class="drawer-block"><div class="block-head"><h3>'+(replaced?"What to do under the amended rule":"What to do")+'</h3>'+practiceTag+'</div>'+practiceList(details.practice)+'</section>':"";
-  const leadBlock=details.lead?.length?'<section class="drawer-block"><h3>Lead times</h3>'+leadList(details.lead)+'</section>':"";
-  drawer("Country requirements library",record.title,'<div class="actions">'+badge(state.label,state.tone)+(check.overdue?badge("Review overdue","red"):"")+badge(record.status,"blue")+'</div>'+alert+
-    exposureBlock+practiceBlock+leadBlock+
-    factlist([["Jurisdiction",record.scope],["Topic",record.topic],["Source type",record.basis],["Date or edition",record.when],["Source provision",record.locator],
-      ["Last checked",displayDay(check.on)+" · "+check.by],["Next review",check.review],["Source watch",watchText(record)]])+
-    block("Requirement summary",record.summary)+
-    '<div class="actions">'+openLink("Open official source",source?.url??record.url,"primary")+
-    (record.id==="uk-label"?trigger("View versions","case-history","uk","","arrow"):record.related?trigger("View related change","open-case",record.related,"","arrow"):"")+'</div>');
+function sectionDetail(id) {
+  const countryId=currentCountry;
+  const country=countryById(countryId);
+  const spec=specFor(countryId);
+  const section=specSection(countryId,id);
+  const state=sectionState(countryId,id);
+  const check=sectionCheck(countryId,id);
+  const exposure=sectionExposure(countryId,id);
+  const notes=(section.notes??[]).map(key=>sourceNotes[key]).filter(Boolean);
+  const practice=notes.flatMap(note=>note.practice??[]);
+  const lead=notes.flatMap(note=>note.lead??[]);
+  const alert=state.note?'<section class="record-alert'+(state.tone==="red"?"":" warn")+'"><p>'+esc(state.note)+'</p>'+trigger(state.key==="edit"?"Review the edit":"Open the change",state.key==="edit"?"case-proposal":"open-case",state.change,state.key==="edit"?"primary":"","arrow")+'</section>':"";
+  let edit="";
+  if(state.key==="edit") {
+    const origin=workflow.draftSource==="ai"?"Drafted by the AI check from the official sources after all its checks passed.":workflow.draftSource==="sme"?"Edited by the Regulatory SME.":"Example text until a passing AI check replaces it with a checked draft.";
+    edit='<section class="drawer-block"><div class="block-head"><h3>Suggested edit</h3>'+badge("Awaiting approval","amber")+'</div><ul class="redline">'+
+      '<li class="del">'+esc(section.items[0])+'</li><li class="add">'+esc(workflow.policy??ukCase.policy)+'</li><li class="add">Supply instruction: '+esc(workflow.draft)+'</li></ul><p class="note-line">'+esc(origin)+'</p></section>';
+  }
+  const published=section.previousItems?'<section class="drawer-block"><div class="block-head"><h3>Published between scheduled updates</h3>'+badge("v"+spec.version,"green")+'</div><p>'+
+    esc("Version "+spec.version+" was published on "+displayDay(spec.published)+" after approval in "+ukCase.id+". The next scheduled update stays on "+displayDay(spec.next)+".")+'</p>'+
+    '<details class="source-notes"><summary>Text in version '+spec.previousVersion+'</summary><ul class="case-list">'+section.previousItems.map(item=>'<li>'+esc(item)+'</li>').join("")+'</ul></details></section>':"";
+  const content='<section class="drawer-block"><h3>Section text · v'+spec.version+'</h3><ul class="case-list">'+section.items.map(item=>'<li>'+esc(item)+'</li>').join("")+'</ul></section>';
+  const exposureBlock=exposure?'<section class="drawer-block"><div class="block-head"><h3>Our trials in '+esc(country.name)+'</h3>'+badge(...exposure.chip)+'</div><ul class="exposure-lines">'+exposure.lines.map(line=>'<li>'+esc(line)+'</li>').join("")+'</ul>'+
+    (exposure.trials?'<div class="actions">'+trigger("See the trials","section-trials",id,"","arrow")+'</div>':"")+'</section>':
+    portfolio||["contacts","notes"].includes(id)?"":'<section class="drawer-block"><h3>Our trials in '+esc(country.name)+'</h3><p>Start the dashboard with Start-RegChain.cmd to load the demo portfolio and see which trials this section affects.</p></section>';
+  const notesBlock=practice.length?'<section class="drawer-block"><details class="source-notes"><summary>What the official sources say '+badge("Written from the sources, not reviewed advice","blue")+'</summary>'+practiceList(practice)+
+    (lead.length?'<h3 class="lead-head">Lead times</h3>'+leadList(lead):'')+'</details></section>':"";
+  const sourceButtons=section.sources.map(sourceId=>{const source=sources.find(item=>item.id===sourceId);return trigger(source.authority+" · "+source.title,"source-detail",sourceId,"","file");}).join("");
+  drawer(country.name+" Country Specification v"+spec.version,sectionById(id).name,'<div class="actions">'+badge(state.label,state.tone)+watchBadge(countryId,id)+(check.overdue?badge("Check overdue","red"):"")+'</div>'+alert+
+    edit+published+content+exposureBlock+notesBlock+
+    factlist([["Section owner",section.owner],["Last checked",displayDay(section.checked)+" · "+section.checkedBy],["Next check",check.review],["How it is kept current",watchText(countryId,id)],
+      ["Specification","v"+spec.version+" · "+(spec.betweenUpdates?"published "+displayDay(spec.published)+" between updates":"last scheduled update "+displayDay(spec.published))],["Next scheduled update",displayDay(spec.next)]])+
+    (sourceButtons?'<div class="actions">'+sourceButtons+'</div>':''));
 }
-// The trials behind a record's numbers, in the country being viewed.
-function recordTrials(id) {
-  const record=publishedRecord(requirements.find(item=>item.id===id));
+// The trials behind a section's numbers.
+function sectionTrials(id) {
   const country=countryById(currentCountry);
   const base=countryPortfolio(country.id);
-  if(!base) return requirementDetail(id);
-  const ukRecord=["uk-label","uk-transition"].includes(id);
+  if(!base) return sectionDetail(id);
+  const ukLabel=country.id==="uk" && id==="regulatory";
   const order=studyId=>{const index=studies.findIndex(study=>study.id===studyId);return index<0?studies.length:index;};
   const items=[...base.trialIds].sort((a,b)=>order(a)-order(b)||a.localeCompare(b)).map(studyId=>{
     const study=portfolio.studies.find(item=>item.id===studyId);
     const sites=base.sites.filter(site=>site.study_id===studyId);
-    const assessed=ukRecord?studies.find(item=>item.id===studyId):null;
+    const assessed=ukLabel?studies.find(item=>item.id===studyId):null;
     const patients=sites.reduce((sum,site)=>sum+(site.patients_on_treatment||0),0);
     return '<li><div class="block-head"><strong>'+esc(studyId+" · "+study.title)+'</strong>'+(assessed?badge(assessed.status,assessed.tone):badge("In scope","blue"))+'</div>'+
       '<small>'+esc((sites.map(site=>site.city).join(", ")||"No sites listed")+" · "+plural(patients,"patient")+" on treatment"+(assessed?" · "+assessed.reason:""))+'</small></li>';
   }).join("");
-  drawer("Country requirements library","Our trials affected by “"+record.title+"”",
-    '<p>'+esc(plural(base.trialIds.length,"active trial")+" in "+country.name+" in the demo portfolio"+(ukRecord?", ordered by what needs action first.":"."))+'</p>'+
+  drawer(country.name+" Country Specification","Our trials affected by “"+sectionById(id).name+"”",
+    '<p>'+esc(plural(base.trialIds.length,"active trial")+" in "+country.name+" in the demo portfolio"+(ukLabel?", ordered by what needs action first.":"."))+'</p>'+
     '<ul class="case-list" style="width:100%">'+items+'</ul>'+
-    '<div class="actions">'+trigger("Back to the record","requirement",id,"","arrow")+(id==="uk-label"&&ukOpen()?trigger("Open the UK case","open-case","uk","primary","arrow"):"")+'</div>');
+    '<div class="actions">'+trigger("Back to the section","spec-section",id,"","arrow")+(ukLabel&&ukOpen()?trigger("Open the UK case","open-case","uk","primary","arrow"):"")+'</div>');
 }
 function monitoringSchedule() {
   return heading("Monitoring schedule","Set the interval for automatic checks.")+
@@ -812,7 +902,7 @@ function caseRoleSelect() {
 function workflowNavigation() {
   const tabs=[["impact","Evidence & impact"]];
   if(currentChange==="uk"){
-    tabs.push(["proposal","SME decision"],["history","Country record"]);
+    tabs.push(["proposal","SME decision"],["history","Country specification"]);
     if(workflow.task) tabs.push(["follow-up","Quality follow-up"]);
   }
   return tabs.length>1?'<div class="case-tabs" role="group" aria-label="Case sections">'+tabs.map(([id,title])=>
@@ -867,32 +957,32 @@ function workflowProposal() {
   const origin=workflow.draftSource==="ai"?"Drafted by the AI check ("+(workflow.aiModel||"AI")+", "+scheduleDate(Date.parse(workflow.aiRunAt))+") after all checks passed. The SME decides.":
     workflow.draftSource==="sme"?"Edited by the Regulatory SME.":"Example text written for the demo. A passing AI check replaces it with a checked draft.";
   const conditions=workflow.conditions??ukCase.conditions;
-  const proposed=panel("Country requirement comparison",ukCase.requirement+" · Proposal revision "+workflow.revision,
-    compareValues("Seeded baseline · v1",ukCase.baseline,published?"Approved country value":"Proposed country value",published?.policy??workflow.policy??ukCase.policy)+
+  const proposed=panel("Country Specification edit","UK · Regulatory requirements · "+ukCase.requirement+" · Proposal revision "+workflow.revision,
+    compareValues("Current text · specification v"+countrySpecs.uk.version,ukCase.baseline,published?"Approved text · v"+(countrySpecs.uk.version+1):"Suggested text",published?.policy??workflow.policy??ukCase.policy)+
     '<div class="case-pad" style="padding-top:11px"><div class="inline-note">'+icon("info")+'<span>'+esc(origin)+'</span></div><h3>Scope and conditions</h3>'+
     (conditions.length?listItems(conditions.map(esc)):'<p>No scope or transition conditions in the draft.</p>')+'<h3>Operational instruction</h3><p>'+esc(workflow.draft)+'</p></div>');
   const confidence=panel("Confidence by dimension","Qualitative evidence assessment",casePad(factlist([
     ["Detection","High · instrument and MHRA sources agree on commencement"],["Extraction","High · cited provisions and guidance are available"],
-    ["Applicability","Mixed · missing QP date and cutoff-day case"],["Interpretation",published?"Approved for the country record in this demo":"Requires authorized SME decision"]
+    ["Applicability","Mixed · missing QP date and cutoff-day case"],["Interpretation",published?"Approved for the UK Country Specification in this demo":"Requires authorized SME decision"]
   ])));
   return '<div class="case-layout"><div class="case-stack">'+proposed+decision+'</div>'+confidence+'</div>';
 }
 function workflowHistory() {
   const publication=workflow.publication;
-  const history=publication?compareValues("Previous record · v1",ukCase.baseline,"Published record · v2",publication.policy+" "+publication.instruction):
+  const history=publication?compareValues("Specification v"+countrySpecs.uk.version+" · earlier text",ukCase.baseline,"Specification v"+(countrySpecs.uk.version+1)+" · published text",publication.policy+" Supply instruction: "+publication.instruction):
     casePad('<p>'+esc(ukCase.baseline)+'</p>');
-  const receipt=publication?casePad(factlist([["Receipt","LOCAL-REC-02"],["Approved revision",publication.revision],["Published",scheduleDate(publication.at)],
+  const receipt=publication?casePad(factlist([["Receipt","LOCAL-REC-02"],["Specification","UK v"+(countrySpecs.uk.version+1)+" · Regulatory requirements"],["Approved revision",publication.revision],["Published",scheduleDate(publication.at)],
     ["Effective date",displayDay(publication.effective)],["Evidence",publication.evidenceIds.join(", ")]])):
-    casePad('<p>Version 1 is the published demo baseline. A new version appears after SME approval.</p>');
+    casePad('<p>Specification v'+countrySpecs.uk.version+' is the published version. Approving the edit publishes v'+(countrySpecs.uk.version+1)+' without waiting for the next scheduled update.</p>');
   const query=casePad('<label class="field">Ordinary cohort date<input type="date" id="record-as-of" value="'+ukCase.effective+'"></label><p id="record-as-of-result" aria-live="polite">'+asOfText(ukCase.effective)+'</p><p>Use the batch assessment for Schedule 14 transition checks.</p>');
-  return '<div class="case-layout"><div class="case-stack">'+panel("Version history",ukCase.requirement,history)+panel("Look up an applicable version","Ordinary cohort",query)+'</div>'+
+  return '<div class="case-layout"><div class="case-stack">'+panel("Version history","UK Country Specification · Regulatory requirements · "+ukCase.requirement,history,trigger("Open the section","open-spec","uk:regulatory","","arrow"))+panel("Look up an applicable version","Ordinary cohort",query)+'</div>'+
     '<div class="case-stack">'+panel("Publication receipt","Local country platform simulation",receipt)+'</div></div>';
 }
 function asOfText(day) {
  if(!day) return "Choose an operational date.";
- if(workflow.publication && day>=workflow.publication.effective) return "Version 2 is effective for the ordinary cohort.";
- if(day>=ukCase.effective) return "Version 1 is the published baseline. No update has been published for this date in the demo.";
- return "Version 1 is the pre-amendment record.";
+ if(workflow.publication && day>=workflow.publication.effective) return "Specification v"+(countrySpecs.uk.version+1)+" applies to the ordinary cohort on this date.";
+ if(day>=ukCase.effective) return "The amended rule applies, but specification v"+countrySpecs.uk.version+" still has the earlier text. No update is published yet in the demo.";
+ return "The earlier labeling text applies on this date.";
 }
 function taskStateLabel(status) {
   return {assigned:"Assigned",acknowledged:"Acknowledged",submitted:"Evidence submitted",verified:"Verified"}[status];
@@ -901,7 +991,7 @@ function workflowFollowUp() {
   const task=workflow.task;
   let content='<p>The mock task appears after the country update is published.</p>';
   if(task) {
-    content=factlist([["Owner",task.owner],["Sample due date",displayDay(task.dueOn)],["Published record","Version "+task.version+" · proposal revision "+task.revision],
+    content=factlist([["Owner",task.owner],["Sample due date",displayDay(task.dueOn)],["Published specification","UK v"+(countrySpecs.uk.version+1)+" · proposal revision "+task.revision],
       ["Status",taskStateLabel(task.status)],["Case",workflow.stage==="closed"?"Closed":"Open"],["Studies",task.studyIds.join(", ")],
       ["Batches",task.batchIds.join(", ")],["Shipments to assess",task.shipmentIds.join(", ")],
       ...(task.evidence?[["Last submitted evidence",task.evidence.reference]]:[])]);
@@ -1185,15 +1275,16 @@ const actions={
   "ai-run":()=>runAi(),
   "pick-country":id=>{
     currentCountry=id;
-    countryTopic="all";
-    countryScope="all";
+    specFilter="all";
     byId("country-list").innerHTML=countryList();
-    byId("country-requirements").innerHTML=countryRequirements();
-    const focusTarget=window.matchMedia("(max-width:760px)").matches?byId("country-topic"):byId("country-list").querySelector('[data-value="'+id+'"]');
+    byId("country-requirements").innerHTML=countrySpecification();
+    const focusTarget=window.matchMedia("(max-width:760px)").matches?byId("spec-filter"):byId("country-list").querySelector('[data-value="'+id+'"]');
     focusTarget.focus();
   },
-  requirement:requirementDetail,
-  "record-trials":recordTrials,
+  "spec-section":sectionDetail,
+  "section-trials":sectionTrials,
+  "case-proposal":id=>openCase(id,"proposal"),
+  "open-spec":value=>{const [country,section]=value.split(":");currentCountry=country;specFilter="all";navigate("countries");if(section) sectionDetail(section);},
   "open-case":openCase,
   "case-history":id=>openCase(id,"history"),
   "workflow-tab":tab=>{workflowTab=tab;render();byId("view").querySelector('[data-act="workflow-tab"][data-value="'+tab+'"]').focus();},
@@ -1247,12 +1338,10 @@ document.addEventListener("change",event=>{
     sourceFilter=event.target.value;
     byId("source-results").innerHTML=sourceTable(sources.filter(tableMatches));
   }
-  if (event.target.id==="country-topic" || event.target.id==="country-scope") {
-    const {id,value}=event.target;
-    if(id==="country-topic") countryTopic=value;
-    else countryScope=value;
-    byId("country-requirements").innerHTML=countryRequirements();
-    byId(id).focus();
+  if (event.target.id==="spec-filter") {
+    specFilter=event.target.value;
+    byId("country-requirements").innerHTML=countrySpecification();
+    byId("spec-filter").focus();
   }
 });
 document.addEventListener("toggle",event=>{

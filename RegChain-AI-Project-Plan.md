@@ -28,7 +28,7 @@ Blue: Giannis. Green: dashboard and product side. The API between them is the fi
 | Product specification | Vision, requirements, evidence and time rules, approval and audit model, MVP architecture, API, acceptance tests, 36-hour build plan | `RegChain-AI-Master-Specification.md` (v1.1) | Written for the full MVP; most of it is not built yet |
 | Research | Data sources (ClinicalTrials.gov, CTIS, AACT), comparable products, real registry examples | `RegChain-AI-Dashboard-Research.md` | |
 | Trial workflow and data map | Clinical trial stages, minimum records, AI input instructions (in Greek) and a synthetic input file | `RegChain-AI-Clinical-Trial-Workflow.md`, `RegChain-AI-Clinical-Trial-Input.example.json` | Not yet used by any code |
-| Dashboard | Four pages (Overview, Country requirements, Source log, Monitoring schedule) and the UK case with evidence, batch and shipment impact, SME decision, versioned publication, mock Quality task, case history and JSON export. Four demo roles: viewer, Regulatory SME, Quality owner, Quality verifier | `RegChain-AI-Dashboard.html` | See "What is still simulated" |
+| Dashboard | Four pages (Overview, Country specifications, Source log, Monitoring schedule) and the UK case with evidence, batch and shipment impact, SME decision, versioned publication, mock Quality task, case history and JSON export. Four demo roles: viewer, Regulatory SME, Quality owner, Quality verifier | `RegChain-AI-Dashboard.html` | See "What is still simulated" |
 | Batch rules | The UK rule that sorts batches A-101 to F-106 by finished-IMP QP date | Inside the dashboard (`batchFinding`) | Runs in the browser; status names differ from the spec (see decision 4) |
 | Live AI check | Fetches regulation 46 before and from 28 April 2026, Schedule 14 paragraph 6 and the MHRA labelling guidance; Claude (`claude-opus-5-5`) drafts the change with quotes; RegChain checks every quote, the effective date and the change status; a failed check blocks SME approval | `regchain-ai/`, `serve-regchain.cjs`, panel at the top of the UK case | Tested with a stand-in AI only. The first real run needs an API key in `.env` |
 | Local start | `Start-RegChain.cmd` starts the server at http://127.0.0.1:4173 and installs the Anthropic SDK the first time | `Start-RegChain.cmd`, `package.json`, `package-lock.json` | Needs Node.js 20.12 or later |
@@ -85,7 +85,7 @@ The spec (section 9) already defines most routes. Confirm them with Giannis and 
 | `GET /v1/evidence/{id}` | The evidence drawer: verified excerpt, locator, source version, fingerprint, link |
 | `GET /v1/cases/{id}/impact` | Impact report download |
 | `POST /v1/proposals/{id}/decisions` | SME approve or reject, with revision, rationale and an idempotency key |
-| `GET /v1/requirements/{id}/versions` | Country record history and the "as of" date lookup |
+| `GET /v1/requirements/{id}/versions` | Country Specification section history and the "as of" date lookup |
 | `GET /v1/cases/{id}/events` | Case history timeline and event export |
 | `POST /v1/actions/{id}/acknowledgements` | Quality owner acknowledges the mock task |
 
