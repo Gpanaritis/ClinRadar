@@ -30,6 +30,7 @@ To turn it on:
 
 `npm run check:ai` tests the source fetching and RegChain's checks without calling the API.
 
+- [Product review, 15 Nov 2026: is the problem real, what was fixed, what is open](RegChain-AI-Product-Review.md)
 - [Project plan: what is done and what is next](RegChain-AI-Project-Plan.md)
 - [Demo scenario: one UK rule change, seven trials affected](RegChain-AI-Demo-Scenario.md)
 - [Spain scenario: a fictional rule, flagged 107 days before it applies](RegChain-AI-Spain-Scenario.md)

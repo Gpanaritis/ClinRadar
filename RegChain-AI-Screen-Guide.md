@@ -58,15 +58,15 @@ Status on 14 November 2026. The screens were captured with the portfolio and the
 
 ![SME decision](screens/08-sme-decision.png)
 
-**Shows:** the current company record next to the proposed one, the scope and conditions, confidence by dimension, and the decision form for the Regulatory SME (approve, edit and approve, reject, request investigation, defer). Here approval is blocked because the AI check failed.
+**Shows:** the current specification text next to the suggested one, the scope and conditions, confidence calculated from the checks, and the decision form for the Regulatory SME (approve, edit and approve, reject, request investigation, defer). Approval needs a passing AI check. In this capture no check has run, so Approve stays greyed out until the SME ticks an override and gives a reason; the override is logged. A failed check blocks approval with no override.
 
-**Real or simulated:** in this capture the proposal is example text written into the page, because the only AI result failed its checks. A passing AI check now replaces it with the AI's draft as a new revision, and a note above the conditions says where the text came from. Roles are picked from a dropdown.
+**Real or simulated:** the proposal is the text prepared before the AI check; a passing check replaces it with the AI's draft as a new revision. People are picked from the "Acting as" list (A. Novak, M. Okafor, L. Chen), and the verifier can never be the approver.
 
 ### 7. Quality follow-up
 
 ![Quality follow-up](screens/09-quality-follow-up.png)
 
-**Shows:** the mock Quality task created on approval: owner, due date (the earliest shipment preparation date), published version, and the studies, batches and shipments in scope. The Quality owner acknowledges and submits evidence; the verifier verifies or returns it, and only then does the case close.
+**Shows:** the Quality task created on approval: owner, due date (the earliest shipment preparation date), published version, the trials and batches in scope, the shipments to act on and to check, and the look-back batches. The Quality owner acknowledges and submits evidence; the verifier verifies or returns it, and only then does the case close.
 
 ### 8. Country specification (in the case)
 
@@ -151,7 +151,7 @@ The Spain case has the same steps as the UK case. The AI panel reads the note in
 
 ## Part 3 · Logic gaps
 
-Ordered by how much they matter for the pitch.
+Ordered by how much they matter for the pitch. The [product review of 15 Nov 2026](RegChain-AI-Product-Review.md) adds the newer findings and what was fixed then (one impact model, the AI gate, version dates, no dead ends, named people).
 
 | # | Gap | Example | Fix |
 | --- | --- | --- | --- |

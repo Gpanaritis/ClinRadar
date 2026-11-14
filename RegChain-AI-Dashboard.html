@@ -61,6 +61,9 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 .spec-brief{display:flex;gap:7px;align-items:flex-start;margin:0 15px 12px;padding:9px 11px;border-radius:9px;background:#f4f8ff;border:1px solid #dbe7fb;font-size:12px;color:#33507a}.spec-brief svg{width:15px;height:15px;margin-top:1px}.spec-brief strong{color:var(--ink)}.spec-excerpt{color:#3f597c}
 .redline{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:5px;font-size:13px}.redline li{padding:7px 9px;border-radius:7px;overflow-wrap:anywhere}.redline .del{background:#fcecf0;color:#9f2c42;text-decoration:line-through}.redline .add{background:#e7f6ef;color:#14523b}.note-line{margin-top:7px!important;font-size:12px!important;color:var(--muted)!important}
 .note-text{white-space:pre-line}.case-pad .redline{margin-bottom:12px}.source-notes summary{cursor:pointer;font-weight:700;font-size:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.source-notes summary::before{content:"";width:7px;height:7px;border-right:2px solid #496795;border-bottom:2px solid #496795;transform:rotate(-45deg);margin-right:2px;transition:transform .15s}.source-notes[open] summary::before{transform:rotate(45deg)}.source-notes[open] summary{margin-bottom:4px}.lead-head{margin-top:12px}
+.lookback{display:flex;gap:7px;align-items:flex-start;margin:6px 0 2px!important;padding:8px 10px;border-radius:8px;background:#fff8ea;border:1px solid #f5d9a6;color:#5a3d00!important;font-size:13px;max-width:900px}.lookback svg{width:15px;height:15px;margin-top:2px;color:#a35f00}
+.gate-note{border:1px solid #f5d9a6;background:#fff8ea;border-radius:8px;padding:9px 11px;display:grid;gap:7px;font-size:13px}.gate-note p{margin:0;color:#4b3a1a}.gate-note .toggle{display:flex;gap:8px;align-items:center;font-weight:700;font-size:12px}
+.setup-note{font-size:12px;color:var(--muted);margin:4px 0 8px}.setup-note summary{cursor:pointer}.reset-link{margin:14px 0 0;text-align:right;font-size:12px}.btn:disabled{opacity:.45;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -70,7 +73,7 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 </div>
 <dialog id="drawer" class="drawer" aria-labelledby="drawer-title"><div class="drawer-top"><div><div class="sub" id="drawer-type"></div><h2 id="drawer-title"></h2></div><form method="dialog"><button class="btn close" aria-label="Close details">×</button></form></div><div class="drawer-body" id="drawer-body"></div></dialog>
 <script id="portfolio-data" type="application/json">{"schema_version":"0.1","synthetic_operational_data":true,"note":"Fictional sponsor portfolio for the RegChain demo. No real studies, sites, products or patients.","assessment_as_of":"2026-11-14T10:00:00Z","studies":[{"id":"STUDY-001","title":"UK legacy-cohort study","phase":"III","therapy_area":"Oncology","status":"active","countries":["GB"],"source_ref":"SRC-CTMS"},{"id":"STUDY-002","title":"Germany-only distribution study","phase":"II","therapy_area":"Immunology","status":"active","countries":["DE"],"source_ref":"SRC-CTMS"},{"id":"STUDY-003","title":"UK labeling and supply study","phase":"III","therapy_area":"Cardiology","status":"active","countries":["GB"],"source_ref":"SRC-CTMS"},{"id":"STUDY-004","title":"Multinational asthma maintenance study","phase":"III","therapy_area":"Respiratory","status":"active","countries":["GB","DE","PL","ES"],"source_ref":"SRC-CTMS"},{"id":"STUDY-005","title":"Rare disease enzyme replacement study","phase":"II","therapy_area":"Rare disease","status":"active","countries":["GB","FR","IT"],"source_ref":"SRC-CTMS"},{"id":"STUDY-006","title":"Paediatric vaccine booster study","phase":"III","therapy_area":"Vaccines","status":"active","countries":["GB","NL"],"source_ref":"SRC-CTMS"},{"id":"STUDY-007","title":"Migraine prevention study","phase":"II","therapy_area":"Neurology","status":"active","countries":["GB","IE"],"source_ref":"SRC-CTMS"},{"id":"STUDY-008","title":"Type 2 diabetes outcomes study","phase":"III","therapy_area":"Metabolic","status":"active","countries":["GB","US","CA"],"source_ref":"SRC-CTMS"},{"id":"STUDY-009","title":"Rheumatoid arthritis biologic study","phase":"III","therapy_area":"Immunology","status":"active","countries":["GB","DE"],"source_ref":"SRC-CTMS"},{"id":"STUDY-010","title":"US oncology dose-finding study","phase":"I","therapy_area":"Oncology","status":"active","countries":["US"],"source_ref":"SRC-CTMS"},{"id":"STUDY-011","title":"Japan bridging study","phase":"I","therapy_area":"Metabolic","status":"active","countries":["JP"],"source_ref":"SRC-CTMS"},{"id":"STUDY-012","title":"EU psoriasis study","phase":"III","therapy_area":"Dermatology","status":"active","countries":["DE","FR","ES"],"source_ref":"SRC-CTMS"},{"id":"STUDY-013","title":"Spain and Portugal hepatitis study","phase":"II","therapy_area":"Infectious disease","status":"active","countries":["ES","PT"],"source_ref":"SRC-CTMS"},{"id":"STUDY-014","title":"Nordic heart failure study","phase":"III","therapy_area":"Cardiology","status":"active","countries":["SE","DK","FI"],"source_ref":"SRC-CTMS"},{"id":"STUDY-015","title":"US and Canada obesity study","phase":"II","therapy_area":"Metabolic","status":"active","countries":["US","CA"],"source_ref":"SRC-CTMS"},{"id":"STUDY-016","title":"France and Belgium lupus study","phase":"II","therapy_area":"Immunology","status":"active","countries":["FR","BE"],"source_ref":"SRC-CTMS"},{"id":"STUDY-017","title":"Australia chronic pain study","phase":"II","therapy_area":"Neurology","status":"active","countries":["AU"],"source_ref":"SRC-CTMS"},{"id":"STUDY-018","title":"UK oncology follow-up study, supply closed","phase":"III","therapy_area":"Oncology","status":"completed","countries":["GB"],"source_ref":"SRC-CTMS"}],"study_countries":[{"id":"STUDY-001-GB","study_id":"STUDY-001","country_code":"GB","jurisdiction":"UK","authorization_cohort":"old_rules","site_ids":["SITE-GB-02","SITE-GB-03"],"source_ref":"SRC-CTMS"},{"id":"STUDY-002-DE","study_id":"STUDY-002","country_code":"DE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-DE-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-003-GB","study_id":"STUDY-003","country_code":"GB","jurisdiction":"UK","authorization_cohort":"old_rules","site_ids":["SITE-GB-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-004-GB","study_id":"STUDY-004","country_code":"GB","jurisdiction":"UK","authorization_cohort":"unknown","site_ids":["SITE-GB-04","SITE-GB-05"],"source_ref":"SRC-CTMS"},{"id":"STUDY-004-DE","study_id":"STUDY-004","country_code":"DE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-DE-02"],"source_ref":"SRC-CTMS"},{"id":"STUDY-004-PL","study_id":"STUDY-004","country_code":"PL","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-PL-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-004-ES","study_id":"STUDY-004","country_code":"ES","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-ES-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-005-GB","study_id":"STUDY-005","country_code":"GB","jurisdiction":"UK","authorization_cohort":"new_rules","site_ids":["SITE-GB-06"],"source_ref":"SRC-CTMS"},{"id":"STUDY-005-FR","study_id":"STUDY-005","country_code":"FR","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-FR-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-005-IT","study_id":"STUDY-005","country_code":"IT","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-IT-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-006-GB","study_id":"STUDY-006","country_code":"GB","jurisdiction":"UK","authorization_cohort":"old_rules","site_ids":["SITE-GB-07"],"source_ref":"SRC-CTMS"},{"id":"STUDY-006-NL","study_id":"STUDY-006","country_code":"NL","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-NL-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-007-GB","study_id":"STUDY-007","country_code":"GB","jurisdiction":"UK","authorization_cohort":"new_rules","site_ids":["SITE-GB-08"],"source_ref":"SRC-CTMS"},{"id":"STUDY-007-IE","study_id":"STUDY-007","country_code":"IE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-IE-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-008-GB","study_id":"STUDY-008","country_code":"GB","jurisdiction":"UK","authorization_cohort":"new_rules","site_ids":["SITE-GB-09"],"source_ref":"SRC-CTMS"},{"id":"STUDY-008-US","study_id":"STUDY-008","country_code":"US","jurisdiction":"US","authorization_cohort":"not_applicable","site_ids":["SITE-US-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-008-CA","study_id":"STUDY-008","country_code":"CA","jurisdiction":"CA","authorization_cohort":"not_applicable","site_ids":["SITE-CA-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-009-GB","study_id":"STUDY-009","country_code":"GB","jurisdiction":"UK","authorization_cohort":"old_rules","site_ids":["SITE-GB-10"],"source_ref":"SRC-CTMS"},{"id":"STUDY-009-DE","study_id":"STUDY-009","country_code":"DE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-DE-03"],"source_ref":"SRC-CTMS"},{"id":"STUDY-010-US","study_id":"STUDY-010","country_code":"US","jurisdiction":"US","authorization_cohort":"not_applicable","site_ids":["SITE-US-02"],"source_ref":"SRC-CTMS"},{"id":"STUDY-011-JP","study_id":"STUDY-011","country_code":"JP","jurisdiction":"JP","authorization_cohort":"not_applicable","site_ids":["SITE-JP-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-012-DE","study_id":"STUDY-012","country_code":"DE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-DE-04"],"source_ref":"SRC-CTMS"},{"id":"STUDY-012-FR","study_id":"STUDY-012","country_code":"FR","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-012-ES","study_id":"STUDY-012","country_code":"ES","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-013-ES","study_id":"STUDY-013","country_code":"ES","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-ES-02"],"source_ref":"SRC-CTMS"},{"id":"STUDY-013-PT","study_id":"STUDY-013","country_code":"PT","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-014-SE","study_id":"STUDY-014","country_code":"SE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-SE-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-014-DK","study_id":"STUDY-014","country_code":"DK","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-014-FI","study_id":"STUDY-014","country_code":"FI","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-015-US","study_id":"STUDY-015","country_code":"US","jurisdiction":"US","authorization_cohort":"not_applicable","site_ids":["SITE-US-03"],"source_ref":"SRC-CTMS"},{"id":"STUDY-015-CA","study_id":"STUDY-015","country_code":"CA","jurisdiction":"CA","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-016-FR","study_id":"STUDY-016","country_code":"FR","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-FR-02"],"source_ref":"SRC-CTMS"},{"id":"STUDY-016-BE","study_id":"STUDY-016","country_code":"BE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-017-AU","study_id":"STUDY-017","country_code":"AU","jurisdiction":"AU","authorization_cohort":"not_applicable","site_ids":["SITE-AU-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-018-GB","study_id":"STUDY-018","country_code":"GB","jurisdiction":"UK","authorization_cohort":"old_rules","site_ids":["SITE-GB-11"],"source_ref":"SRC-CTMS"}],"sites":[{"id":"SITE-GB-01","study_id":"STUDY-003","country_code":"GB","city":"London","patients_on_treatment":14,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-02","study_id":"STUDY-001","country_code":"GB","city":"Manchester","patients_on_treatment":9,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-03","study_id":"STUDY-001","country_code":"GB","city":"Glasgow","patients_on_treatment":7,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-04","study_id":"STUDY-004","country_code":"GB","city":"Birmingham","patients_on_treatment":22,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-05","study_id":"STUDY-004","country_code":"GB","city":"Leeds","patients_on_treatment":17,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-06","study_id":"STUDY-005","country_code":"GB","city":"Cambridge","patients_on_treatment":6,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-07","study_id":"STUDY-006","country_code":"GB","city":"Bristol","patients_on_treatment":40,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-08","study_id":"STUDY-007","country_code":"GB","city":"Edinburgh","patients_on_treatment":25,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-09","study_id":"STUDY-008","country_code":"GB","city":"Newcastle","patients_on_treatment":31,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-10","study_id":"STUDY-009","country_code":"GB","city":"Oxford","patients_on_treatment":19,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-11","study_id":"STUDY-018","country_code":"GB","city":"Cardiff","patients_on_treatment":0,"source_ref":"SRC-CTMS"},{"id":"SITE-DE-01","study_id":"STUDY-002","country_code":"DE","city":"Berlin","patients_on_treatment":12,"source_ref":"SRC-CTMS"},{"id":"SITE-DE-02","study_id":"STUDY-004","country_code":"DE","city":"Munich","patients_on_treatment":20,"source_ref":"SRC-CTMS"},{"id":"SITE-PL-01","study_id":"STUDY-004","country_code":"PL","city":"Warsaw","patients_on_treatment":15,"source_ref":"SRC-CTMS"},{"id":"SITE-ES-01","study_id":"STUDY-004","country_code":"ES","city":"Madrid","patients_on_treatment":11,"source_ref":"SRC-CTMS"},{"id":"SITE-FR-01","study_id":"STUDY-005","country_code":"FR","city":"Lyon","patients_on_treatment":5,"source_ref":"SRC-CTMS"},{"id":"SITE-IT-01","study_id":"STUDY-005","country_code":"IT","city":"Milan","patients_on_treatment":4,"source_ref":"SRC-CTMS"},{"id":"SITE-NL-01","study_id":"STUDY-006","country_code":"NL","city":"Utrecht","patients_on_treatment":35,"source_ref":"SRC-CTMS"},{"id":"SITE-IE-01","study_id":"STUDY-007","country_code":"IE","city":"Dublin","patients_on_treatment":13,"source_ref":"SRC-CTMS"},{"id":"SITE-US-01","study_id":"STUDY-008","country_code":"US","city":"Boston","patients_on_treatment":44,"source_ref":"SRC-CTMS"},{"id":"SITE-CA-01","study_id":"STUDY-008","country_code":"CA","city":"Toronto","patients_on_treatment":18,"source_ref":"SRC-CTMS"},{"id":"SITE-DE-03","study_id":"STUDY-009","country_code":"DE","city":"Hamburg","patients_on_treatment":16,"source_ref":"SRC-CTMS"},{"id":"SITE-US-02","study_id":"STUDY-010","country_code":"US","city":"Houston","patients_on_treatment":12,"source_ref":"SRC-CTMS"},{"id":"SITE-JP-01","study_id":"STUDY-011","country_code":"JP","city":"Osaka","patients_on_treatment":10,"source_ref":"SRC-CTMS"},{"id":"SITE-DE-04","study_id":"STUDY-012","country_code":"DE","city":"Frankfurt","patients_on_treatment":21,"source_ref":"SRC-CTMS"},{"id":"SITE-ES-02","study_id":"STUDY-013","country_code":"ES","city":"Seville","patients_on_treatment":14,"source_ref":"SRC-CTMS"},{"id":"SITE-SE-01","study_id":"STUDY-014","country_code":"SE","city":"Gothenburg","patients_on_treatment":27,"source_ref":"SRC-CTMS"},{"id":"SITE-US-03","study_id":"STUDY-015","country_code":"US","city":"Chicago","patients_on_treatment":33,"source_ref":"SRC-CTMS"},{"id":"SITE-FR-02","study_id":"STUDY-016","country_code":"FR","city":"Lille","patients_on_treatment":8,"source_ref":"SRC-CTMS"},{"id":"SITE-AU-01","study_id":"STUDY-017","country_code":"AU","city":"Melbourne","patients_on_treatment":16,"source_ref":"SRC-CTMS"}],"products":[{"id":"IMP-001","study_id":"STUDY-001","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-002","study_id":"STUDY-002","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-003","study_id":"STUDY-003","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-004","study_id":"STUDY-004","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-005","study_id":"STUDY-005","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-006","study_id":"STUDY-006","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-007","study_id":"STUDY-007","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-008","study_id":"STUDY-008","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-009","study_id":"STUDY-009","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-010","study_id":"STUDY-010","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-011","study_id":"STUDY-011","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-012","study_id":"STUDY-012","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-013","study_id":"STUDY-013","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-014","study_id":"STUDY-014","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-015","study_id":"STUDY-015","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-016","study_id":"STUDY-016","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-017","study_id":"STUDY-017","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-018","study_id":"STUDY-018","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"}],"label_specs":[{"id":"IMP-001-UK-v1","product_id":"IMP-001","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-001-UK-v2","product_id":"IMP-001","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-002-UK-v1","product_id":"IMP-002","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-002-UK-v2","product_id":"IMP-002","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-003-UK-v1","product_id":"IMP-003","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-003-UK-v2","product_id":"IMP-003","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-004-UK-v1","product_id":"IMP-004","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-004-UK-v2","product_id":"IMP-004","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-005-UK-v1","product_id":"IMP-005","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-005-UK-v2","product_id":"IMP-005","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-006-UK-v1","product_id":"IMP-006","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-006-UK-v2","product_id":"IMP-006","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-007-UK-v1","product_id":"IMP-007","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-007-UK-v2","product_id":"IMP-007","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-008-UK-v1","product_id":"IMP-008","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-008-UK-v2","product_id":"IMP-008","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-009-UK-v1","product_id":"IMP-009","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-009-UK-v2","product_id":"IMP-009","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-010-UK-v1","product_id":"IMP-010","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-010-UK-v2","product_id":"IMP-010","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-011-UK-v1","product_id":"IMP-011","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-011-UK-v2","product_id":"IMP-011","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-012-UK-v1","product_id":"IMP-012","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-012-UK-v2","product_id":"IMP-012","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-013-UK-v1","product_id":"IMP-013","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-013-UK-v2","product_id":"IMP-013","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-014-UK-v1","product_id":"IMP-014","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-014-UK-v2","product_id":"IMP-014","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-015-UK-v1","product_id":"IMP-015","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-015-UK-v2","product_id":"IMP-015","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-016-UK-v1","product_id":"IMP-016","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-016-UK-v2","product_id":"IMP-016","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-017-UK-v1","product_id":"IMP-017","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-017-UK-v2","product_id":"IMP-017","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-018-UK-v1","product_id":"IMP-018","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-018-UK-v2","product_id":"IMP-018","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"}],"batches":[{"id":"A-101","study_id":"STUDY-001","study_country_id":"STUDY-001-GB","product_id":"IMP-001","label_spec_id":"IMP-001-UK-v1","physical_manufacture_date":"2026-04-10","finished_imp_qp_certification_date":"2026-04-20","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"B-102","study_id":"STUDY-003","study_country_id":"STUDY-003-GB","product_id":"IMP-003","label_spec_id":"IMP-003-UK-v1","physical_manufacture_date":"2026-04-20","finished_imp_qp_certification_date":"2026-05-05","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"C-103","study_id":"STUDY-003","study_country_id":"STUDY-003-GB","product_id":"IMP-003","label_spec_id":"IMP-003-UK-v2","physical_manufacture_date":"2026-04-24","finished_imp_qp_certification_date":"2026-05-05","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"D-104","study_id":"STUDY-001","study_country_id":"STUDY-001-GB","product_id":"IMP-001","label_spec_id":"IMP-001-UK-v1","physical_manufacture_date":"2026-05-12","finished_imp_qp_certification_date":null,"intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"E-105","study_id":"STUDY-002","study_country_id":"STUDY-002-DE","product_id":"IMP-002","label_spec_id":null,"physical_manufacture_date":"2026-04-22","finished_imp_qp_certification_date":"2026-05-05","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"F-106","study_id":"STUDY-003","study_country_id":"STUDY-003-GB","product_id":"IMP-003","label_spec_id":"IMP-003-UK-v1","physical_manufacture_date":"2026-04-15","finished_imp_qp_certification_date":"2026-04-28","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"G-107","study_id":"STUDY-001","study_country_id":"STUDY-001-GB","product_id":"IMP-001","label_spec_id":"IMP-001-UK-v1","physical_manufacture_date":"2026-05-29","finished_imp_qp_certification_date":"2026-06-10","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"H-108","study_id":"STUDY-001","study_country_id":"STUDY-001-GB","product_id":"IMP-001","label_spec_id":"IMP-001-UK-v2","physical_manufacture_date":"2026-08-20","finished_imp_qp_certification_date":"2026-09-02","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"J-201","study_id":"STUDY-004","study_country_id":"STUDY-004-GB","product_id":"IMP-004","label_spec_id":"IMP-004-UK-v1","physical_manufacture_date":"2026-03-18","finished_imp_qp_certification_date":"2026-03-30","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"J-202","study_id":"STUDY-004","study_country_id":"STUDY-004-GB","product_id":"IMP-004","label_spec_id":"IMP-004-UK-v1","physical_manufacture_date":"2026-07-01","finished_imp_qp_certification_date":"2026-07-14","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"J-203","study_id":"STUDY-004","study_country_id":"STUDY-004-GB","product_id":"IMP-004","label_spec_id":"IMP-004-UK-v2","physical_manufacture_date":"2026-09-17","finished_imp_qp_certification_date":"2026-10-01","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"J-204","study_id":"STUDY-004","study_country_id":"STUDY-004-DE","product_id":"IMP-004","label_spec_id":null,"physical_manufacture_date":"2026-07-01","finished_imp_qp_certification_date":"2026-07-14","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"K-301","study_id":"STUDY-005","study_country_id":"STUDY-005-GB","product_id":"IMP-005","label_spec_id":"IMP-005-UK-v1","physical_manufacture_date":"2026-05-08","finished_imp_qp_certification_date":"2026-05-20","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"K-302","study_id":"STUDY-005","study_country_id":"STUDY-005-GB","product_id":"IMP-005","label_spec_id":"IMP-005-UK-v1","physical_manufacture_date":"2026-07-30","finished_imp_qp_certification_date":"2026-08-11","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"K-303","study_id":"STUDY-005","study_country_id":"STUDY-005-FR","product_id":"IMP-005","label_spec_id":null,"physical_manufacture_date":"2026-07-30","finished_imp_qp_certification_date":"2026-08-11","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"L-401","study_id":"STUDY-006","study_country_id":"STUDY-006-GB","product_id":"IMP-006","label_spec_id":"IMP-006-UK-v1","physical_manufacture_date":"2026-02-02","finished_imp_qp_certification_date":"2026-02-15","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"L-402","study_id":"STUDY-006","study_country_id":"STUDY-006-GB","product_id":"IMP-006","label_spec_id":"IMP-006-UK-v1","physical_manufacture_date":"2026-04-14","finished_imp_qp_certification_date":"2026-04-27","intended_trial_use_confirmed":false,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"L-403","study_id":"STUDY-006","study_country_id":"STUDY-006-GB","product_id":"IMP-006","label_spec_id":"IMP-006-UK-v2","physical_manufacture_date":"2026-06-17","finished_imp_qp_certification_date":"2026-06-30","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"M-501","study_id":"STUDY-007","study_country_id":"STUDY-007-GB","product_id":"IMP-007","label_spec_id":"IMP-007-UK-v2","physical_manufacture_date":"2026-09-04","finished_imp_qp_certification_date":"2026-09-18","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"M-502","study_id":"STUDY-007","study_country_id":"STUDY-007-GB","product_id":"IMP-007","label_spec_id":"IMP-007-UK-v2","physical_manufacture_date":"2026-10-06","finished_imp_qp_certification_date":"2026-10-20","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"N-601","study_id":"STUDY-008","study_country_id":"STUDY-008-GB","product_id":"IMP-008","label_spec_id":"IMP-008-UK-v1","physical_manufacture_date":"2026-05-14","finished_imp_qp_certification_date":"2026-05-28","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"N-602","study_id":"STUDY-008","study_country_id":"STUDY-008-GB","product_id":"IMP-008","label_spec_id":null,"physical_manufacture_date":"2026-08-11","finished_imp_qp_certification_date":"2026-08-25","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"N-603","study_id":"STUDY-008","study_country_id":"STUDY-008-US","product_id":"IMP-008","label_spec_id":null,"physical_manufacture_date":"2026-08-11","finished_imp_qp_certification_date":"2026-08-25","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"P-701","study_id":"STUDY-009","study_country_id":"STUDY-009-GB","product_id":"IMP-009","label_spec_id":"IMP-009-UK-v1","physical_manufacture_date":"2026-03-20","finished_imp_qp_certification_date":"2026-04-01","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"P-702","study_id":"STUDY-009","study_country_id":"STUDY-009-GB","product_id":"IMP-009","label_spec_id":"IMP-009-UK-v1","physical_manufacture_date":"2026-06-23","finished_imp_qp_certification_date":"2026-07-07","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-801","study_id":"STUDY-010","study_country_id":"STUDY-010-US","product_id":"IMP-010","label_spec_id":null,"physical_manufacture_date":"2026-09-01","finished_imp_qp_certification_date":"2026-09-15","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-802","study_id":"STUDY-011","study_country_id":"STUDY-011-JP","product_id":"IMP-011","label_spec_id":null,"physical_manufacture_date":"2026-08-05","finished_imp_qp_certification_date":"2026-08-19","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-803","study_id":"STUDY-012","study_country_id":"STUDY-012-DE","product_id":"IMP-012","label_spec_id":null,"physical_manufacture_date":"2026-07-20","finished_imp_qp_certification_date":"2026-08-03","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-804","study_id":"STUDY-013","study_country_id":"STUDY-013-ES","product_id":"IMP-013","label_spec_id":null,"physical_manufacture_date":"2026-06-01","finished_imp_qp_certification_date":"2026-06-15","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-805","study_id":"STUDY-014","study_country_id":"STUDY-014-SE","product_id":"IMP-014","label_spec_id":null,"physical_manufacture_date":"2026-09-09","finished_imp_qp_certification_date":"2026-09-23","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-806","study_id":"STUDY-015","study_country_id":"STUDY-015-US","product_id":"IMP-015","label_spec_id":null,"physical_manufacture_date":"2026-10-05","finished_imp_qp_certification_date":"2026-10-19","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-807","study_id":"STUDY-016","study_country_id":"STUDY-016-FR","product_id":"IMP-016","label_spec_id":null,"physical_manufacture_date":"2026-08-26","finished_imp_qp_certification_date":"2026-09-09","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-808","study_id":"STUDY-017","study_country_id":"STUDY-017-AU","product_id":"IMP-017","label_spec_id":null,"physical_manufacture_date":"2026-07-08","finished_imp_qp_certification_date":"2026-07-22","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"}],"shipments":[{"id":"SHP-01","batch_ids":["B-102"],"site_id":"SITE-GB-01","study_country_id":"STUDY-003-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-11-22","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-02","batch_ids":["D-104"],"site_id":"SITE-GB-02","study_country_id":"STUDY-001-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-11-25","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-03","batch_ids":["E-105"],"site_id":"SITE-DE-01","study_country_id":"STUDY-002-DE","destination_jurisdiction":"EU","planned_dispatch_date":"2026-11-23","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-EU-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-04","batch_ids":["J-202"],"site_id":"SITE-GB-04","study_country_id":"STUDY-004-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-11-19","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-05","batch_ids":["K-301"],"site_id":"SITE-GB-06","study_country_id":"STUDY-005-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-11-27","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-06","batch_ids":["N-601"],"site_id":"SITE-GB-09","study_country_id":"STUDY-008-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-12-02","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-07","batch_ids":["L-403"],"site_id":"SITE-GB-07","study_country_id":"STUDY-006-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-11-24","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-08","batch_ids":["P-702"],"site_id":"SITE-GB-10","study_country_id":"STUDY-009-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-12-04","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-09","batch_ids":["M-501"],"site_id":"SITE-GB-08","study_country_id":"STUDY-007-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-12-08","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-10","batch_ids":["J-204"],"site_id":"SITE-DE-02","study_country_id":"STUDY-004-DE","destination_jurisdiction":"EU","planned_dispatch_date":"2026-11-26","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-EU-01","source_ref":"SRC-SUPPLY"}],"partners":[{"id":"PARTNER-PACKAGING-01","role":"packaging_and_labeling"},{"id":"PARTNER-LOGISTICS-UK-01","role":"logistics_uk"},{"id":"PARTNER-LOGISTICS-EU-01","role":"logistics_eu"}],"regulatory_case":{"id":"RC-UK-001","jurisdiction":"UK","requirement_record_id":"GB/IMP_LABELING","effective_date":"2026-04-28","rule_event":"finished_imp_qp_certification_date","evidence_source_ids":["reg46-before","reg46-after","sch14-para6","mhra-labelling-transition"]},"source_records":[{"id":"SRC-CTMS","source_system":"CTMS demo","record_version":"1","observed_at":"2026-11-14T09:00:00Z"},{"id":"SRC-SUPPLY","source_system":"Clinical supply demo","record_version":"1","observed_at":"2026-11-14T09:00:00Z"}]}</script>
-<script id="spain-data" type="application/json">{"schema_version":1,"note":"FICTIONAL demo scenario. The information note, the authority, the trial, the sites, the companies and the people are invented for the RegChain demo. None of it is a real rule or a real record.","case":{"id":"RC-ES-001","requirement":"ES/IMP_SHIPPING_DOCUMENTS","effective":"2027-03-01","transitionDeliveredBy":"2027-03-08","noticeBusinessDays":3,"preparedAt":"2026-11-14T09:44:00Z","policy":"From 1 Mar 2027, every IMP shipment to a trial site in Spain carries a delivery note in Spanish with the EU trial number, the hospital pharmacy code and each batch number, and the hospital pharmacy gets an electronic notice at least 3 business days before delivery.","instruction":"For each shipment to a Spanish site dispatched from 1 Mar 2027, or delivered after 8 Mar 2027, print the Spanish delivery note at the depot and send the hospital pharmacy notice 3 business days before delivery. Complete the missing hospital pharmacy codes before the first affected shipment.","conditions":["Applies to IMP shipments to clinical trial sites in Spain.","Shipments dispatched before 1 Mar 2027 and delivered by 8 Mar 2027 can follow the earlier procedure.","Labeling requirements do not change."],"sectionEdits":[{"section":"invoice","replaces":"Delivery note in English or Spanish with the trial number and kit numbers.","text":"From 1 Mar 2027: a delivery note in Spanish with the EU trial number, the hospital pharmacy code and the batch number of each product."},{"section":"logistics","replaces":"","text":"From 1 Mar 2027: send the hospital pharmacy an electronic notice at least 3 business days before delivery. Shipments without the notice or the Spanish delivery note are refused and returned."},{"section":"contacts","replaces":"","text":"From 1 Mar 2027: keep the hospital pharmacy code of every Spanish site. It must be on each delivery note."}],"evidence":[{"id":"EV-ES-01","point":"Point 1","excerpt":"cada envío de medicamentos en investigación a un centro de ensayo clínico en España deberá ir acompañado de un albarán de entrega redactado en español"},{"id":"EV-ES-02","point":"Point 3","excerpt":"con una antelación mínima de tres días hábiles respecto a la fecha prevista de entrega"},{"id":"EV-ES-03","point":"Point 5","excerpt":"Los envíos despachados antes del 1 de marzo de 2027 y entregados a más tardar el 8 de marzo de 2027 podrán seguir el procedimiento anterior"}]},"notice":{"id":"es-notice","title":"Nota informativa 12/2026 (escenario ilustrativo)","titleEn":"Information note 12/2026 (illustrative scenario)","authority":"Autoridad nacional de medicamentos (escenario ilustrativo)","published":"2026-11-10","effective":"2027-03-01","language":"es","text":"Nota informativa 12/2026 (escenario ilustrativo)\nDocumentación que debe acompañar a los envíos de medicamentos en investigación a los centros de ensayos clínicos en España\n1. A partir del 1 de marzo de 2027, cada envío de medicamentos en investigación a un centro de ensayo clínico en España deberá ir acompañado de un albarán de entrega redactado en español.\n2. El albarán de entrega indicará el número de ensayo clínico de la UE, el código del servicio de farmacia del hospital receptor y el número de lote de cada medicamento incluido en el envío.\n3. El promotor enviará al servicio de farmacia del hospital receptor un aviso electrónico de cada envío con una antelación mínima de tres días hábiles respecto a la fecha prevista de entrega.\n4. El servicio de farmacia rechazará los envíos que no cumplan los requisitos de los puntos 1 a 3, y los medicamentos rechazados se devolverán al remitente.\n5. Los envíos despachados antes del 1 de marzo de 2027 y entregados a más tardar el 8 de marzo de 2027 podrán seguir el procedimiento anterior.\n6. Esta nota no modifica los requisitos de etiquetado de los medicamentos en investigación.\nEscenario ilustrativo: esta nota no procede de ninguna autoridad real."},"trial":{"id":"CTP-7842-201","title":"Phase III study of XZ-417 in rheumatology","product":"XZ-417 50 mg film-coated tablets","phase":"III","countries":["DE","ES","IT","PL"],"plannedSites":64,"plannedPatients":480,"firstPatientIn":"2027-02-15","depot":"Central EU depot, Belgium","standardLeadBusinessDays":5,"expeditedLeadBusinessDays":2,"sites":[{"id":"ES-01","city":"Madrid","hospital":"Hospital pharmacy, site ES-01","pharmacyCode":"FH-28-0101","plannedPatients":12},{"id":"ES-02","city":"Madrid","hospital":"Hospital pharmacy, site ES-02","pharmacyCode":"FH-28-0207","plannedPatients":10},{"id":"ES-03","city":"Barcelona","hospital":"Hospital pharmacy, site ES-03","pharmacyCode":"FH-08-0112","plannedPatients":12},{"id":"ES-04","city":"Barcelona","hospital":"Hospital pharmacy, site ES-04","pharmacyCode":"FH-08-0315","plannedPatients":8},{"id":"ES-05","city":"Valencia","hospital":"Hospital pharmacy, site ES-05","pharmacyCode":"FH-46-0104","plannedPatients":9},{"id":"ES-06","city":"Sevilla","hospital":"Hospital pharmacy, site ES-06","pharmacyCode":null,"plannedPatients":8},{"id":"ES-07","city":"Bilbao","hospital":"Hospital pharmacy, site ES-07","pharmacyCode":"FH-48-0109","plannedPatients":7},{"id":"ES-08","city":"Málaga","hospital":"Hospital pharmacy, site ES-08","pharmacyCode":null,"plannedPatients":6}],"shipments":[{"id":"SHP-ES-01","site":"ES-01","kind":"Initial site supply","dispatch":"2027-02-01","delivery":"2027-02-03","kits":12},{"id":"SHP-ES-02","site":"ES-03","kind":"Initial site supply","dispatch":"2027-02-02","delivery":"2027-02-04","kits":12},{"id":"SHP-ES-03","site":"ES-05","kind":"Initial site supply","dispatch":"2027-02-08","delivery":"2027-02-10","kits":12},{"id":"SHP-ES-04","site":"ES-02","kind":"Initial site supply","dispatch":"2027-02-15","delivery":"2027-02-17","kits":12},{"id":"SHP-ES-05","site":"ES-04","kind":"Initial site supply, held for the site initiation visit","dispatch":"2027-02-26","delivery":"2027-03-09","kits":12},{"id":"SHP-ES-06","site":"ES-07","kind":"Initial site supply","dispatch":"2027-03-01","delivery":"2027-03-03","kits":12},{"id":"SHP-ES-07","site":"ES-01","kind":"Resupply forecast","dispatch":"2027-03-04","delivery":"2027-03-08","kits":6},{"id":"SHP-ES-08","site":"ES-06","kind":"Initial site supply","dispatch":"2027-03-08","delivery":"2027-03-10","kits":12},{"id":"SHP-ES-09","site":"ES-03","kind":"Resupply forecast","dispatch":"2027-03-15","delivery":"2027-03-17","kits":6},{"id":"SHP-ES-10","site":"ES-08","kind":"Initial site supply","dispatch":"2027-03-22","delivery":"2027-03-24","kits":12}]},"specification":{"version":4,"published":"2026-10-05","next":"2027-01-20","owner":"C. Ruiz, Regulatory Affairs Spain","sections":{"regulatory":{"owner":"C. Ruiz, Regulatory Affairs Spain","checked":"2026-10-05","review":"2027-04-05","sources":["annex","qa"],"change":"eu","notes":["eu-pack"],"items":["Label under Annex VI of Regulation (EU) 536/2014. The expiry date may be left off the immediate pack when the outer pack stays with it, or for blisters and small units (B.6.2 and B.6.3).","Label language: Spanish (company standard; Article 69 lets each Member State set it)."]},"import":{"owner":"D. Ortega, Trade Compliance EU","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["Supply comes from the central depot in Belgium, within the EU.","Each shipment travels with the QP release documentation of its batches."]},"invoice":{"owner":"D. Ortega, Trade Compliance EU","checked":"2026-10-05","review":"2027-01-20","sources":["es-notice"],"case":"es","items":["Pro-forma invoice: “No commercial value. Value for customs purposes only.”","Delivery note in English or Spanish with the trial number and kit numbers."]},"logistics":{"owner":"M. Silva, Clinical Supply Logistics EU","checked":"2026-10-05","review":"2027-01-20","sources":["es-notice"],"case":"es","items":["Prepare each shipment 5 business days before dispatch, or 2 when expedited.","Road transport from the central depot in Belgium at 15–25 °C with a temperature monitor.","Hospital pharmacies receive deliveries on working days only."]},"carriers":{"owner":"M. Silva, Clinical Supply Logistics EU","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["EU logistics partner: road shipments from the central depot to sites."]},"ior":{"owner":"D. Ortega, Trade Compliance EU","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["Consignee: the hospital pharmacy of each trial site."]},"contacts":{"owner":"Local affiliate, Spain","checked":"2026-10-05","review":"2027-01-20","sources":[],"case":"es","items":["Hospital pharmacy contact for each site, kept in the site file."]},"notes":{"owner":"C. Ruiz, Regulatory Affairs Spain","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["Check regional public holidays: hospital pharmacies do not receive deliveries on them."]}}}}</script>
+<script id="spain-data" type="application/json">{"schema_version":1,"note":"FICTIONAL demo scenario. The information note, the authority, the trial, the sites, the companies and the people are invented for the RegChain demo. None of it is a real rule or a real record.","case":{"id":"RC-ES-001","requirement":"ES/IMP_SHIPPING_DOCUMENTS","effective":"2027-03-01","transitionDeliveredBy":"2027-03-08","noticeBusinessDays":3,"preparedAt":"2026-11-10T09:44:00Z","policy":"From 1 Mar 2027, every IMP shipment to a trial site in Spain carries a delivery note in Spanish with the EU trial number, the hospital pharmacy code and each batch number, and the hospital pharmacy gets an electronic notice at least 3 business days before delivery.","instruction":"For each shipment to a Spanish site dispatched from 1 Mar 2027, or delivered after 8 Mar 2027, print the Spanish delivery note at the depot and send the hospital pharmacy notice 3 business days before delivery. Complete the missing hospital pharmacy codes before the first affected shipment.","conditions":["Applies to IMP shipments to clinical trial sites in Spain.","Shipments dispatched before 1 Mar 2027 and delivered by 8 Mar 2027 can follow the earlier procedure.","Labeling requirements do not change."],"sectionEdits":[{"section":"invoice","replaces":"Delivery note in English or Spanish with the trial number and kit numbers.","text":"From 1 Mar 2027: a delivery note in Spanish with the EU trial number, the hospital pharmacy code and the batch number of each product."},{"section":"logistics","replaces":"","text":"From 1 Mar 2027: send the hospital pharmacy an electronic notice at least 3 business days before delivery. Shipments without the notice or the Spanish delivery note are refused and returned."},{"section":"contacts","replaces":"","text":"From 1 Mar 2027: keep the hospital pharmacy code of every Spanish site. It must be on each delivery note."}],"evidence":[{"id":"EV-ES-01","point":"Point 1","excerpt":"cada envío de medicamentos en investigación a un centro de ensayo clínico en España deberá ir acompañado de un albarán de entrega redactado en español"},{"id":"EV-ES-02","point":"Point 3","excerpt":"con una antelación mínima de tres días hábiles respecto a la fecha prevista de entrega"},{"id":"EV-ES-03","point":"Point 5","excerpt":"Los envíos despachados antes del 1 de marzo de 2027 y entregados a más tardar el 8 de marzo de 2027 podrán seguir el procedimiento anterior"}]},"notice":{"id":"es-notice","title":"Nota informativa 12/2026 (escenario ilustrativo)","titleEn":"Information note 12/2026 (illustrative scenario)","authority":"Autoridad nacional de medicamentos (escenario ilustrativo)","published":"2026-11-10","effective":"2027-03-01","language":"es","text":"Nota informativa 12/2026 (escenario ilustrativo)\nDocumentación que debe acompañar a los envíos de medicamentos en investigación a los centros de ensayos clínicos en España\n1. A partir del 1 de marzo de 2027, cada envío de medicamentos en investigación a un centro de ensayo clínico en España deberá ir acompañado de un albarán de entrega redactado en español.\n2. El albarán de entrega indicará el número de ensayo clínico de la UE, el código del servicio de farmacia del hospital receptor y el número de lote de cada medicamento incluido en el envío.\n3. El promotor enviará al servicio de farmacia del hospital receptor un aviso electrónico de cada envío con una antelación mínima de tres días hábiles respecto a la fecha prevista de entrega.\n4. El servicio de farmacia rechazará los envíos que no cumplan los requisitos de los puntos 1 a 3, y los medicamentos rechazados se devolverán al remitente.\n5. Los envíos despachados antes del 1 de marzo de 2027 y entregados a más tardar el 8 de marzo de 2027 podrán seguir el procedimiento anterior.\n6. Esta nota no modifica los requisitos de etiquetado de los medicamentos en investigación.\nEscenario ilustrativo: esta nota no procede de ninguna autoridad real."},"trial":{"id":"CTP-7842-201","title":"Phase III study of XZ-417 in rheumatology","product":"XZ-417 50 mg film-coated tablets","phase":"III","countries":["DE","ES","IT","PL"],"plannedSites":64,"plannedPatients":480,"firstPatientIn":"2027-02-15","depot":"Central EU depot, Belgium","standardLeadBusinessDays":5,"expeditedLeadBusinessDays":2,"sites":[{"id":"ES-01","city":"Madrid","hospital":"Hospital pharmacy, site ES-01","pharmacyCode":"FH-28-0101","plannedPatients":12},{"id":"ES-02","city":"Madrid","hospital":"Hospital pharmacy, site ES-02","pharmacyCode":"FH-28-0207","plannedPatients":10},{"id":"ES-03","city":"Barcelona","hospital":"Hospital pharmacy, site ES-03","pharmacyCode":"FH-08-0112","plannedPatients":12},{"id":"ES-04","city":"Barcelona","hospital":"Hospital pharmacy, site ES-04","pharmacyCode":"FH-08-0315","plannedPatients":8},{"id":"ES-05","city":"Valencia","hospital":"Hospital pharmacy, site ES-05","pharmacyCode":"FH-46-0104","plannedPatients":9},{"id":"ES-06","city":"Sevilla","hospital":"Hospital pharmacy, site ES-06","pharmacyCode":null,"plannedPatients":8},{"id":"ES-07","city":"Bilbao","hospital":"Hospital pharmacy, site ES-07","pharmacyCode":"FH-48-0109","plannedPatients":7},{"id":"ES-08","city":"Málaga","hospital":"Hospital pharmacy, site ES-08","pharmacyCode":null,"plannedPatients":6}],"shipments":[{"id":"SHP-ES-01","site":"ES-01","kind":"Initial site supply","dispatch":"2027-02-01","delivery":"2027-02-03","kits":12},{"id":"SHP-ES-02","site":"ES-03","kind":"Initial site supply","dispatch":"2027-02-02","delivery":"2027-02-04","kits":12},{"id":"SHP-ES-03","site":"ES-05","kind":"Initial site supply","dispatch":"2027-02-08","delivery":"2027-02-10","kits":12},{"id":"SHP-ES-04","site":"ES-02","kind":"Initial site supply","dispatch":"2027-02-15","delivery":"2027-02-17","kits":12},{"id":"SHP-ES-05","site":"ES-04","kind":"Initial site supply, held for the site initiation visit","dispatch":"2027-02-26","delivery":"2027-03-09","kits":12},{"id":"SHP-ES-06","site":"ES-07","kind":"Initial site supply","dispatch":"2027-03-01","delivery":"2027-03-03","kits":12},{"id":"SHP-ES-07","site":"ES-01","kind":"Resupply forecast","dispatch":"2027-03-04","delivery":"2027-03-08","kits":6},{"id":"SHP-ES-08","site":"ES-06","kind":"Initial site supply","dispatch":"2027-03-08","delivery":"2027-03-10","kits":12},{"id":"SHP-ES-09","site":"ES-03","kind":"Resupply forecast","dispatch":"2027-03-15","delivery":"2027-03-17","kits":6},{"id":"SHP-ES-10","site":"ES-08","kind":"Initial site supply","dispatch":"2027-03-22","delivery":"2027-03-24","kits":12}]},"specification":{"version":4,"published":"2026-10-05","next":"2027-01-20","owner":"C. Ruiz, Regulatory Affairs Spain","sections":{"regulatory":{"owner":"C. Ruiz, Regulatory Affairs Spain","checked":"2026-10-05","review":"2027-04-05","sources":["annex","qa"],"change":"eu","notes":["eu-pack"],"items":["Label under Annex VI of Regulation (EU) 536/2014. The expiry date may be left off the immediate pack when the outer pack stays with it, or for blisters and small units (B.6.2 and B.6.3).","Label language: Spanish (company standard; Article 69 lets each Member State set it)."]},"import":{"owner":"D. Ortega, Trade Compliance EU","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["Supply comes from the central depot in Belgium, within the EU.","Each shipment travels with the QP release documentation of its batches."]},"invoice":{"owner":"D. Ortega, Trade Compliance EU","checked":"2026-10-05","review":"2027-01-20","sources":["es-notice"],"case":"es","items":["Pro-forma invoice: “No commercial value. Value for customs purposes only.”","Delivery note in English or Spanish with the trial number and kit numbers."]},"logistics":{"owner":"M. Silva, Clinical Supply Logistics EU","checked":"2026-10-05","review":"2027-01-20","sources":["es-notice"],"case":"es","items":["Prepare each shipment 5 business days before dispatch, or 2 when expedited.","Road transport from the central depot in Belgium at 15–25 °C with a temperature monitor.","Hospital pharmacies receive deliveries on working days only."]},"carriers":{"owner":"M. Silva, Clinical Supply Logistics EU","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["EU logistics partner: road shipments from the central depot to sites."]},"ior":{"owner":"D. Ortega, Trade Compliance EU","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["Consignee: the hospital pharmacy of each trial site."]},"contacts":{"owner":"Local affiliate, Spain","checked":"2026-10-05","review":"2027-01-20","sources":[],"case":"es","items":["Hospital pharmacy contact for each site, kept in the site file."]},"notes":{"owner":"C. Ruiz, Regulatory Affairs Spain","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["Check regional public holidays: hospital pharmacies do not receive deliveries on them."]}}}}</script>
 <script id="dashboard-data">
 "use strict";
 // Fictional demo portfolio (demo-data/uk-labelling-portfolio.json), added by the local server.
@@ -92,12 +95,12 @@ const sources = [
  {id:"imports",title:"Importing IMPs into Great Britain",authority:"MHRA",scope:"GB",type:"Guidance",path:"GOV.UK / Importing IMPs / Updated guidance",checked:"09:40",status:"Changed",tone:"blue",edition:"12 Feb 2025",section:"Publication change log and QP certification for approved-country imports",result:"The published update notice describes changes reflecting implementation of the EU Clinical Trials Regulation for EU QP certification.",url:"https://www.gov.uk/government/publications/importing-investigational-medicinal-products-into-great-britain-from-approved-countries",change:"import"},
  {id:"statute",title:"UK Clinical Trials amendment",authority:"UK Legislation",scope:"UK",type:"Statutory instrument",path:"legislation.gov.uk / S.I. 2025/538",checked:"09:39",status:"Unchanged",tone:"green",edition:"2025 instrument",section:"Regulation 32 and inserted Schedule 14 paragraph 6",result:"The statutory reference is unchanged on this check. The instrument supplies supporting evidence for the UK labeling case.",url:"https://www.legislation.gov.uk/uksi/2025/538/pdfs/uksi_20250538_en.pdf",change:"uk"},
  {id:"annex",title:"EU Annex VI packaging rules",authority:"EUR-Lex",scope:"EU",type:"Delegated regulation",path:"EUR-Lex / Delegated Regulation 2022/2239",checked:"09:38",status:"Unchanged",tone:"green",edition:"15 Nov 2022 · Official Journal",section:"Annex, entries B.6.2 and B.6.3",result:"The stored comparison is unchanged. The historical amendment is an additional use case for assessing eligible immediate-packaging configurations.",url:"https://eur-lex.europa.eu/eli/reg_del/2022/2239/oj/eng"},
- {id:"list",title:"Approved countries for IMP imports",authority:"MHRA",scope:"GB",type:"Country list",path:"GOV.UK / Importing IMPs / Approved country list",checked:"09:37",status:"Retry needed",tone:"red",edition:"12 Feb 2025 · reference page",section:"Section 3 · Approved countries for QP certification",result:"This attempt timed out before comparison. A failed attempt leaves the source coverage incomplete and produces no change conclusion.",url:"https://www.gov.uk/government/publications/importing-investigational-medicinal-products-into-great-britain-from-approved-countries/list-of-approved-countries-for-clinical-trials-and-investigational-medicinal-products",change:"import"}
+ {id:"list",retry:"govuk",title:"Approved countries for IMP imports",authority:"MHRA",scope:"GB",type:"Country list",path:"GOV.UK / Importing IMPs / Approved country list",checked:"09:37",status:"Retry needed",tone:"red",edition:"12 Feb 2025 · reference page",section:"Section 3 · Approved countries for QP certification",result:"This attempt timed out before comparison. A failed attempt leaves the source coverage incomplete and produces no change conclusion.",url:"https://www.gov.uk/government/publications/importing-investigational-medicinal-products-into-great-britain-from-approved-countries/list-of-approved-countries-for-clinical-trials-and-investigational-medicinal-products",change:"import"}
 ];
 const changes = [
- {id:"uk",title:"UK IMP labeling transition",authority:"MHRA + UK Legislation",scope:"UK",kind:"Labeling",status:"SME review",tone:"amber",when:"Effective 28 Apr 2026",summary:"Apply the amended labeling rules and assess pre-cutoff batch eligibility.",before:"Earlier Part 7 labeling text in the UK Country Specification.",after:"Amended Part 7 with a scoped Schedule 14 transition. MHRA uses the finished-IMP QP certification date for this labeling assessment.",need:"Trial cohort, intended use, batch QP dates, and approved label specifications.",evidence:["transition","statute"],studyNote:"Two UK portfolio studies have batches to review. The public registry view shows screening candidates."},
- {id:"eu",title:"EU guidance on cryopreserved products",authority:"European Commission",scope:"EU",kind:"Labeling guidance",status:"Assess impact",tone:"blue",when:"July 2026 guidance edition",summary:"A new Q&A addresses labeling for cryopreserved medicinal products.",before:"The preceding guidance edition did not contain the new question listed in the July revision history.",after:"July 2026 Q&A adds question 8.4 for cryopreserved products. Review the guidance alongside applicable legislation.",need:"EU study countries, product presentation, cryopreservation status, and applicable labeling specification.",evidence:["qa","annex"],studyNote:"The public example has EU trial sites. Internal product and packaging data are required to assess whether the guidance is relevant."},
- {id:"import",title:"Great Britain import oversight",authority:"MHRA",scope:"GB",kind:"Import / QP",status:"Assess impact",tone:"blue",when:"Guidance updated 12 Feb 2025",summary:"Review QP evidence for IMPs shipped from approved countries.",before:"Existing GB approved-country oversight guidance.",after:"MHRA updated the guidance to reflect EU CTR implementation relating to EU QP certification.",need:"Shipment destination and origin, UK import authorization holder, QP evidence, and applicable route.",evidence:["imports","list"],studyNote:"GB site presence is a screening signal. Shipment origin and QP evidence are required to establish applicability."}
+ {id:"uk",title:"UK IMP labeling transition",authority:"MHRA + UK Legislation",scope:"UK",kind:"Labeling",status:"SME review",tone:"amber",when:"Applies from 28 Apr 2026",summary:"Apply the amended labeling rules and assess pre-cutoff batch eligibility.",before:"Earlier Part 7 labeling text in the UK Country Specification.",after:"Amended Part 7 with a scoped Schedule 14 transition. MHRA uses the finished-IMP QP certification date for this labeling assessment.",need:"Trial cohort, intended use, batch QP dates, and approved label specifications.",evidence:["transition","statute"],studyNote:"Two UK portfolio studies have batches to review. The public registry view shows screening candidates."},
+ {id:"eu",sinceLabel:"July 2026",title:"EU guidance on cryopreserved products",authority:"European Commission",scope:"EU",kind:"Labeling guidance",status:"Assess impact",tone:"blue",when:"July 2026 guidance edition",summary:"A new Q&A addresses labeling for cryopreserved medicinal products.",before:"The preceding guidance edition did not contain the new question listed in the July revision history.",after:"July 2026 Q&A adds question 8.4 for cryopreserved products. Review the guidance alongside applicable legislation.",need:"EU study countries, product presentation, cryopreservation status, and applicable labeling specification.",evidence:["qa","annex"],studyNote:"The public example has EU trial sites. Internal product and packaging data are required to assess whether the guidance is relevant."},
+ {id:"import",since:"2025-02-12",sinceLabel:"12 Feb 2025",title:"Great Britain import oversight",authority:"MHRA",scope:"GB",kind:"Import / QP",status:"Assess impact",tone:"blue",when:"Guidance updated 12 Feb 2025",summary:"Review QP evidence for IMPs shipped from approved countries.",before:"Existing GB approved-country oversight guidance.",after:"MHRA updated the guidance to reflect EU CTR implementation relating to EU QP certification.",need:"Shipment destination and origin, UK import authorization holder, QP evidence, and applicable route.",evidence:["imports","list"],studyNote:"GB site presence is a screening signal. Shipment origin and QP evidence are required to establish applicability."}
 ];
 const studies = [
  {id:"STUDY-001",title:"UK legacy-cohort study",sponsor:"Portfolio study",sites:"UK",status:"Batch review",tone:"amber",reason:"One pre-cutoff batch and one missing QP date.",detail:"A-101 may qualify for transitional treatment. D-104 needs its finished-IMP QP certification date.",batches:["A-101","D-104"],changes:["uk"]},
@@ -282,13 +285,13 @@ const ukCase = {
   "Legacy pathway requires a pre-cutoff finished-IMP QP date, old-rules trial cohort, old-rules labeling and intended trial use",
   "Confirm any applicable exemption or approved variation. Escalate exact cutoff-day cases."
  ],
- key:"uk", country:"uk", storageKey:"regchain-governed-uk-workflow-v1", preparedAt:"2026-11-14T09:42:00Z", taskId:"QMS-2026-0117", receipt:"LOCAL-REC-02",
+ key:"uk", country:"uk", reviewer:"A. Novak", storageKey:"regchain-governed-uk-workflow-v1", preparedAt:"2026-11-14T09:42:00Z", taskId:"QMS-2026-0117", receipt:"LOCAL-REC-02",
  // The UK edit replaces the labeling line of the regulatory section and adds the supply instruction.
  edits:state=>[{section:"regulatory",replaces:ukCase.baseline,text:state.policy??ukCase.policy},{section:"regulatory",replaces:"",text:"Supply instruction: "+state.draft}]
 };
 // The fictional Spain case (demo-data/spain-scenario.json): a new information note that applies from 1 Mar 2027.
 const esCase = spain ? {
- ...spain.case, key:"es", country:"es", storageKey:"regchain-governed-es-workflow-v1", taskId:"QMS-2026-0118", receipt:"LOCAL-REC-03",
+ ...spain.case, key:"es", country:"es", reviewer:"C. Ruiz", storageKey:"regchain-governed-es-workflow-v1", taskId:"QMS-2026-0118", receipt:"LOCAL-REC-03",
  snapshot:"PORTFOLIO-01 + "+spain.trial.id, initialText:spain.case.instruction,
  baseline:"Delivery note in English or Spanish. No advance notice to the hospital pharmacy.",
  evidence:spain.case.evidence.map(item=>({...item,source:spain.notice.id,tier:2,kind:"Information note",locator:item.point})),
@@ -383,15 +386,39 @@ const demoShipments = portfolio ? portfolioShipments() : [
  {id:"SHP-02",batch:"D-104",destination:"UK",date:"2026-11-25",partner:"UK depot",leadDays:5},
  {id:"SHP-03",batch:"E-105",destination:"Germany",date:"2026-11-23",partner:"EU depot",leadDays:5}
 ];
+// One impact model for every screen: Act (work needed before dispatch), Check (confirm; no change expected) or Not affected.
+const impactStatuses = {Act:["Labeling review required","Insufficient information","Needs SME assessment"],Check:["Verify specification","Potential transition eligibility"]};
+const impactOf = status => impactStatuses.Act.includes(status)?"Act":impactStatuses.Check.includes(status)?"Check":"Not affected";
+const impactTone = impact => impact==="Act"?"amber":impact==="Check"?"blue":"";
 function shipmentFindings() {
  return demoShipments.map(shipment=>{
   const batch=assessedBatches.find(item=>item.id===shipment.batch);
   const due=Date.parse(shipment.date)-shipment.leadDays*86400000;
-  const status=batch.status==="Out of scope"?"Out of scope":batch.status==="Insufficient information"?"Insufficient information":"Potentially affected";
-  return {...shipment,status,preparationDate:new Date(due).toISOString().slice(0,10),reason:batch.reason};
+  return {...shipment,status:impactOf(batch.status),batchStatus:batch.status,preparationDate:new Date(due).toISOString().slice(0,10),reason:batch.reason};
  });
 }
-const workflowRoles = {viewer:"Clinical Supply viewer",reviewer:"Regulatory SME",owner:"Quality action owner",verifier:"Quality verifier"};
+// The UK change in one place, so the Overview, the case and the Quality task always agree.
+function ukImpactSummary() {
+ const uk=assessedBatches.filter(batch=>batch.scope==="UK");
+ const shipments=shipmentFindings();
+ const count=impact=>({
+  batches:uk.filter(batch=>impactOf(batch.status)===impact),
+  shipments:shipments.filter(shipment=>shipment.status===impact),
+  trials:[...new Set(uk.filter(batch=>impactOf(batch.status)===impact).map(batch=>batch.study))]
+ });
+ const act=count("Act"), check=count("Check");
+ check.trials=check.trials.filter(id=>!act.trials.includes(id));
+ // Look back: batches certified after the rule applied that still carry a legacy label may already have shipped.
+ const lookback=uk.filter(batch=>batch.status==="Labeling review required");
+ return {act,check,lookback,earliest:[...act.shipments,...check.shipments].map(item=>item.preparationDate).sort()[0]};
+}
+const workflowRoles = {viewer:"Clinical Supply",reviewer:"Regulatory SME",owner:"Quality owner",verifier:"Quality verifier"};
+// Named people, so the audit trail says who did what. The approver, the owner and the verifier are always different people.
+const workflowPeople = {viewer:"P. Laine",owner:"M. Okafor",verifier:"L. Chen"};
+function roleName(role,state) {
+ const person=role==="reviewer"?caseOf(state)?.reviewer:workflowPeople[role];
+ return person&&workflowRoles[role]?person+" · "+workflowRoles[role]:undefined;
+}
 // Each governed case keeps its own workflow in browser storage.
 function initialWorkflow(caseId="uk") {
  const governed=governedCases[caseId];
@@ -415,7 +442,7 @@ function saveWorkflow(state) {
 }
 function appendWorkflowEvent(state,type,role,now,detail) {
  const eventId=caseOf(state).id+"-"+String(state.events.length+1).padStart(2,"0");
- state.events.push({eventId,type,actor:workflowRoles[role]??(role==="scheduler"?"RegChain scheduler":role==="ai"?"RegChain AI check":"RegChain publisher"),at:now,revision:state.revision,detail});
+ state.events.push({eventId,type,actor:roleName(role,state)??(role==="scheduler"?"RegChain scheduler":role==="ai"?"RegChain AI check":"RegChain publisher"),at:now,revision:state.revision,detail});
 }
 function workflowStep(state,command,role,now) {
  const {action,revision}=command;
@@ -424,7 +451,7 @@ function workflowStep(state,command,role,now) {
  if(["approve","edit","reject","investigate","defer","resume"].includes(action)) {
   if(role!=="reviewer") throw Error("Switch to the Regulatory SME role to record a review decision.");
   if(action==="resume"){
-   if(!["investigating","deferred"].includes(state.stage)) throw Error("There is no held proposal to resume.");
+   if(!["investigating","deferred","rejected"].includes(state.stage)) throw Error("There is no held proposal to resume.");
    if(!reason) throw Error("Record what changed or why review should resume.");
    state.revision++;
    state.stage="review";
@@ -442,10 +469,11 @@ function workflowStep(state,command,role,now) {
    state.draftSource="sme";
    appendWorkflowEvent(state,"proposal.edited",role,now,instruction);
   }
+  if(["approve","edit"].includes(action) && command.override) appendWorkflowEvent(state,"proposal.ai_check_overridden",role,now,"Approved without a passing AI check. "+reason);
   const reviewOn=command.reviewOn;
   if(action==="defer" && (!/^\d{4}-\d{2}-\d{2}$/.test(reviewOn??"") || reviewOn<=(command.today??now.slice(0,10)))) throw Error("Choose a future return-to-review date.");
   if(action==="approve" && command.instruction!=null && instruction!==state.draft) throw Error("Use Edit & approve to publish a modified instruction.");
-  state.decision={action,rationale:reason,actor:workflowRoles[role],time:now,revision:state.revision,reviewOn:action==="defer"?reviewOn:null};
+  state.decision={action,rationale:reason,actor:roleName(role,state),time:now,revision:state.revision,reviewOn:action==="defer"?reviewOn:null};
   appendWorkflowEvent(state,"proposal."+({approve:"approved",edit:"approved",reject:"rejected",investigate:"investigation_requested",defer:"deferred"}[action]),role,now,reason+(action==="defer"?" · Return "+reviewOn:""));
   if(action==="reject" || action==="investigate" || action==="defer") {
    state.stage={reject:"rejected",investigate:"investigating",defer:"deferred"}[action];
@@ -455,19 +483,20 @@ function workflowStep(state,command,role,now) {
   const governed=caseOf(state);
   const spec=countrySpecs[governed.country];
   const sectionEdits=governed.edits(state);
-  state.publication={version:spec.version+1,previousVersion:spec.version,revision:state.revision,at:now,effective:governed.effective,policy:state.policy??governed.policy,instruction:state.draft,
+  state.publication={version:spec.version+1,previousVersion:spec.version,revision:state.revision,at:now,inForce:now.slice(0,10),effective:governed.effective,policy:state.policy??governed.policy,instruction:state.draft,
    sectionEdits,source:state.draftSource??"seed",evidenceIds:governed.evidence.map(item=>item.id)};
   const sectionList=[...new Set(sectionEdits.map(edit=>edit.section))].map(id=>specSectionNames[id]??id).join(", ");
   appendWorkflowEvent(state,"country_record.published","publisher",now,specCountryName(governed.country)+" Country Specification v"+(spec.version+1)+" · "+sectionList+" · "+governed.requirement+" · Receipt "+governed.receipt);
   if(governed.key==="uk") {
-   const nextReview=shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").map(shipment=>shipment.preparationDate).sort()[0];
-   state.task={id:governed.taskId,owner:workflowRoles.owner,status:"assigned",evidence:null,assignedAt:now,dueOn:nextReview,
-    version:spec.version+1,revision:state.revision,studyIds:[...new Set(assessedBatches.filter(batch=>batch.scope==="UK").map(batch=>batch.study))],
-    batchIds:assessedBatches.filter(batch=>batch.scope==="UK").map(batch=>batch.id),
-    shipmentIds:shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").map(shipment=>shipment.id)};
+   const impact=ukImpactSummary();
+   state.task={id:governed.taskId,owner:roleName("owner",state),status:"assigned",evidence:null,assignedAt:now,dueOn:impact.earliest,
+    version:spec.version+1,revision:state.revision,studyIds:[...impact.act.trials,...impact.check.trials],
+    batchIds:[...impact.act.batches,...impact.check.batches].map(batch=>batch.id),
+    shipmentIds:impact.act.shipments.map(item=>item.id),checkShipmentIds:impact.check.shipments.map(item=>item.id),
+    lookbackBatchIds:impact.lookback.map(batch=>batch.id)};
   } else {
    const impact=spainImpact();
-   state.task={id:governed.taskId,owner:workflowRoles.owner,status:"assigned",evidence:null,assignedAt:now,dueOn:impact.first?.prepareBy??governed.effective,
+   state.task={id:governed.taskId,owner:roleName("owner",state),status:"assigned",evidence:null,assignedAt:now,dueOn:impact.first?.prepareBy??governed.effective,
     version:spec.version+1,revision:state.revision,studyIds:[spain.trial.id],batchIds:[],shipmentIds:impact.affected.map(item=>item.id),
     siteIds:impact.missing.map(site=>site.id)};
   }
@@ -483,7 +512,7 @@ function workflowStep(state,command,role,now) {
  }
  if(action==="implement" && role==="owner" && task.status==="acknowledged") {
   if(!reason) throw Error("Enter the implementation evidence reference.");
-  task.evidence={reference:reason,at:now,submittedBy:workflowRoles[role]};
+  task.evidence={reference:reason,at:now,submittedBy:roleName(role,state)};
   task.status="submitted";
   appendWorkflowEvent(state,"quality_task.evidence_submitted",role,now,reason);
   return;
@@ -495,6 +524,7 @@ function workflowStep(state,command,role,now) {
   return;
  }
  if(action==="verify" && role==="verifier" && task.status==="submitted" && task.evidence) {
+  if([state.decision?.actor,task.evidence.submittedBy].includes(roleName("verifier",state))) throw Error("The verifier must be a different person from the approver and the owner.");
   if(!reason) throw Error("Enter the basis for verifying the evidence.");
   task.status="verified";
   appendWorkflowEvent(state,"quality_task.verified",role,now,reason);
@@ -583,21 +613,48 @@ const expandedRegions = new Set(countries.filter(country=>country.changes?.lengt
 if (changes.some(change=>change.scope==="EU")) expandedRegions.add("Europe");
 const scheduleKey = "regchain-dashboard-schedule-v1";
 const dayMs = 24 * 60 * 60 * 1000;
-const athens = new Intl.DateTimeFormat("en-GB",{dateStyle:"medium",timeStyle:"short",timeZone:"Europe/Athens"});
+const athens = new Intl.DateTimeFormat("en-GB",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23",timeZone:"Europe/Athens"});
 let scheduleState = readSchedule();
 let replaying = false;
 let drawerOrigin = null;
 const selectedChange = () => changes.find(change=>change.id===currentChange);
 const filteredStudies = () => studyView === "portfolio" ? studies.filter(study=>study.changes.includes(currentChange)) : publicStudies.filter(study=>study.countries.includes(selectedChange().scope));
-const retryCount = sources.filter(source=>source.status==="Retry needed").length;
-const caseOpen = id => !["closed","rejected"].includes(workflows[id].stage);
+// Source checks retried on this computer replace the recorded result for that source.
+const sourceChecksKey = "regchain-source-checks-v1";
+const storedJson = key => {try {return JSON.parse(localStorage.getItem(key))??{};} catch {return {};}};
+const storeJson = (key,value) => {try {localStorage.setItem(key,JSON.stringify(value));return true;} catch {return false;}};
+for(const [id,check] of Object.entries(storedJson(sourceChecksKey))) {
+  const source=sources.find(item=>item.id===id);
+  if(source) Object.assign(source,check);
+}
+const retryCount = () => sources.filter(source=>source.status==="Retry needed").length;
+// Decisions on changes that have no governed case: not relevant, open a case, or keep assessing.
+const changeDecisionsKey = "regchain-change-decisions-v1";
+let changeDecisions = storedJson(changeDecisionsKey);
+const changeResolved = id => !isGoverned(id) && changeDecisions[id]?.decision==="not-relevant";
+// A case stays open until its follow-up is verified; a rejected edit still leaves the rule unresolved.
+const caseOpen = id => workflows[id].stage!=="closed";
 const ukOpen = () => caseOpen("uk");
-const openChanges = () => changes.filter(change=>!isGoverned(change.id)||caseOpen(change.id));
-const openChangeIds = country => (country.changes??[]).filter(id=>!isGoverned(id)||caseOpen(id));
+const changeOpen = id => isGoverned(id)?caseOpen(id):!changeResolved(id);
+const openChanges = () => changes.filter(change=>changeOpen(change.id));
+const openChangeIds = country => (country.changes??[]).filter(changeOpen);
 const openCountries = () => countries.filter(country=>openChangeIds(country).length);
 function caseStatus(id=currentChange) {
   return {review:["SME review","amber"],investigating:["Investigation requested","amber"],deferred:["Deferred","amber"],
-    rejected:["Rejected",""],published:["Published · follow-up open","blue"],closed:["Closed · evidence verified","green"]}[workflows[id].stage];
+    rejected:["Edit rejected · next step needed","red"],published:["Published · follow-up open","blue"],closed:["Closed · evidence verified","green"]}[workflows[id].stage];
+}
+// Status of a change that has no governed case, including the owner's decision on it.
+function changeStatus(change) {
+  const decision=changeDecisions[change.id];
+  if(decision?.decision==="not-relevant") return ["Not relevant · "+displayDay(decision.at.slice(0,10)),""];
+  if(decision?.decision==="case") return ["Case requested","blue"];
+  return [change.status,change.tone];
+}
+// How long a change has been open, from the source's own date.
+function openFor(change) {
+  if(!change.since) return "";
+  const days=Math.round((Date.parse(libraryToday)-Date.parse(change.since))/86400000);
+  return days>0?"open "+days+" days":"";
 }
 
 function readSchedule() {
@@ -616,11 +673,15 @@ function storeSchedule() {
   return true;
 }
 function cadence(days) {return days===1?"Every day":"Every "+days+" days";}
-function scheduleDate(value) {return value ? athens.format(new Date(value))+" Athens time" : "—";}
+function scheduleDate(value) {
+  if(!value) return "—";
+  const parts=Object.fromEntries(athens.formatToParts(new Date(value)).map(part=>[part.type,part.value]));
+  return Number(parts.day)+" "+monthNames[Number(parts.month)-1]+" "+parts.year+", "+parts.hour+":"+parts.minute+" Athens time";
+}
 function runStatus() {
   const next=scheduleState.enabled?scheduleDate(scheduleState.nextAt):"Paused";
   const last=scheduleState.lastAt?scheduleDate(scheduleState.lastAt)+" · "+(scheduleState.lastReason==="scheduled"?"Scheduled run":"Manual run"):replayDate;
-  return factlist([["Next run",next],["Last run",last],["Source coverage",sources.length+" source checks · "+retryCount+" retry needed"]]);
+  return factlist([["Next run",next],["Last run",last],["Source coverage",sources.length+" source checks · "+retryCount()+" retry needed"]]);
 }
 
 function shell() {
@@ -669,19 +730,25 @@ function ukLabelImpact() {
 }
 function portfolioImpactCard() {
   if(!portfolio||!ukOpen()) return "";
+  const summary=ukImpactSummary();
+  const rejected=workflows.uk.stage==="rejected";
+  const behind=Math.round((Date.parse(libraryToday)-Date.parse(ukCase.effective))/86400000);
   const asOf=portfolio.assessment_as_of.slice(0,10);
   const daysLeft=day=>Math.round((Date.parse(day)-Date.parse(asOf))/86400000);
   const {statusOf,urgent,trials,batches,patients,first}=ukLabelImpact();
   const firstDays=first?daysLeft(first.preparationDate):null;
   const when=firstDays===0?"<strong>today</strong>":firstDays===1?"<strong>tomorrow</strong>":"by <strong>"+esc(displayDay(first?.preparationDate))+"</strong>";
   const headline='<p class="impact-headline"><strong>'+trials+' of '+studies.length+'</strong> trials need action. <strong>'+batches+'</strong> batches need a labeling review or an expert decision, and <strong>'+urgent.length+'</strong> UK shipments need work before dispatch'+
-    (first?'. The first must be prepared '+when+', for a site with '+first.patients+' patients on treatment.':'.')+'</p>';
+    (first?'. The first must be prepared '+when+', for a site with '+first.patients+' patients on treatment.':'.')+
+    (summary.check.shipments.length||summary.check.trials.length?' Another <strong>'+summary.check.batches.length+'</strong> batches and <strong>'+summary.check.shipments.length+'</strong> shipments only need a check.':'')+'</p>'+
+    (summary.lookback.length?'<p class="lookback">'+icon("alert")+'<span><strong>Look back:</strong> '+summary.lookback.length+' batches certified since '+esc(displayDay(ukCase.effective))+' still carry a legacy label ('+esc(summary.lookback.map(batch=>batch.id).join(", "))+'). Check the distribution records for anything already shipped from them.</span></p>':'')+
+    (rejected?'<p class="lookback">'+icon("alert")+'<span><strong>The suggested edit was rejected.</strong> The rule still applies, so the risk stays open: reopen the case or record a different edit.</span></p>':'');
   const rows=urgent.map(shipment=>{
     const days=daysLeft(shipment.preparationDate);
     return '<tr><td><strong>'+esc(shipment.id)+'</strong><span class="sub">Batch '+esc(shipment.batch)+' · '+esc(statusOf(shipment.batch))+'</span></td><td>'+esc(shipment.site||shipment.destination)+'</td><td class="nowrap">'+esc(displayDay(shipment.preparationDate))+'</td>'+
       '<td>'+badge(days<=0?"Today":days===1?"1 day":days+" days",days<=0?"red":days<=3?"amber":"")+'</td><td>'+esc(shipment.patients)+'</td></tr>';
   }).join("");
-  return '<section class="card portfolio-impact"><div class="card-head"><div><h2>UK labeling change · portfolio impact</h2><p>Portfolio · assessed '+esc(displayDay(asOf))+'</p></div>'+trigger("Open the UK case","open-case","uk","primary","arrow")+'</div>'+
+  return '<section class="card portfolio-impact"><div class="card-head"><div><h2>UK labeling change · portfolio impact</h2><p>Found at the first scan on '+esc(displayDay(asOf))+' · the rule has applied since '+esc(displayDay(ukCase.effective))+', '+behind+' days earlier</p></div>'+trigger("Open the UK case","open-case","uk","primary","arrow")+'</div>'+
     '<div class="case-pad">'+headline+'</div>'+
     (rows?'<div class="table-wrap" tabindex="0"><table><caption class="sr">UK shipments that need action before dispatch</caption><thead><tr><th>Shipment</th><th>Site</th><th>Prepare by</th><th>Time left</th><th>Patients on treatment</th></tr></thead><tbody>'+rows+'</tbody></table></div>':"")+
     '<div class="card-foot"><small>'+esc(patients+" patients on treatment at the sites these shipments resupply · "+portfolio.batches.length+" batches and "+portfolio.shipments.length+" shipments checked")+'</small></div></section>';
@@ -717,8 +784,8 @@ function overview() {
     '<div class="tiles" aria-label="Check summary">'+
       tile("Countries with open changes",openCountries().length,"Plus 1 shared EU update","countries")+
       tile("Open changes",openChanges().length,changeScopes(),"changes")+
-      tile("Studies to review",ukOpen()?studies.filter(study=>study.status==="Batch review").length:0,portfolio?"Of "+studies.length+" checked · UK labeling":"UK labeling · portfolio","studies")+
-      tile("Checks to retry",retryCount,"Coverage gap in Great Britain","alert","retry-filter")+
+      tile("Trials to review",ukOpen()?studies.filter(study=>study.status==="Batch review").length:0,portfolio?"Of "+studies.length+" checked · UK labeling":"UK labeling · portfolio","studies")+
+      tile("Checks to retry",retryCount(),retryCount()?"Coverage gap in Great Britain":"All source checks completed","alert","retry-filter")+
     '</div>'+portfolioImpactCard()+spainImpactCard()+regionCard();
 }
 function tile(title,value,hint,symbol,target) {
@@ -727,7 +794,7 @@ function tile(title,value,hint,symbol,target) {
 }
 function changeRow(change) {
   return '<button type="button" class="change" data-act="open-case" data-value="'+change.id+'"><span class="change-mark">'+icon("changes")+'</span><span><span class="change-top"><strong>'+change.title+'</strong>'+
-    badge(...(isGoverned(change.id)?caseStatus(change.id):[change.status,change.tone]))+'</span><small>'+change.scope+' · '+change.kind+' · '+change.when+'</small><span class="change-summary">'+change.summary+'</span></span>'+icon("chevron")+'</button>';
+    badge(...(isGoverned(change.id)?caseStatus(change.id):changeStatus(change)))+'</span><small>'+change.scope+' · '+change.kind+' · '+change.when+(openFor(change)&&!changeResolved(change.id)?' · '+openFor(change):'')+'</small><span class="change-summary">'+change.summary+'</span></span>'+icon("chevron")+'</button>';
 }
 function regionCard() {
   const content=regions.map(region=>{
@@ -791,8 +858,8 @@ function sectionState(countryId,sectionId) {
     const rejected=state.stage==="rejected";
     const why=governed.key==="uk"?"Out of date since 28 Apr 2026, when the amended Part 7 came into force. ":
       "A new rule applies from "+displayDay(governed.effective)+", set by an information note published on "+displayDay(spain.notice.published)+". ";
-    return {label:"Edit suggested",tone:"red",key:"edit",change:governed.key,caseId:governed.id,
-      note:why+(rejected?"The suggested edit was rejected in case "+governed.id+", so this section keeps its current text.":"RegChain drafted an edit from "+(governed.key==="uk"?"the official sources":"the note")+". It is waiting for approval in case "+governed.id+".")};
+    return {label:rejected?"Edit rejected":"Edit suggested",tone:"red",key:"edit",change:governed.key,caseId:governed.id,
+      note:why+(rejected?"The suggested edit was rejected in case "+governed.id+". The rule still applies, so reopen the case or record why the current text is right.":"RegChain drafted an edit from "+(governed.key==="uk"?"the official sources":"the note")+". It is waiting for approval in case "+governed.id+".")};
   }
   const change=openChanges().find(item=>item.id===section.change);
   if(change) return {label:"Change to assess",tone:"amber",key:"changing",change:change.id,note:"An open change may alter this section: "+change.title+" ("+change.when+"). Regulatory Affairs is assessing it."};
@@ -1065,9 +1132,30 @@ function panel(title,description,body,action="") {
 }
 const casePad = body => '<div class="case-pad">'+body+'</div>';
 const listItems = items => '<ul class="case-list">'+items.map(item=>'<li>'+item+'</li>').join("")+'</ul>';
-const displayDay = day => day ? new Intl.DateTimeFormat("en-GB",{dateStyle:"medium",timeZone:"UTC"}).format(new Date(day)) : "Unknown";
+const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const displayDay = day => {
+  if(!day) return "Unknown";
+  const date=new Date(day);
+  return date.getUTCDate()+" "+monthNames[date.getUTCMonth()]+" "+date.getUTCFullYear();
+};
 function caseRoleSelect() {
-  return '<label class="field">Acting as<select id="workflow-role">'+options(Object.entries(workflowRoles),workflowRole)+'</select></label>';
+  return '<label class="field">Acting as<select id="workflow-role">'+options(Object.keys(workflowRoles).map(role=>[role,roleName(role,workflow)]),workflowRole)+'</select></label>';
+}
+// The AI gate for the case on screen: "pass", "fail", or "none" when no AI check has run.
+const aiGate = () => !aiState.result?"none":aiState.result.verification.verified?"pass":"fail";
+function aiGateNote() {
+  const gate=aiGate();
+  const result=aiState.result;
+  if(gate==="pass") return '<div class="inline-note">'+icon("info")+'<span>'+esc("AI check passed on "+scheduleDate(Date.parse(result.at))+": "+result.verification.checks.length+" of "+result.verification.checks.length+" checks.")+'</span></div>';
+  if(gate==="fail") return '<p class="form-feedback">The latest AI check failed, so Approve and Edit &amp; approve are blocked. Re-run the AI check, reject, or request an investigation.</p>';
+  return '<div class="gate-note"><p><strong>No AI check has run on this case.</strong> Run it on the Evidence &amp; impact tab first. To approve without it, tick the override below and give your reason; the override is recorded in the audit trail.</p>'+
+    '<label class="toggle"><input type="checkbox" name="override" id="ai-override"> Approve without a passing AI check (override)</label></div>';
+}
+// Approve and Edit &amp; approve need a passing AI check or an explicit override; other decisions never do.
+function decisionBlocked() {
+  if(!["approve","edit"].includes(reviewDecision)) return false;
+  const gate=aiGate();
+  return gate==="fail" || (gate==="none" && !byId("ai-override")?.checked);
 }
 function workflowNavigation() {
   const tabs=[["impact","Evidence & impact"]];
@@ -1118,16 +1206,19 @@ function workflowDecision() {
     if(workflowRole!=="reviewer") return '<p>Switch to Regulatory SME to record a decision.</p>';
     const fields=decisionFields();
     return '<form id="workflow-form" class="review-form" data-revision="'+workflow.revision+'">'+
-      (aiBlocked()?'<p class="form-feedback">The latest AI check failed, so Approve and Edit &amp; approve are blocked. Re-run the AI check, reject, or request an investigation.</p>':"")+
       '<label class="field">Decision<select id="review-decision" name="decision">'+options(reviewDecisions,reviewDecision)+'</select></label>'+
+      '<div id="decision-gate"'+(["approve","edit"].includes(reviewDecision)?"":" hidden")+'>'+aiGateNote()+'</div>'+
       '<div id="decision-fields"'+(fields?"":" hidden")+'>'+fields+'</div>'+reasonField("Decision rationale")+
-      '<div class="actions"><button id="record-decision" type="submit" name="action" value="'+reviewDecision+'" class="btn primary">'+reviewDecisions.find(([id])=>id===reviewDecision)[1]+'</button></div>'+
+      '<div class="actions"><button id="record-decision" type="submit" name="action" value="'+reviewDecision+'" class="btn primary"'+(["approve","edit"].includes(reviewDecision)&&aiGate()!=="pass"?" disabled":"")+'>'+reviewDecisions.find(([id])=>id===reviewDecision)[1]+'</button></div>'+
       '<div id="workflow-error" class="form-feedback" role="alert"></div></form>';
   }
   const details=decision?factlist([["Decision by",decision.actor],["Rationale",decision.rationale],["Recorded",scheduleDate(decision.time)],
     ...(decision.reviewOn?[["Return to review",displayDay(decision.reviewOn)]]:[])]):"";
-  const canResume=["investigating","deferred"].includes(workflow.stage)&&workflowRole==="reviewer";
-  return details+(canResume?actionForm(reasonField("Reason to resume review"),[["resume","Resume as new revision","primary"]]):"");
+  const held=["investigating","deferred","rejected"].includes(workflow.stage);
+  const canResume=held&&workflowRole==="reviewer";
+  const label=workflow.stage==="rejected"?"Reopen as a new revision":"Resume as new revision";
+  return details+(workflow.stage==="rejected"?'<p class="form-feedback">The edit was rejected, but the rule still applies. Reopen the case with a different edit, or record why the current text is right.</p>':"")+
+    (canResume?actionForm(reasonField(workflow.stage==="rejected"?"Reason to reopen":"Reason to resume review"),[["resume",label,"primary"]]):held&&workflowRole!=="reviewer"?'<p>Switch to Regulatory SME to '+(workflow.stage==="rejected"?"reopen":"resume")+' the case.</p>':"");
 }
 function workflowProposal() {
   const decision=panel("SME decision","Role and rationale are recorded in the case history.",casePad(workflowDecision()),caseRoleSelect());
@@ -1147,12 +1238,20 @@ function workflowProposal() {
     editList+
     '<div class="case-pad" style="padding-top:11px"><div class="inline-note">'+icon("info")+'<span>'+esc(origin)+'</span></div><h3>Scope and conditions</h3>'+
     (conditions.length?listItems(conditions.map(esc)):'<p>No scope or transition conditions in the draft.</p>')+'<h3>Operational instruction</h3><p>'+esc(workflow.draft)+'</p></div>');
-  const confidence=panel("Confidence by dimension","Qualitative evidence assessment",casePad(factlist(governed.key==="uk"?[
-    ["Detection","High · instrument and MHRA sources agree on commencement"],["Extraction","High · cited provisions and guidance are available"],
-    ["Applicability","Mixed · missing QP date and cutoff-day case"],["Interpretation",published?"Approved for the UK Country Specification":"Requires authorized SME decision"]
+  const verification=aiState.result?.verification;
+  const quotes=verification?.claims??[];
+  const found=quotes.filter(claim=>claim.found).length;
+  const extraction=!verification?"Not checked · run the AI check":verification.verified?"High · "+found+" of "+quotes.length+" quotes found word for word":"Low · "+(quotes.length-found)+" of "+quotes.length+" quotes not found, or another check failed";
+  const ukBatches=assessedBatches.filter(batch=>batch.scope==="UK");
+  const missingQp=ukBatches.filter(batch=>!batch.qp).length;
+  const cutoff=ukBatches.filter(batch=>batch.status==="Needs SME assessment").length;
+  const confidence=panel("Confidence by dimension","From the source checks, the AI checks and the portfolio data",casePad(factlist(governed.key==="uk"?[
+    ["Detection","First scan on "+displayDay(libraryToday)+" · the rule has applied since "+displayDay(ukCase.effective)],["Extraction",extraction],
+    ["Applicability","Mixed · "+plural(missingQp,"batch","batches")+" without a QP date, "+plural(cutoff,"batch","batches")+" certified on the cutoff day"],
+    ["Interpretation",published?"Approved for the UK Country Specification":"Open · Schedule 14 says “manufactured”; MHRA reads it as QP certification. The SME confirms."]
   ]:[
-    ["Detection","High · new note found on its publication day"],["Extraction","High · six numbered points with one date and one transition"],
-    ["Applicability","Mixed · "+plural(spainImpact().missing.length,"site")+" without a hospital pharmacy code"],["Interpretation",published?"Approved for the Spain Country Specification":"Requires authorized SME decision"]
+    ["Detection","Found on "+displayDay(spain.notice.published)+", the day the note was published"],["Extraction",extraction],
+    ["Applicability","Mixed · "+plural(spainImpact().missing.length,"site")+" without a hospital pharmacy code"],["Interpretation",published?"Approved for the Spain Country Specification":"Requires a Regulatory SME decision"]
   ])));
   return '<div class="case-layout"><div class="case-stack">'+proposed+decision+'</div>'+confidence+'</div>';
 }
@@ -1170,22 +1269,28 @@ function workflowHistory() {
       const after=applyEdits(before,edits.filter(edit=>edit.section===section));
       return '<h3>'+esc(specSectionNames[section])+'</h3>'+(publication?compareValues("v"+spec.version+" · earlier text",before.join(" "),"v"+(spec.version+1)+" · published text",after.join(" ")):'<p>'+esc(before.join(" "))+'</p>');
     }).join(""));
+  const inForce=publication?.inForce??publication?.at.slice(0,10);
+  const gap=publication?Math.round((Date.parse(inForce)-Date.parse(publication.effective))/86400000):0;
   const receipt=publication?casePad(factlist([["Receipt",governed.receipt],["Specification",country+" v"+(spec.version+1)+" · "+sections.map(id=>specSectionNames[id]).join(", ")],["Approved revision",publication.revision],["Published",scheduleDate(publication.at)],
-    ["Effective date",displayDay(publication.effective)],["Evidence",publication.evidenceIds.join(", ")]])):
+    ["Rule applies from",displayDay(publication.effective)],["v"+(spec.version+1)+" in force from",displayDay(inForce)],
+    ...(gap>0?[["Gap closed","v"+spec.version+" described the earlier rule for "+gap+" days"]]:[["Ahead of the rule",(-gap)+" days before it applies"]]),
+    ["Evidence",publication.evidenceIds.join(", ")]])):
     casePad('<p>Specification v'+spec.version+' is the published version. Approving the edit publishes v'+(spec.version+1)+' without waiting for the next scheduled update on '+esc(displayDay(spec.next))+'.</p>');
   const uk=governed.key==="uk";
-  const query=casePad('<label class="field">'+(uk?"Ordinary cohort date":"Dispatch date")+'<input type="date" id="record-as-of" value="'+governed.effective+'"></label><p id="record-as-of-result" aria-live="polite">'+asOfText(governed.effective)+'</p><p>'+
+  const query=casePad('<label class="field">'+(uk?"Date to look up":"Dispatch date")+'<input type="date" id="record-as-of" value="'+governed.effective+'"></label><p id="record-as-of-result" aria-live="polite">'+asOfText(governed.effective)+'</p><p>'+
     (uk?"Use the batch assessment for Schedule 14 transition checks.":"Shipments dispatched before 1 Mar 2027 and delivered by 8 Mar 2027 can follow the earlier procedure.")+'</p>');
-  return '<div class="case-layout"><div class="case-stack">'+panel("Version history",country+" Country Specification · "+sections.map(id=>specSectionNames[id]).join(", ")+" · "+governed.requirement,history,trigger("Open the section","open-spec",governed.country+":"+sections[0],"","arrow"))+panel("Look up an applicable version",uk?"Ordinary cohort":"Shipments to Spanish sites",query)+'</div>'+
+  return '<div class="case-layout"><div class="case-stack">'+panel("Version history",country+" Country Specification · "+sections.map(id=>specSectionNames[id]).join(", ")+" · "+governed.requirement,history,trigger("Open the section","open-spec",governed.country+":"+sections[0],"","arrow"))+panel("Which version applied on a date",uk?"Batches outside the transition":"Shipments to Spanish sites",query)+'</div>'+
     '<div class="case-stack">'+panel("Publication receipt","Country Specification platform",receipt)+'</div></div>';
 }
 function asOfText(day) {
  const governed=activeCase();
  const version=countrySpecs[governed.country].version;
- if(!day) return "Choose an operational date.";
- if(workflow.publication && day>=workflow.publication.effective) return "Specification v"+(version+1)+" applies on this date.";
- if(day>=governed.effective) return "The new rule applies, but specification v"+version+" still has the earlier text. No update is published yet.";
- return governed.key==="uk"?"The earlier labeling text applies on this date.":"The earlier procedure applies on this date.";
+ const inForce=workflow.publication?(workflow.publication.inForce??workflow.publication.at.slice(0,10)):null;
+ if(!day) return "Choose a date.";
+ const rule=day>=governed.effective?"The new rule applies on this date. ":"The earlier rule applies on this date. ";
+ if(inForce && day>=inForce) return rule+"Specification v"+(version+1)+" is in force"+(day<governed.effective?" and already describes the coming rule.":" and describes it.");
+ if(day>=governed.effective) return rule+"The specification in force, v"+version+", still has the earlier text"+(inForce?" until v"+(version+1)+" came into force on "+displayDay(inForce)+".":", and no update is published yet.");
+ return rule+"Specification v"+version+" describes it.";
 }
 function taskStateLabel(status) {
   return {assigned:"Assigned",acknowledged:"Acknowledged",submitted:"Evidence submitted",verified:"Verified"}[status];
@@ -1203,13 +1308,13 @@ function workflowFollowUp() {
     if(task.status==="assigned"&&workflowRole==="owner") content+=actionForm("",[["ack","Acknowledge task","primary"]]);
     else if(task.status==="acknowledged"&&workflowRole==="owner") content+=actionForm(reasonField("Implementation evidence reference"),[["implement","Submit evidence","primary"]]);
     else if(task.status==="submitted"&&workflowRole==="verifier") content+=actionForm(reasonField("Verification rationale"),[["verify","Verify & close case","primary"],["return","Return evidence"]]);
-    else if(task.status!=="verified") content+='<p>Select '+(task.status==="submitted"?"Quality verifier":"Quality action owner")+' to continue the handoff.</p>';
+    else if(task.status!=="verified") content+='<p>Select '+(task.status==="submitted"?"Quality verifier":"Quality action owner")+' to continue the follow-up.</p>';
   }
   return panel("Quality follow-up",task?task.id+" · Quality management system":"Awaiting publication",casePad(content),caseRoleSelect());
 }
 function auditPanel() {
   return '<details class="card source-references space"><summary>Audit trail ('+workflow.events.length+')</summary><div class="drawer-body"><div class="actions">'+
-    trigger("Export audit JSON","export-workflow","","","file")+' '+trigger("Reset case","reset-workflow","","","retry")+'</div>'+
+    trigger("Export audit JSON","export-workflow","","","file")+'</div>'+
     listItems([...workflow.events].reverse().map(event=>'<strong>'+esc(event.type.replaceAll("."," · ").replaceAll("_"," "))+'</strong><small>'+esc(event.actor+" · "+scheduleDate(event.at)+" · revision "+event.revision)+'</small><small>'+esc(event.detail)+'</small>'))+'</div></details>';
 }
 // One AI state per governed case; `aiState` is the one for the case on screen.
@@ -1225,9 +1330,20 @@ async function aiRequest(path,options={}) {
 const aiBlocked = () => Boolean(aiState.result && !aiState.result.verification.verified);
 function applyAiDraft(caseId=isGoverned(currentChange)?currentChange:"uk") {
   const state=aiStates[caseId];
-  if(!state.result) return false;
+  const result=state.result;
+  if(!result) return false;
   const next=structuredClone(readWorkflow(caseId,workflows[caseId]));
-  if(!adoptAiDraft(next,state.result,new Date().toISOString())) return false;
+  const now=new Date().toISOString();
+  let logged=false;
+  if(!next.events.some(event=>event.aiRunAt===result.at)) {
+    const checks=result.verification.checks;
+    appendWorkflowEvent(next,result.verification.verified?"ai_check.passed":"ai_check.failed","ai",now,
+      result.model+" · run "+scheduleDate(Date.parse(result.at))+" · "+checks.filter(check=>check.ok).length+" of "+checks.length+" checks passed");
+    next.events[next.events.length-1].aiRunAt=result.at;
+    logged=true;
+  }
+  const adopted=adoptAiDraft(next,result,now);
+  if(!logged&&!adopted) return false;
   setWorkflow(next);
   saveWorkflow(next);
   return true;
@@ -1282,7 +1398,7 @@ function aiSetupHints() {
   const hints=[];
   if(!status.sdk) hints.push("Run npm install once in the RegChain folder, then restart the launcher.");
   if(!status.keySet) hints.push("Add ANTHROPIC_API_KEY to a .env file next to serve-regchain.cjs.");
-  return hints.length?'<div class="inline-note">'+icon("info")+'<span>'+esc(hints.join(" "))+'</span></div>':"";
+  return hints.length?'<details class="setup-note"><summary>The AI check is not set up on this computer</summary><p>'+esc(hints.join(" "))+'</p></details>':"";
 }
 function aiResult(result) {
   const {draft,verification,sources:read,diff}=result;
@@ -1302,7 +1418,7 @@ function aiResult(result) {
   const transition=draft.transition||{applies:false,conditions:[]};
   const governed=governedCases[result.case??"uk"]??ukCase;
   const edits=Array.isArray(draft.sectionEdits)?draft.sectionEdits:[];
-  const proposal=governed.key==="uk"?compareValues("Current company record · v1",governed.baseline,"AI draft · not yet approved",draft.proposedRequirement):
+  const proposal=governed.key==="uk"?compareValues("Specification v"+countrySpecs[governed.country].version+" · current text",governed.baseline,"AI draft · not yet approved",draft.proposedRequirement):
     '<h3>Edits to the Spain Country Specification · not yet approved</h3><ul class="redline">'+edits.map(edit=>'<li class="add"><strong>'+esc(specSectionNames[edit.section]??edit.section)+':</strong> '+esc(edit.text)+(edit.replaces?'<br><small>Replaces: '+esc(edit.replaces)+'</small>':'')+'</li>').join("")+'</ul>'+
     '<h3>Operational instruction</h3><p>'+esc(draft.proposedRequirement)+'</p>';
   return gate+aiAdoptionNote(result)+checks+
@@ -1355,22 +1471,35 @@ function caseImpact() {
   const evidence=change.id==="uk"?workflowEvidence():panel("Regulatory evidence",change.authority+" · "+change.when,casePad(
     compareValues("Previous reference",change.before,"What changed",change.after)+
     '<div class="evidence-item"><h3>Supporting sources</h3><div class="actions">'+change.evidence.map(id=>trigger(sources.find(source=>source.id===id).title,"source-detail",id,"","file")).join("")+'</div></div>'));
+  const summary=change.id==="uk"?ukImpactSummary():null;
   const facts=change.id==="uk"?[
     ["Severity","High · potential labeling or supply disruption"],
-    ["Operational urgency","Priority · review by "+displayDay(shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").map(shipment=>shipment.preparationDate).sort()[0])],
-    ["Legal date basis","Date of finished-IMP QP certification"],
-    ["Portfolio scope",new Set(assessedBatches.filter(batch=>batch.scope==="UK").map(batch=>batch.study)).size+" UK studies · "+assessedBatches.filter(batch=>batch.scope==="UK").length+" UK batches · "+shipmentFindings().filter(shipment=>shipment.status!=="Out of scope").length+" shipments to assess"]
-  ]:[["Applicability","Public registry screening only"]];
+    ["Operational urgency","Prepare "+summary.act.shipments.sort((a,b)=>a.preparationDate.localeCompare(b.preparationDate))[0]?.id+" by "+displayDay(summary.earliest)],
+    ["Date basis","Finished-IMP QP certification date, as MHRA reads Schedule 14. Schedule 14 itself says “manufactured before”, so the SME confirms this reading (B-102 was made on 20 Apr and certified on 5 May)."],
+    ["Act","Work needed before dispatch: "+plural(summary.act.trials.length,"trial")+" · "+plural(summary.act.batches.length,"batch","batches")+" · "+plural(summary.act.shipments.length,"shipment")],
+    ["Check","Confirm, no change expected: "+plural(summary.check.trials.length,"trial")+" · "+plural(summary.check.batches.length,"batch","batches")+" · "+plural(summary.check.shipments.length,"shipment")],
+    ["Look back","Legacy-label batches certified since 28 Apr: "+(summary.lookback.map(batch=>batch.id).join(", ")||"none")+". Check whether any were shipped."]
+  ]:[["Open since",change.sinceLabel??"Unknown"],["Applicability","Public registry screening only"]];
   const context=panel("Assessment",change.id==="uk"?ukCase.snapshot:"",casePad(factlist(facts)+'<h3>Inputs to check</h3><p>'+esc(change.need)+'</p>'));
-  return (change.id==="uk"?aiCard():"")+'<div class="case-layout">'+evidence+context+'</div><div id="study-card" class="space">'+studyCard()+operationalImpact()+'</div>';
+  return (change.id==="uk"?aiCard():"")+'<div class="case-layout">'+evidence+context+'</div>'+(change.id==="uk"?"":changeDecisionPanel(change))+'<div id="study-card" class="space">'+studyCard()+operationalImpact()+'</div>';
+}
+// A change without a governed case still needs an owner decision, so it never sits open without one.
+function changeDecisionPanel(change) {
+  const decision=changeDecisions[change.id];
+  const recorded=decision?factlist([["Decision",{"not-relevant":"Not relevant to our supply","case":"Open a governed case","assessing":"Keep assessing"}[decision.decision]],["By",decision.by],["Recorded",scheduleDate(decision.at)],["Reason",decision.reason]]):"";
+  const form=workflowRole!=="reviewer"?'<p>Switch to Regulatory SME to record a decision on this change.</p>':
+    '<form id="change-decision-form" class="review-form" data-change="'+esc(change.id)+'"><label class="field">Decision<select name="decision">'+
+    options([["not-relevant","Not relevant to our supply"],["case","Open a governed case"],["assessing","Keep assessing"]],decision?.decision??"not-relevant")+'</select></label>'+
+    reasonField("Reason")+'<div class="actions"><button type="submit" class="btn primary">Record decision</button></div><div id="change-decision-error" class="form-feedback" role="alert"></div></form>';
+  return '<div class="space">'+panel("Owner decision",change.sinceLabel?"Open since "+change.sinceLabel+(openFor(change)?" · "+openFor(change):""):"No decision yet",casePad(recorded+form),caseRoleSelect())+'</div>';
 }
 function changeWorkspace() {
   const change=selectedChange();
   const content={impact:caseImpact,proposal:workflowProposal,history:workflowHistory,"follow-up":workflowFollowUp};
   const governed=isGoverned(change.id);
-  const status=governed?caseStatus(change.id):[change.status,change.tone];
+  const status=governed?caseStatus(change.id):changeStatus(change);
   return heading(esc(change.title),esc((governed?governedCases[change.id].id+" · ":"")+change.scope+" · "+change.kind+" · "+change.when),badge(...status))+
-    workflowNavigation()+content[workflowTab]()+(governed?auditPanel():"");
+    workflowNavigation()+content[workflowTab]()+(governed?auditPanel()+'<p class="reset-link"><button type="button" class="quiet" data-act="reset-workflow">Reset this case</button></p>':"");
 }
 function impactTable(title,description,columns,rows) {
  return panel(title,description,'<div class="table-wrap" tabindex="0" aria-label="'+esc(title)+'"><table><thead><tr>'+
@@ -1381,11 +1510,11 @@ function operationalImpact() {
   if(currentChange!=="uk"||studyView!=="portfolio") return "";
   const shipments=shipmentFindings();
   return '<div class="case-stack space">'+impactTable("Batch applicability","Portfolio · finished-IMP QP certification drives the date comparison",
-    ["Batch","Study","QP date","Label","Assessment","Basis"],assessedBatches.map(batch=>[batch.id,batch.study,displayDay(batch.qp),batch.label||"Unknown",batch.status,
+    ["Batch","Trial","QP date","Label","Impact","Assessment","Basis"],assessedBatches.map(batch=>[batch.id,batch.study,displayDay(batch.qp),batch.label||"Unknown",impactOf(batch.status),batch.status,
       (batch.made?"Physical manufacture "+displayDay(batch.made)+". ":"")+batch.reason]))+
     impactTable("Shipments and partners","Planning dates set preparation priority. Labeling applicability comes from the linked batch.",
       ["Shipment / batch","Destination","Planned dispatch","Prep target","Partner","Assessment"],shipments.map(shipment=>[shipment.id+" / "+shipment.batch,shipment.site?shipment.destination+" · "+shipment.site+" · "+shipment.patients+" patients":shipment.destination,displayDay(shipment.date),
-        shipment.status==="Out of scope"?"—":displayDay(shipment.preparationDate),shipment.partner,shipment.status]))+'</div>';
+        shipment.status==="Not affected"?"—":displayDay(shipment.preparationDate),shipment.partner,shipment.status+" · "+shipment.batchStatus]))+'</div>';
 }
 const views = {
   overview,
@@ -1411,6 +1540,25 @@ function drawer(type,title,content) {
   modal.scrollTop=0;
   modal.querySelector(".close").focus();
 }
+// Retry a failed source check through the local server, which fetches the official page now.
+async function retrySource(id) {
+  const source=sources.find(item=>item.id===id);
+  const button=byId("drawer-body").querySelector('[data-act="retry-source"]');
+  if(button) {button.disabled=true;button.textContent="Checking…";}
+  try {
+    const check=await aiRequest("/api/sources/retry?id="+encodeURIComponent(id),{method:"POST"});
+    const update={status:check.changed?"Changed":"Unchanged",tone:check.changed?"blue":"green",checked:check.checkedAt.slice(11,16),
+      result:"Checked again on "+scheduleDate(Date.parse(check.checkedAt))+". The page was last updated on "+displayDay(check.updated.slice(0,10))+(check.changed?", after the edition on record.":", the edition on record."),
+      edition:displayDay(check.updated.slice(0,10))};
+    Object.assign(source,update);
+    storeJson(sourceChecksKey,{...storedJson(sourceChecksKey),[id]:update});
+    notify("Source checked again.");
+  } catch(error) {
+    notify("The source could not be checked: "+error.message);
+  }
+  sourceDetail(id);
+  if(page==="sources") byId("source-results").innerHTML=sourceTable(sources.filter(tableMatches));
+}
 function sourceDetail(id) {
   const source=sources.find(item=>item.id===id);
   drawer("Source check",source.title,badge(source.status,source.tone)+factlist([
@@ -1418,6 +1566,7 @@ function sourceDetail(id) {
     ["Source edition",source.edition],["Compared section",source.status==="Retry needed"?"Comparison pending":source.section]
   ])+block("Check result",source.result)+(source.url?'<section><h3>Page URL</h3><a class="url" href="'+esc(source.url)+'" target="_blank" rel="noopener noreferrer">'+esc(source.url)+'</a></section>':
     '<section class="drawer-block"><h3>Text of the note (in Spanish)</h3><p class="note-text" lang="es">'+esc(source.text??"")+'</p></section>')+
+  (source.status==="Retry needed"?'<div class="actions">'+(location.protocol.startsWith("http")?trigger("Retry this check","retry-source",source.id,"primary","retry"):'<p>Retry needs the local server: open RegChain with Start-RegChain.cmd.</p>')+'</div>':"")+
   (source.change && page==="sources"?'<div>'+trigger("View related change","open-case",source.change,"","arrow")+'</div>':""));
 }
 function studyDetail(id) {
@@ -1475,7 +1624,7 @@ function replay(reason="manual") {
         updateRun();
       }
     }
-    notify("Checks complete. "+changes.length+" changes reviewed. "+(retryCount===1?"One source check needs":retryCount+" source checks need")+" retry.");
+    notify("Checks complete. "+changes.length+" changes reviewed. "+(retryCount()===0?"No source check needs a":retryCount()===1?"One source check needs":retryCount()+" source checks need")+" retry.");
   },350);
 }
 function readScheduleOrCurrent() {
@@ -1558,6 +1707,7 @@ const actions={
     notify((caseId==="es"?"Spain":"UK")+" case reset.");
   },
   "source-detail":sourceDetail,
+  "retry-source":retrySource,
   "study-detail":studyDetail,
   "study-view":tab=>{studyView=tab;updateStudies();byId("study-card").querySelector('[data-value="'+tab+'"]').focus();notify(tab==="registry"?"Showing public registry candidates.":"Showing the portfolio assessment.");}
 };
@@ -1590,8 +1740,11 @@ document.addEventListener("change",event=>{
     const submit=byId("record-decision");
     submit.value=reviewDecision;
     submit.textContent=reviewDecisions.find(([id])=>id===reviewDecision)[1];
+    byId("decision-gate").hidden=!["approve","edit"].includes(reviewDecision);
+    submit.disabled=decisionBlocked();
     byId("workflow-error").textContent="";
   }
+  if(event.target.id==="ai-override") byId("record-decision").disabled=decisionBlocked();
   if(event.target.id==="source-filter"){
     sourceFilter=event.target.value;
     byId("source-results").innerHTML=sourceTable(sources.filter(tableMatches));
@@ -1615,9 +1768,11 @@ document.addEventListener("submit",event=>{
     const fields=new FormData(event.target);
     const command={action:event.submitter.value,revision:Number(event.target.dataset.revision),
       reason:fields.get("reason"),instruction:fields.get("instruction"),reviewOn:fields.get("reviewOn"),today:athensDay()};
-    if(["approve","edit"].includes(command.action) && aiBlocked()) {
-      byId("workflow-error").textContent="The latest AI check failed, so approval is blocked. Re-run the AI check, reject, or request an investigation.";
-      return;
+    if(["approve","edit"].includes(command.action)) {
+      const gate=aiGate();
+      if(gate==="fail") {byId("workflow-error").textContent="The latest AI check failed, so approval is blocked. Re-run the AI check, reject, or request an investigation.";return;}
+      if(gate==="none" && !fields.get("override")) {byId("workflow-error").textContent="Run the AI check first, or tick the override and give your reason.";return;}
+      command.override=gate==="none";
     }
     const next=structuredClone(readWorkflow(currentChange,workflow));
     try {workflowStep(next,command,workflowRole,new Date().toISOString());}
@@ -1629,6 +1784,19 @@ document.addEventListener("submit",event=>{
     render();
     byId("page-title").focus({preventScroll:true});
     notify(saved?"Case updated.":"Workflow updated for this tab. Browser storage is unavailable.");
+    return;
+  }
+  if(event.target.id==="change-decision-form") {
+    event.preventDefault();
+    const fields=new FormData(event.target);
+    const reason=String(fields.get("reason")??"").trim();
+    if(!reason) {byId("change-decision-error").textContent="Give a reason for the decision.";return;}
+    const id=event.target.dataset.change;
+    changeDecisions={...changeDecisions,[id]:{decision:fields.get("decision"),reason,by:roleName("reviewer",workflow),at:new Date().toISOString()}};
+    const saved=storeJson(changeDecisionsKey,changeDecisions);
+    render();
+    byId("page-title").focus({preventScroll:true});
+    notify(saved?"Decision recorded.":"Decision recorded for this tab. Browser storage is unavailable.");
     return;
   }
   if(event.target.id!=="schedule-form") return;
