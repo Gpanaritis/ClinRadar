@@ -1,0 +1,170 @@
+{
+  "schema_version": "0.1",
+  "synthetic_operational_data": true,
+  "assessment_as_of": "2026-11-14T10:00:00Z",
+  "study": {
+    "id": "STUDY-003",
+    "protocol_id": "PROTO-003",
+    "protocol_version": "2.0",
+    "status": "active",
+    "source_ref": "SRC-CTMS"
+  },
+  "study_countries": [
+    {
+      "id": "STUDY-003-GB",
+      "study_id": "STUDY-003",
+      "country_code": "GB",
+      "jurisdiction": "UK",
+      "authorization_cohort": "unknown",
+      "authorization_status": "unknown",
+      "site_ids": ["SITE-GB-01"],
+      "source_ref": "SRC-CTMS"
+    }
+  ],
+  "products": [
+    {
+      "id": "IMP-DEMO-01",
+      "category": "finished_IMP",
+      "role": "investigational",
+      "source_ref": "SRC-SUPPLY"
+    }
+  ],
+  "label_specs": [
+    {
+      "id": "LBL-UK-v1",
+      "version": "1",
+      "jurisdiction": "UK",
+      "legacy_reference": true,
+      "approved_for_batch_use": "unknown",
+      "source_ref": "SRC-SUPPLY"
+    }
+  ],
+  "batches": [
+    {
+      "id": "B-102",
+      "study_country_id": "STUDY-003-GB",
+      "product_id": "IMP-DEMO-01",
+      "label_spec_id": "LBL-UK-v1",
+      "physical_manufacture_date": "2026-04-20",
+      "finished_imp_qp_certification_date": "2026-05-05",
+      "sponsor_release_status": "unknown",
+      "approved_labeling_variation": "unknown",
+      "source_ref": "SRC-SUPPLY"
+    }
+  ],
+  "milestones": [
+    {
+      "study_country_id": "STUDY-003-GB",
+      "site_id": "SITE-GB-01",
+      "event": "site_activation",
+      "planned_date": null,
+      "actual_date": null,
+      "source_ref": "SRC-CTMS"
+    },
+    {
+      "study_country_id": "STUDY-003-GB",
+      "site_id": "SITE-GB-01",
+      "event": "site_supply_dispatch",
+      "planned_date": "2026-11-22",
+      "actual_date": null,
+      "source_ref": "SRC-SUPPLY"
+    }
+  ],
+  "shipments": [
+    {
+      "id": "SHP-01",
+      "site_id": "SITE-GB-01",
+      "study_country_id": "STUDY-003-GB",
+      "batch_ids": ["B-102"],
+      "destination_jurisdiction": "UK",
+      "planned_dispatch_date": "2026-11-22",
+      "planned_customs_entry_date": null,
+      "actual_dispatch_date": null,
+      "preparation_lead_calendar_days": 5,
+      "logistics_partner_id": "PARTNER-LOGISTICS-01",
+      "source_ref": "SRC-SUPPLY"
+    }
+  ],
+  "partners": [
+    {"id": "PARTNER-PACKAGING-01", "role": "packaging_and_labeling"},
+    {"id": "PARTNER-LOGISTICS-01", "role": "transport"}
+  ],
+  "agreement_coverage": [
+    {
+      "id": "AGR-PACK-001",
+      "type": "quality_agreement",
+      "version": "3",
+      "partner_id": "PARTNER-PACKAGING-01",
+      "study_country_ids": ["STUDY-003-GB"],
+      "product_ids": ["IMP-DEMO-01"],
+      "activity": "packaging_and_labeling",
+      "authorized_owner_role": "Clinical Supply Packaging",
+      "status": "effective",
+      "signed_at": "2026-04-01",
+      "valid_from": "2026-04-02",
+      "valid_to": null,
+      "required_before_event": "packaging_activity_start",
+      "source_ref": "SRC-CONTRACT"
+    },
+    {
+      "id": "AGR-LOG-001",
+      "type": "statement_of_work",
+      "version": "1",
+      "partner_id": "PARTNER-LOGISTICS-01",
+      "study_country_ids": ["STUDY-003-GB"],
+      "product_ids": ["IMP-DEMO-01"],
+      "activity": "site_distribution",
+      "authorized_owner_role": "Clinical Supply Logistics",
+      "status": "pending_signature",
+      "signed_at": null,
+      "valid_from": null,
+      "valid_to": null,
+      "required_before_event": "site_supply_dispatch",
+      "source_ref": "SRC-CONTRACT"
+    }
+  ],
+  "regulatory_case": {
+    "id": "RC-UK-001",
+    "jurisdiction": "UK",
+    "effective_date": "2026-04-28",
+    "rule_event": "finished_imp_qp_certification_date",
+    "requirement_record_id": "GB/IMP_LABELING",
+    "baseline_record_version": 1,
+    "assessment_status": "needs_sme_review",
+    "evidence_ids": ["EV-01", "EV-02"]
+  },
+  "source_records": [
+    {"id": "SRC-CTMS", "source_system": "CTMS demo", "record_ref": "ctms-fixture-003", "record_version": "1", "observed_at": "2026-11-14T09:00:00Z"},
+    {"id": "SRC-SUPPLY", "source_system": "Clinical Supply demo", "record_ref": "supply-fixture-003", "record_version": "1", "observed_at": "2026-11-14T09:00:00Z"},
+    {"id": "SRC-CONTRACT", "source_system": "Contract management demo", "record_ref": "contracts-fixture-003", "record_version": "1", "observed_at": "2026-11-14T09:00:00Z"}
+  ],
+  "evidence": [
+    {
+      "id": "EV-01",
+      "jurisdiction": "UK",
+      "tier": 1,
+      "instrument_ref": "S.I. 2025/538",
+      "locator": "Regulation 32 and Schedule 14 paragraph 6",
+      "url": "https://www.legislation.gov.uk/uksi/2025/538/pdfs/uksi_20250538_en.pdf"
+    },
+    {
+      "id": "EV-02",
+      "jurisdiction": "UK",
+      "tier": 2,
+      "authority": "MHRA",
+      "locator": "Transitional arrangements for labelling of investigational medicinal products",
+      "url": "https://www.gov.uk/guidance/clinical-trials-for-medicines-clinical-trials-regulations-transitional-arrangements#transitional-arrangements-for-labelling-of-investigational-medicinal-products"
+    }
+  ],
+  "expected_output": {
+    "batch_id": "B-102",
+    "regulatory_applicability": "potentially_applicable",
+    "batch_triage": "labeling_review_required",
+    "missing_facts": ["approved_labeling_variation", "approval status of label specification"],
+    "shipment_id": "SHP-01",
+    "preparation_target_date": "2026-11-17",
+    "agreement_readiness": "pending_signature_for_site_distribution",
+    "recommended_reviewers": ["Regulatory Affairs", "Clinical Supply Packaging", "Clinical Supply Logistics"],
+    "evidence_ids": ["EV-01", "EV-02"]
+  }
+}
