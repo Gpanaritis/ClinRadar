@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>RegChain AI | Regulatory monitor</title>
+<style>
+:root{font:14px/1.45 Inter,"Segoe UI",sans-serif;color:#132446;background:#f5f8fc;--ink:#132446;--muted:#536683;--line:#e0e8f3;--blue:#1a52d1;--deep:#123eaa;--pale:#edf4ff;--white:#fff;--shadow:0 2px 5px #14356207}
+*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button,select{cursor:pointer}button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #3b72ef;outline-offset:3px}button:disabled{cursor:wait;opacity:.7}a{color:var(--blue);text-underline-offset:3px}h1,h2,h3,p{margin:0}[hidden]{display:none!important}
+svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round;flex:none;vertical-align:middle}
+.shell{display:grid;grid-template-columns:218px minmax(0,1fr);min-height:100vh}.rail{position:sticky;top:0;height:100vh;background:white;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:25px 13px 16px}.brand{display:flex;align-items:center;gap:10px;padding:0 10px;margin-bottom:42px;white-space:nowrap;font-size:17px;font-weight:750;letter-spacing:-.35px}.brand small{font-size:inherit;color:var(--blue)}.brand-mark{display:grid;place-items:center;background:var(--blue);color:white;width:34px;height:34px;border-radius:9px}.brand-mark svg{width:21px;height:21px}.rail nav{display:grid;gap:4px}.nav{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-radius:8px;background:white;color:#475b7c;padding:10px 11px;font-size:13px;font-weight:600}.nav:hover{background:#f3f7fe;color:var(--blue)}.nav[aria-current]{background:#e9f1ff;color:#1644ad;font-weight:750}.rail-foot{margin-top:auto;border-top:1px solid var(--line);padding:14px 8px 0;display:flex;align-items:center;gap:10px}.rail-avatar{display:grid;place-items:center;background:var(--pale);color:var(--deep);font-weight:750;font-size:12px;width:32px;height:32px;border-radius:50%;flex:none}.rail-foot strong,.rail-foot small{display:block}.rail-foot small{color:var(--muted);font-size:11px}
+.main{min-width:0}.top{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:64px;padding:10px 29px;background:white;border-bottom:1px solid var(--line)}.crumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}.crumb strong{color:var(--ink)}.crumb svg{width:13px;height:13px}.demo{display:inline-flex;gap:7px;align-items:center;padding:5px 9px;border-radius:6px;background:#eff4fc;color:#385477;font-size:12px;font-weight:650}.demo svg{width:14px;height:14px}.content{max-width:1500px;margin:auto;padding:25px 29px 38px}
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:13px;flex-wrap:wrap;margin-bottom:19px}.page-head h1{font-size:clamp(27px,3vw,37px);letter-spacing:-1.2px;line-height:1.1;font-weight:750;margin-bottom:6px}.page-head p{color:var(--muted);font-size:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:8px 11px;border:1px solid #d8e3f1;background:white;color:#23466e;text-decoration:none;font-weight:650;border-radius:8px;min-height:36px;white-space:nowrap;font-size:12px}.btn:hover{background:#edf4ff}.btn svg{width:15px;height:15px}.btn.primary{background:var(--blue);border-color:var(--blue);color:white}.btn.primary:hover{background:var(--deep)}.quiet{background:none;border:0;padding:0;color:var(--blue);font-weight:700;text-align:left;display:inline-flex;align-items:center;gap:5px;text-decoration:none}.quiet:hover{text-decoration:underline}.quiet svg{width:14px;height:14px}.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.runbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 13px;background:#edf4ff;border:1px solid #d8e6ff;border-radius:9px;color:#294c8e;margin-bottom:15px;font-size:12px}.runbar-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.runbar strong{color:#183e82}.runbar svg{width:16px;height:16px}.separator{color:#7190ba}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:17px}.tile{border:1px solid var(--line);border-radius:11px;background:white;padding:13px;min-width:0;display:grid;text-align:left;color:var(--ink);box-shadow:var(--shadow);transition:border-color .15s,background .15s}.tile:hover{border-color:#a9c3fa;background:#fcfdff}.tile-top{display:flex;align-items:center;gap:7px;color:#466080;font-size:12px;font-weight:650}.tile-icon{display:grid;place-items:center;width:29px;height:29px;border-radius:7px;color:var(--blue);background:#ebf2ff;flex:none}.tile-icon svg{width:16px;height:16px}.tile strong{display:block;font-size:28px;font-weight:750;line-height:1.12;letter-spacing:-.8px;margin:7px 0 2px}.tile small{color:var(--muted);font-size:11px}
+.layout{display:grid;grid-template-columns:minmax(0,1.22fr) minmax(0,1fr);gap:14px;align-items:start}.card{background:white;border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow);min-width:0;overflow:hidden}.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px 15px;flex-wrap:wrap}.card-head h2{font-size:17px;letter-spacing:-.25px;font-weight:750}.card-head p{font-size:12px;color:var(--muted);margin-top:3px}.card-foot{border-top:1px solid var(--line);padding:10px 15px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.card-foot small{color:var(--muted);font-size:11px}.space{margin-top:15px}
+.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;text-align:left}th,td{padding:9px 11px;border-bottom:1px solid #edf1f7}th:first-child,td:first-child{padding-left:15px}th:last-child,td:last-child{padding-right:15px}th{font-size:11px;color:#47617e;white-space:nowrap;font-weight:750;background:#f5f8fe;border-top:1px solid #edf1f7}td{font-size:12px}tbody tr:last-child td{border-bottom:0}tbody tr:hover{background:#f8fbff}.entity-button{display:inline-flex;text-align:left;align-items:center;gap:8px;border:0;background:none;padding:0;font-weight:700;color:#173868}.entity-button:hover{color:var(--blue);text-decoration:underline}.entity-button svg{width:16px;height:16px;color:#5d7eaf}.sub{display:block;color:var(--muted);font-weight:450;font-size:11px;margin-top:2px}.muted{color:var(--muted)}.nowrap{white-space:nowrap}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.badge{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;border-radius:20px;padding:4px 7px;font-size:10.5px;font-weight:700;line-height:1.2;background:#edf1f7;color:#495e78}.badge::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}.blue{color:#184fbd;background:#eaf2ff}.amber{color:#824900;background:#fff2d9}.red{color:#9f2c42;background:#fcecf0}.green{color:#196449;background:#e7f6ef}.purple{color:#6150a2;background:#f0ecff}
+.change-list{display:grid}.change{width:100%;text-align:left;display:grid;grid-template-columns:30px minmax(0,1fr) 15px;gap:9px;align-items:start;background:white;color:var(--ink);border:0;border-top:1px solid #edf1f7;padding:11px 14px}.change:hover,.change[aria-pressed="true"]{background:#f1f6ff}.change[aria-pressed="true"]{box-shadow:inset 3px 0 #3a70ed}.change-mark{display:grid;place-items:center;background:var(--pale);color:#2560ce;width:30px;height:30px;border-radius:7px}.change-mark svg{width:16px;height:16px}.change>svg{margin-top:6px;width:15px;color:#5b76a0}.change-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.change-top strong{font-size:13px}.change small{display:block;font-size:11px;color:var(--muted);margin:3px 0 0}.change-summary{display:block;font-size:12px;color:#455e80;margin-top:3px;line-height:1.35}
+.study-head{align-items:center}.study-tabs{display:flex;align-items:center;gap:2px;border-radius:8px;background:#edf3fc;padding:3px}.study-tabs button{color:#486181;border:0;border-radius:6px;padding:6px 8px;background:none;font-size:11px;font-weight:700}.study-tabs button[aria-pressed="true"]{background:white;box-shadow:0 1px 3px #26447427;color:#174bbc}.inline-note{padding:8px 15px;border-top:1px solid #edf1f7;background:#f8fbff;font-size:12px;color:#45638b;display:flex;align-items:center;gap:6px}.inline-note svg{width:14px;height:14px}.filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.field{display:grid;gap:4px;font-size:11px;font-weight:700;color:#445b7c}.field input,.field select{min-height:34px;padding:6px 9px;background:white;color:var(--ink);border:1px solid #d5e2f1;border-radius:7px;font-weight:500;font-size:13px;max-width:100%}.paginate{display:flex;gap:6px;align-items:center}.nothing{padding:20px;color:var(--muted)}.status-text{font-size:12px;margin-top:8px;color:var(--deep)}.status-text:empty{display:none}
+.drawer{margin:0 0 0 auto;padding:0;border:0;width:min(100%,500px);max-width:100%;height:100%;max-height:100%;background:white;color:var(--ink);box-shadow:-10px 0 40px #18345c35}.drawer::backdrop{background:#162f516d}.drawer-top{position:sticky;top:0;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:19px;background:white;border-bottom:1px solid var(--line)}.drawer h2{font-size:21px;line-height:1.15;margin-top:4px;letter-spacing:-.5px}.drawer h3{font-size:14px;margin-bottom:5px}.drawer-body{display:grid;gap:15px;padding:17px 19px 28px;justify-items:start}.drawer-body>.facts,.drawer-body>.drawer-block{width:100%}.drawer-block{border:1px solid var(--line);border-radius:9px;padding:11px;background:#f8fbff;min-width:0}.drawer-block p,.drawer-body p{font-size:13px;color:#3f597c}.drawer .url{display:block;overflow-wrap:anywhere;font-size:12px;margin-top:4px}.facts{display:grid;gap:0;margin:0}.facts div{display:grid;grid-template-columns:minmax(100px,.8fr) minmax(0,1.4fr);gap:8px;padding:8px 0;border-bottom:1px solid #e9eff8;font-size:12px}.facts dt{color:#536a89}.facts dd{margin:0;font-weight:650;overflow-wrap:anywhere}.close{min-width:33px;padding:5px;font-size:20px;line-height:1}
+.resource-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.resource{padding:14px;display:grid;gap:7px;align-content:start}.resource h2{font-size:15px}.resource p{color:var(--muted);font-size:13px}.research-lead{margin:18px 0 10px;font-size:18px}
+@media(max-width:1120px){.shell{grid-template-columns:171px minmax(0,1fr)}.content,.top{padding-left:19px;padding-right:19px}.table-wrap .hide-narrow{display:none}}
+@media(max-width:900px){.shell{display:block}.rail{position:static;height:auto;padding:11px 13px;gap:9px;border-right:0;border-bottom:1px solid var(--line)}.rail nav{display:flex;flex-wrap:wrap}.brand{margin:0;padding:0}.nav{width:auto;padding:7px 8px}.rail-foot{display:none}.layout{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.content,.top{padding-left:12px;padding-right:12px}.content{padding-top:17px}.top{min-height:54px}.tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.tile{padding:9px}.card-head{padding:11px}.card-foot{padding:9px 11px}.resource-grid{grid-template-columns:1fr}.study-tabs{max-width:100%;flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+ <aside class="rail"><div class="brand"><span class="brand-mark" id="brand-mark" aria-hidden="true"></span><span>RegChain <small>AI</small></span></div><nav id="nav" aria-label="Workspace"></nav><div class="rail-foot"><span class="rail-avatar">CS</span><div><strong>Clinical Supply</strong><small>Demo workspace</small></div></div></aside>
+ <div class="main"><div class="top"><div class="crumb" id="crumb"></div><span class="demo" id="mode"></span></div><main class="content"><div id="view"></div><p id="announce" class="status-text" role="status" aria-live="polite"></p></main></div>
+</div>
+<dialog id="drawer" class="drawer" aria-labelledby="drawer-title"><div class="drawer-top"><div><div class="sub" id="drawer-type"></div><h2 id="drawer-title"></h2></div><form method="dialog"><button class="btn close" aria-label="Close details">×</button></form></div><div class="drawer-body" id="drawer-body"></div></dialog>
+<script id="dashboard-data">
+"use strict";
+const replayDate = "14 Nov 2026";
+const registryCredit = "ClinicalTrials.gov, U.S. National Library of Medicine · accessed 14 Nov 2026";
+const sources = [
+ {id:"transition",title:"Clinical trial transitional arrangements",authority:"MHRA",scope:"UK",type:"Guidance",path:"GOV.UK / Clinical trials / Transition",checked:"09:42",status:"Changed",tone:"blue",edition:"15 Jul 2026",section:"Part 7 labeling transition and finished-IMP QP certification",result:"Compared against the legacy labeling baseline. A conditional transition and the date basis for batch triage are in the reviewed evidence.",url:"https://www.gov.uk/guidance/clinical-trials-for-medicines-clinical-trials-regulations-transitional-arrangements#transitional-arrangements-for-labelling-of-investigational-medicinal-products",change:"uk"},
+ {id:"qa",title:"Clinical Trials Regulation Q&A",authority:"European Commission",scope:"EU",type:"Guidance PDF",path:"EudraLex / Volume 10 / July 2026 Q&A",checked:"09:41",status:"Changed",tone:"blue",edition:"July 2026 edition",section:"Revision history and new Q&A 8.4",result:"The July revision history identifies a new question about labeling cryopreserved medicinal products. This is a historical guidance example.",url:"https://health.ec.europa.eu/document/download/4ec3992a-ef9b-41f9-8e34-1dd6d0a479ae_en?filename=mp_ctr_qa_rules.pdf",change:"eu"},
+ {id:"imports",title:"Importing IMPs into Great Britain",authority:"MHRA",scope:"GB",type:"Guidance",path:"GOV.UK / Importing IMPs / Updated guidance",checked:"09:40",status:"Changed",tone:"blue",edition:"12 Feb 2025",section:"Publication change log and QP certification for approved-country imports",result:"The published update notice describes changes reflecting implementation of the EU Clinical Trials Regulation for EU QP certification.",url:"https://www.gov.uk/government/publications/importing-investigational-medicinal-products-into-great-britain-from-approved-countries",change:"import"},
+ {id:"statute",title:"UK Clinical Trials amendment",authority:"UK Legislation",scope:"UK",type:"Statutory instrument",path:"legislation.gov.uk / S.I. 2025/538",checked:"09:39",status:"Unchanged",tone:"green",edition:"2025 instrument",section:"Regulation 32 and inserted Schedule 14 paragraph 6",result:"The replay keeps the same statutory reference on this check. The instrument supplies supporting evidence for the UK labeling case.",url:"https://www.legislation.gov.uk/uksi/2025/538/pdfs/uksi_20250538_en.pdf",change:"uk"},
+ {id:"annex",title:"EU Annex VI packaging rules",authority:"EUR-Lex",scope:"EU",type:"Delegated regulation",path:"EUR-Lex / Delegated Regulation 2022/2239",checked:"09:38",status:"Unchanged",tone:"green",edition:"15 Nov 2022 · Official Journal",section:"Annex, entries B.6.2 and B.6.3",result:"The stored comparison is unchanged. The historical amendment is an additional use case for assessing eligible immediate-packaging configurations.",url:"https://eur-lex.europa.eu/eli/reg_del/2022/2239/oj/eng"},
+ {id:"list",title:"Approved countries for IMP imports",authority:"MHRA",scope:"GB",type:"Country list",path:"GOV.UK / Importing IMPs / Approved country list",checked:"09:37",status:"Retry needed",tone:"red",edition:"12 Feb 2025 · reference page",section:"Section 3 · Approved countries for QP certification",result:"This simulated attempt timed out before comparison. A failed attempt leaves the source coverage incomplete and produces no change conclusion.",url:"https://www.gov.uk/government/publications/importing-investigational-medicinal-products-into-great-britain-from-approved-countries/list-of-approved-countries-for-clinical-trials-and-investigational-medicinal-products",change:"import"}
+];
+const changes = [
+ {id:"uk",title:"UK IMP labeling transition",authority:"MHRA + UK Legislation",scope:"UK",kind:"Labeling",status:"SME review",tone:"amber",when:"Effective 28 Apr 2026",summary:"Apply the amended labeling rules and assess pre-cutoff batch eligibility.",before:"Earlier Part 7 labeling reference in the country record.",after:"Amended Part 7 with a scoped Schedule 14 transition. MHRA uses the finished-IMP QP certification date for this labeling assessment.",need:"Trial cohort, intended use, batch QP dates, and approved label specifications.",evidence:["transition","statute"],studyNote:"Two fictional UK portfolio studies have batches to review. The public registry view shows screening candidates."},
+ {id:"eu",title:"EU guidance on cryopreserved products",authority:"European Commission",scope:"EU",kind:"Labeling guidance",status:"Assess impact",tone:"blue",when:"July 2026 guidance edition",summary:"A new Q&A addresses labeling for cryopreserved medicinal products.",before:"The preceding guidance edition did not contain the new question listed in the July revision history.",after:"July 2026 Q&A adds question 8.4 for cryopreserved products. Review the guidance alongside applicable legislation.",need:"EU study countries, product presentation, cryopreservation status, and applicable labeling specification.",evidence:["qa","annex"],studyNote:"The public example has EU trial sites. Internal product and packaging data are required to assess whether the guidance is relevant."},
+ {id:"import",title:"Great Britain import oversight",authority:"MHRA",scope:"GB",kind:"Import / QP",status:"Assess impact",tone:"blue",when:"Guidance updated 12 Feb 2025",summary:"Review QP evidence for IMPs shipped from approved countries.",before:"Existing GB approved-country oversight guidance.",after:"MHRA updated the guidance to reflect EU CTR implementation relating to EU QP certification.",need:"Shipment destination and origin, UK import authorization holder, QP evidence, and applicable route.",evidence:["imports","list"],studyNote:"GB site presence is a screening signal. Shipment origin and QP evidence are required to establish applicability."}
+];
+const studies = [
+ {id:"STUDY-001",title:"UK legacy-cohort study",sponsor:"Fictional sponsor",sites:"UK",status:"Batch review",tone:"amber",reason:"One pre-cutoff batch and one missing QP date.",detail:"A-101 may qualify for transitional treatment. D-104 needs its finished-IMP QP certification date.",batches:["A-101","D-104"],changes:["uk"]},
+ {id:"STUDY-003",title:"UK labeling and supply study",sponsor:"Fictional sponsor",sites:"UK",status:"Batch review",tone:"amber",reason:"Two post-cutoff batches and one boundary date.",detail:"Review B-102's legacy label, verify C-103's updated label, and escalate F-106's cutoff-day certification.",batches:["B-102","C-103","F-106"],changes:["uk"]},
+ {id:"STUDY-002",title:"Germany-only distribution study",sponsor:"Fictional sponsor",sites:"Germany",status:"Out of scope",tone:"",reason:"No UK linkage in the fictional portfolio.",detail:"E-105 is excluded from the UK labeling review. It remains available as a jurisdiction control.",batches:["E-105"],changes:["uk"]}
+];
+const publicStudies = [
+ {id:"NCT05797168",title:"FONTANA · AZD5335 in solid tumors",sponsor:"AstraZeneca",sites:"UK · London verified",status:"Recruiting",posted:"5 Oct 2026",countries:["UK","GB"],url:"https://clinicaltrials.gov/study/NCT05797168"},
+ {id:"NCT07284979",title:"KaiNETIC-3 · Ribupatide in obesity",sponsor:"Kailera",sites:"UK, Poland, Bulgaria and others",status:"Recruiting",posted:"1 Sep 2026",countries:["UK","GB","EU"],url:"https://clinicaltrials.gov/study/NCT07284979"},
+ {id:"NCT07685600",title:"AZD4144 and itraconazole interaction",sponsor:"AstraZeneca",sites:"UK · Harrow verified",status:"Recruiting",posted:"28 Sep 2026",countries:["UK","GB"],url:"https://clinicaltrials.gov/study/NCT07685600"}
+];
+const resources = [
+ {name:"ClinicalTrials.gov API v2",text:"Study IDs, sponsors, intervention types, site countries, recruitment status and posted updates. Use NCT IDs to preserve links to the public record.",url:"https://clinicaltrials.gov/data-api/how-download-study-records"},
+ {name:"EMA CTIS public portal",text:"EU and EEA trial searches, EU trial numbers and public trial information. Use explicit registry identifiers to link records.",url:"https://www.ema.europa.eu/en/human-regulatory-overview/research-development/clinical-trials-human-medicines/clinical-trials-information-system-ctis"},
+ {name:"AACT database",text:"Relational ClinicalTrials.gov data for SQL queries and bulk snapshots. AACT is a mirror of the registry.",url:"https://aact.ctti-clinicaltrials.org/landing"}
+];
+</script>
+<script id="dashboard-ui">
+"use strict";
+const icons = {
+  logo:'<path d="M2.7 13 7.5 4l3.1 6 2.7-4m-2.1 0h2.3v2.3M2.7 13h10.6"/>',
+  overview:'<rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/>',
+  sources:'<circle cx="8" cy="8" r="5.5"/><path d="M2.5 8h11M8 2.5c-3 3.2-3 7.8 0 11m0-11c3 3.2 3 7.8 0 11"/>',
+  changes:'<path d="M2.5 8h3l1.7-4 2.4 8 1.8-4h2.1"/>',
+  studies:'<rect x="2.5" y="2.5" width="11" height="11" rx="2"/><path d="M2.5 7h11M7 7v6.5"/>',
+  research:'<path d="M8 4c-1.6-1.1-3.3-1.4-5.5-1v9c2.2-.4 3.9-.1 5.5 1 1.6-1.1 3.3-1.4 5.5-1V3c-2.2-.4-3.9-.1-5.5 1Zm0 0v9"/>',
+  file:'<path d="M3.5 2.5h6l3 3v8h-9zm5.5 0v3.5h3.5M6 8h4M6 10.5h4"/>',
+  chevron:'<path d="m6 4 4 4-4 4"/>',
+  arrow:'<path d="M3 8h9m-3-3 3 3-3 3"/>',
+  info:'<circle cx="8" cy="8" r="5.5"/><path d="M8 7.5v3m0-5h.01"/>',
+  clock:'<circle cx="8" cy="8" r="5.5"/><path d="M8 5v3l2 1.5"/>',
+  retry:'<path d="M3 7a5 5 0 1 1 1 4m-1-7v3.5h3.5"/>',
+  alert:'<path d="M8 2.5 14 13H2ZM8 6v3m0 1.8h.01"/>',
+  external:'<path d="M9 3h4v4m0-4L7 9m0-5H3v9h9V9"/>'
+};
+const navItems = {"overview":"Overview","sources":"Pages checked","changes":"Detected changes","studies":"Study impact","research":"Data & use cases"};
+const byId = id => document.getElementById(id);
+const esc = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const icon = name => '<svg viewBox="0 0 16 16" aria-hidden="true">'+icons[name]+'</svg>';
+const badge = (text,tone="") => '<span class="badge '+tone+'">'+esc(text)+'</span>';
+const trigger = (text,act,value="",tone="",symbol="") => '<button type="button" class="btn '+tone+'" data-act="'+act+'" data-value="'+esc(value)+'">'+(symbol?icon(symbol):"")+esc(text)+'</button>';
+const openLink = (text,url,tone="") => '<a class="btn '+tone+'" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(text)+icon("external")+'</a>';
+const quiet = (text,view) => '<button type="button" class="quiet" data-act="nav" data-value="'+view+'">'+esc(text)+icon("arrow")+'</button>';
+let page = "overview";
+let currentChange = "uk";
+let studyView = "portfolio";
+let sourceFilter = "all";
+let sourceSearch = "";
+let replayCount = 1;
+let replaying = false;
+let drawerOrigin = null;
+const selectedChange = () => changes.find(change=>change.id===currentChange);
+const filteredStudies = () => studyView === "portfolio" ? studies.filter(study=>study.changes.includes(currentChange)) : publicStudies.filter(study=>study.countries.includes(selectedChange().scope));
+const retryCount = sources.filter(source=>source.status==="Retry needed").length;
+
+function shell() {
+  byId("brand-mark").innerHTML=icon("logo");
+  byId("mode").innerHTML=icon("clock")+" Historical replay";
+  byId("crumb").innerHTML='Clinical Supply '+icon("chevron")+' <strong>'+navItems[page]+'</strong>';
+  byId("nav").innerHTML=Object.entries(navItems).map(([id,name])=>'<button type="button" class="nav" data-act="nav" data-value="'+id+'"'+(page===id?' aria-current="page"':'')+'>'+icon(id)+name+'</button>').join("");
+}
+function heading(title,description,action="") {
+  return '<header class="page-head"><div><h1 id="page-title" tabindex="-1">'+title+'</h1><p>'+description+'</p></div>'+action+'</header>';
+}
+function updateRun() {
+  const button=byId("replay");
+  if (button) {
+    button.disabled=replaying;
+    button.innerHTML=icon("retry")+(replaying?"Replaying…":"Replay checks");
+  }
+}
+function overview() {
+  return heading("Regulatory monitor","See what was checked, what changed, and which studies need review.",'<button id="replay" class="btn primary" type="button" data-act="replay">'+icon("retry")+'Replay checks</button>')+
+    '<div class="runbar"><div class="runbar-left">'+icon("clock")+'<strong>Replay '+String(replayCount).padStart(2,"0")+'</strong><span class="separator">·</span><span>'+replayDate+' · times in UTC</span></div>'+badge("Completed with 1 retry needed","amber")+'</div>'+
+    '<div class="tiles" aria-label="Replay summary">'+
+      tile("Pages checked",sources.length,"3 changed · 2 unchanged · 1 retry","sources","sources")+
+      tile("Changes detected",changes.length,"3 published-source examples","changes","changes")+
+      tile("Studies to review",studies.filter(study=>study.status==="Batch review").length,"UK labeling · fictional portfolio","studies","studies")+
+      tile("Checks to retry",retryCount,"Approved-country list","alert","retry-filter")+
+    '</div><div class="layout">'+sourceCard(true)+changeCard(true)+'</div><div class="space" id="study-card">'+studyCard(true)+'</div>';
+}
+function tile(title,value,hint,symbol,target) {
+  return '<button type="button" class="tile" data-act="metric" data-value="'+target+'"><div class="tile-top"><span class="tile-icon">'+icon(symbol)+'</span>'+title+'</div><strong>'+value+'</strong><small>'+hint+'</small></button>';
+}
+function sourceTable(data,compact) {
+  if (!data.length) return '<p class="nothing">No pages match these filters.</p>';
+  const rows=data.map(source=>'<tr><td><button class="entity-button" type="button" data-act="source-detail" data-value="'+source.id+'">'+icon("file")+'<span>'+source.title+'<small class="sub">'+source.authority+' · '+(compact?source.scope:source.path)+'</small></span></button></td><td class="nowrap muted">'+source.checked+'</td><td>'+badge(source.status,source.tone)+'</td>'+(!compact?'<td class="hide-narrow">'+source.scope+'</td><td class="hide-narrow">'+source.type+'</td>':'')+'</tr>').join("");
+  return '<div class="table-wrap" tabindex="0"><table><caption class="sr">Source pages checked in the replay</caption><thead><tr><th>Page checked</th><th>UTC</th><th>Check status</th>'+(!compact?'<th class="hide-narrow">Scope</th><th class="hide-narrow">Source type</th>':'')+'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+function tableMatches(source) {
+  const matchStatus=sourceFilter==="all"||source.status===sourceFilter;
+  const haystack=[source.title,source.authority,source.scope,source.path,source.section].join(" ").toLowerCase();
+  return matchStatus&&haystack.includes(sourceSearch.trim().toLowerCase());
+}
+function sourceCard(compact) {
+  const filters=compact?quiet("View source log","sources"):'<div class="filters"><label class="field">Find a page<input id="source-search" type="search" placeholder="Page or authority" value="'+esc(sourceSearch)+'"></label><label class="field">Check status<select id="source-filter"><option value="all">All statuses</option>'+["Changed","Unchanged","Retry needed"].map(status=>'<option'+(status===sourceFilter?' selected':'')+'>'+status+'</option>').join("")+'</select></label></div>';
+  return '<section class="card" aria-labelledby="sources-title"><div class="card-head"><div><h2 id="sources-title">Pages checked</h2><p>Latest replay attempts by source page</p></div>'+filters+'</div><div id="source-results">'+sourceTable(compact?sources:sources.filter(tableMatches),compact)+'</div></section>';
+}
+function changeCard(compact) {
+  const entries=changes.map(change=>'<button type="button" class="change" data-act="'+(compact?"select-change":"change-detail")+'" data-value="'+change.id+'"'+(compact?' aria-pressed="'+(currentChange===change.id)+'"':'')+'><span class="change-mark">'+icon("changes")+'</span><span><span class="change-top"><strong>'+change.title+'</strong>'+badge(change.status,change.tone)+'</span><small>'+change.scope+' · '+change.kind+' · '+change.when+'</small><span class="change-summary">'+change.summary+'</span></span>'+icon("chevron")+'</button>').join("");
+  return '<section class="card"><div class="card-head"><div><h2>Detected changes</h2><p>'+(compact?"Select a change to see its study screen.":"Historical source changes used in this replay.")+'</p></div>'+(compact?quiet("View queue","changes"):"")+'</div><div class="change-list">'+entries+'</div>'+(compact?'<div class="card-foot">'+trigger("View change evidence","change-detail",currentChange,"","file")+'</div>':'')+'</section>';
+}
+function studyCard(compact) {
+  const change=selectedChange();
+  const selected=filteredStudies();
+  const registry=studyView==="registry";
+  const name=registry?"Public registry matches":"Portfolio impact";
+  const tabs='<div class="study-tabs" aria-label="Study dataset"><button type="button" data-act="study-view" data-value="portfolio" aria-pressed="'+!registry+'">Demo portfolio</button><button type="button" data-act="study-view" data-value="registry" aria-pressed="'+registry+'">Public registry</button></div>';
+  const content=selected.length?'<div class="table-wrap" tabindex="0"><table><caption class="sr">'+name+'</caption><thead><tr><th>Study</th><th>Listed location</th><th>'+ (registry?"Screening result":"Assessment") +'</th><th class="hide-narrow">'+(registry?"Registry status":"Reason")+'</th></tr></thead><tbody>'+selected.map(study=>'<tr><td><button type="button" class="entity-button" data-act="study-detail" data-value="'+study.id+'"><span>'+esc(study.title)+'<small class="sub">'+study.id+' · '+study.sponsor+'</small></span></button></td><td>'+study.sites+'</td><td>'+badge(registry?"Candidate match":study.status,registry?"blue":study.tone)+'</td><td class="hide-narrow muted">'+(registry?study.status+' · '+study.posted:study.reason)+'</td></tr>').join("")+'</tbody></table></div>':'<p class="nothing">No fictional portfolio assessment is loaded for this change. Open Public registry to see candidates.</p>';
+  const note=registry?"Country matches help prioritize screening. Supply impact requires sponsor data.":change.studyNote;
+  return '<section class="card"><div class="card-head study-head"><div><h2>Study impact</h2><p>'+change.title+'</p></div>'+tabs+'</div>'+content+'<div class="inline-note">'+icon("info")+'<span>'+note+'</span></div><div class="card-foot"><small>'+ (registry?registryCredit:"Synthetic study and supply records") +'</small>'+(compact?quiet("Open study workspace","studies"):"")+'</div></section>';
+}
+function resourceCard(name,text,url,linkName) {
+  return '<article class="card resource"><h2>'+esc(name)+'</h2><p>'+esc(text)+'</p><div>'+openLink(linkName,url)+'</div></article>';
+}
+function research() {
+  return heading("Data & use cases","Source-backed examples and public study datasets for screening.")+
+    '<div class="resource-grid">'+resources.map(item=>resourceCard(item.name,item.text,item.url,"Open data source")).join("")+'</div>'+
+    '<h2 class="research-lead">Regulatory use cases</h2>'+changeCard(false)+
+    '<div class="space">'+resourceCard("EU Annex VI immediate packaging","Assess whether an eligible inner package can omit the expiry or retest date. The decision depends on the internal packaging configuration and applicable conditions.",sources.find(source=>source.id==="annex").url,"Open EUR-Lex")+'</div>';
+}
+const views = {
+  overview,
+  sources:()=>heading("Pages checked","Inspect each page, its retrieval result, the section compared and the linked evidence.")+sourceCard(false),
+  changes:()=>heading("Detected changes","Inspect a change, its source evidence and the inputs needed for study screening.")+changeCard(false),
+  studies:()=>heading("Study impact","Explore the portfolio assessment or public matches for the selected change.")+
+    '<div class="runbar"><label class="field">Regulatory change<select id="study-change">'+changes.map(change=>'<option value="'+change.id+'"'+(change.id===currentChange?' selected':'')+'>'+change.title+'</option>').join("")+'</select></label><div class="actions">'+trigger("View change evidence","change-detail",currentChange,"","file")+(currentChange==="uk"?'<a class="btn" href="./RegChain-AI-Prototype.html">Open approval demo '+icon("arrow")+'</a>':"")+'</div></div><div id="study-card">'+studyCard(false)+'</div>',
+  research
+};
+function render() {shell();byId("view").innerHTML=views[page]();updateRun();}
+function notify(text="") {byId("announce").textContent=text;}
+function navigate(to,focus=true) {page=to;render();if(focus){byId("page-title").focus({preventScroll:true});window.scrollTo(0,0);}}
+function factlist(facts) {
+  return '<dl class="facts">'+facts.map(([label,value])=>'<div><dt>'+esc(label)+'</dt><dd>'+esc(value)+'</dd></div>').join("")+'</dl>';
+}
+function block(title,text) {return '<section class="drawer-block"><h3>'+esc(title)+'</h3><p>'+esc(text)+'</p></section>';}
+function drawer(type,title,content) {
+  const modal=byId("drawer");
+  if (!modal.open) drawerOrigin=document.activeElement;
+  byId("drawer-type").textContent=type;
+  byId("drawer-title").textContent=title;
+  byId("drawer-body").innerHTML=content;
+  if (!modal.open) modal.showModal();
+  modal.scrollTop=0;
+  modal.querySelector(".close").focus();
+}
+function sourceDetail(id) {
+  const source=sources.find(item=>item.id===id);
+  drawer("Source check",source.title,badge(source.status,source.tone)+factlist([
+    ["Authority",source.authority],["Scope",source.scope],["Check time",replayDate+" · "+source.checked+" UTC (replay)"],
+    ["Source edition",source.edition],["Compared section",source.status==="Retry needed"?"Comparison pending":source.section]
+  ])+block("Check result",source.result)+'<section><h3>Page URL</h3><a class="url" href="'+esc(source.url)+'" target="_blank" rel="noopener noreferrer">'+esc(source.url)+'</a></section>'+
+  (source.change?'<div>'+trigger("View related change","change-detail",source.change,"","arrow")+'</div>':""));
+}
+function changeDetail(id) {
+  const change=changes.find(item=>item.id===id);
+  drawer("Detected change",change.title,badge(change.status,change.tone)+factlist([["Authority",change.authority],["Scope",change.scope],["Date basis",change.when]])+
+    block("Previous reference",change.before)+block("What changed",change.after)+block("Study data needed",change.need)+
+    '<section><h3>Supporting sources</h3><div class="actions">'+change.evidence.map(id=>trigger(sources.find(source=>source.id===id).title,"source-detail",id,"","file")).join("")+'</div></section>'+
+    '<div>'+trigger("View study impact","go-impact",id,"primary","arrow")+'</div>');
+}
+function studyDetail(id) {
+  const isPublic=id.startsWith("NCT");
+  const study=(isPublic?publicStudies:studies).find(item=>item.id===id);
+  const change=selectedChange();
+  if(isPublic) {
+    drawer("ClinicalTrials.gov · public registry",study.title,badge("Candidate match","blue")+factlist([["Registry ID",study.id],["Sponsor",study.sponsor],["Listed locations",study.sites],["Registry status",study.status],["Last update posted",study.posted]])+
+      block("Why it surfaced","The sample record lists a site in the jurisdiction screened for "+change.title+".")+
+      block("Information needed to assess impact",change.need)+'<p>'+esc(registryCredit)+'</p><div>'+openLink("Open registry record",study.url,"primary")+'</div>');
+  } else {
+    drawer("Fictional portfolio",study.title,badge(study.status,study.tone)+factlist([["Study ID",study.id],["Location",study.sites],["Related change",change.title],["Batches",study.batches.join(", ")]])+
+      block("Assessment",study.detail)+'<div>'+trigger("View change evidence","change-detail",change.id,"","file")+'</div>');
+  }
+}
+function selectChange(id) {
+  currentChange=id;
+  studyView=studies.some(study=>study.changes.includes(id))?"portfolio":"registry";
+}
+function updateStudies() {byId("study-card").innerHTML=studyCard(page==="overview");}
+function replay() {
+  if (replaying) return;
+  replaying=true;updateRun();notify("Replaying the six recorded checks.");
+  window.setTimeout(()=>{
+    replayCount++;replaying=false;
+    if(page==="overview"){render();byId("replay").focus();}
+    notify("Replay complete. Three changes detected. One source check needs retry.");
+  },350);
+}
+const actions={
+  nav:to=>{notify();navigate(to);},
+  metric:target=>{
+    if(target==="retry-filter"){sourceFilter="Retry needed";sourceSearch="";navigate("sources");return;}
+    if(target==="sources"){sourceFilter="all";sourceSearch="";}
+    if(target==="studies") selectChange("uk");
+    navigate(target);
+  },
+  replay,
+  "source-detail":sourceDetail,
+  "change-detail":changeDetail,
+  "study-detail":studyDetail,
+  "select-change":id=>{
+    selectChange(id);
+    byId("view").querySelectorAll('[data-act="select-change"]').forEach(control=>control.setAttribute("aria-pressed",String(control.dataset.value===id)));
+    byId("view").querySelector('[data-act="change-detail"]').dataset.value=id;
+    updateStudies();
+    byId("study-card").scrollIntoView({block:"nearest"});
+    notify("Study impact updated for "+selectedChange().title+".");
+  },
+  "go-impact":id=>{byId("drawer").close();drawerOrigin=null;selectChange(id);navigate("studies");},
+  "study-view":tab=>{studyView=tab;updateStudies();byId("study-card").querySelector('[data-value="'+tab+'"]').focus();notify(tab==="registry"?"Showing public registry candidates.":"Showing the fictional portfolio assessment.");}
+};
+document.addEventListener("click",event=>{
+  const target=event.target.closest("[data-act]");
+  if(target && !target.disabled) actions[target.dataset.act](target.dataset.value);
+});
+document.addEventListener("input",event=>{
+  if(event.target.id==="source-search"){
+    sourceSearch=event.target.value;
+    byId("source-results").innerHTML=sourceTable(sources.filter(tableMatches),false);
+  }
+});
+document.addEventListener("change",event=>{
+  if(event.target.id==="source-filter"){
+    sourceFilter=event.target.value;
+    byId("source-results").innerHTML=sourceTable(sources.filter(tableMatches),false);
+  }
+  if(event.target.id==="study-change"){
+    selectChange(event.target.value);
+    render();
+    byId("study-change").focus();
+  }
+});
+byId("drawer").addEventListener("close",()=>{if(drawerOrigin?.isConnected) drawerOrigin.focus();drawerOrigin=null;});
+render();
+</script>
+</body>
+</html>
