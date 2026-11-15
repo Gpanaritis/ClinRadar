@@ -243,6 +243,9 @@ tr[data-act]{cursor:pointer}
 .tip-pop{display:none!important}
 #tip-layer{position:fixed;z-index:1300;display:none;max-width:min(300px,calc(100vw - 32px));background:#132446;color:#fff;font:500 12.5px/1.45 Inter,"Segoe UI",sans-serif;padding:9px 11px;border-radius:8px;box-shadow:0 8px 22px #13244640;pointer-events:none;text-align:left}
 #tip-layer.on{display:block}
+.study-countries{display:flex;flex-wrap:wrap;gap:4px}.study-country{font:700 11px/1 Inter,"Segoe UI",sans-serif;padding:4px 6px;border-radius:6px;background:#f1f4f9;color:#7a889e;border:1px solid #e3e9f2}.study-country.on{background:#eaf1ff;color:#1d4ed8;border-color:#c9daff}
+.muted.block,small.block{display:block;margin-top:2px}.source-line{display:flex;align-items:center;gap:6px;color:#5b6b84;font-size:12.5px;margin:0}.source-line svg{width:14px;height:14px}
+.study-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;padding:14px}.study-facts div{display:grid;gap:3px;padding:10px 12px;border-radius:10px;background:#f7f9fd;border:1px solid #e6ecf5}.study-facts strong{font-size:22px;color:var(--ink)}.study-facts span{font-size:12.5px;color:#5b6b84}.study-facts .warn{background:#fff4f4;border-color:#f6d2d2}.study-facts .warn strong{color:#b42318}
 @media (max-width:760px){.team-row.watch{grid-template-columns:repeat(2,minmax(0,1fr))}.team-row.watch .team-node:last-child{grid-column:auto}}
 </style>
 </head>
@@ -770,14 +773,16 @@ const icons = {
   lock:'<rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/>',
   route:'<circle cx="4" cy="12" r="1.6"/><circle cx="12" cy="4" r="1.6"/><path d="M5.6 12H10a2 2 0 0 0 0-4H6a2 2 0 0 1 0-4h4.4"/>'
 };
-const navItems = {overview:"Overview",scope:"Monitoring scope",signals:"Signals",shipments:"Shipments",team:"Agents in action",countries:"Country specifications",settings:"Settings"};
+const navItems = {overview:"Overview",shipments:"Shipments",studies:"Studies",signals:"Signals",scope:"Monitoring scope",team:"Agents in action",countries:"Country specifications",settings:"Settings"};
 // Earlier page names still open the right place, so no button or link breaks: Agent plans is the Shipments "Needs action"
 // tab, Shipment checks its "All shipments" tab, and the Source log a Settings tab.
 let shipmentsTab = "action";
 const pageAliases = {plans:()=>{shipmentsTab="action";return "shipments";},checks:()=>{shipmentsTab="all";return "shipments";},sources:()=>{settingsTab="sources";return "settings";}};
 const resolvePage = to => pageAliases[to]?pageAliases[to]():to;
 // Pages under a menu item: the breadcrumb leads back to it and the menu marks it.
-const pageParents = {agent:"shipments",signal:"signals",case:"signals"};
+const pageParents = {agent:"shipments",signal:"signals",case:"signals",study:"studies"};
+let currentStudyId = null;
+let studiesFilter = "active";
 let currentSignalId = null;
 const byId = id => document.getElementById(id);
 const esc = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -1006,6 +1011,7 @@ function pageTitle() {
   if(page==="agent") return agentShipment??"Shipment";
   if(page==="signal") return clip(ss?.signals?.find(item=>item.id===currentSignalId)?.title??"Signal",64);
   if(page==="case") return clip(selectedChange()?.title??"Regulatory change",64);
+  if(page==="study") return currentStudyId??"Study";
   return navItems[page]??"Overview";
 }
 function shell() {
@@ -1018,7 +1024,7 @@ function shell() {
   byId("nav").innerHTML=Object.entries(navItems).map(([id,name])=>'<button type="button" class="nav" data-act="nav" data-value="'+id+'"'+(page===id?' aria-current="page"':parent===id?' aria-current="location"':'')+'>'+icon(id)+esc(name)+'</button>').join("");
   // Who is acting: the switches on Monitoring scope and every approval depend on it.
   const person=signedInUser?.name??String(roleName(workflowRole,workflow)??"").split(" · ")[0];
-  const initials=person.replace(/[^A-Z]/g,"").slice(0,2)||"SS";
+  const initials=person.replace(/[^A-Z]/g,"").slice(0,2)||"CR";
   byId("rail-foot").innerHTML='<span class="rail-avatar">'+esc(initials)+'</span><div><strong>'+esc(person)+'</strong><small>'+esc(workflowRoles[workflowRole]??"")+'</small></div>';
 }
 function heading(title,description,action="") {
@@ -3933,7 +3939,90 @@ function afterRender() {
     (row.querySelector(".ss-toggle")??row.querySelector("button"))?.focus({preventScroll:true});
   });
 }
+// ---------- Studies: each trial with its countries, sites, patients, planned shipments and what puts its supply at risk ----------
+// Assembled from what the systems already hold: the CTMS (study and country status), IRT (sites, patients, shipments),
+// ERP (batches and labels) and the courier (routes). Nothing here is typed in by hand.
+const studySources = [["CTMS","study and country status"],["IRT","sites, patients on treatment, shipments"],["ERP","batches, labels, QP release"],["Depot and courier","routes and collections"]];
+function studyIndex() {
+  const index={};
+  const entry=(id,title,status)=>index[id]??=(index[id]={id,title:title??id,status:status??"",countries:{},sites:[],counted:true,note:""});
+  const scope=ss?.scope;
+  for(const country of scope?.countries??[]) for(const study of country.studies??[]) entry(study.id,study.title,study.status).countries[country.code]="ACTIVE";
+  for(const item of scope?.notInScope??[]) for(const study of item.entries??[]) entry(study.study,study.title,study.studyStatus).countries[item.code]??=study.status??"NOT_STARTED";
+  for(const warning of scope?.reviewWarnings??[]) entry(warning.study,warning.title,warning.studyStatus).countries[warning.code]="UNKNOWN";
+  for(const study of scope?.studies?.excluded??[]) {const item=entry(study.id,study.title,study.status);item.counted=false;item.note=study.note??"";for(const code of study.countries??[]) item.countries[code]??=study.status;}
+  for(const study of portfolio?.studies??[]) {const item=entry(study.id,study.title,study.status);item.phase=study.phase;item.area=study.therapy_area;}
+  // A study-country with no activated site is approved but not started: it does not put the country in scope.
+  for(const row of portfolio?.study_countries??[]) entry(row.study_id).countries[row.country_code]??=(row.site_ids?.length?"ACTIVE":"NOT_STARTED");
+  for(const site of portfolio?.sites??[]) entry(site.study_id).sites.push({id:site.id,country:site.country_code,city:site.city,patients:site.patients_on_treatment});
+  if(israel?.trial) {const item=entry(israel.trial.id,israel.trial.title);item.phase=israel.trial.phase;item.product=israel.trial.product;item.depot=israel.trial.depot;
+    for(const site of israel.trial.sites??[]) item.sites.push({id:site.id,country:site.country,city:site.city,patients:site.patients});}
+  if(spain?.trial) {const item=entry(spain.trial.id,spain.trial.title);item.phase=spain.trial.phase;item.product=spain.trial.product;item.depot=spain.trial.depot;item.firstPatientIn=spain.trial.firstPatientIn;
+    for(const site of spain.trial.sites??[]) item.sites.push({id:site.id,country:site.country??"ES",city:site.city,patients:site.patients??null});}
+  const shipments=plannedShipments();
+  for(const item of Object.values(index)) {
+    item.shipments=shipments.filter(shipment=>shipment.trial===item.id);
+    item.patients=item.sites.reduce((sum,site)=>sum+(site.patients??0),0);
+    item.risks=item.shipments.flatMap(shipment=>(ss?.byShipment?.[shipment.id]??[]).filter(match=>["confirmed","potential"].includes(match.tier)).map(match=>({...match,shipment:shipment.id})));
+  }
+  return Object.values(index).sort((a,b)=>Number(b.counted)-Number(a.counted)||b.shipments.filter(needsAction).length-a.shipments.filter(needsAction).length||a.id.localeCompare(b.id,undefined,{numeric:true}));
+}
+const studyCountries = item => Object.entries(item.countries).map(([code,status])=>'<span class="study-country'+(status==="ACTIVE"?" on":"")+'" title="'+esc(ssName(code)+": "+(status==="ACTIVE"?"active":statusText(status).toLowerCase()))+'">'+esc(code)+'</span>').join("");
+function studyRisk(item) {
+  const confirmed=item.risks.filter(match=>match.tier==="confirmed"),potential=item.risks.filter(match=>match.tier==="potential");
+  const need=item.shipments.filter(needsAction).length;
+  const parts=[];
+  if(confirmed.length) parts.push(badge(plural(confirmed.length,"confirmed disruption"),"red"));
+  if(potential.length) parts.push(badge(plural(potential.length,"potential exposure"),"amber"));
+  if(need) parts.push(badge(plural(need,"shipment")+(need===1?" needs":" need")+" action","blue"));
+  return parts.join(" ")||'<span class="muted">Nothing open</span>';
+}
+function studiesView() {
+  const all=studyIndex();
+  const counted=all.filter(item=>item.counted);
+  const shown=studiesFilter==="all"?all:studiesFilter==="other"?all.filter(item=>!item.counted):counted;
+  const chips=[["active","Active",counted.length],["other","Not counted",all.length-counted.length],["all","All",all.length]].map(([id,name,count])=>'<button type="button" class="filter-chip" data-act="studies-filter" data-value="'+id+'" aria-pressed="'+(studiesFilter===id)+'">'+esc(name)+' <span class="chip-count">'+count+'</span></button>').join("");
+  const rows=shown.map(item=>'<tr><td><button type="button" class="entity-button" data-act="open-study" data-value="'+esc(item.id)+'">'+esc(item.id)+'</button><small class="muted block">'+esc([item.title,item.phase?"Phase "+item.phase:"",item.area].filter(Boolean).join(" Â· "))+'</small></td>'+
+    '<td>'+esc(statusText(item.status))+'</td><td><span class="study-countries">'+studyCountries(item)+'</span></td>'+
+    '<td>'+esc(item.sites.length?plural(item.sites.length,"site")+(item.patients?" Â· "+item.patients+" patients":""):"â€”")+'</td>'+
+    '<td>'+esc(item.shipments.length?plural(item.shipments.length,"planned shipment"):"â€”")+'</td><td>'+(item.counted?studyRisk(item):'<span class="muted">'+esc(item.note||"Not counted by the status policy")+'</span>')+'</td></tr>').join("");
+  return heading("Studies","Every study in the CTMS with its countries, sites and planned shipments, and what puts its supply at risk.")+
+    '<section class="card"><div class="card-head"><div class="chip-filters" role="group" aria-label="Show studies">'+chips+'</div>'+
+    '<p class="source-line">'+icon("plug")+esc("From "+studySources.map(([name])=>name).join(", "))+tip(studySources.map(([name,what])=>name+": "+what).join(". ")+". Read-only; every number links back to its system of record.","Where these numbers come from")+'</p></div>'+
+    '<div class="table-wrap" tabindex="0"><table class="stack-table studies-table" data-full><caption class="sr">Studies</caption><thead><tr><th>Study</th><th>CTMS status</th><th>Countries</th><th>Sites and patients</th><th>Shipments</th><th>Supply risk</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>';
+}
+function studyPage() {
+  const item=studyIndex().find(entry=>entry.id===currentStudyId);
+  if(!item) return heading("Study","This study is not in the CTMS snapshot.")+'<p>'+trigger("All studies","nav","studies","quiet","arrow")+'</p>';
+  const need=item.shipments.filter(needsAction);
+  const runout=item.risks.filter(match=>match.buffer?.runsOutOn).sort((a,b)=>a.buffer.runsOutOn.localeCompare(b.buffer.runsOutOn))[0];
+  const facts=[[Object.values(item.countries).filter(status=>status==="ACTIVE").length,"active countries"],[item.sites.length,"sites"],[item.patients||"â€”","patients on treatment"],[item.shipments.length,"planned shipments"],[need.length,"need action before dispatch"]];
+  const head=heading(esc(item.id)+" Â· "+esc(item.title),esc([item.phase?"Phase "+item.phase:"",item.area,statusText(item.status),item.product,item.depot?"from the "+item.depot:"",item.firstPatientIn?"first patient in "+displayDay(item.firstPatientIn):""].filter(Boolean).join(" Â· ")),trigger("All studies","nav","studies","quiet","arrow"));
+  const factsHtml='<section class="card study-facts">'+facts.map(([value,label])=>'<div><strong>'+esc(value)+'</strong><span>'+esc(label)+'</span></div>').join("")+
+    (runout?'<div class="warn"><strong>'+esc(displayDay(runout.buffer.runsOutOn))+'</strong><span>'+esc("first stock-out at risk ("+runout.shipment+")")+'</span></div>':"")+'</section>';
+  const sitesByCountry=code=>item.sites.filter(site=>site.country===code);
+  const countryRows=Object.entries(item.countries).map(([code,status])=>{
+    const country=(ss?.scope?.countries??[]).find(entry=>entry.code===code);
+    const sites=sitesByCountry(code);
+    const watched=country?"Monitored Â· active trial":(ss?.scope?.recommendations??[]).find(entry=>entry.code===code)?.monitoring?.external?.on?"Monitored Â· turned on by a person":"Not monitored";
+    return '<tr><td><strong>'+esc(ssName(code))+'</strong></td><td>'+esc(status==="ACTIVE"?"Active":statusText(status))+'</td><td>'+esc(sites.length?sites.map(site=>site.city).filter(Boolean).join(", "):"â€”")+'</td><td>'+esc(sites.reduce((sum,site)=>sum+(site.patients??0),0)||"â€”")+'</td><td>'+esc(watched)+'</td></tr>';
+  }).join("");
+  const shipmentRows=item.shipments.map(shipment=>{
+    const risk=(ss?.byShipment?.[shipment.id]??[]).find(match=>["confirmed","potential","clear"].includes(match.tier));
+    return '<tr><td><button type="button" class="entity-button" data-act="open-agents" data-value="'+esc(shipment.id)+'">'+esc(shipment.id)+'</button><small class="muted block">'+esc(shipment.site)+'</small></td><td>'+esc(displayDay(shipment.prepareBy))+'</td><td>'+badge(...resultStyle[shipment.result])+'</td><td>'+(risk?statusBadge(statusKey(risk.tier,signalById(risk.signal))):'<span class="muted">â€”</span>')+'</td><td>'+planBadge(shipment.id)+'</td><td>'+esc(attention(shipment))+'</td></tr>';
+  }).join("");
+  const risks=item.risks.length?'<ul class="match-lines">'+item.risks.map(match=>{const signal=signalById(match.signal);return '<li>'+statusBadge(statusKey(match.tier,signal))+'<strong>'+esc(match.shipment)+'</strong><span>'+esc((signal?.title??match.label)+" Â· "+displayDay(match.date))+'</span>'+(signal?'<button type="button" class="link-button" data-act="open-signal" data-value="'+esc(signal.id)+'">Open the signal</button>':"")+'</li>';}).join("")+'</ul>':'<p class="muted">No external event touches this study\'s shipments in the monitored countries.</p>';
+  return head+factsHtml+
+    '<section class="card space"><div class="card-head"><div><h2>What puts this study\'s supply at risk</h2><p>Signals matched to its planned shipments, routes and sites</p></div></div>'+risks+'</section>'+
+    '<section class="card space"><div class="card-head"><div><h2>Planned shipments</h2><p>'+esc(item.shipments.length?plural(need.length,"shipment")+" of "+item.shipments.length+" need action before dispatch":"No shipment planned in the supply plan")+'</p></div></div>'+
+      (item.shipments.length?'<div class="table-wrap" tabindex="0"><table class="stack-table" data-full><caption class="sr">Planned shipments of '+esc(item.id)+'</caption><thead><tr><th>Shipment</th><th>Prepare by</th><th>Result</th><th>Risk</th><th>Agent plan</th><th>What needs attention</th></tr></thead><tbody>'+shipmentRows+'</tbody></table></div>':"")+'</section>'+
+    '<section class="card space"><div class="card-head"><div><h2>Countries and sites</h2><p>'+esc("Study-country status from the CTMS; sites and patients on treatment from IRT")+'</p></div></div>'+
+      '<div class="table-wrap" tabindex="0"><table class="stack-table" data-full><caption class="sr">Countries of '+esc(item.id)+'</caption><thead><tr><th>Country</th><th>CTMS status</th><th>Sites</th><th>Patients</th><th>Monitoring</th></tr></thead><tbody>'+countryRows+'</tbody></table></div></section>'+
+    '<p class="source-line">'+icon("plug")+esc("Sources: "+studySources.map(([name,what])=>name+" ("+what+")").join(" Â· "))+'</p>';
+}
 const views = {
+  studies:studiesView,
+  study:studyPage,
   team:teamView,
   agent:agentView,
   shipments:shipmentsView,
@@ -4189,6 +4278,8 @@ const actions={
   "signal-tier":id=>{signalTier=id;if(signalType==="regulatory") signalType="all";render();document.querySelector('[data-act="signal-tier"][data-value="'+id+'"]')?.focus();},
   "signals-type":type=>{signalType=type;signalTier="all";signalCountry="all";navigate("signals");},
   "open-signal":id=>{currentSignalId=id;navigate("signal");},
+  "open-study":id=>{currentStudyId=id;navigate("study");},
+  "studies-filter":id=>{studiesFilter=id;render();document.querySelector('[data-act="studies-filter"][data-value="'+id+'"]')?.focus();},
   "signal-plan":id=>{const status=agentState.status;openAgents(id);startAgentRun(status?.keySet&&status?.sdk?"live":"scripted");},
   "open-scope":code=>{const rec=ss?.scope?.recommendations?.find(item=>item.code===code);if(rec) {openFolds.add(isDismissed(rec)?"rec-dismissed":"rec-"+rec.group);scopeQuery="";}scopeFocus=code;navigate("scope");},
   "scope-jump":id=>byId(id)?.scrollIntoView({block:"start"}),

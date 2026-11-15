@@ -27,6 +27,9 @@ flowchart LR
   OV -->|Open the change| CASE[Change case]
   OV -->|Source checks to retry| SRC[Settings<br/>Sources]
   OV -->|Run the first check| TEAM[Agents in action]
+  STL[Studies] -->|a study| STP[Study page]
+  STP -->|a shipment| PLAN
+  STP -->|a signal| SIG
   SG -->|a signal| SIG[Signal page]
   SG -->|a regulatory change| CASE
   SIG -->|Plan a recovery with the agents| PLAN
@@ -46,9 +49,10 @@ flowchart LR
   SET --> SRC
 ```
 
-The menu has: **Overview · Monitoring scope · Signals · Shipments · Agents in action · Country specifications · Settings**.
+The menu follows the day's work: **Overview · Shipments · Studies · Signals · Monitoring scope · Agents in action · Country specifications · Settings**.
 
 - A shipment page opens under **Shipments**, and its breadcrumb leads back there.
+- A study page opens under **Studies**.
 - A signal and a change case open under **Signals**.
 - Earlier page names still open the right place, so old links keep working:
   - **Agent plans** is now the **Needs action** tab of Shipments;
@@ -60,6 +64,8 @@ The menu has: **Overview · Monitoring scope · Signals · Shipments · Agents i
 | Screen | The question it answers | Main action |
 |---|---|---|
 | **Overview** | What needs a decision today, and what did the last check find? | One button per line under **Needs your decision**; **Run the check** |
+| **Studies** | Which studies do we supply, where, to how many patients, and what puts each one's supply at risk? | Open a study |
+| **Study page** | For one study: active countries, sites and patients, planned shipments with their result and plan, and the signals that touch them. Each number names its system (CTMS, IRT, ERP, depot, courier) | Open a shipment or a signal |
 | **Monitoring scope** | Which countries does ClinRadar watch, and why? | Turn a suggested country on or off, with a reason; dismiss or restore a suggestion |
 | **Signals** | What happened in the monitored countries, and does it touch our shipments? | Open a signal or a regulatory change; **Run the check** |
 | **Signal page** | For one event: the sources, each match with our shipments, the owner and the next step | **Plan a recovery with the agents** |
@@ -147,6 +153,21 @@ flowchart TD
    - choose **Acknowledge** for an escalation (SHP-03, SHP-05);
    - open the shipment for anything you want to read first.
 6. The **Approved** chip counts what is done. Each draft waits for approval in its own system.
+
+### J1b · One study at a glance (STUDY-021)
+
+**Who:** a clinical supply manager or study lead who thinks per study.
+
+1. **Studies** lists every study in the CTMS. **Active** shows the 18 that count; **Not counted** shows the completed, suspended and not-yet-recruiting ones with the reason. Each row gives:
+   - the study status from the CTMS;
+   - its countries, with active ones highlighted and approved-but-not-started ones greyed;
+   - sites and patients on treatment;
+   - planned shipments;
+   - the supply risk.
+2. Open **STUDY-021**, the multinational psoriasis study (illustrative). It has 3 active countries, 5 sites and 66 patients on treatment. 3 of its 5 shipments need action, and the first stock-out at risk is 27 Nov 2026 (SHP-IL-01).
+3. **What puts this study's supply at risk** shows two things. The Belgian strike is a confirmed disruption for SHP-IL-01; the Ben Gurion runway works are a potential exposure for SHP-IL-02. Each one opens its signal.
+4. **Planned shipments** gives each shipment's result, risk, agent plan and what needs attention, and opens the shipment page.
+5. **Countries and sites** shows the study-country status from the CTMS, the sites and patients from IRT, and whether each country is monitored.
 
 ### J2 · A strike cancels a flight: SHP-IL-01 to Tel Aviv (illustrative)
 
