@@ -1655,8 +1655,7 @@ function aiSetupHints() {
   const status=aiState.status;
   if(!status) return "";
   const hints=[];
-  if(!status.sdk) hints.push("Run npm install once in the RegChain folder, then restart the launcher.");
-  if(!status.keySet) hints.push("Add ANTHROPIC_API_KEY to a .env file next to serve-regchain.cjs.");
+  if(status.setup) hints.push(status.setup); else { if(!status.sdk) hints.push("Run npm install once in the RegChain folder, then restart the launcher."); if(!status.keySet) hints.push("Add ANTHROPIC_API_KEY to a .env file next to serve-regchain.cjs."); }
   return hints.length?'<details class="setup-note"><summary>The AI check is not set up on this computer</summary><p>'+esc(hints.join(" "))+'</p></details>':"";
 }
 function aiResult(result) {
@@ -2303,7 +2302,7 @@ function controlsPanel(id,status) {
 function agentSetupNote(status) {
   const live=agentServer()&&status?.keySet&&status?.sdk;
   return !agentServer()?'<div class="inline-note">'+icon("info")+'<span>The agents need the local server: open RegChain with Start-RegChain.cmd.</span></div>':
-    !live?'<p class="setup-line">'+icon("info")+'The AI agents are not set up on this computer: add ANTHROPIC_API_KEY to the .env file next to serve-regchain.cjs and restart RegChain. The scripted walkthrough runs the same steps without AI.</p>':"";
+    !live?'<p class="setup-line">'+icon("info")+'The AI agents are not set up on this computer. '+esc(status?.setup||"Add ANTHROPIC_API_KEY to the .env file next to serve-regchain.cjs and restart RegChain.")+' The scripted walkthrough runs the same steps without AI.</p>':"";
 }
 const approverNote = () => canApprovePlans()?"":'<p class="form-feedback">Clinical Supply approves supply plans. Choose '+esc(roleName("viewer",workflow))+' under Acting as.</p>';
 function runButtons(scope,primaryLabel) {
@@ -2383,7 +2382,7 @@ function agentView() {
   const trail=(agentState.running||record)?'<details id="agent-trail" class="card fold"'+(openPanels.has("agent-trail")||agentState.running?" open":"")+'><summary><span class="fold-title">'+icon("changes")+'<strong>How the agents worked it out</strong></span><small id="agent-trail-count" class="muted">'+
       esc(agentState.running?events.length+" steps so far":plural(events.length,"step")+" · "+plural(events.filter(event=>event.type==="tool_call").length,"system call"))+'</small></summary>'+
       (agentState.running?"":'<div class="actions trail-watch">'+trigger("Watch it step by step","watch-team",agentShipment,"quiet","team")+'</div>')+trailFilters(events)+'<ol id="agent-timeline" class="agent-timeline">'+trailList(events)+'</ol></details>':"";
-  const runLine=record?'<section class="run-line"><span>'+esc((record.mode==="live"?"AI agents ("+record.models.orchestrator+", "+record.models.specialists+")":"Scripted walkthrough, no AI")+" · run on "+scheduleDate(Date.parse(record.at))+
+  const runLine=record?'<section class="run-line"><span>'+esc((record.mode==="live"?"AI agents ("+record.models.orchestrator+", "+record.models.specialists+(record.models.service?", through "+record.models.service:"")+")":"Scripted walkthrough, no AI")+" · run on "+scheduleDate(Date.parse(record.at))+
       (record.mode==="live"?" · "+record.usage.input_tokens+" tokens in, "+record.usage.output_tokens+" out":""))+'</span>'+trigger("Export the audit record","agent-export","","quiet","file")+
       '<details id="agent-rerun" class="rerun"'+(openPanels.has("agent-rerun")?" open":"")+'><summary>Run the agents again</summary>'+runButtons("one","Run the AI agents")+agentSetupNote(status)+'<small class="muted">A new run never inherits an earlier approval.</small></details></section>':"";
   return heading(esc(title),esc(sub),back)+steps+

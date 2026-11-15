@@ -1,7 +1,8 @@
 // Checks the agent layer without calling the Anthropic API:
 // the rules match the dashboard, the verifier is strict, the six MCP servers start and answer, scripted runs resolve
 // different kinds of shipment, the portfolio run never promises the same kits or slot twice, approvals are re-checked
-// on the server, and the live loop works end to end with a stand-in AI client.
+// on the server, the live loop works end to end with a stand-in AI client, and the Claude service setting picks the
+// right models and request for each service.
 // Usage: node scripts/check-agent.mjs [--save]   (--save writes the scripted runs as recorded results, for UI testing)
 // Every check runs in a temporary cache, so approvals on this computer never change the results.
 
@@ -176,6 +177,60 @@ assert.equal(live.verification.find(item => item.id === "A").passes, true);
 assert.equal(live.drafts.length, 2);
 assert.ok(live.drafts.find(draft => draft.option_id === "B").withdrawn && !live.drafts.find(draft => draft.option_id === "A").withdrawn, "drafts of a failing option are withdrawn");
 console.log(`ok  live loop (stand-in AI): ${live.events.length} steps, delegation to the supply agent, MCP calls, verification, and a draft for a failing option withdrawn`);
+
+// 9. Which Claude service: one setting, Claude models only, and one clear sentence for whatever is missing.
+{
+  const { claudeSettings, setupMessage, createClaude, credentialsRefused, PROVIDERS } = await import("../regchain-ai/claude.mjs");
+  const { draftChange } = await import("../regchain-ai/analyze.mjs");
+  const plain = claudeSettings({ ANTHROPIC_API_KEY: "test" });
+  assert.equal(plain.provider, "anthropic");
+  assert.ok(plain.configured && plain.serverFallbacks);
+  assert.deepEqual(plain.models, { orchestrator: "claude-opus-5-5", specialist: "claude-sonnet-5-5", aiCheck: "claude-opus-5-5" });
+  assert.equal(setupMessage(claudeSettings({}), true), "Add ANTHROPIC_API_KEY to the .env file next to serve-regchain.cjs, then restart RegChain.");
+  const bedrock = claudeSettings({ REGCHAIN_AI_PROVIDER: "bedrock", AWS_REGION: "eu-central-1" });
+  assert.ok(bedrock.configured && !bedrock.serverFallbacks);
+  assert.deepEqual(bedrock.models, { orchestrator: "anthropic.claude-opus-5-5", specialist: "anthropic.claude-sonnet-5-5", aiCheck: "anthropic.claude-opus-5-5" });
+  assert.match(setupMessage(bedrock, false), /npm install @anthropic-ai\/bedrock-sdk/);
+  assert.deepEqual(claudeSettings({ REGCHAIN_AI_PROVIDER: "aws", AWS_REGION: "eu-west-1" }).missing, ["ANTHROPIC_AWS_WORKSPACE_ID"]);
+  assert.ok(claudeSettings({ REGCHAIN_AI_PROVIDER: "google-cloud", ANTHROPIC_GOOGLE_CLOUD_WORKSPACE_ID: "wrkspc_test" }).configured);
+  assert.match(setupMessage(claudeSettings({ REGCHAIN_AI_PROVIDER: "vertex" }), true), /CLOUD_ML_REGION/);
+  assert.equal(claudeSettings({ REGCHAIN_AI_PROVIDER: "vertex", CLOUD_ML_REGION: "global" }).models.orchestrator, "claude-opus-5-5");
+  assert.deepEqual(claudeSettings({ REGCHAIN_AI_PROVIDER: "Foundry" }).missing, ["ANTHROPIC_FOUNDRY_RESOURCE"]);
+  assert.match(claudeSettings({ ANTHROPIC_API_KEY: "test", REGCHAIN_MODEL_SPECIALIST: "gpt-5" }).problems[0], /Claude models only/);
+  assert.match(claudeSettings({ REGCHAIN_AI_PROVIDER: "openai" }).problems[0], /Use one of: anthropic, aws, bedrock, google-cloud, vertex, foundry/);
+  assert.match(credentialsRefused({ status: 401 }, plain), /Anthropic API key was not accepted/);
+  assert.match(credentialsRefused({ status: 403 }, bedrock), /Amazon Bedrock did not accept/);
+  assert.equal(credentialsRefused({ status: 500 }, bedrock), null);
+
+  // Through Amazon Bedrock: the agents and the AI check use Bedrock's model names, and the AI check leaves out the
+  // server-side fallback that Bedrock does not offer.
+  const saved = { REGCHAIN_AI_PROVIDER: process.env.REGCHAIN_AI_PROVIDER, AWS_REGION: process.env.AWS_REGION };
+  Object.assign(process.env, { REGCHAIN_AI_PROVIDER: "bedrock", AWS_REGION: "eu-central-1" });
+  try {
+    await assert.rejects(createClaude({ load: async () => { throw new Error("not installed"); } }), /npm install @anthropic-ai\/bedrock-sdk/);
+    const seen = new Map();
+    const inner = standIn();
+    const viaBedrock = await resolveShipment({ root, shipmentId: "SHP-04", mode: "live", client: { messages: { stream(params) {
+      seen.set(params.system.includes("orchestrator") ? "orchestrator" : "supply", params.model);
+      return inner.messages.stream(params);
+    } } } });
+    assert.equal(viaBedrock.error, undefined, viaBedrock.error);
+    assert.equal(seen.get("orchestrator"), "anthropic.claude-opus-5-5");
+    assert.equal(seen.get("supply"), "anthropic.claude-sonnet-5-5");
+    assert.equal(viaBedrock.models.service, "Amazon Bedrock");
+    const sources = [{ id: "v1", role: "before", text: "Old text." }, { id: "v2", role: "after", text: "New text." }];
+    let sent;
+    await draftChange(sources, { claude: claudeSettings(), client: { messages: { async create(params) {
+      sent = params;
+      return { model: params.model, stop_reason: "end_turn", content: [{ type: "text", text: "{}" }] };
+    } } } });
+    assert.equal(sent.model, "anthropic.claude-opus-5-5");
+    assert.ok(!("fallbacks" in sent) && !("betas" in sent), "Bedrock gets no server-side fallback");
+  } finally {
+    for (const [name, value] of Object.entries(saved)) value === undefined ? delete process.env[name] : (process.env[name] = value);
+  }
+  console.log(`ok  Claude service: ${Object.keys(PROVIDERS).length} services, Claude models only, a clear sentence for what is missing, and a live run through Amazon Bedrock with its own model names`);
+}
 
 (await import("../regchain-ai/db.mjs")).closeDatabase(root);
 await rm(testCache, { recursive: true, force: true });

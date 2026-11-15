@@ -20,6 +20,7 @@ if (existsSync(envFile)) {
 
 // Settings, security headers and logs (regchain-ai/config.mjs, security.mjs). Defaults serve one person on this computer.
 const { loadConfig } = require("./regchain-ai/config.mjs");
+const claude = require("./regchain-ai/claude.mjs");
 const { securityHeaders, withNonce, newNonce, requestId, clientAddress, createLogger, createRateLimiter } = require("./regchain-ai/security.mjs");
 let config;
 try {
@@ -175,8 +176,10 @@ async function streamAgentRun(request, response) {
   };
   const { loadData, shipmentView } = await loadModule("rules.mjs");
   if (!shipmentView(await loadData(__dirname), shipment)) return fail("Unknown shipment.");
-  if (mode === "live" && !(await sdkInstalled())) return fail("The Anthropic SDK is not installed. Run npm install in the RegChain folder, then restart.");
-  if (mode === "live" && !(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN)) return fail("Add ANTHROPIC_API_KEY to the .env file next to serve-regchain.cjs, then restart RegChain.");
+  if (mode === "live") {
+    const ai = claude.claudeStatus();
+    if (!ai.ready) return fail(ai.message);
+  }
   if (agentRunning) return fail("An agent run is already in progress.");
   agentRunning = true;
   try {
@@ -189,7 +192,7 @@ async function streamAgentRun(request, response) {
     response.write("event: complete\ndata: " + JSON.stringify(record) + "\n\n");
     response.end();
   } catch (error) {
-    const message = error.status === 401 ? "The Anthropic API key was not accepted. Check ANTHROPIC_API_KEY in the .env file." :
+    const message = claude.credentialsRefused(error) ? claude.credentialsRefused(error) :
       error.code === "ERR_MODULE_NOT_FOUND" ? "The agent packages are not installed. Run npm install in the RegChain folder, then restart RegChain." :
       error.message || "The agent run failed.";
     console.error("Agent run failed: " + message);
@@ -212,8 +215,10 @@ async function streamPortfolioRun(request, response) {
     response.write("event: failure\ndata: " + JSON.stringify({ error: message }) + "\n\n");
     response.end();
   };
-  if (mode === "live" && !(await sdkInstalled())) return fail("The Anthropic SDK is not installed. Run npm install in the RegChain folder, then restart.");
-  if (mode === "live" && !(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN)) return fail("Add ANTHROPIC_API_KEY to the .env file next to serve-regchain.cjs, then restart RegChain.");
+  if (mode === "live") {
+    const ai = claude.claudeStatus();
+    if (!ai.ready) return fail(ai.message);
+  }
   if (agentRunning) return fail("An agent run is already in progress.");
   agentRunning = true;
   try {
@@ -228,7 +233,7 @@ async function streamPortfolioRun(request, response) {
     response.write("event: complete\ndata: " + JSON.stringify(record) + "\n\n");
     response.end();
   } catch (error) {
-    const message = error.status === 401 ? "The Anthropic API key was not accepted. Check ANTHROPIC_API_KEY in the .env file." :
+    const message = claude.credentialsRefused(error) ? claude.credentialsRefused(error) :
       error.code === "ERR_MODULE_NOT_FOUND" ? "The agent packages are not installed. Run npm install in the RegChain folder, then restart RegChain." :
       error.message || "The portfolio run failed.";
     console.error("Portfolio run failed: " + message);
@@ -249,13 +254,10 @@ async function readJson(request) {
   try { return JSON.parse(body || "{}"); } catch { throw Object.assign(new Error("Invalid JSON."), { statusCode: 400 }); }
 }
 
-async function sdkInstalled() {
-  try {
-    await import("@anthropic-ai/sdk");
-    return true;
-  } catch {
-    return false;
-  }
+// What the page needs to know about the AI: which Claude service, whether it is set up, and if not, the one thing to do.
+function aiSetup() {
+  const ai = claude.claudeStatus();
+  return { service: ai.label, keySet: ai.configured, sdk: ai.installed, setup: ai.message };
 }
 
 async function latestAnalysis(caseId) {
@@ -329,19 +331,16 @@ async function handleApi(request, response, path) {
   if (path === "/api/ai/status" && request.method === "GET") {
     const recorded = await latestAnalysis(caseId);
     sendJson(response, 200, {
-      model: (await loadModule("analyze.mjs")).MODEL,
-      keySet: Boolean(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN),
-      sdk: await sdkInstalled(),
+      model: claude.claudeSettings().models.aiCheck,
+      ...aiSetup(),
       recorded: recorded ? { at: recorded.at, model: recorded.model, verified: recorded.verification.verified } : null
     });
     return;
   }
   if (path === "/api/agent/status" && request.method === "GET") {
-    const agent = await loadModule("agent.mjs");
     sendJson(response, 200, {
-      keySet: Boolean(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN),
-      sdk: await sdkInstalled(),
-      models: { orchestrator: agent.ORCHESTRATOR_MODEL, specialists: agent.SPECIALIST_MODEL },
+      ...aiSetup(),
+      models: claude.liveModels(),
       systems: await agentSystems(),
       running: agentRunning,
     });
@@ -451,8 +450,9 @@ async function handleApi(request, response, path) {
       return;
     }
     request.resume();
-    if (!(await sdkInstalled())) {
-      sendJson(response, 503, { error: "The Anthropic SDK is not installed. Run npm install in the RegChain folder, then restart." });
+    const ai = claude.claudeStatus();
+    if (!ai.ready) {
+      sendJson(response, 503, { error: ai.message });
       return;
     }
     if (analysisRunning) {
@@ -465,10 +465,9 @@ async function handleApi(request, response, path) {
       const workflow = await (await api()).recordAnalysisResult(caseId, result).catch(error => { console.error("Recording the AI check failed: " + error.message); return null; });
       sendJson(response, 200, { ...result, workflow });
     } catch (error) {
-      const status = error.status === 401 ? 401 : error.status ? 502 : 500;
-      const message = error.status === 401
-        ? "The Anthropic API key was not accepted. Check ANTHROPIC_API_KEY in the .env file."
-        : error.message || "The AI check failed.";
+      // The AI service refusing RegChain's credentials is a problem upstream (502), not a sign-in for this person (401).
+      const status = error.status ? 502 : 500;
+      const message = claude.credentialsRefused(error) || error.message || "The AI check failed.";
       console.error("AI check failed: " + message);
       sendJson(response, status, { error: message });
     } finally {
@@ -561,6 +560,8 @@ server.on("error", error => {
 });
 
 server.listen(port, host, () => {
+  const ai = claude.claudeStatus();
+  console.log("Claude service: " + ai.label + (ai.ready ? ", ready for live AI checks and agent runs." : ". Live AI is off: " + ai.message));
   console.log("RegChain AI is running at " + origin + (config.auth === "password" ? " (named users sign in)" : "") + "\nPress Ctrl+C to stop.");
   openBrowser();
   agentSystems().catch(error => console.error("The agent systems did not start: " + error.message));

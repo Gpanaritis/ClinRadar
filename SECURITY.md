@@ -29,7 +29,7 @@ RegChain AI is a prototype. This is a summary. The settings and their defaults a
 - **Requests.** Unknown `Host` headers are refused. Writes must be JSON from the same site (`Origin` and `Sec-Fetch-Site` are checked). Request bodies are validated against schemas and size-limited, writes to `/v1` and `/api` routes that start work are rate-limited per client address, and an `Idempotency-Key` stops a retried write from applying twice.
 - **Pages.** A Content Security Policy that runs only scripts carrying the page's own nonce, new for every page. No framing, no MIME sniffing, no referrer, same-origin opener and resource policies, camera, microphone, location, payment and USB turned off, and HSTS over HTTPS.
 - **Records.** One SQLite database. The audit trail is append-only (database triggers refuse changes) and hash-chained. `/v1/health` and `/v1/audit/verify` recompute the chain, and `/v1/health` answers 503 when it is broken.
-- **AI and agents.** The Anthropic API key stays on the server. It is never sent to the page or to the MCP server processes. The MCP servers are read-only except for a draft inbox. AI output is a draft, checked by fixed rules and decided by a person.
+- **AI and agents.** The AI credentials (the Anthropic API key, or the cloud identity for AWS, Google Cloud or Azure) stay on the server. They are never sent to the page or to the MCP server processes. RegChain calls Claude models only. The MCP servers are read-only except for a draft inbox. AI output is a draft, checked by fixed rules and decided by a person.
 
 Known limits:
 

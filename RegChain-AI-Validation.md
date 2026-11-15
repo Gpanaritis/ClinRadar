@@ -24,7 +24,7 @@ RegChain is the system of record for what it owns: source versions and evidence,
 ## GAMP 5 categorisation and approach
 
 - **Category 5, custom application.** RegChain's code was written for this purpose. Its runtime (Node.js), database engine (SQLite through `node:sqlite`) and libraries (`zod`, the MCP SDK, the Anthropic SDK) can be treated as infrastructure and standard components, identified by the exact versions in `package-lock.json`.
-- **The AI model is an external service.** It needs a supplier assessment and an agreement with the provider, as for any service provider under Annex 11 §3.
+- **The AI model is an external service.** It needs a supplier assessment and an agreement with the provider, as for any service provider under Annex 11 §3. The provider is whoever runs the chosen Claude service: Anthropic, or the company's cloud provider for Amazon Bedrock, Google Cloud Vertex AI and Microsoft Foundry.
 - **Risk-based approach.** Following GAMP 5 (second edition), effort goes where patient safety, product quality and data integrity are affected. A starting point for the risk assessment:
 
 | Function | Why it matters | Suggested rigour |
@@ -104,8 +104,8 @@ The draft EU GMP Annex 22 on artificial intelligence, published for public consu
 
 What validation of the AI parts should cover:
 
-- The model IDs are pinned in code (`claude-opus-5-5` for the AI check and the orchestrator, `claude-sonnet-5-5` for the specialist agents), and the prompts are versioned in git. Changing either is a change to the system: run `check:ai` and `check:agent` again.
-- The AI check allows the provider's server-side fallback (`fallbacks: "default"` in `regchain-ai/analyze.mjs`), so another model may answer when the pinned one is unavailable. Each result records the model that answered. Decide whether to keep the fallback for validated use.
+- The model IDs are pinned in code (`claude-opus-5-5` for the AI check and the orchestrator, `claude-sonnet-5-5` for the specialist agents), and the prompts are versioned in git. The Claude service (`REGCHAIN_AI_PROVIDER`) and any model name set for it (`REGCHAIN_MODEL_*`) are configuration items, and only Claude models are accepted. Changing the service, a model or a prompt is a change to the system: run `check:ai` and `check:agent` again, then a live AI check and a live agent run on the chosen service, and record the result.
+- On the services Anthropic runs (`anthropic`, `aws`, `google-cloud`), the AI check allows the provider's server-side fallback (`fallbacks: "default"` in `regchain-ai/analyze.mjs`), so another model may answer when the pinned one is unavailable. Each result records the model that answered. Decide whether to keep the fallback for validated use. Bedrock, Vertex AI and Foundry have no server-side fallback, so there the pinned model answers or the check stops.
 - Live AI answers vary between runs. Validate the deterministic checks and the human review with fixed test cases, as the stand-in clients in `check:ai` and `check:agent` do, rather than the wording of a live answer.
 - Review, at intervals, the cases where people rejected or edited the AI draft or chose an option other than the recommended one.
 
