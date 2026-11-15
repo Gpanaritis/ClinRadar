@@ -8,7 +8,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadData, checkShipment, allShipmentChecks, verifyOption, shipmentView, sectionNames } from "./rules.mjs";
+import { loadData, checkShipment, allShipmentChecks, verifyOptionSafe, shipmentView, sectionNames } from "./rules.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 export const SYSTEMS = {
@@ -40,6 +40,8 @@ export function registerTools(server, system, data) {
     server.registerTool("list_shipments_needing_action", { title: "Shipments needing action", description: "Lists planned shipments that are blocked or need a check before dispatch, with the specification sections involved.", inputSchema: {}, annotations: READ },
       async () => json(allShipmentChecks(data).filter(item => item.result !== "Ready").map(item => ({ shipment: item.id, country: item.country, dispatch: item.dispatch, prepare_by: item.prepareBy, result: item.result,
         issues: item.checks.filter(check => ["Fail", "Missing", "Decision", "Confirm"].includes(check.result)).map(check => `${sectionNames[check.section]}: ${check.result} · ${check.detail}`) }))));
+    server.registerTool("list_commitments", { title: "Commitments", description: "Lists the stock and relabelling capacity already promised to plans people approved in RegChain. Options must not use these kits or slot places again.", inputSchema: {}, annotations: READ },
+      async () => json(data.reservations ?? []));
     server.registerTool("get_shipment_checks", { title: "Shipment checks", description: "Checks one planned shipment against its destination's Country Specification and returns every check with its result.", inputSchema: { shipment_id: z.string() }, annotations: READ },
       async ({ shipment_id }) => json({ shipment: shipmentView(data, shipment_id), ...checkShipment(data, shipment_id) }));
     server.registerTool("get_country_specification", { title: "Country Specification", description: "Returns a country's specification (country id uk, de, fr, es or us), or one section of it.", inputSchema: { country: z.string(), section: z.string().optional() }, annotations: READ },
@@ -47,11 +49,14 @@ export function registerTools(server, system, data) {
         const spec = specs[country];
         if (!spec) return json({ error: `No specification for ${country}.` });
         const sections = section ? { [section]: spec.sections[section] } : spec.sections;
-        return json({ country, version: spec.version, published: spec.published, next_scheduled_update: spec.next, sections: Object.fromEntries(Object.entries(sections).filter(([, value]) => value).map(([id, value]) => [id, { name: sectionNames[id], owner: value.owner, items: value.items }])) });
+        const pending = { uk: { id: "RC-UK-001", text: "The amended Part 7 labelling rules apply from 2026-04-28. RegChain's shipment checks already apply them." },
+          es: { id: data.spain.case.id, text: `From ${data.spain.case.effective}: ${data.spain.case.policy} RegChain's shipment checks already apply it.` } }[country];
+        return json({ country, version: spec.version, published: spec.published, next_scheduled_update: spec.next, sections: Object.fromEntries(Object.entries(sections).filter(([, value]) => value).map(([id, value]) => [id, { name: sectionNames[id], owner: value.owner, items: value.items,
+          ...(value.case && pending ? { pending_change: `${pending.id} is waiting for approval and changes this section. ${pending.text}` } : {}) }])) });
       });
     server.registerTool("verify_option", { title: "Verify an option", description: "Tests a proposed option for a shipment against the specification rules and operational feasibility (stock, relabelling slots, label approvals, site stock, QP plan). Fixed rules, no AI. An option passes only if it is feasible and the shipment is no longer blocked.",
       inputSchema: { shipment_id: z.string(), actions: z.array(z.object({ type: z.enum(ACTION_TYPES), batch_id: z.string().optional(), relabel_date: z.string().optional(), new_dispatch_date: z.string().optional(), authorisation_route: z.string().optional(), qp_date: z.string().optional() })) }, annotations: READ },
-      async ({ shipment_id, actions }) => json(verifyOption(data, shipment_id, actions)));
+      async ({ shipment_id, actions }) => json(verifyOptionSafe(data, shipment_id, actions)));
   }
   if (system === "irt") {
     server.registerTool("get_shipment", { title: "Shipment", description: "Returns a planned shipment: site, dispatch and delivery dates, batch, kits, depot and carrier.", inputSchema: { shipment_id: z.string() }, annotations: READ },
@@ -88,12 +93,12 @@ export function registerTools(server, system, data) {
       async ({ site_id }) => json(ops.siteContacts[site_id] ?? { status: "no contact on record" }));
   }
   if (system === "drafts") {
-    let count = 0;
+    const counts = {};
     server.registerTool("create_draft", { title: "Create a draft",
       description: "Creates a draft action for a person to approve in the target validated system: a change request, a relabelling work order, a QP slot booking, a record correction or a message. It never executes anything and never changes a validated record.",
-      inputSchema: { target_system: z.enum(["IRT", "ERP", "Depot", "QMS", "eTMF", "Site portal"]), kind: z.string(), shipment_id: z.string(), title: z.string(), body: z.string() },
+      inputSchema: { target_system: z.enum(["IRT", "ERP", "Depot", "QMS", "eTMF", "Site portal"]), kind: z.string(), shipment_id: z.string(), option_id: z.string().optional().describe("The option this draft belongs to, or 'escalate'."), title: z.string(), body: z.string() },
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false } },
-      async input => json({ draft_id: `DRAFT-${input.shipment_id}-${String(++count).padStart(2, "0")}`, status: `Draft · needs approval in ${input.target_system}`, executed: false, ...input }));
+      async input => json({ draft_id: `DRAFT-${input.shipment_id}-${String((counts[input.shipment_id] = (counts[input.shipment_id] ?? 0) + 1)).padStart(2, "0")}`, status: `Draft · needs approval in ${input.target_system}`, executed: false, ...input }));
   }
 }
 

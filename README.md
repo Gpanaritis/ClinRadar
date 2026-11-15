@@ -38,9 +38,11 @@ A blocked shipment's panel has **Resolve with agents**. It opens a page where an
 - They propose two or three options and check each one against RegChain's rules.
 - They draft the changes for people to approve.
 
-Only options that pass the fixed rules can be approved. Each draft still needs approval in its own validated system. Every step is logged and can be exported.
+Only options that pass the fixed rules can be approved, only by Clinical Supply, and the server checks each one again before recording it. Each draft still needs approval in its own validated system. Every step, approval and withdrawal is logged, and every version of every run is kept in `.regchain-cache/`.
 
-**Run the AI agents** needs the same `.env` key as the AI step. **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers without calling Claude. `npm run check:agent` tests the rules, the six MCP servers, three scripted runs and the live loop with a stand-in for Claude, without calling the API. The systems behind the MCP servers are fictional data in `demo-data/supply-operations.json`. Design and compliance notes: [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
+**Resolve all with agents**, on Shipment checks, runs the agents on every shipment that needs action, most urgent first. RegChain then checks the plans together so no kits or relabelling slot is promised twice: today SHP-06 moves to the 18 Nov slot because SHP-01 needs the 16 Nov one more urgently.
+
+**Run the AI agents** needs the same `.env` key as the AI step. **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers without calling Claude. `npm run check:agent` tests the rules, the six MCP servers, scripted runs, the portfolio allocation, server-side approvals and the live loop with a stand-in for Claude, without calling the API. The systems behind the MCP servers are fictional data in `demo-data/supply-operations.json`. Design and compliance notes: [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
 
 - [Agents: how they resolve blocked shipments within validated systems](RegChain-AI-Agents.md)
 - [Product review, 15 Nov 2026: is the problem real, what was fixed, what is open](RegChain-AI-Product-Review.md)

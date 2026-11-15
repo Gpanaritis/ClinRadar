@@ -149,7 +149,7 @@ async function streamAgentRun(request, response) {
     const { cacheDir } = await loadModule("sources.mjs");
     const dir = cacheDir(__dirname);
     await mkdir(dir, { recursive: true });
-    await writeFile(join(dir, "agent-run-" + shipment + ".json"), JSON.stringify(record, null, 2));
+    await (await loadModule("approvals.mjs")).saveRun(__dirname, record);
     response.write("event: complete\ndata: " + JSON.stringify(record) + "\n\n");
     response.end();
   } catch (error) {
@@ -161,6 +161,56 @@ async function streamAgentRun(request, response) {
   } finally {
     agentRunning = false;
   }
+}
+
+// Every shipment that needs action, as one orchestrated run, streamed like a single run.
+async function streamPortfolioRun(request, response) {
+  const site = request.headers["sec-fetch-site"];
+  if (site && !["same-origin", "none"].includes(site)) {
+    sendJson(response, 403, { error: "Requests from other sites are refused." });
+    return;
+  }
+  const mode = new URL(request.url, origin).searchParams.get("mode") === "live" ? "live" : "scripted";
+  response.writeHead(200, { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-store", Connection: "keep-alive", "X-RegChain-Local": identity });
+  const fail = message => {
+    response.write("event: failure\ndata: " + JSON.stringify({ error: message }) + "\n\n");
+    response.end();
+  };
+  if (mode === "live" && !(await sdkInstalled())) return fail("The Anthropic SDK is not installed. Run npm install in the RegChain folder, then restart.");
+  if (mode === "live" && !(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN)) return fail("Add ANTHROPIC_API_KEY to the .env file next to serve-regchain.cjs, then restart RegChain.");
+  if (agentRunning) return fail("An agent run is already in progress.");
+  agentRunning = true;
+  try {
+    const { resolvePortfolio } = await loadModule("agent.mjs");
+    const { cacheDir } = await loadModule("sources.mjs");
+    const dir = cacheDir(__dirname);
+    await mkdir(dir, { recursive: true });
+    const { record } = await resolvePortfolio({ root: __dirname, mode,
+      emit: event => response.write("data: " + JSON.stringify(event) + "\n\n"),
+      onShipment: async run => (await loadModule("approvals.mjs")).saveRun(__dirname, run) });
+    await writeFile(join(dir, "agent-portfolio-run.json"), JSON.stringify(record, null, 2));
+    response.write("event: complete\ndata: " + JSON.stringify(record) + "\n\n");
+    response.end();
+  } catch (error) {
+    const message = error.status === 401 ? "The Anthropic API key was not accepted. Check ANTHROPIC_API_KEY in the .env file." :
+      error.code === "ERR_MODULE_NOT_FOUND" ? "The agent packages are not installed. Run npm install in the RegChain folder, then restart RegChain." :
+      error.message || "The portfolio run failed.";
+    console.error("Portfolio run failed: " + message);
+    fail(message);
+  } finally {
+    agentRunning = false;
+  }
+}
+
+// A small JSON body from the page. Requiring application/json means another site cannot post here without a preflight.
+async function readJson(request) {
+  if (!String(request.headers["content-type"] || "").startsWith("application/json")) throw Object.assign(new Error("Send JSON."), { statusCode: 415 });
+  let body = "";
+  for await (const chunk of request) {
+    body += chunk;
+    if (body.length > 10000) throw Object.assign(new Error("Request too large."), { statusCode: 413 });
+  }
+  try { return JSON.parse(body || "{}"); } catch { throw Object.assign(new Error("Invalid JSON."), { statusCode: 400 }); }
 }
 
 async function sdkInstalled() {
@@ -252,6 +302,43 @@ async function handleApi(request, response, path) {
   }
   if (path === "/api/agent/run" && request.method === "GET") {
     await streamAgentRun(request, response);
+    return;
+  }
+  if (path === "/api/agent/portfolio-run" && request.method === "GET") {
+    await streamPortfolioRun(request, response);
+    return;
+  }
+  if (path === "/api/agent/portfolio-last" && request.method === "GET") {
+    const { cacheDir } = await loadModule("sources.mjs");
+    try {
+      sendJson(response, 200, JSON.parse(await readFile(join(cacheDir(__dirname), "agent-portfolio-run.json"), "utf8")));
+    } catch {
+      sendJson(response, 404, { error: "No portfolio run on this computer yet." });
+    }
+    return;
+  }
+  if (path === "/api/agent/approvals" && request.method === "GET") {
+    const { readApprovals } = await loadModule("rules.mjs");
+    const { approvalLog } = await loadModule("approvals.mjs");
+    sendJson(response, 200, { approvals: await readApprovals(__dirname), log: await approvalLog(__dirname) });
+    return;
+  }
+  if ((path === "/api/agent/approve" || path === "/api/agent/withdraw") && request.method === "POST") {
+    if (request.headers.origin && !allowedOrigins.includes(request.headers.origin)) {
+      sendJson(response, 403, { error: "Requests from other sites are refused." });
+      return;
+    }
+    if (agentRunning) {
+      sendJson(response, 409, { error: "An agent run is in progress. Approve when it has finished." });
+      return;
+    }
+    try {
+      const body = await readJson(request);
+      const { approvePlan, withdrawPlan } = await loadModule("approvals.mjs");
+      sendJson(response, 200, path === "/api/agent/approve" ? await approvePlan(__dirname, body) : await withdrawPlan(__dirname, body));
+    } catch (error) {
+      sendJson(response, error.statusCode || 500, { error: error.message || "The approval could not be recorded." });
+    }
     return;
   }
   if (path === "/api/sources/retry" && request.method === "POST") {

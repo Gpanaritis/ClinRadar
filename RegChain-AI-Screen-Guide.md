@@ -150,11 +150,11 @@ Opening a shipment shows each check with its result, the reason and where the re
 
 **Real or simulated:** the checks are rules written in the page, run on the demo portfolio and the Spain scenario. Invoices, label texts and courier data aren't connected, so those requirements show as Not checked. Actions are saved in the browser.
 
-### 15. Agents · resolving a blocked shipment
+### 15. Agents · resolving blocked shipments
 
 ![Resolve with agents in the shipment panel](screens/19-agents-drawer.png)
 
-**Shows:** every blocked or to-confirm shipment's panel now has **Resolve with agents** after the checks. Recording an action by hand is still there below it, under **Or record an action yourself**. The button opens the Agents page for that shipment (the menu keeps Shipment checks highlighted).
+**Shows:** every blocked or to-confirm shipment's panel has **Resolve with agents** after the checks. Recording an action by hand is still there below it, under **Or record an action yourself**. Once an agent plan is approved, the panel shows it in place of the manual form, with **Withdraw the approval**. Shipment checks also has **Resolve all with agents** at the top.
 
 ![Agents page](screens/19b-agents.png)
 
@@ -162,36 +162,45 @@ At the top, **How the agents are kept in bounds**:
 
 - read-only access to the validated systems;
 - drafts, never changes;
-- fixed rules decide whether an option passes;
+- fixed rules decide whether an option passes, and again when someone approves, and kits and slots are never promised twice;
 - every step is logged.
 
 Below it are the six systems connected over MCP, with their tool counts: five read-only and one draft-only.
 
-**What the agents are doing** fills in step by step as the run streams. The orchestrator states the goal, reads the checks and asks a specialist. The specialist calls its system, shown as a chip with the tool and its inputs, and the system's answer appears beneath. The specialist reports back, the orchestrator checks options, and finally the verifier checks every option. The **Agents** panel shows who is working and how many tool calls each agent made. **This run** shows the mode, the models, the steps, the MCP calls, the drafts and, for live runs, the tokens.
-
-![Options checked against the rules](screens/19c-agents-options.png)
+**What the agents are doing** fills in step by step as the run streams. The orchestrator states the goal, reads the checks and what other plans already hold, and asks a specialist. The specialist calls its system, shown as a chip with the tool and its inputs, and the system's answer appears beneath (shortened on screen, kept in full in the record). The specialist reports back, the orchestrator checks options, and finally the verifier checks every option. If someone opens another shipment while a run is in progress, that page says so instead of mixing the two.
 
 **Resolution** shows the recommendation, the root cause and each option with:
 
 - its actions;
 - why it was proposed and its risk;
-- RegChain's result: "Passes the rules · confirm before dispatch", or "Does not pass · not feasible" with the reason, for example "the site has 7 days of stock".
+- RegChain's result: "Passes the rules · confirm before dispatch", or "Does not pass · not feasible" with the reason, for example "relabelled kits are ready on 17 Nov, after preparation starts on 14 Nov".
 
-Only passing options have **Approve this plan**, approved under the role chosen in **Acting as**. Approving:
+Only passing options have **Approve this plan**, and only **Clinical Supply** can approve: the other roles see the buttons disabled. The server checks the option once more before it records the approval. Approving:
 
-- records the plan and the person;
-- marks the shipment "Batch swap requested" or "On hold" on Shipment checks;
+- records the plan, the person and the run it came from;
+- marks the shipment "Agent plan approved" on Shipment checks;
 - shows each draft with "Next: approve this draft in IRT" (or ERP, the depot, the QMS, the site portal).
 
-Nothing changes in the validated systems. **Export the run** saves the full audit record as JSON.
+Approving an option other than the recommendation drafts its changes and withdraws the others. A newer run never inherits an earlier approval: it shows "It came from an earlier run" until someone withdraws it. Nothing changes in the validated systems. **Export the run** saves the full audit record as JSON, with the approval log.
 
-![Escalation when nothing passes](screens/19d-agents-escalation.png)
+![Every shipment that needs action](screens/19c-agents-all.png)
+
+**Resolve all with agents** runs the agent team on all 16 shipments that are blocked or need confirming:
+
+- The shipments are ordered by preparation date, the most urgent first.
+- RegChain then checks the plans together, so no kits or relabelling slot is promised twice.
+- The board shows the totals: 14 plans that pass, 1 re-planned, 2 escalated, 28 drafts.
+- Each row has the plan, RegChain's result and an **Approve** or **Acknowledge** button.
+
+![A re-planned shipment](screens/19d-agents-replanned.png)
+
+SHP-06 is the re-planned one. On its own, its agents pick the 16 Nov relabelling slot. SHP-01 is more urgent and needs 10 of that slot's 20 places; SHP-06 needs 14. RegChain moves SHP-06 to the 18 Nov slot, withdraws the first drafts (struck through, with the reason) and drafts the new plan. The shipment's own page shows the same result as the board.
 
 When no option passes, as for SHP-03 (the German label specification takes 15 business days and the site has 7 days of stock), the agents recommend **escalation** and draft a QMS escalation instead of guessing.
 
 **Real or simulated:**
 
-- **Real:** the MCP servers, the agent loop, the rule checks, the streaming and the approval.
+- **Real:** the MCP servers, the agent loop, the rule checks, the portfolio allocation, the streaming and the approval.
 - **Fictional:** the systems behind the MCP servers are data in `demo-data/supply-operations.json`.
 - **Run modes:** **Run the AI agents** needs the API key and has not been run yet. **Scripted walkthrough (no AI)** runs the same steps with coded decisions and is what these screens show.
 
