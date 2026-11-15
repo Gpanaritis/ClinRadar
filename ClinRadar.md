@@ -1,27 +1,27 @@
-# SupplyShield AI
+# ClinRadar
 
 External risk and country regulatory intelligence for global clinical supply · 15 November 2026
 
-SupplyShield AI was called RegChain AI until 15 November 2026. The product name changed on screen; the repository, the file names, the `regchain-ai/` folder and the `REGCHAIN_*` settings keep the old name so that nothing that runs today breaks.
+ClinRadar was called RegChain AI until 15 November 2026. The product name changed on screen; the repository, the file names, the `regchain-ai/` folder and the `REGCHAIN_*` settings keep the old name so that nothing that runs today breaks.
 
 ## What it does
 
-SupplyShield watches the outside world only where the company actually runs trials. It reads the authorised active-trial portfolio from the CTMS, monitors the countries with an operationally active trial, and recommends other countries with the evidence for each one, without ever switching them on by itself. It matches each external event and each regulatory change to the company's own planned shipments, facilities, routes, deadlines and operating constraints. It then says which shipment is affected, how sure it is, and what evidence is still missing. For a confirmed disruption, AI agents propose recovery options, fixed rules check every option, and a named person approves. Nothing changes in a validated system, in the Country Specifications or in a shipment instruction without that approval.
+ClinRadar watches the outside world only where the company actually runs trials. It reads the authorised active-trial portfolio from the CTMS, monitors the countries with an operationally active trial, and recommends other countries with the evidence for each one, without ever switching them on by itself. It matches each external event and each regulatory change to the company's own planned shipments, facilities, routes, deadlines and operating constraints. It then says which shipment is affected, how sure it is, and what evidence is still missing. For a confirmed disruption, AI agents propose recovery options, fixed rules check every option, and a named person approves. Nothing changes in a validated system, in the Country Specifications or in a shipment instruction without that approval.
 
 The goal is a company-specific risk assessment and a controlled action, not a feed of world news.
 
 ## Why: what the research found
 
-The full report, with sources, is [SupplyShield-AI-Research.md](SupplyShield-AI-Research.md). In short:
+The full report, with sources, is [ClinRadar-Research.md](ClinRadar-Research.md). In short:
 
 - **Rule changes alone are a narrow problem.** Supply-relevant rule changes are few: at least 9 in 8 jurisdictions from 2022 to 2026, mostly announced well ahead, and several of them relaxations. Monitoring regulations is also already sold, by RegASK, Freyr, IQVIA, Clarivate and Veeva. The pitch "a missed rule change breaks clinical supply" has no evidence behind it.
 - **Requirements that already exist but are missed on a given shipment are reported again and again.** Examples are permits that name quantities or sites, licences that must change when the contents change, exact-kit invoices, and the importer of record. Nobody publishes how often this happens. In the one multi-company study, the cross-border leg is the weak point: 80% of shipments to in-country depots arrived on time, against 97% of shipments to sites (Tufts CSDD, 2016).
 - **Keeping patients supplied is a regulatory duty, and disruptions do hit trials.** ICH E6(R3) 3.15.3(c)(i) asks for timely supply "to avoid any interruption" of treatment. EMA counts systematic missed doses, unmanaged temperature excursions and IRT faults as serious breaches. Wars and closed airspace, COVID-19, comparator shortages and IT outages have all stopped or slowed trials.
 - **Nobody links an external event or a country requirement to a specific planned shipment, then proposes a recovery for a person to approve.** The 2026 supply agents (Signant, Endpoint, Suvoda) flag risks inside their own systems. Veeva's Batch Release uses regulatory status per country, but only for marketed products. The fastest competitors to watch are Veeva and IQVIA, which already hold most of the pieces.
 
-## How SupplyShield follows its brief
+## How ClinRadar follows its brief
 
-| # | The brief | How SupplyShield does it | Where |
+| # | The brief | How ClinRadar does it | Where |
 |---|---|---|---|
 | 1 | Retrieve the active studies and their operationally active countries from the CTMS | The CTMS snapshot (`ctms` in `demo-data/supply-network.json`) gives each study's status and each country's supply status: supplying, approved but not started, or closed. Agents read it through the CTMS MCP server (`get_active_studies`). | Monitoring scope |
 | 2 | Monitor only those countries automatically | 16 countries with an operationally active trial are monitored for external risk and for regulatory and customs changes. These switches are locked on. The status policy in `config/supplyshield.yaml` leaves out 4 of the 22 studies: two completed (STUDY-018, STUDY-019 in Brazil), one suspended (STUDY-020) and one not yet recruiting (CTP-7842-201). | Monitoring scope |
@@ -31,21 +31,21 @@ The full report, with sources, is [SupplyShield-AI-Research.md](SupplyShield-AI-
 | 6 | No list of "hostile" countries; geopolitical exposure only on current authoritative evidence | No country list judges hostility. Official advice counts only as evidence on a country that already has a supply link or a border, and it always carries its source and date (UK FCDO, Open Government Licence). | `regchain-ai/supplyshield.mjs` |
 | 7 | Match events to shipments, facilities, routes, deadlines and constraints | Every shipment has a route with the day of each leg: collection, road, flight, import clearance, delivery. An event matches by place (airport, facility, road country) and by day. The checks also apply depot working days, Israeli delivery days, preparation dates and import approval terms (port of entry, kits, consignee, validity). | Shipments, Signals |
 | 8 | Separate an observed event, a potential exposure and a confirmed disruption | Four tiers, defined below, for every match and every signal. | Signals, Shipments |
-| 9 | Investigate missing evidence with authorised tools; never invent | A match is confirmed only by a record from the courier or the depot, with its time. Without one, the match stays a potential exposure, and the screen names what is missing and who must confirm it. The agents read the courier and depot systems over MCP, and their instructions forbid guessing a status. | Signal page, plan page |
+| 9 | Investigate missing evidence with authorised tools; never invent | A match is confirmed only by a record from the courier or the depot, with its time. Without one, the match stays a potential exposure, and the screen names what is missing and who must confirm it. The agents read the courier and depot systems over MCP, and their instructions forbid guessing a status. A route through a country nobody monitors is never called clear: it needs a confirmation. | Signal page, plan page |
 | 10 | Propose feasible mitigations and assign owners | The agents propose options, for example leave from Amsterdam instead of Brussels, or dispatch on 25 Nov. Fixed rules check each one. Each draft names its system and owner. | Plan page |
 | 11 | Human approval before changing the country intelligence, regulated systems or shipment instructions | Country Specification edits go through the Regulatory SME's decision. Plans need Clinical Supply's approval. Every system change is a draft that someone approves in IRT, ERP, the depot, the courier, the QMS or the site portal. | Plan page, change cases |
 | 12 | Keep evidence, timestamps, history and audit | Monitoring decisions, the CTMS connection, every check of the feeds, every approval and every agent run are in the hash-chained audit trail and the run history. | Settings, audit export |
 
-With no CTMS connected, SupplyShield says that its monitoring scope cannot be determined and monitors nothing. It never assumes that every country with registered trials is in scope.
+With no CTMS connected, ClinRadar says that its monitoring scope cannot be determined and monitors nothing. It never assumes that every country with registered trials is in scope.
 
 ## The starter pack, built in
 
-The team's SupplyShield starter pack has three files, and all of them are now in the repository:
+The team's ClinRadar starter pack has three files, and all of them are now in the repository:
 
-| File | What SupplyShield does with it |
+| File | What ClinRadar does with it |
 |---|---|
 | `config/supplyshield.yaml` (the agent configuration) | The engine reads it at every check (`regchain-ai/yaml-lite.mjs`). It sets which study statuses count as active (RECRUITING, ENROLLING_BY_INVITATION, ACTIVE_NOT_RECRUITING, TREATMENT_ONGOING, FOLLOW_UP_ONGOING), what is left out by default (not yet recruiting, suspended, completed), which kinds of recommendation are made, which risk categories are monitored, the governance flags and the monitoring cadence. Recommended countries are never switched on automatically, even if the file says otherwise. |
-| `SupplyShield-AI-Master-Prompt.md` (the master prompt) | Its master agent instructions are the orchestrator's system prompt, followed by the per-shipment task. Both are sent as one cached prefix, so later turns read them from the cache. The specialists keep their short instructions. |
+| `ClinRadar-Master-Prompt.md` (the master prompt) | Its master agent instructions are the orchestrator's system prompt, followed by the per-shipment task. Both are sent as one cached prefix, so later turns read them from the cache. The specialists keep their short instructions. |
 | `demo-data/country-catalogue-iso3166.csv` (the ISO 3166 catalogue) | It supplies the names and codes for any country a CTMS might send. It is a vocabulary, not a list of countries to monitor. |
 
 What the pack added to the engine:
@@ -59,7 +59,7 @@ What the pack added to the engine:
 - **Tracking outages.** A courier tracking outage is lost visibility, never a lost shipment.
 - **Insufficient data.** A shipment without a route on record says so instead of getting invented transit countries.
 - **Recommendation reviews.** A recommendation can be dismissed with a reason, and restored. A country that is being monitored has to be switched off first.
-- **The pack's tool names.** The MCP servers answer to the contract's names: `get_active_studies`, `get_study_countries`, `get_shipment_route`, `get_carrier_or_provider_status`, `get_land_neighbors`. A request to monitor a country can only be a draft for a person (target "SupplyShield monitoring").
+- **The pack's tool names.** The MCP servers answer to the contract's names: `get_active_studies`, `get_study_countries`, `get_shipment_route`, `get_carrier_or_provider_status`, `get_land_neighbors`. A request to monitor a country can only be a draft for a person (target "ClinRadar monitoring").
 - **The exact answer with no portfolio.** The agent gives the pack's sentence word for word (`scope.agentAnswer`); the screen shows the same meaning in the third person.
 
 ### The pack's thirty acceptance tests
@@ -110,13 +110,54 @@ A regulatory change that waits for the Regulatory SME **holds** the shipments it
 | **Confirmed disruption** | An authorised system confirmed the impact, with a time. Example: the courier cancelled SHP-IL-01's flight from Brussels on 24 Nov 2026 (14 Nov, 08:10 UTC). |
 | **Not affected after check** | It touched one of ours, and the carrier or depot confirmed normal operation. Example: SHP-03's truck is in Germany before the Belgian strike day. |
 
-A confirmed disruption blocks the shipment and a potential exposure adds a confirmation; both are shown on the shipment's checks. A new route through a country SupplyShield does not monitor needs a person's decision first.
+A confirmed disruption blocks the shipment and a potential exposure adds a confirmation; both are shown on the shipment's checks. A new route through a country ClinRadar does not monitor needs a person's decision first.
+
+**No false assurance on unmonitored routes.** A booked route whose legs pass through a country that is not monitored for external risk is never shown as Ready for external risk. It gets a Confirm check, for example "External risk is not monitored on this route: Belgium (depot and departure). … Turn it on in Monitoring scope or confirm with the EMEA specialty courier." Only countries on the route legs count (collection, road, departure, hub, arrival, import clearance, delivery). In the prepared workspace Belgium is on, so no planned shipment crosses an unmonitored country and the counts stay at 14 blocked, 5 to confirm and 6 ready. Turn Belgium off and every shipment leaving the central EU depot becomes Confirm instead of Ready; SHP-IL-01 loses the strike Fail, because the strike is no longer seen, and gets this Confirm instead.
+
+## The watch team
+
+Four agents sweep every monitored country, one kind of hazard each. Every signal carries a `hazard` field, set by fixed rules from its category and source.
+
+| Agent id | Name | Watches | Sources in the prototype |
+|---|---|---|---|
+| `weather` | Weather & natural hazards | GDACS alerts (floods, cyclones, earthquakes, wildfires, volcanic ash), weather warnings on lanes and facilities | GDACS (live or recorded), recorded weather warnings |
+| `transport` | Strikes & transport | Labour action, airport, port and road notices, carrier and depot operations, tracking outages | Airport and transport-authority notices, courier and depot systems |
+| `security` | Security & travel advice | UK FCDO travel advice, conflict, unrest, border closures | UK FCDO (live or recorded) |
+| `regulatory` | Regulatory & customs | Rule changes waiting for the Regulatory SME, import permits and approvals | Country Specifications, UK legislation and MHRA guidance, EU rules, eTMF import approvals |
+
+They run on Claude Haiku 5.5 (`REGCHAIN_MODEL_WATCH`): sweeping every country is cheap, high-volume scanning. The orchestrator stays on Claude Opus 5.5 and the specialists on Claude Sonnet 5.5. In **Plan all**, the orchestrator dispatches the four before triage, and triage uses what they found: patients first (SHP-IL-01 runs out on 27 Nov), then by preparation date. In a single-shipment run with a route risk, the orchestrator asks the matching watch agent to confirm the event, its evidence level and its duration before the logistics agent looks for alternatives.
+
+To keep the story global, the recorded events include an illustrative US National Weather Service winter storm watch over the US depot in Allentown, Pennsylvania, on 16–17 Nov 2026. No collection is planned there on those days, so it is an observed event that touches a facility of ours. The weather agent also names what is not watched (the APAC depot in Singapore, the manufacturer in Switzerland, the supplier in India) and the red GDACS tropical cyclone alert in India from 1 to 3 Nov, which is context for a recommendation, not a signal.
+
+The page gets `watch` (one summary per agent: `agent`, `name`, `hazard`, `sources`, `countries`, `regions`, `events`, `touching`, `confirmed`, `potential`, `top`, `gaps`, `finding`) and `regulatoryItems` in the ClinRadar payload. The portfolio run record keeps the same four summaries, each with the agent's own finding.
+
+## Enterprise risk alerts
+
+Most pharma companies already run an enterprise risk or crisis-alerting system (Everbridge, Dataminr, Crisis24, Resilinc, Interos). It alerts offices, sites, suppliers and travellers, and knows nothing about trials, patients, IMP shipments or depots. ClinRadar ingests those alerts and says which ones touch our studies, sites, routes and facilities, and counts the rest. *Your enterprise system told everyone about the strike; ClinRadar told Clinical Supply which patients.*
+
+Each alert becomes a ClinRadar signal (`regchain-ai/enterprise.mjs`): its category and hazard, country, window and place (an airport, one of our facilities in the named city, our trial sites in the named cities, a provider's systems, or the country's roads for strikes and unrest). Then the usual merging, matching and tiers apply. An aggregator alone is a single source. It can corroborate an incident another source already reported, but it never confirms an impact on a shipment: only the courier or the depot can.
+
+The seven illustrative alerts in `demo-data/enterprise-alerts.json`:
+
+| Alert | What ClinRadar makes of it |
+|---|---|
+| Belgian national action day, 24 Nov | Merged into SIG-BE-STRIKE-1124 as a third source (SHP-IL-01, SHP-03) |
+| Winter storm, eastern Pennsylvania, 16–17 Nov | Merged into SIG-US-WINTER-1116 as a second source (the US depot) |
+| Seasonal heat outlook for Andalusia, March 2027 | New signal SIG-ENT-ERS-26-114-0042: a single-source potential exposure for the deliveries to Sevilla (SHP-ES-08) and Málaga (SHP-ES-10). The depot and the courier must confirm that the qualified packaging holds the shipments' 15–25 °C range. Both shipments were already blocked, so the results stay at 14, 5 and 6 |
+| Ransomware at a forwarder we don't use | Counted, not matched: no study, site, route or facility affected |
+| Typhoon warning, northern Taiwan | Counted, not matched |
+| Demonstration in central Paris, 21 Nov | Counted, not matched: no shipment of ours is on French roads that day |
+| Planned power cut in the Basel industrial area, 19 Nov | Coverage gap: it touches our drug-product manufacturer in Switzerland, which nobody monitors, so ClinRadar suggests turning Switzerland on |
+
+The watch agents read the alerts of their own kind (`specs.get_enterprise_alerts`) and report them, for example "Enterprise risk system: 3 alerts, 1 touches our network (merged into SIG-BE-STRIKE-1124), 1 coverage gap".
+
+**For a real deployment**, the enterprise system posts to `POST /api/enterprise-alerts`: one alert, an array, or `{ "alerts": [...] }`. The webhook takes JSON only, at most 256 KB and 100 alerts per request, and is rate-limited per address. Every alert is validated before any is stored. With named users it requires `Authorization: Bearer <REGCHAIN_ENTERPRISE_TOKEN>` and is refused (503) while that variable is unset; in local mode only this computer may call it. Alerts are stored in the data folder (`enterprise-alerts.json`), merged with the demo file on load, and audited as `enterprise.alert_received`. The answer says what ClinRadar made of each alert. `GET /v1/enterprise-alerts` (optional `hazard`) reads the same summary, and the page gets it as `enterprise` in the ClinRadar payload.
 
 ## The demonstration, in five minutes
 
 | Time | Screen | What happens | What to say |
 |---|---|---|---|
-| 0:00 | Overview, empty workspace (`?empty`) | No portfolio is connected | "SupplyShield monitors nothing until it knows which trials we run. It doesn't watch the whole world." |
+| 0:00 | Overview, empty workspace (`?empty`) | No portfolio is connected | "ClinRadar monitors nothing until it knows which trials we run. It doesn't watch the whole world." |
 | 0:20 | First check | Connect the CTMS (read-only): 22 studies, 18 counted under the company's status policy; 16 countries operationally active; 5 excluded; Portugal's contradictory status waits for confirmation | "Only the countries where we actually supply patients, by the company's own definition of active." |
 | 0:50 | Recommendations | 50 countries recommended, all off. Belgium comes first: it hosts the central EU depot, and 17 planned shipments leave from it. Austria has a suspended study with 24 kits still on site | "Belgium has no active site, so it isn't monitored automatically. The evidence says it should be, so I turn it on, with a reason." |
 | 1:30 | Signals | The check finds the national strike in Belgium on 24 Nov: **confirmed disruption** for SHP-IL-01 (the courier cancelled the Brussels to Tel Aviv flight); SHP-03 **not affected after check**; the Ben Gurion works a **potential exposure** for SHP-IL-02 | "Three levels of certainty, each with its evidence. Nothing is a guess." |
@@ -141,7 +182,7 @@ Without an API key, the agents run as the scripted walkthrough (no AI) through t
 | Live feeds (FCDO, GDACS) with a recorded copy | `regchain-ai/feeds.mjs`, `scripts/record-feeds.mjs` (`npm run record:feeds`), `demo-data/recorded-feeds.json` |
 | Route and import-approval checks inside every shipment check; the `reroute` action | `regchain-ai/rules.mjs` |
 | CTMS and courier MCP servers; scope and signal tools; facility status; approval terms | `regchain-ai/mcp-servers.mjs` |
-| SupplyShield orchestrator instructions; the scripted recovery of a confirmed disruption | `regchain-ai/agent.mjs` |
+| ClinRadar orchestrator instructions; the scripted recovery of a confirmed disruption | `regchain-ai/agent.mjs` |
 | Page endpoints: `GET /api/supplyshield`, `POST /api/supplyshield/monitoring`, `/portfolio`, `/check` | `serve-regchain.cjs` |
 | Public read API: `GET /v1/monitoring-scope`, `/v1/signals`, `/v1/signals/{id}`, `/v1/shipments/{id}/risk` | `regchain-ai/api.mjs`, `regchain-ai/openapi.mjs` |
 | Supply network, CTMS statuses, routes, permits, courier and depot records, geography | `demo-data/supply-network.json` |
@@ -154,5 +195,5 @@ Without an API key, the agents run as the scripted walkthrough (no AI) through t
 - **Country-level hazard alerts.** GDACS alerts are matched by country, not yet by location.
 - **More sources:** EU weather warnings (MeteoAlarm), EASA conflict-zone bulletins, airport and strike notices, sanctions lists, and customs portals.
 - **Real company data:** courier, depot and IRT connections through the same MCP tools; import approvals and their terms for every country; Country Specifications from the real documents (only with the company's approval).
-- **Proof of the problem:** before building further, ask 5 to 10 supply teams for 12 months of holds, relabels and missed deliveries, with root causes. The case for SupplyShield is strongest if most of those events trace back to an existing requirement or an external event that nobody matched to the shipment in time.
-- **GxP:** SupplyShield starts as decision support. Once it blocks shipments or edits controlled documents, it needs validation, Part 11 signatures and the company's own procedures ([RegChain-AI-Validation.md](RegChain-AI-Validation.md)).
+- **Proof of the problem:** before building further, ask 5 to 10 supply teams for 12 months of holds, relabels and missed deliveries, with root causes. The case for ClinRadar is strongest if most of those events trace back to an existing requirement or an external event that nobody matched to the shipment in time.
+- **GxP:** ClinRadar starts as decision support. Once it blocks shipments or edits controlled documents, it needs validation, Part 11 signatures and the company's own procedures ([RegChain-AI-Validation.md](RegChain-AI-Validation.md)).

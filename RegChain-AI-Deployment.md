@@ -15,12 +15,12 @@
 
 Records made in local mode do not name a real person. Use password mode for anything you intend to keep.
 
-In local mode, `node serve-regchain.cjs` starts RegChain at `http://127.0.0.1:4173/`. On Windows, `npm start` or **Start-RegChain.cmd** also opens the browser.
+In local mode, `node serve-regchain.cjs` starts RegChain at `http://127.0.0.1:4173/`. On Windows, `npm start` or **Start-ClinRadar.cmd** also opens the browser.
 
 In password mode:
 
-- The dashboard and its data are served only after sign-in. Before that, `/` shows the sign-in page.
-- Every `/api` route and every `/v1` route needs a signed-in user, except `GET /v1/health`, `GET /v1/session`, `POST /v1/auth/login` and `GET /v1/openapi.json`. Other requests get 401.
+- The dashboard and its data are served only after sign-in. Before that, `/` shows the sign-in page. The public launch page at `/site/` (`sites/clinradar/`) is served before and after sign-in.
+- Every `/api` route and every `/v1` route needs a signed-in user, except `GET /v1/health`, `GET /v1/session`, `POST /v1/auth/login`, `GET /v1/openapi.json` and the launch page's contact form, `POST /api/contact` (same-site JSON, validated, at most `REGCHAIN_CONTACTS_PER_HOUR` per client address, stored as one line in `<data dir>/contact-requests.jsonl` without the client address). Other requests get 401.
 - `POST /v1/session`, the role switch, answers 403. A person cannot change role.
 
 ## Settings
@@ -40,6 +40,8 @@ All settings are environment variables. An unset variable uses the default.
 | `REGCHAIN_LOGIN_ATTEMPTS_PER_ADDRESS` | `20` | Failed sign-ins from one client address, across usernames, before it is locked |
 | `REGCHAIN_LOGIN_LOCK_MINUTES` | `15` | The window in which failures are counted, so a lock lasts at most this long |
 | `REGCHAIN_WRITES_PER_MINUTE` | `120` | Per client address per minute: write requests to `/v1`, and separately requests to `/api` that start work. Over the limit: 429 with `Retry-After` |
+| `REGCHAIN_CONTACTS_PER_HOUR` | `10` | Per client address per hour: messages sent through the public contact form (`POST /api/contact`). Over the limit: 429 with `Retry-After` |
+| `REGCHAIN_ENTERPRISE_TOKEN` | none | Password mode: the bearer token the enterprise risk system sends to `POST /api/enterprise-alerts`. While it is unset the webhook answers 503. In local mode only this computer may post alerts. Use a long random value and keep it in the secret store |
 | `REGCHAIN_LOG_FORMAT` | `json` | `text` gives lines for reading in a terminal |
 | `REGCHAIN_LOG_LEVEL` | `info` | `debug`, `info`, `warn` or `error` |
 | `REGCHAIN_DATA_DIR` | `.regchain-data` in the RegChain folder | Folder of the database. The Docker image sets `/data` |
@@ -50,7 +52,7 @@ All settings are environment variables. An unset variable uses the default.
 | `REGCHAIN_NEW_PASSWORD` | none | Read by `scripts/users.mjs` only: the password to set instead of a generated one |
 | `REGCHAIN_AI_PROVIDER` | `anthropic` | Which Claude service RegChain calls: `anthropic`, `aws`, `bedrock`, `google-cloud`, `vertex` or `foundry`. See [Which Claude service](#which-claude-service) |
 | `ANTHROPIC_API_KEY` | none | With `anthropic`: turns on the live AI check and live agent runs. `ANTHROPIC_AUTH_TOKEN` is also accepted |
-| `REGCHAIN_MODEL_ORCHESTRATOR`, `REGCHAIN_MODEL_SPECIALIST`, `REGCHAIN_MODEL_AI_CHECK` | the service's names for Claude Opus 5.5, Claude Sonnet 5.5 and Claude Opus 5.5 | The model for the master agent, the specialist agents and the AI check. Claude models only |
+| `REGCHAIN_MODEL_ORCHESTRATOR`, `REGCHAIN_MODEL_SPECIALIST`, `REGCHAIN_MODEL_WATCH`, `REGCHAIN_MODEL_AI_CHECK` | the service's names for Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5 and Claude Opus 5.5 | The model for the master agent, the specialist agents, the watch team and the AI check. Claude models only |
 
 Switches accept `1`, `true`, `yes` or `on`. A number that is empty or not a number falls back to its default.
 
@@ -77,7 +79,7 @@ RegChain uses Claude models only. `REGCHAIN_AI_PROVIDER` chooses how it reaches 
 
 **Installing the package.** In a folder install, run `npm install` with the package name in the RegChain folder. With Docker, build with it: `docker compose build --build-arg REGCHAIN_AI_PACKAGES=@anthropic-ai/bedrock-sdk` (several packages go in quotes, separated by spaces), and add the service's settings to `docker-compose.yml`. The cloud packages are not in `package.json`, so an install that uses Anthropic's API carries no cloud libraries.
 
-**Model names.** `REGCHAIN_MODEL_ORCHESTRATOR`, `REGCHAIN_MODEL_SPECIALIST` and `REGCHAIN_MODEL_AI_CHECK` replace the names in the table, for example for a Foundry deployment with its own name. Only Claude models are accepted: a name without "claude" turns live AI off with a message.
+**Model names.** `REGCHAIN_MODEL_ORCHESTRATOR`, `REGCHAIN_MODEL_SPECIALIST`, `REGCHAIN_MODEL_WATCH` and `REGCHAIN_MODEL_AI_CHECK` replace the names in the table, for example for a Foundry deployment with its own name. Only Claude models are accepted: a name without "claude" turns live AI off with a message.
 
 **One difference between services.** On the services Anthropic runs (`anthropic`, `aws`, `google-cloud`), the AI check asks for Anthropic's server-side fallback, so another Claude model can answer if the chosen one declines. Bedrock, Vertex AI and Foundry do not offer it: there a refusal ends the check with a message, and the expert runs it again or decides without it. Everything else RegChain uses (streaming, tool use, adaptive thinking, structured outputs) works on all six.
 

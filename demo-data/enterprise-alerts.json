@@ -1,0 +1,98 @@
+{
+  "schema_version": "1.0",
+  "system": "Enterprise risk system (illustrative)",
+  "note": "Illustrative alerts shaped like a typical enterprise crisis-alerting feed (Everbridge, Dataminr, Crisis24, Resilinc, Interos and similar). They are invented for the scenario: never present them as real news. The enterprise system alerts offices, sites, suppliers and travellers; ClinRadar works out which alerts touch our studies, sites, routes and facilities.",
+  "alerts": [
+    {
+      "id": "ERS-26-114-0031",
+      "system": "Enterprise risk system (illustrative)",
+      "receivedAt": "2026-11-13T19:05:00Z",
+      "severity": "Severe",
+      "category": "Labour action",
+      "title": "Belgium: national action day on 24 Nov 2026, Brussels Airport expects no departures",
+      "summary": "Unions have called a national action day for Tuesday 24 November. Brussels Airport expects no departing flights; disruption is likely on public transport and at ports. Staff should plan to work from home.",
+      "location": { "country": "BE", "city": "Brussels", "airport": "BRU" },
+      "window": { "from": "2026-11-24", "to": "2026-11-24" },
+      "audience": "All EMEA offices and travellers",
+      "illustrative": true
+    },
+    {
+      "id": "ERS-26-114-0038",
+      "system": "Enterprise risk system (illustrative)",
+      "receivedAt": "2026-11-14T03:10:00Z",
+      "severity": "Moderate",
+      "category": "Winter weather",
+      "title": "United States: heavy snow and ice in eastern Pennsylvania, 16 to 17 Nov 2026",
+      "summary": "A winter storm is forecast for eastern Pennsylvania, including Allentown and the Lehigh Valley. Expect slow roads and possible office closures.",
+      "location": { "country": "US", "city": "Allentown", "area": "Lehigh Valley, Pennsylvania" },
+      "window": { "from": "2026-11-16", "to": "2026-11-17" },
+      "audience": "US offices and warehouse sites",
+      "illustrative": true
+    },
+    {
+      "id": "ERS-26-114-0042",
+      "system": "Enterprise risk system (illustrative)",
+      "receivedAt": "2026-11-14T05:20:00Z",
+      "severity": "Moderate",
+      "category": "Extreme heat",
+      "title": "Seasonal outlook for Andalusia (Sevilla, Málaga): above-normal temperatures in March 2027",
+      "summary": "The seasonal climate outlook gives above-normal temperatures for Andalusia through March 2027, with early heat episodes possible. Review temperature-sensitive deliveries and outdoor work.",
+      "location": { "country": "ES", "area": "Andalusia", "cities": ["Sevilla", "Málaga"] },
+      "window": { "from": "2027-03-01", "to": "2027-03-31" },
+      "audience": "Iberia offices and field staff",
+      "illustrative": true
+    },
+    {
+      "id": "ERS-26-114-0045",
+      "system": "Enterprise risk system (illustrative)",
+      "receivedAt": "2026-11-14T06:00:00Z",
+      "severity": "Severe",
+      "category": "Cyber incident",
+      "title": "Netherlands: ransomware outage at NorthSea Freight Systems, tracking and bookings down",
+      "summary": "NorthSea Freight Systems, a freight forwarder used by some business units, reports a ransomware incident. Its tracking and booking platform is offline while it restores systems.",
+      "location": { "country": "NL", "city": "Rotterdam", "provider": "NorthSea Freight Systems" },
+      "window": { "from": "2026-11-14", "to": "2026-11-17" },
+      "audience": "Procurement and logistics teams",
+      "illustrative": true
+    },
+    {
+      "id": "ERS-26-114-0047",
+      "system": "Enterprise risk system (illustrative)",
+      "receivedAt": "2026-11-14T06:30:00Z",
+      "severity": "Severe",
+      "category": "Tropical cyclone",
+      "title": "Taiwan: typhoon warning for the north of the island, 17 to 18 Nov 2026",
+      "summary": "A typhoon warning is in force for northern Taiwan, including Taipei. Offices may close and flights from Taoyuan are likely to be cancelled.",
+      "location": { "country": "TW", "city": "Taipei" },
+      "window": { "from": "2026-11-17", "to": "2026-11-18" },
+      "audience": "APAC offices and travellers",
+      "illustrative": true
+    },
+    {
+      "id": "ERS-26-114-0049",
+      "system": "Enterprise risk system (illustrative)",
+      "receivedAt": "2026-11-14T07:15:00Z",
+      "severity": "Minor",
+      "category": "Demonstration",
+      "title": "France: demonstration in central Paris on 21 Nov 2026, road closures around Place de la République",
+      "summary": "A large demonstration is announced for Saturday 21 November in central Paris. Expect road closures and metro station closures around Place de la République and Nation.",
+      "location": { "country": "FR", "city": "Paris" },
+      "window": { "from": "2026-11-21", "to": "2026-11-21" },
+      "audience": "Paris office and travellers",
+      "illustrative": true
+    },
+    {
+      "id": "ERS-26-114-0052",
+      "system": "Enterprise risk system (illustrative)",
+      "receivedAt": "2026-11-14T08:40:00Z",
+      "severity": "Moderate",
+      "category": "Power outage",
+      "title": "Switzerland: planned power interruption in the Basel industrial area, 19 Nov 2026, 08:00 to 14:00",
+      "summary": "The grid operator has announced a planned power interruption for the Kleinhüningen and Klybeck industrial areas of Basel on Thursday 19 November, 08:00 to 14:00. Sites without backup power should plan for it.",
+      "location": { "country": "CH", "city": "Basel" },
+      "window": { "from": "2026-11-19", "to": "2026-11-19" },
+      "audience": "Swiss sites and suppliers",
+      "illustrative": true
+    }
+  ]
+}

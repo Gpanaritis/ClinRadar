@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "note": "External-risk items recorded by SupplyShield's last check, for countries it monitors. Items marked illustrative are invented for the scenario: never present them as real news. Live items from official feeds are in recorded-feeds.json and are refreshed by Run the check.",
+  "note": "External-risk items recorded by ClinRadar's last check, for countries it monitors. Items marked illustrative are invented for the scenario: never present them as real news. Live items from official feeds are in recorded-feeds.json and are refreshed by Run the check.",
   "checked_at": "2026-11-14T06:12:00Z",
   "signals": [
     {
@@ -70,6 +70,24 @@
       "summary": "Planned runway works reduce cargo handling at Ben Gurion Airport from 4 to 8 January. Airlines may consolidate cargo flights; carriers will confirm bookings closer to the date.",
       "locations": [
         { "kind": "airport", "code": "TLV", "effect": "Fewer cargo slots; carriers may move bookings by a day or two." }
+      ]
+    },
+    {
+      "id": "SIG-US-WINTER-1116",
+      "type": "external",
+      "category": "weather",
+      "title": "Winter storm watch for the Lehigh Valley, Pennsylvania: heavy snow and ice, 16 to 17 Nov 2026",
+      "country": "US",
+      "authority": "US National Weather Service, Mount Holly forecast office",
+      "illustrative": true,
+      "evidence": "OFFICIAL_CONFIRMED",
+      "publishedAt": "2026-11-14T02:30:00Z",
+      "detectedAt": "2026-11-14T06:12:00Z",
+      "window": { "from": "2026-11-16", "to": "2026-11-17" },
+      "summary": "A winter storm watch covers the Lehigh Valley, including Allentown, from Monday 16 to Tuesday 17 November: heavy snow and freezing rain are forecast. It is a forecast warning, not an observed closure. Roads to industrial sites and Philadelphia airport operations may be slowed.",
+      "locations": [
+        { "kind": "facility", "id": "DEPOT-US", "effect": "Snow and ice may slow access to the depot and its collections." },
+        { "kind": "road", "country": "US", "effect": "Snow and ice may slow road transport in eastern Pennsylvania." }
       ]
     },
     {

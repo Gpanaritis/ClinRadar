@@ -5,9 +5,10 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { readFileSync, renameSync } from "node:fs";
-import { appendAudit, openDatabase, transaction } from "./db.mjs";
+import { appendAudit, openDatabase, transaction, dataDir } from "./db.mjs";
+import { readEnterpriseAlerts } from "./enterprise.mjs";
 import { cacheDir } from "./sources.mjs";
-import { computeSupplyShield, riskChecks, routeFor } from "./supplyshield.mjs";
+import { computeClinRadar, riskChecks, routeFor, watchSummary } from "./supplyshield.mjs";
 import { readFeeds } from "./feeds.mjs";
 import { readScopeState } from "./monitoring.mjs";
 import { parseYaml } from "./yaml-lite.mjs";
@@ -75,17 +76,19 @@ export async function loadData(root) {
   const data = { portfolio, spain, israel, specs, ops, network, today: portfolio.assessment_as_of.slice(0, 10), ukEffective: "2026-04-28", approvals };
   data.reservations = Object.entries(approvals).flatMap(([shipment, approval]) => planReservations(data, shipment, approval.actions ?? []));
   if (network) {
-    // SupplyShield: the monitoring scope from the active-trial portfolio, read with the company's status policy
+    // ClinRadar: the monitoring scope from the active-trial portfolio, read with the company's status policy
     // (config/supplyshield.yaml), and every external signal matched to our shipments.
-    const [configText, catalogueText] = await Promise.all([
+    // Enterprise risk alerts: the demo file plus whatever the ingest webhook stored in the data folder.
+    const [configText, catalogueText, enterprise] = await Promise.all([
       readFile(join(root, "config", "supplyshield.yaml"), "utf8").catch(() => ""), readFile(join(root, "demo-data", "country-catalogue-iso3166.csv"), "utf8").catch(() => ""),
+      readEnterpriseAlerts(root, dataDir(root)),
     ]);
     const state = readScopeState(root, network);
     data.scopeState = state;
     data.config = configText ? parseYaml(configText) : {};
     data.catalogue = readCatalogue(catalogueText);
-    data.supplyshield = computeSupplyShield({ network, portfolio, spain, israel, views: allShipmentIds(data).map(id => shipmentView(data, id)), choices: state.choices,
-      connected: state.connected, feeds, recorded, today: data.today, config: data.config, catalogue: data.catalogue, specs });
+    data.supplyshield = computeClinRadar({ network, portfolio, spain, israel, views: allShipmentIds(data).map(id => shipmentView(data, id)), choices: state.choices,
+      connected: state.connected, feeds, recorded, today: data.today, config: data.config, catalogue: data.catalogue, specs, enterprise });
   }
   return data;
 }
@@ -335,7 +338,7 @@ export function checkShipment(data, shipmentId, overrides = {}) {
     checks.push({ section: "ior", requirement: "Consignee: the hospital pharmacy of the trial site", result: "Pass", detail: `Consignee: ${view.hospital}.` });
     checks.push({ section: "invoice", requirement: "Pro-forma invoice statement", result: "Not checked", detail: "Invoice data is not connected yet." });
   }
-  // SupplyShield: external events on this shipment's route, as the carrier and the depot report them.
+  // ClinRadar: external events on this shipment's route, as the carrier and the depot report them.
   checks.push(...riskChecks(data.supplyshield, data.network, view, overrides));
   const results = checks.map(item => item.result);
   const result = results.some(item => ["Fail", "Missing", "Decision"].includes(item)) ? "Blocked" : results.includes("Confirm") ? "Confirm" : "Ready";
@@ -364,7 +367,7 @@ export function allShipmentChecks(data) {
   return allShipmentIds(data).map(id => checkShipment(data, id));
 }
 
-// What the page needs from SupplyShield: the scope, the assessed signals, and for each shipment the route and permit
+// What the page needs from ClinRadar: the scope, the assessed signals, and for each shipment the route and permit
 // checks these rules add, so the page shows exactly what the agents and the verifier see.
 export function supplyShieldPayload(data) {
   const ss = data.supplyshield;
@@ -376,11 +379,44 @@ export function supplyShieldPayload(data) {
     results[id] = result.result;
     extraChecks[id] = result.checks.filter(item => item.section === "risk" || (item.section === "permits" && item.requirement.startsWith("The import approval covers")));
   }
+  const { watch, regulatory } = watchBriefs(data);
   return {
     schema: 1, today: ss.today, checkedAt: ss.checkedAt, scope: ss.scope, signals: ss.signals, counts: ss.counts, byShipment: ss.byShipment, routes: ss.routes,
     feeds: ss.feeds, names: ss.names, extraChecks, results, log: data.scopeState?.log ?? [], connected: data.scopeState?.connected ?? true,
-    patientsAtRisk: ss.patientsAtRisk, costReference: ss.costReference,
+    patientsAtRisk: ss.patientsAtRisk, costReference: ss.costReference, watch, regulatoryItems: regulatory, enterprise: ss.enterprise ?? null,
   };
+}
+
+// The regulatory and customs items the regulatory watch agent follows: each rule change waiting for the Regulatory SME,
+// and each import approval on record, with the planned shipments it holds today (from the shipment checks).
+export function regulatoryWatchItems(data, results = allShipmentChecks(data)) {
+  const open = check => !["Pass", "Not checked"].includes(check.result);
+  const holding = (country, pick) => results.filter(item => item.country === country && item.checks.some(check => pick(check) && open(check))).map(item => item.id);
+  const items = [
+    { id: "RC-UK-001", kind: "change", country: "GB", title: "UK: amended Part 7 rules for IMP labels, with the Schedule 14 transition", short: "UK Part 7 labels", effective: data.ukEffective,
+      touching: holding("uk", check => check.section === "regulatory") },
+  ];
+  if (data.spain?.case) items.push({ id: data.spain.case.id, kind: "change", country: "ES", title: "Spain: Spanish delivery note and pharmacy notice for IMP shipments", short: `Spanish delivery notes from ${dayMonthYear(data.spain.case.effective)}`, effective: data.spain.case.effective,
+    touching: holding("es", check => /^From 1 Mar 2027/.test(check.requirement)) });
+  if (data.israel?.case) items.push({ id: "RC-IL-001", kind: "change", country: "IL", title: data.israel.case.title, short: `Israel-only labels from ${dayMonthYear(data.israel.case.effective)}`, effective: data.israel.case.effective,
+    touching: holding("il", check => check.section === "regulatory" && /Israel-only/.test(check.requirement)) });
+  for (const permit of data.network?.permits ?? []) {
+    const check = results.find(item => item.id === permit.shipment)?.checks.find(item => item.section === "permits" && item.requirement.startsWith("The import approval covers"));
+    items.push({ id: permit.id, kind: "permit", country: permit.country, title: `${permit.kind} ${permit.id} for ${permit.shipment}`, short: permit.id, shipment: permit.shipment, validUntil: permit.validUntil,
+      result: check?.result ?? "Not checked", touching: check && open(check) ? [permit.shipment] : [] });
+  }
+  return items.map(item => ({ ...item, hazard: "regulatory", status: item.kind === "change" ? "Waiting for the Regulatory SME; shipments are held against it until then" : `Import check: ${item.result}` }));
+}
+const dayMonthYear = day => new Date(day + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+
+// The watch team's summaries (one per kind of hazard) and the regulatory items, computed once per data load.
+export function watchBriefs(data) {
+  if (!data.supplyshield) return { watch: [], regulatory: [] };
+  if (!data.watchCache) {
+    const regulatory = data.supplyshield.scope.status === "determined" ? regulatoryWatchItems(data) : [];
+    data.watchCache = { regulatory, watch: watchSummary(data.supplyshield, { network: data.network, regulatory }) };
+  }
+  return data.watchCache;
 }
 
 // Test an option against the rules and against what operations can deliver. An option is a list of actions.

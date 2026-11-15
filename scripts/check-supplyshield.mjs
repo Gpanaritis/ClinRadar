@@ -1,4 +1,4 @@
-// Checks SupplyShield's fixed rules without network or AI calls: the monitoring scope comes only from the active-trial
+// Checks ClinRadar's fixed rules without network or AI calls: the monitoring scope comes only from the active-trial
 // portfolio and cannot be determined without it; recommended countries are never switched on by themselves, carry their
 // evidence and change only by the right role, with a reason, in the audit trail; external signals are matched to the
 // shipments and classified (observed event, potential exposure, confirmed disruption, not affected after check); the
@@ -17,7 +17,7 @@ process.env.REGCHAIN_DATA_DIR = join(temp, "data");
 process.env.REGCHAIN_CACHE_DIR = join(temp, "cache");
 
 const { loadData, checkShipment, verifyOption, allShipmentChecks, supplyShieldPayload } = await import("../regchain-ai/rules.mjs");
-const { computeSupplyShield, MONITORING_KINDS } = await import("../regchain-ai/supplyshield.mjs");
+const { computeClinRadar, MONITORING_KINDS } = await import("../regchain-ai/supplyshield.mjs");
 const { setMonitoring, setPortfolioConnection, emptyScope, readScopeState, reviewRecommendation } = await import("../regchain-ai/monitoring.mjs");
 const { openDatabase, verifyAudit, closeDatabase } = await import("../regchain-ai/db.mjs");
 const inScopeCodes = state => state.scope.countries.map(item => item.code);
@@ -75,7 +75,8 @@ assert.equal(strike.tier, "confirmed");
 assert.deepEqual(strike.matches.map(match => `${match.shipment}:${match.leg}:${match.tier}`).sort(), ["SHP-03:road:clear", "SHP-IL-01:air:confirmed"]);
 assert.match(strike.matches.find(match => match.shipment === "SHP-IL-01").evidence.source, /courier booking system/);
 assert.ok(strike.notes.some(note => /no outbound collections/.test(note)), "the depot's own status is reported");
-assert.equal(strike.sources.length, 2, "two reports of the same strike are one signal with two sources");
+assert.equal(strike.sources.length, 3, "three reports of the same strike are one signal with three sources: the airport, the federal notice and the enterprise risk system");
+assert.deepEqual(strike.sources.filter(source => source.enterprise).map(source => source.alert), ["ERS-26-114-0031"], "the enterprise alert corroborates the incident, it is not a new one");
 assert.equal(strike.evidenceLevel, "TRUSTED_CORROBORATED");
 assert.ok(!ss.signals.some(item => item.id === "SIG-BE-STRIKE-1124-FPS"), "not a second incident");
 assert.equal(strike.priority, "CRITICAL", "patients would go without treatment if nobody acts");
@@ -97,6 +98,18 @@ assert.equal(signal("SIG-FR-ROAD-1202").tier, "observed", "no shipment of ours i
 assert.ok(ss.signals.filter(item => item.category === "natural-hazard").every(item => item.tier === "observed"), "the recorded GDACS alerts touch nothing of ours");
 assert.ok(ss.signals.every(item => ss.scope.monitored.external.includes(item.country)), "signals come only from monitored countries");
 assert.equal(ss.feeds.live, false, "without a live check, the recorded copy of the feeds is used and says so");
+// Every signal belongs to one kind of hazard, for the watch team.
+assert.ok(ss.signals.every(item => ["weather", "transport", "security", "regulatory"].includes(item.hazard)), "every signal has a hazard");
+assert.equal(strike.hazard, "transport");
+assert.equal(tracking.hazard, "transport");
+assert.equal(works.hazard, "transport");
+assert.ok(ss.signals.filter(item => item.category === "natural-hazard").every(item => item.hazard === "weather" && item.hazardType), "GDACS alerts are weather, and keep their GDACS type");
+assert.ok(ss.signals.filter(item => item.category === "official-advice").every(item => item.hazard === "security"), "UK FCDO advice is security");
+const storm = signal("SIG-US-WINTER-1116");
+assert.ok(storm.illustrative && storm.hazard === "weather" && storm.country === "US", "a non-European natural hazard, clearly illustrative");
+assert.equal(storm.tier, "observed", "the US depot has no collection planned on those days");
+assert.ok(storm.notes.some(note => /US depot \(Allentown, Pennsylvania\) is in the area: no collection is planned/.test(note)));
+assert.deepEqual(ss.byShipment["SHP-IL-01"].map(item => item.hazard), ["transport"], "each shipment match says which kind of hazard it is");
 console.log(`ok  signals: ${ss.counts.confirmed} confirmed disruption, ${ss.counts.potential} potential exposure, ${ss.counts.observed} observed; the strike cancels SHP-IL-01's flight (courier), SHP-03 is not affected after check, the runway works wait for the courier's confirmation`);
 
 // 4. The route check and the option verifier.
@@ -107,7 +120,7 @@ const verdict = actions => verifyOption(data, "SHP-IL-01", actions);
 assert.equal(verdict([{ type: "reroute", via: "AMS" }]).after, "Ready", "leave from Amsterdam: delivery unchanged");
 const lux = verdict([{ type: "reroute", via: "LUX" }]);
 assert.equal(lux.passes, false);
-assert.match(lux.checks.find(item => item.result === "Decision").detail, /Luxembourg, which SupplyShield does not monitor/);
+assert.match(lux.checks.find(item => item.result === "Decision").detail, /Luxembourg, which ClinRadar does not monitor/);
 assert.match(verdict([{ type: "delay", new_dispatch_date: "2026-11-25" }]).notes.join(" "), /runs out on 2026-11-27, but the kits would arrive on 2026-11-30: 14 patients/, "a later dispatch arrives after the stock runs out");
 assert.equal(verdict([{ type: "delay", new_dispatch_date: "2026-11-25" }]).passes, false);
 assert.match(il01.checks.find(item => item.section === "risk").detail, /14 patients would go 2 days without treatment/, "the shipment's own check says who is at risk");
@@ -116,6 +129,75 @@ assert.equal(verdict([{ type: "advance_dispatch", new_dispatch_date: "2026-11-20
 assert.equal(verdict([{ type: "reroute", via: "CDG" }]).feasible, false, "no qualified departure from Paris");
 assert.equal(verifyOption(data, "SHP-03", [{ type: "reroute", via: "AMS" }]).feasible, false, "a road shipment has no departure airport");
 assert.equal(verifyOption(data, "SHP-IL-02", [{ type: "advance_dispatch", new_dispatch_date: "2026-12-28" }]).after, "Ready", "an earlier dispatch also avoids the runway works");
+// The watch team's summary for the page: one entry per kind of hazard, in the default workspace (Belgium monitored).
+{
+  const payload = supplyShieldPayload(data);
+  assert.deepEqual(payload.watch.map(item => [item.agent, item.name, item.hazard]), [["weather", "Weather & natural hazards", "weather"], ["transport", "Strikes & transport", "transport"], ["security", "Security & travel advice", "security"], ["regulatory", "Regulatory & customs", "regulatory"]]);
+  for (const item of payload.watch) {
+    assert.ok(Array.isArray(item.sources) && item.sources.length && Number.isInteger(item.countries) && item.countries > 0 && item.regions.length && Number.isInteger(item.events) && Number.isInteger(item.touching) && Array.isArray(item.top) && item.finding, item.agent);
+    if (item.hazard !== "regulatory") assert.ok(item.top.every(id => payload.signals.some(entry => entry.id === id && entry.hazard === item.hazard)), `${item.agent}: top lists its own signals`);
+    else assert.ok(item.top.every(id => payload.regulatoryItems.some(entry => entry.id === id)), "regulatory: top lists regulatory items");
+    assert.ok(!/%|probab/i.test(item.finding), "no probabilities");
+  }
+  const watch = Object.fromEntries(payload.watch.map(item => [item.hazard, item]));
+  assert.deepEqual([watch.transport.events, watch.transport.touching, watch.transport.confirmed, watch.transport.potential, watch.transport.top[0]], [4, 2, 1, 1, "SIG-BE-STRIKE-1124"]);
+  assert.deepEqual(watch.weather.top.slice(0, 2), ["SIG-ENT-ERS-26-114-0042", "SIG-US-WINTER-1116"], "the Andalusian heat outlook (potential exposure) first, then the storm at the US depot");
+  assert.deepEqual([watch.weather.enterprise.received, watch.weather.enterprise.matched, watch.transport.enterprise.gaps], [3, 2, 1], "each watch agent sees its own enterprise alerts");
+  assert.match(watch.transport.finding, /Enterprise risk system: 3 alerts, 1 touches our network \(merged into SIG-BE-STRIKE-1124\), 1 coverage gap \(touches the drug product manufacturer in Switzerland, not monitored\)/);
+  assert.ok(watch.weather.touching >= 1 && watch.weather.regions.includes("North America"));
+  assert.ok(watch.weather.gaps.some(gap => gap.code === "SG") && /India, 1–3 Nov \(ended\)/.test(watch.weather.finding), "the APAC depot is not monitored; the GDACS cyclone in India is context, not a signal");
+  assert.equal(watch.security.top[0], "FCDO-IL-2026-10-27", "advice for parts of Israel needs mapping against our sites");
+  assert.equal(watch.regulatory.countries, ss.scope.monitored.regulatory.length);
+  assert.deepEqual(payload.regulatoryItems.find(item => item.id === "RC-IL-001").touching, ["SHP-IL-02", "SHP-IL-03"]);
+  assert.equal(payload.regulatoryItems.find(item => item.id === "MOH-IMP-26-4410").result, "Pass");
+  assert.ok(payload.regulatoryItems.every(item => item.hazard === "regulatory"));
+  console.log(`ok  watch summary: ${payload.watch.map(item => `${item.name} ${item.events} events, ${item.touching} touching us`).join("; ")}`);
+}
+
+// Enterprise risk alerts: matched to our studies, sites, routes and facilities; the rest counted, not matched.
+{
+  const payload = supplyShieldPayload(data);
+  const enterprise = payload.enterprise;
+  assert.equal(enterprise.system, "Enterprise risk system (illustrative)");
+  assert.deepEqual([enterprise.received, enterprise.matched, enterprise.merged, enterprise.newSignals, enterprise.notMatched, enterprise.gaps], [7, 3, 2, 1, 3, 1]);
+  const result = Object.fromEntries(enterprise.alerts.map(item => [item.id, item.result]));
+  assert.deepEqual(result, {
+    "ERS-26-114-0031": "merged into SIG-BE-STRIKE-1124",
+    "ERS-26-114-0038": "merged into SIG-US-WINTER-1116",
+    "ERS-26-114-0042": "new signal SIG-ENT-ERS-26-114-0042",
+    "ERS-26-114-0045": "no study, site, route or facility affected",
+    "ERS-26-114-0047": "no study, site, route or facility affected",
+    "ERS-26-114-0049": "no study, site, route or facility affected",
+    "ERS-26-114-0052": "touches the drug product manufacturer in Switzerland, not monitored",
+  }, "every alert keeps its own id, and says what became of it");
+  assert.deepEqual(enterprise.alerts.find(item => item.id === "ERS-26-114-0031").shipments.sort(), ["SHP-03", "SHP-IL-01"]);
+  assert.match(enterprise.alerts.find(item => item.id === "ERS-26-114-0052").suggestion, /nobody monitors.*Suggest turning external risk on for Switzerland/);
+  assert.match(enterprise.alerts.find(item => item.id === "ERS-26-114-0045").note, /NorthSea Freight Systems is not one of our carriers/);
+  assert.ok(!ss.signals.some(item => ["SIG-ENT-ERS-26-114-0045", "SIG-ENT-ERS-26-114-0047", "SIG-ENT-ERS-26-114-0049", "SIG-ENT-ERS-26-114-0052"].includes(item.id)), "alerts that touch nothing of ours are counted, not added to the signals");
+  const heat = signal("SIG-ENT-ERS-26-114-0042");
+  assert.deepEqual([heat.tier, heat.evidenceLevel, heat.hazard, heat.illustrative], ["potential", "SINGLE_SOURCE", "weather", true], "an aggregator alone is a single source, and never confirms an impact");
+  assert.deepEqual(heat.matches.map(match => `${match.shipment}:${match.leg}:${match.date}`), ["SHP-ES-08:delivery:2027-03-10", "SHP-ES-10:delivery:2027-03-24"], "deliveries to Sevilla and Málaga in March; Madrid, Barcelona and February deliveries untouched");
+  assert.ok(heat.matches.every(match => match.owner === "Clinical Supply Logistics" && /the depot and the courier that the shipment's qualified packaging holds its temperature range/.test(match.missing)));
+  assert.equal(checkShipment(data, "SHP-ES-08").result, "Blocked", "still blocked for its own reasons: the heat outlook adds a confirmation, not a block");
+  assert.equal(signal("SIG-US-WINTER-1116").sources.length, 2, "the enterprise storm alert corroborates the NWS watch");
+  // Validation and storage, as the ingest webhook uses them.
+  const { validateAlerts, storeEnterpriseAlerts } = await import("../regchain-ai/enterprise.mjs");
+  const { dataDir } = await import("../regchain-ai/db.mjs");
+  const good = { id: "ERS-TEST-1", category: "Airport disruption", severity: "Severe", title: "Tel Aviv: Ben Gurion Airport cargo terminal closed, 5 Jan 2027", location: { country: "IL", city: "Tel Aviv", airport: "TLV" }, window: { from: "2027-01-05", to: "2027-01-05" } };
+  assert.ok(validateAlerts({ alerts: [good] }).alerts?.length === 1);
+  assert.match(validateAlerts([{ ...good, location: { country: "Israel" } }]).errors[0], /location.country/);
+  assert.match(validateAlerts([{ ...good, window: { from: "2027-01-06", to: "2027-01-05" } }]).errors[0], /window/);
+  assert.match(validateAlerts([{ ...good, id: "bad id!" }]).errors[0], /id:/);
+  assert.match(validateAlerts(Array.from({ length: 101 }, (_, index) => ({ ...good, id: `E-${index}` }))).errors[0], /At most 100/);
+  await storeEnterpriseAlerts(dataDir(root), validateAlerts([good]).alerts);
+  const withStored = (await loadData(root)).supplyshield;
+  const stored = withStored.enterprise.alerts.find(item => item.id === "ERS-TEST-1");
+  assert.deepEqual([stored.origin, stored.result, withStored.enterprise.received], ["webhook", "merged into SIG-IL-TLV-0104", 8], "a stored alert is merged with the demo file on load and runs through the same matching");
+  assert.equal(withStored.signals.find(item => item.id === "SIG-IL-TLV-0104").evidenceLevel, "TRUSTED_CORROBORATED", "the runway works now have a second source");
+  const { rm: remove } = await import("node:fs/promises");
+  await remove(join(dataDir(root), "enterprise-alerts.json"));
+  console.log("ok  enterprise risk alerts: 7 received; the Belgian strike and the US storm merge as extra sources, the Andalusian heat outlook is a new single-source potential exposure for SHP-ES-08 and SHP-ES-10, 3 counted (an outage at a forwarder we don't use, a typhoon in Taiwan, a Paris demonstration), 1 coverage gap (the Swiss manufacturer); stored alerts are validated and merged on load");
+}
 console.log("ok  verifier: Amsterdam passes with the same delivery day, Luxembourg needs a monitoring decision, 25 Nov arrives after the Tel Aviv stock runs out, 24 Nov fails at the depot, 20 Nov is too late to prepare, no departure from Paris, no airport for road shipments");
 
 // 5. Monitoring decisions: the right role, a reason, the audit trail; nothing switches on by itself.
@@ -133,11 +215,25 @@ assert.equal(verifyOption(data, "SHP-IL-01", [{ type: "reroute", via: "LUX" }]).
 setMonitoring(root, data.network, { country: "BE", kind: "external", enabled: false, reason: "Rehearsal: what if no one had turned Belgium on" }, { ...clinicalSupply, allowed, names });
 data = await loadData(root);
 assert.equal(data.supplyshield.signals.some(item => item.id === "SIG-BE-STRIKE-1124"), false, "Belgium is not monitored: its events are not assessed");
-assert.equal(checkShipment(data, "SHP-IL-01").result, "Ready");
-assert.match(checkShipment(data, "SHP-IL-01").checks.find(item => item.section === "risk").detail, /Not monitored: Belgium/, "the route says plainly what is not monitored");
+// No false assurance: the strike is no longer seen, but the route is not called clear either.
+const blind = checkShipment(data, "SHP-IL-01");
+assert.equal(blind.result, "Confirm", "a booked leg in an unmonitored country is a confirmation, never Ready");
+const blindCheck = blind.checks.find(item => item.section === "risk" && item.requirement === "External risk is monitored on every country of the route");
+assert.equal(blindCheck.result, "Confirm");
+assert.match(blindCheck.detail, /^External risk is not monitored on this route: Belgium \(depot and departure\)\..*Turn it on in Monitoring scope or confirm with the EMEA specialty courier\.$/);
+assert.deepEqual(blindCheck.unmonitored, ["BE"]);
+assert.ok(!blind.checks.some(item => item.result === "Pass" && /No disruption/.test(item.requirement) && !/Not monitored: Belgium/.test(item.detail)), "any pass on the route names what is not monitored");
+assert.match(checkShipment(data, "SHP-03").checks.find(item => item.unmonitored).detail, /Belgium \(depot\)/, "a road shipment from the Belgian depot");
+assert.equal(checkShipment(data, "SHP-04").checks.some(item => item.unmonitored), false, "only countries on the booked route count: a UK shipment is untouched");
+assert.ok(allShipmentChecks(data).every(item => item.result !== "Ready" || !(data.supplyshield.routes[item.id]?.countries ?? []).includes("BE")), "no shipment through Belgium is Ready while Belgium is unmonitored");
 const audit = openDatabase(root).prepare("SELECT actor, role, type, detail FROM audit_entry WHERE type = 'scope.monitoring_changed' ORDER BY seq").all();
 assert.deepEqual(audit.map(row => [row.actor, row.role]), [[clinicalSupply.by, "viewer"], [clinicalSupply.by, "viewer"]]);
 assert.match(audit[0].detail, /Luxembourg · External risk monitoring on · Alternative departure/);
+setMonitoring(root, data.network, { country: "BE", kind: "external", enabled: true, reason: "Rehearsal over: our central EU depot is in Belgium" }, { ...clinicalSupply, allowed, names });
+data = await loadData(root);
+const seen = checkShipment(data, "SHP-IL-01");
+assert.equal(seen.result, "Blocked", "Belgium monitored again: the strike is seen again");
+assert.ok(seen.checks.some(item => item.section === "risk" && item.result === "Fail" && /cancelled/.test(item.detail)) && !seen.checks.some(item => item.unmonitored), "back to the strike Fail, and no unmonitored-route check");
 // Reviewing recommendations: dismiss with a reason, restore; never a country that is being monitored.
 assert.throws(() => reviewRecommendation(root, data.network, { country: "MA", decision: "dismiss", reason: "" }, { ...clinicalSupply, allowed, names }), /Say why/);
 assert.throws(() => reviewRecommendation(root, data.network, { country: "LU", decision: "dismiss", reason: "No longer needed" }, { ...clinicalSupply, allowed, names }), /Turn its monitoring off/);
@@ -150,6 +246,7 @@ data = await loadData(root);
 assert.equal(data.supplyshield.scope.recommendations.find(item => item.code === "MA").review.state, "open");
 assert.equal(verifyAudit(openDatabase(root)).ok, true, "the hash chain holds");
 console.log("ok  monitoring decisions: Clinical Supply owns external risk, the Regulatory SME regulatory and customs, a reason is required, active-trial countries cannot be switched, recommendations can be dismissed and restored, every change is in the hash-chained audit trail");
+console.log("ok  no false assurance: with Belgium unmonitored, SHP-IL-01 is Confirm (\"External risk is not monitored on this route: Belgium (depot and departure)\"), never Ready; Belgium on again brings back the strike Fail");
 
 // 6. No portfolio, no scope: nothing is monitored and nothing is assumed.
 setPortfolioConnection(root, data.network, false, clinicalSupply);
@@ -178,7 +275,7 @@ console.log("ok  no portfolio: the scope cannot be determined, nothing is monito
   const views = [...base.portfolio.shipments, ...base.spain.trial.shipments, ...base.israel.trial.shipments].map(item => item.id).map(id => (base.supplyshield.routes[id] ? { id } : null)).filter(Boolean);
   assert.ok(views.length > 0);
   const { shipmentView, allShipmentIds } = await import("../regchain-ai/rules.mjs");
-  const result = computeSupplyShield({ network: base.network, portfolio: base.portfolio, spain: base.spain, israel: base.israel, views: allShipmentIds(base).map(id => shipmentView(base, id)),
+  const result = computeClinRadar({ network: base.network, portfolio: base.portfolio, spain: base.spain, israel: base.israel, views: allShipmentIds(base).map(id => shipmentView(base, id)),
     choices: {}, connected: true, feeds, recorded: { signals: [] }, today: base.today });
   const germany = result.signals.find(item => item.id.startsWith("FCDO-DE"));
   assert.equal(germany.tier, "potential", "a whole-country alert touches every German shipment, unconfirmed");
@@ -189,7 +286,7 @@ console.log("ok  no portfolio: the scope cannot be determined, nothing is monito
   console.log("ok  live feeds: FCDO advice and GDACS alerts become signals only for monitored countries; a whole-country alert and an overlapping flood are potential exposures; the rest is counted, not matched");
 }
 
-// 8. The starter pack's acceptance tests that need a portfolio of their own (SupplyShield-AI-Master-Prompt.md, section M).
+// 8. The starter pack's acceptance tests that need a portfolio of their own (ClinRadar-Master-Prompt.md, section M).
 {
   const base = await loadData(root);
   const { buildScope, riskChecks } = await import("../regchain-ai/supplyshield.mjs");
@@ -223,7 +320,7 @@ console.log("ok  no portfolio: the scope cannot be determined, nothing is monito
     { id: "T-ROAD-B", category: "road", title: "Road protest B", country: "BE", authority: "Source B", publishedAt: "2026-11-13T12:00:00Z", window: { from: "2026-11-24", to: "2026-11-24" }, locations: [{ kind: "road", country: "BE", effect: "Slow traffic." }] },
     { id: "T-TRACK", category: "tracking", title: "Courier tracking outage", country: "BE", authority: "Status page", publishedAt: "2026-11-20T08:00:00Z", window: { from: "2026-11-23", to: "2026-11-26" }, locations: [{ kind: "provider", carrier: "EMEA specialty courier", effect: "Tracking delayed." }] },
   ] };
-  const result = computeSupplyShield({ network: base.network, portfolio: base.portfolio, spain: base.spain, israel: base.israel, views, choices: { "BE|external": { enabled: true, by: "test" } }, connected: true,
+  const result = computeClinRadar({ network: base.network, portfolio: base.portfolio, spain: base.spain, israel: base.israel, views, choices: { "BE|external": { enabled: true, by: "test" } }, connected: true,
     feeds: null, recorded, today: base.today, config: base.config, catalogue: base.catalogue, specs: base.specs });
   const roads = result.signals.filter(item => item.category === "road");
   assert.equal(roads.length, 1, "M16: two reports of the same protest are one signal");
@@ -244,4 +341,4 @@ console.log("ok  no portfolio: the scope cannot be determined, nothing is monito
 
 closeDatabase(root);
 await rm(temp, { recursive: true, force: true }).catch(() => {});
-console.log("All SupplyShield checks passed.");
+console.log("All ClinRadar checks passed.");

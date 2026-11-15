@@ -1,16 +1,16 @@
-# TrialReady · SupplyShield AI
+# TrialReady · ClinRadar
 
-SupplyShield AI (formerly RegChain AI) is a browser prototype for external risk and country regulatory intelligence in global clinical supply.
+ClinRadar (formerly RegChain AI) is a browser prototype for external risk and country regulatory intelligence in global clinical supply.
 
 - **Monitoring scope** comes only from the company's authorised active-trial portfolio. Countries with an operationally active trial are monitored automatically. Other countries are recommended with their evidence (depots, suppliers, transit routes, hubs, borders, sea neighbours, current official advice) and stay off until a person turns them on.
 - **Signals** matches external events and regulatory changes to the company's own shipments, facilities, routes and deadlines. Each match is an observed event, a potential exposure, a confirmed disruption or not affected after check.
 - **Shipments** tests every planned shipment against its destination's Country Specification and against the events on its route. AI agents propose recovery options, fixed rules check them, and a named person approves.
 
-The product brief, how each of its twelve rules is built, the demonstration and what is real or illustrative are in [SupplyShield-AI.md](SupplyShield-AI.md). The evidence behind it is in [SupplyShield-AI-Research.md](SupplyShield-AI-Research.md). The files and settings keep the RegChain name (`serve-regchain.cjs`, `regchain-ai/`, `REGCHAIN_*`).
+The product brief, how each of its twelve rules is built, the demonstration and what is real or illustrative are in [ClinRadar.md](ClinRadar.md). The evidence behind it is in [ClinRadar-Research.md](ClinRadar-Research.md). The files and settings keep the RegChain name (`serve-regchain.cjs`, `regchain-ai/`, `REGCHAIN_*`).
 
 ## Run locally
 
-On Windows, open **Start-RegChain.cmd** from the repository folder. If Node.js is available, it starts the local dashboard at **http://127.0.0.1:4173/** and opens your default browser. Keep the launcher window open while using that address. Press **Ctrl+C** to stop it. Without Node.js, the launcher opens the standalone dashboard file in your browser.
+On Windows, open **Start-ClinRadar.cmd** from the repository folder. If Node.js is available, it starts the local dashboard at **http://127.0.0.1:4173/** and opens your default browser. Keep the launcher window open while using that address. Press **Ctrl+C** to stop it. Without Node.js, the launcher opens the standalone dashboard file in your browser.
 
 From a terminal on any system with Node.js, run `node serve-regchain.cjs` from the repository folder and open **http://127.0.0.1:4173/**. Use the same address and browser profile to keep saved review decisions and replay settings across sessions. File-mode browser storage varies by browser and is separate from localhost.
 
@@ -33,7 +33,7 @@ A regulation pipeline snapshots the official sources, detects meaningful changes
 
 ## Monitoring scope and external risk
 
-SupplyShield reads the CTMS snapshot in `demo-data/supply-network.json` with the company's status policy in `config/supplyshield.yaml`, from the SupplyShield starter pack. Of the 22 studies in the snapshot, 18 count. It monitors the 16 countries with an operationally active trial, and EU rules apply to the 10 of them in the EU. It excludes 5 registered countries without an active site. Portugal's contradictory status is shown for confirmation.
+ClinRadar reads the CTMS snapshot in `demo-data/supply-network.json` with the company's status policy in `config/supplyshield.yaml`, from the ClinRadar starter pack. Of the 22 studies in the snapshot, 18 count. It monitors the 16 countries with an operationally active trial, and EU rules apply to the 10 of them in the EU. It excludes 5 registered countries without an active site. Portugal's contradictory status is shown for confirmation.
 
 It recommends 50 more countries, each with its evidence:
 
@@ -44,11 +44,11 @@ It recommends 50 more countries, each with its evidence:
 
 Each recommended country has two switches, both off until a person turns them on: **External risk** for Clinical Supply, **Regulatory and customs** for the Regulatory SME. A switch needs a reason, and every change goes into the audit trail. A recommendation can also be dismissed with a reason. In the prepared workspace, Belgium's external-risk switch is on, as a decision P. Laine recorded on 2 Nov 2026.
 
-The orchestrator agent works under the starter pack's master instructions (`SupplyShield-AI-Master-Prompt.md`). [SupplyShield-AI.md](SupplyShield-AI.md) lists how each of the pack's 30 acceptance tests is covered.
+The orchestrator agent works under the starter pack's master instructions (`ClinRadar-Master-Prompt.md`). [ClinRadar.md](ClinRadar.md) lists how each of the pack's 30 acceptance tests is covered.
 
 **Run the check** reads the official feeds live for the monitored countries: UK FCDO travel advice through the GOV.UK content API (Open Government Licence) and GDACS alerts. A country that doesn't answer keeps its last good record. `npm run record:feeds` refreshes the recorded copy (`demo-data/recorded-feeds.json`) that the demo uses without internet. Only metadata is kept: the alert status, the update time and the change note.
 
-The public API has read-only routes for SupplyShield: `/v1/monitoring-scope`, `/v1/signals` (optionally `?tier=confirmed`), `/v1/signals/{id}` and `/v1/shipments/{id}/risk`. `npm run check:supplyshield` tests the scope, the recommendations, the tiers, the option verifier, the roles, the audit trail, the state with no portfolio connected and the live-feed rules, without network or AI calls.
+The public API has read-only routes for ClinRadar: `/v1/monitoring-scope`, `/v1/signals` (optionally `?tier=confirmed`), `/v1/signals/{id}` and `/v1/shipments/{id}/risk`. `npm run check:supplyshield` tests the scope, the recommendations, the tiers, the option verifier, the roles, the audit trail, the state with no portfolio connected and the live-feed rules, without network or AI calls.
 
 ## Running it for a team
 
@@ -60,6 +60,17 @@ By default RegChain serves one person on this computer, who picks a role with **
 - **Operations:** a Docker image and Compose file, a CI workflow that runs every check, `npm run users` to manage people and `npm run backup` for a checked copy of the database.
 
 `npm run check:security` starts the real server with named users and tests all of this. [RegChain-AI-Deployment.md](RegChain-AI-Deployment.md) covers settings, HTTPS, users, backups and upgrades. [RegChain-AI-Validation.md](RegChain-AI-Validation.md) outlines validation for GxP use and lists what a company still decides. [SECURITY.md](SECURITY.md) says how to report a vulnerability.
+
+## Launch page and sign-in
+
+The public launch page lives in `sites/clinradar/` (static HTML, CSS and a small script, no external resources) and is served at **/site/**. It says what ClinRadar prevents, how it works, the Belgian strike example and how it supports validation, and it has a contact form. **Sign in** and **Open ClinRadar** go to `/`, which shows the sign-in page in password mode. There is no self sign-up: accounts are set up by an administrator.
+
+- **Start it on Windows:** open **Start-ClinRadar-Site.cmd**. It starts ClinRadar in password mode (`REGCHAIN_AUTH=password`) at http://127.0.0.1:4173 and opens http://127.0.0.1:4173/site/. Plain HTTP is fine on this computer; the session cookie gets the Secure flag only behind HTTPS (`REGCHAIN_PUBLIC_ORIGIN=https://…`). If another ClinRadar is already running on port 4173, stop it first.
+- **Demo accounts:** the launcher runs `npm run demo:accounts` first. It creates one account per role, if missing: `p.laine` (P. Laine, Clinical Supply), `a.novak` (A. Novak, Regulatory SME), `m.okafor` (M. Okafor, Quality owner) and `l.chen` (L. Chen, Quality verifier). New passwords are printed once and kept in `.regchain-data/demo-accounts.txt` (ignored by Git). `npm run demo:accounts -- --reset` gives them new passwords. `npm run users` manages any other account.
+- **Contact form:** it posts JSON to `POST /api/contact`, which is public like the page. The server accepts same-site JSON only, checks the fields (name, company, work email, message, consent), limits the size and allows `REGCHAIN_CONTACTS_PER_HOUR` (10) messages per client address per hour. Each message is one JSON line in `.regchain-data/contact-requests.jsonl` with an ID and the time; the client address is not stored and no email is sent.
+- **Sign-in page:** links back to the launch page (**About ClinRadar**) and says that there is no self sign-up.
+
+`npm run check:security` tests the launch page and the contact form before sign-in, along with everything else in password mode.
 
 ## AI step
 
@@ -75,7 +86,7 @@ To turn it on:
 
 1. Install Node.js 22.13 or later, which includes npm.
 2. Create a file named `.env` next to `serve-regchain.cjs` containing `ANTHROPIC_API_KEY=` followed by your key. Git ignores this file.
-3. Open **Start-RegChain.cmd**. The first time, it installs the Anthropic SDK with npm.
+3. Open **Start-ClinRadar.cmd**. The first time, it installs the Anthropic SDK with npm.
 
 RegChain uses Claude models only. To reach them through AWS, Google Cloud or Microsoft Azure instead of Anthropic's API, set `REGCHAIN_AI_PROVIDER` as described in [Which Claude service](RegChain-AI-Deployment.md#which-claude-service).
 
@@ -83,7 +94,7 @@ RegChain uses Claude models only. To reach them through AWS, Google Cloud or Mic
 
 ## First run and the agents at work
 
-Open **http://127.0.0.1:4173/?empty** to start from an empty workspace (one-person mode only). Plans and approvals are archived, the cases start again, the CTMS is disconnected and every monitoring decision is cleared; nothing is deleted from the audit trail. The Overview says that SupplyShield cannot determine its monitoring scope and monitors nothing. The first check then works through these steps:
+Open **http://127.0.0.1:4173/?empty** to start from an empty workspace (one-person mode only). Plans and approvals are archived, the cases start again, the CTMS is disconnected and every monitoring decision is cleared; nothing is deleted from the audit trail. The Overview says that ClinRadar cannot determine its monitoring scope and monitors nothing. The first check then works through these steps:
 
 1. It connects the CTMS and derives the scope.
 2. It shows the recommended countries, all off, and invites you to turn on external-risk monitoring for Belgium, where the central EU depot is.
@@ -99,20 +110,20 @@ The Israel scenario ([RegChain-AI-Israel-Scenario.md](RegChain-AI-Israel-Scenari
 
 ## Agents
 
-**Shipments › Needs action** lists every shipment that needs action, most urgent first. Each one opens a plan page where an orchestrator (Claude Opus 5.5, with SupplyShield's instructions) and four specialist agents (Claude Sonnet 5.5) work through the problem:
+**Shipments › Needs action** lists every shipment that needs action, most urgent first. Each one opens a plan page where an orchestrator (Claude Opus 5.5, with ClinRadar's instructions) and four specialist agents (Claude Sonnet 5.5) work through the problem:
 
 - They read IRT, ERP, the depot, the eTMF, the CTMS and the courier through eight MCP servers, which are read-only except for a draft inbox.
-- They propose two or three options and check each one against SupplyShield's rules. For a confirmed disruption these can include leaving from another qualified airport (`reroute`) or a later dispatch.
+- They propose two or three options and check each one against ClinRadar's rules. For a confirmed disruption these can include leaving from another qualified airport (`reroute`) or a later dispatch.
 - They draft the changes for people to approve, in IRT, ERP, the depot, the courier, the QMS or the site portal.
 
 Only options that pass the fixed rules can be approved, only by Clinical Supply, and the server checks each one again before recording it. Each draft still needs approval in its own validated system. Approvals and withdrawals are stored in the database with the audit trail, and every version of every run is kept in `.regchain-cache/`.
 
-**Plan all with AI agents**, on Shipments, runs the agents on every shipment that needs action, most urgent first: 19 today, 17 with a plan and 2 escalated. SupplyShield then checks the plans together so that no kit or relabelling slot is promised twice. Today SHP-06 moves to the 18 Nov slot because SHP-01 needs the 16 Nov one more urgently. SHP-IL-01, whose flight the Brussels strike cancelled, leaves from Amsterdam instead.
+**Plan all with AI agents**, on Shipments, runs the agents on every shipment that needs action, most urgent first: 19 today, 17 with a plan and 2 escalated. ClinRadar then checks the plans together so that no kit or relabelling slot is promised twice. Today SHP-06 moves to the 18 Nov slot because SHP-01 needs the 16 Nov one more urgently. SHP-IL-01, whose flight the Brussels strike cancelled, leaves from Amsterdam instead.
 
 **Run the AI agents** needs the same `.env` key as the AI step. **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers without calling Claude. To rehearse from a clean start, open **http://127.0.0.1:4173/?fresh** (clears decisions, keeps plans) or **?fresh=all** (also clears plans). Nothing is deleted: cleared approvals are kept in full in the audit trail, and runs are archived in `.regchain-cache/`. Starting fresh works only in the one-person mode. `npm run check:agent` tests the rules, the eight MCP servers, scripted runs, the portfolio allocation, server-side approvals and the live loop with a stand-in for Claude, without calling the API. The systems behind the MCP servers are fictional data in `demo-data/supply-operations.json` and `demo-data/supply-network.json`. Design and compliance notes: [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
 
-- [SupplyShield AI: the brief, how each rule is built, the demonstration, what is real](SupplyShield-AI.md)
-- [Research: clinical supply failures, business continuity, competitors, and whether the problem is real](SupplyShield-AI-Research.md)
+- [ClinRadar: the brief, how each rule is built, the demonstration, what is real](ClinRadar.md)
+- [Research: clinical supply failures, business continuity, competitors, and whether the problem is real](ClinRadar-Research.md)
 - [Database, pipeline and API: the server side, how it works and how it is tested](RegChain-AI-Data-And-API.md)
 - [Deployment: settings, Docker, HTTPS, users, backups and upgrades](RegChain-AI-Deployment.md)
 - [Validation outline: intended use, GAMP 5, Part 11 and Annex 11, and what a company still decides](RegChain-AI-Validation.md)

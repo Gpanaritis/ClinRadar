@@ -1,6 +1,6 @@
-# SupplyShield AI · Agents that resolve blocked and disrupted shipments
+# ClinRadar · Agents that resolve blocked and disrupted shipments
 
-*15 November 2026. Design note for the hackathon team: what the agent layer does, how it is built, and how it fits validated clinical systems. SupplyShield AI was called RegChain AI; see [SupplyShield-AI.md](SupplyShield-AI.md).*
+*15 November 2026. Design note for the hackathon team: what the agent layer does, how it is built, and how it fits validated clinical systems. ClinRadar was called RegChain AI; see [ClinRadar.md](ClinRadar.md).*
 
 ## What it does
 
@@ -10,12 +10,19 @@ Fixing a blocked shipment today means asking several teams. Supply checks for an
 
 **Shipments › Needs action** is the work queue: every shipment that needs action, most urgent first. Opening one shows its plan page, where a team of AI agents works on that shipment:
 
-- An **orchestrator**, instructed as SupplyShield AI, reads the failed checks, the external signals on the shipment's route, the monitoring scope, the destination's Country Specification and what other plans already hold, and decides what it needs to know. It keeps an observed event, a potential exposure and a confirmed disruption apart, and never treats one as another without evidence.
+- An **orchestrator**, instructed as ClinRadar, reads the failed checks, the external signals on the shipment's route, the monitoring scope, the destination's Country Specification and what other plans already hold, and decides what it needs to know. It keeps an observed event, a potential exposure and a confirmed disruption apart, and never treats one as another without evidence.
 - It **delegates** to specialists. Each one can use only the tools of its own systems:
   - the **supply agent** works with IRT and ERP: stock, batches and QP plans;
   - the **logistics agent** works with the depot, the courier, ERP and IRT: the route and the day of each leg, the courier's and the depot's status, qualified alternative departures, relabelling, label approvals, site stock;
   - the **records agent** works with the eTMF: authorisations, import approvals and their terms (port of entry, kits, consignee, validity), site contacts;
   - the **communications agent** writes messages to sites in English and the local language.
+- It can also ask the **watch team**: four agents, each sweeping every monitored country for one kind of hazard, read-only and limited to that kind:
+  - **Weather & natural hazards** (`weather`): GDACS alerts (floods, cyclones, earthquakes, wildfires, volcanic ash) and official weather warnings on our lanes and facilities;
+  - **Strikes & transport** (`transport`): labour action, airport, port and road notices, carrier and depot operations, courier tracking outages;
+  - **Security & travel advice** (`security`): UK FCDO travel advice, conflict, unrest, border closures;
+  - **Regulatory & customs** (`regulatory`): the regulatory changes waiting for the Regulatory SME, import permits and approvals.
+
+  When a route check fails because of an external event, the orchestrator first asks the watch agent for that hazard to confirm the event, its evidence level and how long it lasts; only then does the logistics agent look for alternatives. For SHP-IL-01 the transport watch agent confirms a one-day strike on 24 Nov, reported by two trusted sources, with the courier's cancellation of the BRU → TLV flight on record and SHP-03 checked and not affected; logistics then finds the Amsterdam departure.
 - The orchestrator builds two or three options and **checks each one** with RegChain's rule engine before recommending it.
 - It **drafts** the changes for the recommended option, for example a shipment change request in IRT or a relabelling work order for the depot. Each draft names the option it belongs to.
 - **RegChain's verifier**, which uses fixed rules and no AI, checks every option again. A draft for an option that fails is withdrawn. Only passing options can be approved.
@@ -23,10 +30,11 @@ Fixing a blocked shipment today means asking several teams. Supply checks for an
 
 **Plan all with AI agents**, on Shipments, does this for every shipment that needs action, as one orchestrated run:
 
-1. **Triage.** The orchestrator orders the shipments by preparation date, the most urgent first.
-2. **One agent team per shipment.** Each shipment gets its own run, as above.
-3. **Checking the plans together.** RegChain walks the plans in priority order and counts what each one holds: kits of a batch, places in a relabelling slot. If a less urgent plan loses its kits or slot to a more urgent one, RegChain moves it to its next passing option or another slot, withdraws its old drafts and drafts the new plan. If nothing passes, it escalates.
-4. **One board** shows every plan, why it was re-planned and its approval, in priority order.
+1. **Watch sweep.** The orchestrator sends the four watch agents across the monitored countries, one kind of hazard each. Each reports one business finding, for example "Strikes & transport: 4 events in 17 monitored countries; 1 confirmed disruption — SHP-IL-01's flight BRU → TLV on 24 Nov cancelled (courier); SHP-03 checked, not affected." The weather agent finds the (illustrative) winter storm watch over the US depot in Allentown on 16–17 Nov, with no collection planned there, and names what is not watched: the APAC depot in Singapore, the manufacturer in Switzerland and the supplier in India. The run record keeps the four findings (`watch`).
+2. **Triage.** Patients first: a shipment with a confirmed disruption that would leave patients without treatment goes to the front ("SHP-IL-01 runs out on 27 Nov, 14 patients"). The rest follow by preparation date, the most urgent first, and the potential exposures the watch team found are listed for confirmation.
+3. **One agent team per shipment.** Each shipment gets its own run, as above.
+4. **Checking the plans together.** RegChain walks the plans in priority order and counts what each one holds: kits of a batch, places in a relabelling slot. If a less urgent plan loses its kits or slot to a more urgent one, RegChain moves it to its next passing option or another slot, withdraws its old drafts and drafts the new plan. If nothing passes, it escalates.
+5. **One board** shows every plan, why it was re-planned and its approval, in priority order.
 
 Every step appears live on screen, and every run can be exported as an audit record.
 
@@ -46,7 +54,7 @@ In the portfolio run on today's data, 19 shipments get 17 plans that pass, 2 esc
 
 ## Watching the team: Agents in action
 
-The **Agents in action** page shows who does what. The master agent (the orchestrator, Claude Opus 5.5) sits on top and hands tasks to four specialists (Claude Sonnet 5.5). Under them are the systems they reach over MCP, and next to them the SupplyShield verifier, which is fixed code, not AI. Each step draws a line from the one who acts to the one it reaches: a task handed out, a system read, an answer, a report back, an option tested, a draft put in the inbox. The master agent's card shows how the work was split between the specialists.
+The **Agents in action** page shows who does what. The master agent (the orchestrator, Claude Opus 5.5) sits on top and hands tasks to four specialists (Claude Sonnet 5.5). Under them are the systems they reach over MCP, and next to them the ClinRadar verifier, which is fixed code, not AI. Each step draws a line from the one who acts to the one it reaches: a task handed out, a system read, an answer, a report back, an option tested, a draft put in the inbox. The master agent's card shows how the work was split between the specialists.
 
 The page replays the last run, with each shipment's own run placed where the master agent handed it out, or follows a run live. It replays at 1× to 8×, steps one at a time, filters the steps by agent, and opens a single shipment's run. After the first check it replays the scripted run automatically, because a scripted run finishes in seconds.
 
@@ -61,14 +69,14 @@ flowchart LR
   O -->|delegate| C[Communications agent]
   S & L & R & C -.->|claude-sonnet-5-5| M
   O --> M[(MCP servers)]
-  M --- IRT & ERP & Depot & eTMF & CTMS & Courier & Specs[SupplyShield rules,<br/>scope and signals] & Drafts[Draft inbox]
-  O --> V[SupplyShield verifier<br/>fixed rules, no AI,<br/>counts what plans hold]
+  M --- IRT & ERP & Depot & eTMF & CTMS & Courier & Specs[ClinRadar rules,<br/>scope and signals] & Drafts[Draft inbox]
+  O --> V[ClinRadar verifier<br/>fixed rules, no AI,<br/>counts what plans hold]
   V --> H[Clinical Supply approves<br/>server re-checks]
   H --> D[Each draft approved in its own system]
 ```
 
 - **Eight MCP servers** (`regchain-ai/mcp-servers.mjs`), one per system. Each runs as its own process and is reached through the Model Context Protocol SDK. None of them receives the API key.
-  - **SupplyShield**: shipment checks (including the route and import-approval checks), Country Specifications, option checks, commitments (what approved plans already hold), the monitoring scope and the external signals.
+  - **ClinRadar**: shipment checks (including the route and import-approval checks), Country Specifications, option checks, commitments (what approved plans already hold), the monitoring scope and the external signals.
   - **IRT**: shipments, depot stock, site stock.
   - **ERP**: batches, label approvals, QP plans.
   - **Depot**: relabelling capacity, couriers, the facility's own status by day.
@@ -78,7 +86,10 @@ flowchart LR
   - **Draft inbox**: create a draft for a named option, in IRT, ERP, the depot, the courier, the QMS, the eTMF or the site portal.
 
   A specification section with a change waiting for approval says so, so an agent never treats the old text as the whole rule.
-- **The agent loop** (`regchain-ai/agent.mjs`). Claude's tool use, with the orchestrator delegating through a `delegate_to_agent` tool. Each specialist runs its own loop with only its own tools, and returns a written report. A run is capped at 16 orchestrator turns, 8 per specialist and 60 tool calls. The portfolio run (`resolvePortfolio`) runs up to three shipments at a time in live mode.
+- **The agent loop** (`regchain-ai/agent.mjs`). Claude's tool use, with the orchestrator delegating through a `delegate_to_agent` tool. Each specialist runs its own loop with only its own tools, and returns a written report. A run is capped at 16 orchestrator turns, 8 per specialist and 60 tool calls. The portfolio run (`resolvePortfolio`) runs the watch sweep first (`runWatchSweep`), then up to three shipments at a time in live mode.
+- **The watch team.** Agent ids `weather`, `transport`, `security`, `regulatory`. Their tools are `specs.get_watch_brief` (sources, monitored countries and regions, coverage gaps, and for regulatory the changes and import approvals with the shipments each affects) and `specs.get_risk_signals` (or `specs.get_country_specification` for regulatory). `get_risk_signals` takes optional `hazard` and `region` filters; the loop pins a watch agent's reads to its own hazard whatever it asks for. Watch agents cannot delegate or draft. Every signal carries a `hazard` field (weather, transport, security or regulatory), set by fixed rules in `supplyshield.mjs` from its category and source. Their instructions: keep observed, potential and confirmed apart, name missing evidence and its owner, never invent facts, never treat a single unverified source as confirmed, no probabilities.
+- **Enterprise risk alerts.** The company's enterprise risk system (Everbridge, Dataminr, Crisis24 and the like) alerts offices and travellers, not trials. ClinRadar turns each alert into a signal and matches it like any other (`regchain-ai/enterprise.mjs`; see [ClinRadar.md](ClinRadar.md#enterprise-risk-alerts)). The weather, transport and security watch agents also read `specs.get_enterprise_alerts` for their own hazard (pinned like their other reads) and end their report with what it found, for example "Enterprise risk system: 3 alerts, 1 touches our network (merged into SIG-BE-STRIKE-1124), 1 coverage gap (touches the drug product manufacturer in Switzerland, not monitored)". Alerts arrive through `POST /api/enterprise-alerts`, which needs the enterprise system's bearer token (`REGCHAIN_ENTERPRISE_TOKEN`) with named users.
+- **Models.** The orchestrator runs on Claude Opus 5.5 (`REGCHAIN_MODEL_ORCHESTRATOR`), the specialists on Claude Sonnet 5.5 (`REGCHAIN_MODEL_SPECIALIST`), and the watch team on Claude Haiku 5.5 (`claude-haiku-5-5`, `REGCHAIN_MODEL_WATCH`), because sweeping every monitored country is cheap, high-volume scanning. Watch agents run without extended thinking. Only Claude models are accepted for any of the three.
 - **The rule engine** (`regchain-ai/rules.mjs`). The same checks as the Shipment checks page, plus the option check. The option check tests:
   - whether an option is possible: stock, label approval, slot dates and capacity, site stock against a delay, the eTMF record, QP lead time;
   - whether it is done in time: kits relabelled, label specifications ready and QP-released kits at the depot before preparation starts, not only before dispatch;
@@ -114,7 +125,7 @@ Clinical supply runs on validated systems: IRT, ERP, the depot's warehouse syste
   - For every shipment: **Shipments** → **Scripted walkthrough (no AI)**.
   - Every journey and demo script: [RegChain-AI-User-Journeys.md](RegChain-AI-User-Journeys.md).
 - **Live agents:** add `ANTHROPIC_API_KEY` to `.env` next to `serve-regchain.cjs` and restart RegChain. **Run the AI agents** is enabled once the key is set. To reach Claude through AWS, Google Cloud or Azure instead, see [Which Claude service](RegChain-AI-Deployment.md#which-claude-service).
-  - A run for one shipment takes a minute or two and uses Claude Opus 5.5 for the orchestrator and Claude Sonnet 5.5 for the specialists.
+  - A run for one shipment takes a minute or two and uses Claude Opus 5.5 for the orchestrator, Claude Sonnet 5.5 for the specialists and Claude Haiku 5.5 for any watch agent it consults.
   - A live portfolio run of 19 shipments takes several minutes and costs more. Run it once before the demo; the page loads the last run.
 - **Tests:** `npm run check:agent` makes no API call and uses a temporary cache, so approvals on the computer never change the results. It checks:
   - the rules match the page (14 blocked, 5 to confirm, 6 ready), and the Israel rules: the shared booklet refused from 3 Jan 2027, Israeli working days, three ways out, and the Brussels strike blocking SHP-IL-01;
@@ -122,14 +133,15 @@ Clinical supply runs on validated systems: IRT, ERP, the depot's warehouse syste
   - commitments: kits and slots held by another plan are not offered again;
   - all eight MCP servers start, and only the draft inbox can write;
   - eight scripted runs end as expected (swap, relabel with a Monday dispatch, fix the data, escalate, proceed with a confirmation, leave from Amsterdam);
-  - the portfolio run: 19 shipments, most urgent first (SHP-IL-01 second), SHP-06 and SHP-IL-03 re-planned, nothing promised twice;
+  - the watch team: four agents on Claude Haiku 5.5 with read-only ClinRadar tools; the `hazard` and `region` filters; the SHP-IL-01 run consults the transport watch agent before logistics;
+  - the portfolio run: the four watch agents report before triage; 19 shipments, patients first (SHP-IL-01), then by preparation date; SHP-06 and SHP-IL-03 re-planned, nothing promised twice;
   - approvals: re-checked on the server, refused when stale or failing, withdrawals free their holds, and every step is logged;
-  - the live loop end to end with a stand-in for Claude, including a withdrawn draft for an option that fails.
-- `npm run check:supplyshield` checks the monitoring scope, the recommendations, the signal tiers, the route and option checks (Amsterdam passes, Luxembourg needs a monitoring decision, the depot does not collect on the strike day), the monitoring roles and the audit trail, and the state with no portfolio connected.
+  - the live loop end to end with a stand-in for Claude, including a withdrawn draft for an option that fails, and a live watch sweep whose reads stay pinned to each agent's hazard.
+- `npm run check:supplyshield` checks the monitoring scope, the recommendations, the signal tiers and hazards, the watch summary, the route and option checks (Amsterdam passes, Luxembourg needs a monitoring decision, the depot does not collect on the strike day, an unmonitored Belgium makes SHP-IL-01 Confirm rather than Ready), the monitoring roles and the audit trail, and the state with no portfolio connected.
 
 ## Real and illustrative
 
-- **Real:** the MCP protocol and servers, the agent loop with Claude's tool use, the rule engine, the portfolio allocation, the streaming, the approval and the audit record, and the official feeds SupplyShield reads (UK FCDO travel advice, GDACS).
+- **Real:** the MCP protocol and servers, the agent loop with Claude's tool use, the rule engine, the portfolio allocation, the streaming, the approval and the audit record, and the official feeds ClinRadar reads (UK FCDO travel advice, GDACS).
 - **Illustrative:** the systems behind the MCP servers are fictional data files (`demo-data/supply-operations.json`, `demo-data/supply-network.json`), not IRT, ERP, a depot, an eTMF, a CTMS or a courier. The Belgian strike and the Ben Gurion runway works are invented for the scenario and labelled so on screen.
 
 ## Before it could be used for real

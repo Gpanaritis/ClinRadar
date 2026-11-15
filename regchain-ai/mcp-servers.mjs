@@ -8,18 +8,20 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadData, checkShipment, allShipmentChecks, verifyOptionSafe, shipmentView, sectionNames } from "./rules.mjs";
+import { loadData, checkShipment, allShipmentChecks, verifyOptionSafe, shipmentView, sectionNames, watchBriefs } from "./rules.mjs";
+import { HAZARDS } from "./supplyshield.mjs";
+import { enterpriseFor } from "./enterprise.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 export const SYSTEMS = {
-  specs: "SupplyShield: Country Specifications, shipment checks, monitoring scope and external signals",
+  specs: "ClinRadar: Country Specifications, shipment checks, monitoring scope and external signals",
   irt: "IRT/RTSM (validated, read-only)",
   erp: "ERP batch records (validated, read-only)",
   depot: "Depot and labelling (validated, read-only)",
   etmf: "eTMF (validated, read-only)",
   ctms: "CTMS: the active-trial portfolio (validated, read-only)",
   courier: "Courier booking and tracking (read-only)",
-  drafts: "SupplyShield draft inbox (draft-only)",
+  drafts: "ClinRadar draft inbox (draft-only)",
 };
 const READ = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
 const json = value => ({ content: [{ type: "text", text: JSON.stringify(value, null, 1) }] });
@@ -58,7 +60,7 @@ export function registerTools(server, system, data) {
         const sections = section ? { [section]: spec.sections[section] } : spec.sections;
         // A change waiting for the Regulatory SME: the shipment checks hold shipments against it (the safe side), but the
         // Country Specification itself changes only after approval.
-        const held = "SupplyShield's shipment checks hold shipments against it until the Regulatory SME decides; the Country Specification itself changes only after that approval.";
+        const held = "ClinRadar's shipment checks hold shipments against it until the Regulatory SME decides; the Country Specification itself changes only after that approval.";
         const pending = { uk: { id: "RC-UK-001", text: `The amended Part 7 labelling rules apply from 2026-04-28. ${held}` },
           es: { id: data.spain.case.id, text: `From ${data.spain.case.effective}: ${data.spain.case.policy} ${held}` },
           ...(data.israel ? { il: { id: "RC-IL-001", text: `From ${data.israel.case.effective}: ${data.israel.case.summary} ${held}` } } : {}) }[country];
@@ -69,7 +71,7 @@ export function registerTools(server, system, data) {
       inputSchema: { shipment_id: z.string(), actions: z.array(z.object({ type: z.enum(ACTION_TYPES), batch_id: z.string().optional(), relabel_date: z.string().optional(), new_dispatch_date: z.string().optional(), authorisation_route: z.string().optional(), qp_date: z.string().optional(), via: z.string().optional().describe("For reroute: the departure airport code, for example AMS.") })) }, annotations: READ },
       async ({ shipment_id, actions }) => json(verifyOptionSafe(data, shipment_id, actions)));
     const ss = data.supplyshield;
-    server.registerTool("get_monitoring_scope", { title: "Monitoring scope", description: "Returns which countries SupplyShield monitors and why: countries with an operationally active trial (automatic), recommended countries with their evidence and whether a person turned monitoring on, and registered countries that are not operationally active. Agents cannot change the scope.", inputSchema: {}, annotations: READ },
+    server.registerTool("get_monitoring_scope", { title: "Monitoring scope", description: "Returns which countries ClinRadar monitors and why: countries with an operationally active trial (automatic), recommended countries with their evidence and whether a person turned monitoring on, and registered countries that are not operationally active. Agents cannot change the scope.", inputSchema: {}, annotations: READ },
       async () => json(!ss ? { status: "unavailable" } : ss.scope.status !== "determined" ? { status: ss.scope.status, message: ss.scope.message } : {
         status: "determined", source: ss.scope.source,
         monitored_for_external_risk: ss.scope.monitored.external.map(code => ({ code, name: ss.names[code] ?? code })),
@@ -86,12 +88,34 @@ export function registerTools(server, system, data) {
         if (geography.land?.[code] === undefined) return json({ country: code, name: names[code] ?? code, status: "BORDER_RELATION_UNKNOWN", source: geography.source ?? null });
         return json({ country: code, name: names[code] ?? code, land: geography.land[code].map(item => ({ code: item, name: names[item] ?? item })), sea: (geography.sea?.[code] ?? []).map(item => ({ code: item, name: names[item] ?? item })), source: geography.source });
       });
-    server.registerTool("get_risk_signals", { title: "External signals", description: "Returns the external events SupplyShield detected in monitored countries and how each one touches our shipments: confirmed disruption (an authorised system confirmed the impact), potential exposure (touches the route on the day, not confirmed; names the missing evidence), not affected after check, or observed. Give a shipment_id for that shipment's matches and route.", inputSchema: { shipment_id: z.string().optional() }, annotations: READ },
-      async ({ shipment_id }) => {
+    const regionOf = code => data.network?.geography?.regions?.[code] ?? "Other";
+    server.registerTool("get_risk_signals", { title: "External signals", description: "Returns the external events ClinRadar detected in monitored countries and how each one touches our shipments: confirmed disruption (an authorised system confirmed the impact), potential exposure (touches the route on the day, not confirmed; names the missing evidence), not affected after check, or observed. Give a shipment_id for that shipment's matches and route. Optional filters: hazard (weather, transport, security or regulatory) and region (for example Europe, Middle East, North America, Asia, Oceania).",
+      inputSchema: { shipment_id: z.string().optional(), hazard: z.enum(Object.keys(HAZARDS)).optional().describe("Only this kind of hazard."), region: z.string().optional().describe("Only events in countries of this region.") }, annotations: READ },
+      async ({ shipment_id, hazard, region }) => {
         if (!ss) return json({ status: "unavailable" });
-        if (shipment_id) return json({ shipment: shipment_id, route: ss.routes[shipment_id] ?? null, matches: ss.byShipment[shipment_id] ?? [] });
-        return json(ss.signals.map(signal => ({ id: signal.id, title: signal.title, tier: signal.tierName, country: signal.country, window: signal.window, illustrative: Boolean(signal.illustrative), live: Boolean(signal.live), counts: signal.counts,
+        const inRegion = code => !region || regionOf(code).toLowerCase() === String(region).toLowerCase();
+        if (shipment_id) return json({ shipment: shipment_id, route: ss.routes[shipment_id] ?? null, matches: (ss.byShipment[shipment_id] ?? []).filter(match => (!hazard || match.hazard === hazard) && inRegion(ss.signals.find(item => item.id === match.signal)?.country)) });
+        return json(ss.signals.filter(signal => (!hazard || signal.hazard === hazard) && inRegion(signal.country)).map(signal => ({ id: signal.id, title: signal.title, hazard: signal.hazard, tier: signal.tierName, priority: signal.priority,
+          country: signal.country, region: regionOf(signal.country), window: signal.window, evidence: signal.evidenceName, sources: (signal.sources ?? []).map(source => source.authority),
+          illustrative: Boolean(signal.illustrative), live: Boolean(signal.live), counts: signal.counts,
           matches: signal.matches.map(match => `${match.shipment} · ${match.label} on ${match.date} · ${match.tier}`), notes: signal.notes })));
+      });
+    server.registerTool("get_enterprise_alerts", { title: "Enterprise risk alerts", description: "Returns the alerts from the company's enterprise risk system (which alerts offices, sites, suppliers and travellers, and knows nothing about trials) and what ClinRadar made of each: merged into an existing signal as an extra source, a new signal with the shipments it touches, no study, site, route or facility affected (counted, not matched), or a coverage gap at one of our facilities in a country nobody monitors. Optional filter: hazard.",
+      inputSchema: { hazard: z.enum(Object.keys(HAZARDS)).optional().describe("Only this kind of hazard.") }, annotations: READ },
+      async ({ hazard }) => json(!ss?.enterprise ? { status: "No enterprise risk system is connected." } : enterpriseFor(ss.enterprise, hazard)));
+    server.registerTool("get_watch_brief", { title: "Watch brief", description: "For one kind of hazard (weather, transport, security or regulatory): the sources watched, every monitored country with its region, how many events were found and how many touch our shipments, routes or facilities, the most relevant event ids, and the coverage gaps. For regulatory: the rule changes and import approvals with the planned shipments each affects.",
+      inputSchema: { hazard: z.enum(Object.keys(HAZARDS)) }, annotations: READ },
+      async ({ hazard }) => {
+        if (!ss || ss.scope.status !== "determined") return json({ hazard, status: ss?.scope.status ?? "unavailable", message: ss?.scope.message ?? "ClinRadar is not available." });
+        const { watch, regulatory } = watchBriefs(data);
+        const entry = watch.find(item => item.hazard === hazard);
+        const codes = ss.scope.monitored[HAZARDS[hazard].kind] ?? [];
+        return json({ hazard, agent: entry.agent, name: entry.name, covers: entry.covers, sources: entry.sources,
+          monitored_countries: codes.map(code => ({ code, name: ss.names[code] ?? code, region: regionOf(code) })), regions: entry.regions,
+          events: entry.events, touching_our_network: entry.touching, confirmed: entry.confirmed, potential: entry.potential, most_relevant: entry.top,
+          coverage_gaps: entry.gaps.map(gap => gap.text),
+          ...(hazard === "weather" ? { alerts_outside_scope_near_our_facilities: ss.feeds?.gdacs?.nearOurFacilities ?? [] } : {}),
+          ...(hazard === "regulatory" ? { items: regulatory.map(({ short: _short, ...item }) => item) } : {}) });
       });
   }
   if (system === "ctms") {
@@ -180,7 +204,7 @@ export function registerTools(server, system, data) {
     const counts = {};
     server.registerTool("create_draft", { title: "Create a draft",
       description: "Creates a draft action for a person to approve in the target validated system: a change request, a relabelling work order, a QP slot booking, a record correction or a message. It never executes anything and never changes a validated record.",
-      inputSchema: { target_system: z.enum(["IRT", "ERP", "Depot", "QMS", "eTMF", "Site portal", "Courier", "SupplyShield monitoring"]).describe("SupplyShield monitoring: a request that a person turns on monitoring for a recommended country; agents never turn it on themselves."), kind: z.string(), shipment_id: z.string(), option_id: z.string().optional().describe("The option this draft belongs to, or 'escalate'."), title: z.string(), body: z.string() },
+      inputSchema: { target_system: z.enum(["IRT", "ERP", "Depot", "QMS", "eTMF", "Site portal", "Courier", "ClinRadar monitoring"]).describe("ClinRadar monitoring: a request that a person turns on monitoring for a recommended country; agents never turn it on themselves."), kind: z.string(), shipment_id: z.string(), option_id: z.string().optional().describe("The option this draft belongs to, or 'escalate'."), title: z.string(), body: z.string() },
       annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false } },
       async input => json({ draft_id: `DRAFT-${input.shipment_id}-${String((counts[input.shipment_id] = (counts[input.shipment_id] ?? 0) + 1)).padStart(2, "0")}`, status: `Draft · needs approval in ${input.target_system}`, executed: false, ...input }));
   }

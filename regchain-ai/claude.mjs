@@ -9,9 +9,10 @@ import { createRequire } from "node:module";
 
 const requireHere = createRequire(import.meta.url);
 
-// The models for each job. Opus plans and reads the law; Sonnet does the specialists' narrower work.
-export const DEFAULT_MODELS = { orchestrator: "claude-opus-5-5", specialist: "claude-sonnet-5-5", aiCheck: "claude-opus-5-5" };
-const MODEL_SETTINGS = { orchestrator: "REGCHAIN_MODEL_ORCHESTRATOR", specialist: "REGCHAIN_MODEL_SPECIALIST", aiCheck: "REGCHAIN_MODEL_AI_CHECK" };
+// The models for each job. Opus plans and reads the law; Sonnet does the specialists' narrower work; Haiku does the watch
+// team's high-volume scanning of every monitored country.
+export const DEFAULT_MODELS = { orchestrator: "claude-opus-5-5", specialist: "claude-sonnet-5-5", watch: "claude-haiku-5-5", aiCheck: "claude-opus-5-5" };
+const MODEL_SETTINGS = { orchestrator: "REGCHAIN_MODEL_ORCHESTRATOR", specialist: "REGCHAIN_MODEL_SPECIALIST", watch: "REGCHAIN_MODEL_WATCH", aiCheck: "REGCHAIN_MODEL_AI_CHECK" };
 const GOOGLE_SCOPE = "https://www.googleapis.com/auth/cloud-platform";
 const AZURE_SCOPE = "https://ai.azure.com/.default";
 
@@ -162,5 +163,5 @@ export async function createClaude({ load = name => import(name) } = {}) {
 
 // For records and screens: which service and which models a live run used.
 export function liveModels(settings = claudeSettings()) {
-  return { orchestrator: settings.models.orchestrator, specialists: settings.models.specialist, service: settings.label };
+  return { orchestrator: settings.models.orchestrator, specialists: settings.models.specialist, watch: settings.models.watch, service: settings.label };
 }

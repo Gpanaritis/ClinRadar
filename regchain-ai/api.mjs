@@ -6,6 +6,7 @@ import { appendAudit, auditFor, eventEnvelope, newId, openDatabase, rememberedRe
 import { applyAnalysis, applyCommand, caseRow, caseView, createCaseModel, ensureCases, resetCase, returnDueDeferrals, ROLES } from "./cases.mjs";
 import { FIXTURE_SETS, recordedAnalysis, runReplay } from "./pipeline.mjs";
 import { checkShipment, loadData, readApprovals, shipmentView } from "./rules.mjs";
+import { enterpriseFor } from "./enterprise.mjs";
 import { OPENAPI } from "./openapi.mjs";
 import { sessionFor, signIn, signOut } from "./auth.mjs";
 import { createRateLimiter, clientAddress, securityHeaders } from "./security.mjs";
@@ -306,19 +307,30 @@ export function createApi({ root, config = loadConfig(), allowedOrigins = config
       return { status: 200, body: { change_id: match[1], decision: body.decision, reason, by: actor, at } };
     }],
     ["GET", /^\/v1\/shipment-actions$/, async ({ db }) => ({ status: 200, body: { actions: Object.fromEntries(db.prepare("SELECT * FROM shipment_action").all().map(row => [row.shipment_id, { action: row.action, reason: row.reason, by: row.actor, at: row.recorded_at }])) } })],
-    // SupplyShield, read-only: the monitoring scope, the external signals and one shipment's route. The scope changes only
+    // ClinRadar, read-only: the monitoring scope, the external signals and one shipment's route. The scope changes only
     // through the monitoring switches (Clinical Supply, the Regulatory SME), with a reason, in the audit trail.
     ["GET", /^\/v1\/monitoring-scope$/, async () => {
       const ss = (await loadData(root)).supplyshield;
-      if (!ss) throw fail(404, "SupplyShield's supply network data is not installed.");
+      if (!ss) throw fail(404, "ClinRadar's supply network data is not installed.");
       return { status: 200, body: ss.scope };
     }],
     ["GET", /^\/v1\/signals$/, async ({ url }) => {
       const ss = (await loadData(root)).supplyshield;
-      if (!ss) throw fail(404, "SupplyShield's supply network data is not installed.");
+      if (!ss) throw fail(404, "ClinRadar's supply network data is not installed.");
       const tier = url.searchParams.get("tier");
       if (tier && !["observed", "potential", "confirmed", "clear"].includes(tier)) throw fail(400, "tier is observed, potential, confirmed or clear.");
-      return { status: 200, body: { checked_at: ss.checkedAt, counts: ss.counts, feeds: ss.feeds, signals: tier ? ss.signals.filter(signal => signal.tier === tier) : ss.signals } };
+      const hazard = url.searchParams.get("hazard");
+      if (hazard && !["weather", "transport", "security", "regulatory"].includes(hazard)) throw fail(400, "hazard is weather, transport, security or regulatory.");
+      return { status: 200, body: { checked_at: ss.checkedAt, counts: ss.counts, feeds: ss.feeds, signals: ss.signals.filter(signal => (!tier || signal.tier === tier) && (!hazard || signal.hazard === hazard)) } };
+    }],
+    // Enterprise risk alerts and what ClinRadar made of each: merged, a new signal, counted, or a coverage gap.
+    ["GET", /^\/v1\/enterprise-alerts$/, async ({ url }) => {
+      const ss = (await loadData(root)).supplyshield;
+      if (!ss) throw fail(404, "ClinRadar's supply network data is not installed.");
+      const hazard = url.searchParams.get("hazard");
+      if (hazard && !["weather", "transport", "security", "regulatory"].includes(hazard)) throw fail(400, "hazard is weather, transport, security or regulatory.");
+      if (!ss.enterprise) return { status: 200, body: { system: null, received: 0, matched: 0, merged: 0, newSignals: 0, notMatched: 0, gaps: 0, alerts: [] } };
+      return { status: 200, body: enterpriseFor(ss.enterprise, hazard) };
     }],
     ["GET", /^\/v1\/signals\/([^/]+)$/, async ({ match }) => {
       const signal = (await loadData(root)).supplyshield?.signals.find(item => item.id === decodeURIComponent(match[1]));

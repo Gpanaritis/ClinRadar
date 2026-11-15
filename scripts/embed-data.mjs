@@ -1,8 +1,8 @@
 // Copies the data files into RegChain-AI-Dashboard.html, so the page shows the full
 // portfolio and the Spain scenario even when it is opened as a file, without the local server.
-// It also embeds SupplyShield's assessment as the server would give it to a new workspace (the monitoring scope, the
+// It also embeds ClinRadar's assessment as the server would give it to a new workspace (the monitoring scope, the
 // signals matched to the shipments and the route checks), computed with an empty database and the recorded feeds.
-// The local server still reads the data files on every request, and the page asks it for SupplyShield's live state.
+// The local server still reads the data files on every request, and the page asks it for ClinRadar's live state.
 // Usage: node scripts/embed-data.mjs          (update the copies in the page)
 //        node scripts/embed-data.mjs --check  (fail if the copies in the page are out of date)
 
@@ -29,7 +29,7 @@ export function embed(html, id, json) {
   return html.replace('<script id="dashboard-data">', () => `${tag}\r\n<script id="dashboard-data">`);
 }
 
-// SupplyShield's assessment for a new workspace: a temporary database and cache, so nothing on this computer changes it.
+// ClinRadar's assessment for a new workspace: a temporary database and cache, so nothing on this computer changes it.
 async function supplyShieldJson() {
   const temp = await mkdtemp(join(tmpdir(), "supplyshield-embed-"));
   const saved = { data: process.env.REGCHAIN_DATA_DIR, cache: process.env.REGCHAIN_CACHE_DIR };
@@ -53,7 +53,7 @@ const check = process.argv.includes("--check");
 let html = await readFile(pagePath, "utf8");
 let stale = 0;
 const sources = [...await Promise.all(DATA_FILES.map(async ({ id, file }) => ({ id, file, json: await readFile(join(root, file), "utf8") }))),
-  { id: "supplyshield-state", file: "SupplyShield assessment (computed)", json: await supplyShieldJson() }];
+  { id: "supplyshield-state", file: "ClinRadar assessment (computed)", json: await supplyShieldJson() }];
 for (const { id, file, json } of sources) {
   const embedded = html.match(tagPattern(id))?.[1];
   const same = embedded !== undefined && JSON.stringify(JSON.parse(embedded)) === JSON.stringify(JSON.parse(json));

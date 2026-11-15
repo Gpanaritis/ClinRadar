@@ -47,7 +47,7 @@ export async function approvePlan(root, { shipment, option, by, runAt, role = nu
   let entry;
   if (option === "escalate") {
     const passing = options.find(item => verifyOption(data, shipment, item.actions).passes);
-    if (passing) throw refuse(409, `"${passing.title}" passes SupplyShield's rules now. Approve it, or withdraw other plans, instead of escalating.`);
+    if (passing) throw refuse(409, `"${passing.title}" passes ClinRadar's rules now. Approve it, or withdraw other plans, instead of escalating.`);
     entry = { option, title: "Escalation", actions: [] };
   } else {
     const chosen = options.find(item => item.id === option);
@@ -55,7 +55,7 @@ export async function approvePlan(root, { shipment, option, by, runAt, role = nu
     const check = verifyOption(data, shipment, chosen.actions);
     if (!check.passes) {
       const reasons = check.notes.filter(note => note.startsWith("Not feasible")).map(note => note.replace("Not feasible: ", "")).join(" ");
-      throw refuse(409, `"${chosen.title}" does not pass SupplyShield's rules now: ${reasons || "the shipment would still be " + check.after.toLowerCase() + "."}`);
+      throw refuse(409, `"${chosen.title}" does not pass ClinRadar's rules now: ${reasons || "the shipment would still be " + check.after.toLowerCase() + "."}`);
     }
     entry = { option, title: chosen.title, actions: chosen.actions, after: check.after };
     // A passing option other than the recommendation has no drafts yet: draft its changes now, through the draft inbox.

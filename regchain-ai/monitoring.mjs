@@ -1,4 +1,4 @@
-// SupplyShield's monitoring decisions: which recommended countries a person has turned on, and whether the authoritative
+// ClinRadar's monitoring decisions: which recommended countries a person has turned on, and whether the authoritative
 // active-trial portfolio (the CTMS) is connected. As with the settings, the audit trail is the store: the current value is
 // the latest recorded change, so every change keeps who made it, when, why and what it was.
 //
@@ -75,7 +75,7 @@ export function setPortfolioConnection(root, network, connected, { by, role }) {
   const current = readScopeState(root, network).connected;
   if (current === connected) return readScopeState(root, network);
   const db = openDatabase(root);
-  transaction(db, () => appendAudit(db, { actor: by ?? "SupplyShield", role: role ?? null, type: connected ? "scope.portfolio_connected" : "scope.portfolio_disconnected", subjectType: "portfolio", subjectId: network?.ctms?.system ?? "CTMS",
+  transaction(db, () => appendAudit(db, { actor: by ?? "ClinRadar", role: role ?? null, type: connected ? "scope.portfolio_connected" : "scope.portfolio_disconnected", subjectType: "portfolio", subjectId: network?.ctms?.system ?? "CTMS",
     detail: connected ? `${network?.ctms?.system ?? "CTMS"} connected, read-only: the active-trial portfolio sets the monitoring scope` : `${network?.ctms?.system ?? "CTMS"} disconnected: the monitoring scope cannot be determined`, data: { connected } }));
   return readScopeState(root, network);
 }
@@ -84,6 +84,6 @@ export function setPortfolioConnection(root, network, connected, { by, role }) {
 // the audit trail.
 export function emptyScope(root, { by }) {
   const db = openDatabase(root);
-  transaction(db, () => appendAudit(db, { actor: by ?? "SupplyShield", type: "scope.workspace_emptied", subjectType: "portfolio", subjectId: "workspace",
+  transaction(db, () => appendAudit(db, { actor: by ?? "ClinRadar", type: "scope.workspace_emptied", subjectType: "portfolio", subjectId: "workspace",
     detail: "Workspace emptied: portfolio disconnected, monitoring decisions cleared (kept in this trail)", data: {} }));
 }

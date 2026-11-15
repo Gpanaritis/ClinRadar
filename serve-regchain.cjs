@@ -2,8 +2,9 @@
 
 const { createServer, get } = require("node:http");
 const { readFileSync, existsSync } = require("node:fs");
-const { readFile, writeFile, mkdir } = require("node:fs/promises");
-const { join } = require("node:path");
+const { readFile, writeFile, mkdir, appendFile } = require("node:fs/promises");
+const { join, resolve, sep, extname } = require("node:path");
+const { randomBytes, timingSafeEqual } = require("node:crypto");
 const { pathToFileURL } = require("node:url");
 const { spawn } = require("node:child_process");
 
@@ -35,6 +36,8 @@ const origin = config.publicOrigin ?? "http://" + (host === "0.0.0.0" ? "127.0.0
 const allowedOrigins = config.origins;
 const logger = createLogger({ format: config.logFormat, level: config.logLevel });
 const apiWriteLimit = createRateLimiter(config.writesPerMinute);
+// The public contact form has its own, stricter limit per client address (REGCHAIN_CONTACTS_PER_HOUR).
+const contactLimit = createRateLimiter(config.contactsPerHour, 3600000);
 // With named users, the routes that start work belong to one role each, as in the user journeys.
 const API_ROLES = {
   "/api/agent/run": ["viewer", "Clinical Supply runs the agents."],
@@ -69,16 +72,20 @@ function dashboardPage() {
   }
   return Buffer.from(page);
 }
-const wantBrowser = process.argv.includes("--open") && config.auth === "local";
+// --open opens the dashboard in local mode; --open-site opens the public launch page (/site/) in either mode.
+const openPath = process.argv.includes("--open-site") ? "/site/" : "/";
+const wantBrowser = process.argv.includes("--open-site") || (process.argv.includes("--open") && config.auth === "local");
 
 // The sign-in page of a shared deployment. The dashboard and its data are served only after sign-in.
 function signInPage(nonce) {
-  return Buffer.from(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>RegChain AI | Sign in</title>
+  return Buffer.from(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ClinRadar | Sign in</title><link rel="icon" href="/site/assets/favicon.svg" type="image/svg+xml">
 <style>:root{font:15px/1.5 Inter,"Segoe UI",sans-serif;color:#132446;background:#f5f8fc}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:16px}main{width:100%;max-width:380px;background:#fff;border:1px solid #e0e8f3;border-radius:12px;padding:28px;box-shadow:0 2px 5px #14356212}
 h1{font-size:22px;margin:0 0 4px}p{color:#536683;margin:0 0 18px;font-size:14px}label{display:grid;gap:4px;font-size:12px;font-weight:700;color:#445b7c;margin-bottom:12px}input{font:inherit;padding:9px 10px;border:1px solid #d5e2f1;border-radius:8px}
-button{width:100%;font:inherit;font-weight:700;color:#fff;background:#1a52d1;border:0;border-radius:8px;padding:10px;cursor:pointer}button:disabled{opacity:.6}#error{color:#9f2c42;font-size:13px;min-height:20px;margin:10px 0 0}</style></head>
-<body><main><h1>RegChain AI</h1><p>Sign in with your RegChain account.</p><form id="signin"><label>Username<input name="username" autocomplete="username" required maxlength="80"></label>
-<label>Password<input name="password" type="password" autocomplete="current-password" required maxlength="200"></label><button type="submit">Sign in</button><p id="error" role="alert"></p></form></main>
+button{width:100%;font:inherit;font-weight:700;color:#fff;background:#1a52d1;border:0;border-radius:8px;padding:10px;cursor:pointer}button:disabled{opacity:.6}#error{color:#9f2c42;font-size:13px;min-height:20px;margin:10px 0 0}
+.foot{margin:18px 0 0;padding-top:14px;border-top:1px solid #e0e8f3;font-size:13px}.foot a{color:#1a52d1;font-weight:700}</style></head>
+<body><main><h1>ClinRadar</h1><p>Sign in with your ClinRadar account.</p><form id="signin"><label>Username<input name="username" autocomplete="username" required maxlength="80"></label>
+<label>Password<input name="password" type="password" autocomplete="current-password" required maxlength="200"></label><button type="submit">Sign in</button><p id="error" role="alert"></p></form>
+<p class="foot" id="no-signup">Accounts are set up by your administrator. There is no self sign-up. <a href="/site/">About ClinRadar</a></p></main>
 <script nonce="${nonce}">document.getElementById("signin").addEventListener("submit",async event=>{event.preventDefault();const form=event.target;const button=form.querySelector("button");button.disabled=true;
 try{const response=await fetch("/v1/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:form.username.value,password:form.password.value})});
 const body=await response.json().catch(()=>({}));if(!response.ok) throw new Error(body.error||"Sign-in failed.");location.replace("/");}catch(error){document.getElementById("error").textContent=error.message;button.disabled=false;}});</script></body></html>`);
@@ -119,7 +126,7 @@ let analysisRunning = false;
 
 function openBrowser() {
   if (!wantBrowser || process.platform !== "win32") return;
-  const browser = spawn("cmd.exe", ["/d", "/c", "start", "", origin + "/"], {
+  const browser = spawn("cmd.exe", ["/d", "/c", "start", "", origin + openPath], {
     stdio: "ignore",
     windowsHide: true
   });
@@ -297,11 +304,240 @@ async function runAnalysis(caseId) {
   return result;
 }
 
+// The public launch page (sites/clinradar/), served at /site/ before and after sign-in. Only files inside that folder
+// with a known type; index.html gets a fresh script nonce like every other page.
+const SITE_DIR = join(__dirname, "sites", "clinradar");
+const SITE_TYPES = {
+  ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8",
+  ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".ico": "image/x-icon", ".txt": "text/plain; charset=utf-8",
+};
+async function serveSite(request, response, path) {
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    response.writeHead(405, { ...securityHeaders(), Allow: "GET, HEAD" }).end();
+    return;
+  }
+  if (path === "/site") {
+    const query = request.url.slice(path.length);
+    response.writeHead(301, { ...securityHeaders(), Location: "/site/" + (query.startsWith("?") ? query : "") }).end();
+    return;
+  }
+  const notFound = () => response.writeHead(404, { ...securityHeaders(), "Content-Type": "text/plain; charset=utf-8" }).end("Page not found");
+  let name;
+  try {
+    name = decodeURIComponent(path.slice("/site/".length)) || "index.html";
+  } catch {
+    notFound();
+    return;
+  }
+  // Plain relative names only: no "..", no backslashes, no hidden files, no NUL.
+  if (!/^[A-Za-z0-9_-][A-Za-z0-9._-]*(\/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$/.test(name) || name.split("/").includes("..")) {
+    notFound();
+    return;
+  }
+  const file = resolve(SITE_DIR, name);
+  const type = SITE_TYPES[extname(file).toLowerCase()];
+  if (!file.startsWith(SITE_DIR + sep) || !type) {
+    notFound();
+    return;
+  }
+  let body;
+  try {
+    body = await readFile(file);
+  } catch {
+    notFound();
+    return;
+  }
+  const html = type.startsWith("text/html");
+  const nonce = html ? newNonce() : null;
+  if (html) body = Buffer.from(withNonce(body.toString("utf8"), nonce));
+  response.writeHead(200, {
+    ...securityHeaders({ nonce, html, secure: config.secureCookies }),
+    "Content-Type": type,
+    "Content-Length": body.length,
+    // The page carries a new nonce each time; its files may be cached briefly and are checked again after that.
+    "Cache-Control": html ? "no-store" : "public, max-age=300, must-revalidate",
+    "X-RegChain-Local": identity,
+  });
+  response.end(request.method === "HEAD" ? undefined : body);
+}
+
+// The contact form on the launch page: public, same-site JSON only, size-limited, validated and rate-limited. Each
+// request is one JSON line in <data dir>/contact-requests.jsonl. The client address is not stored. No email is sent.
+const CONTACT_LIMITS = { name: 120, company: 160, email: 254, message: 3000 };
+const CONTACT_EMAIL = /^[^\s@<>"(),;:]+@[^\s@<>"(),;:]+\.[^\s@<>"(),;:]{2,}$/;
+function contactErrors(body) {
+  const fields = {};
+  const text = key => (typeof body[key] === "string" ? body[key].trim() : null);
+  const labels = { name: "your name", company: "your company", email: "your work email", message: "a message" };
+  for (const key of Object.keys(CONTACT_LIMITS)) {
+    const value = text(key);
+    if (!value) fields[key] = "Enter " + labels[key] + ".";
+    else if (value.length > CONTACT_LIMITS[key]) fields[key] = "Use at most " + CONTACT_LIMITS[key] + " characters.";
+  }
+  if (!fields.email && !CONTACT_EMAIL.test(text("email"))) fields.email = "Enter a valid email address.";
+  if (body.consent !== true) fields.consent = "Consent is needed so that we may reply.";
+  return fields;
+}
+async function handleContact(request, response) {
+  if (request.method !== "POST") {
+    response.writeHead(405, { ...securityHeaders(), "Content-Type": "application/json; charset=utf-8", Allow: "POST" }).end(JSON.stringify({ error: "Send the contact form with POST." }));
+    return;
+  }
+  const site = request.headers["sec-fetch-site"];
+  if ((request.headers.origin && !allowedOrigins.includes(request.headers.origin)) || (site && !["same-origin", "none"].includes(site))) {
+    request.resume();
+    sendJson(response, 403, { error: "Requests from other sites are refused." });
+    return;
+  }
+  const wait = contactLimit(clientAddress(request, config.trustProxy));
+  if (wait) {
+    request.resume();
+    response.writeHead(429, { ...securityHeaders({ secure: config.secureCookies }), "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "Retry-After": String(wait) });
+    response.end(JSON.stringify({ error: "Too many messages from this address. Try again later." }));
+    return;
+  }
+  if (!String(request.headers["content-type"] || "").toLowerCase().startsWith("application/json")) {
+    request.resume();
+    sendJson(response, 415, { error: "Send the contact form as JSON (Content-Type: application/json)." });
+    return;
+  }
+  const maxBytes = 16 * 1024;
+  if (Number(request.headers["content-length"] || 0) > maxBytes) {
+    request.resume();
+    sendJson(response, 413, { error: "The message is too large. Keep it under 3,000 characters." });
+    return;
+  }
+  // Read with listeners rather than for-await: leaving a for-await loop early destroys the socket before the 413 is sent.
+  const raw = await new Promise(done => {
+    const chunks = [];
+    let size = 0;
+    request.on("data", chunk => {
+      size += chunk.length;
+      if (size > maxBytes) {
+        request.removeAllListeners("data");
+        request.resume();
+        done(null);
+      } else chunks.push(chunk);
+    });
+    request.on("end", () => done(Buffer.concat(chunks)));
+    request.on("error", () => done(null));
+  });
+  if (raw === null) {
+    response.setHeader("Connection", "close");
+    sendJson(response, 413, { error: "The message is too large. Keep it under 3,000 characters." });
+    return;
+  }
+  let body;
+  try {
+    body = JSON.parse(raw.toString("utf8"));
+  } catch {
+    sendJson(response, 400, { error: "The request is not valid JSON." });
+    return;
+  }
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    sendJson(response, 400, { error: "Send the contact form as a JSON object." });
+    return;
+  }
+  const fields = contactErrors(body);
+  if (Object.keys(fields).length) {
+    sendJson(response, 400, { error: "Check the highlighted fields.", fields });
+    return;
+  }
+  const receivedAt = new Date().toISOString();
+  const id = "CR-" + receivedAt.slice(0, 10).replace(/-/g, "") + "-" + randomBytes(3).toString("hex").toUpperCase();
+  const entry = { id, receivedAt, name: body.name.trim(), company: body.company.trim(), email: body.email.trim(), message: body.message.trim(), consent: true };
+  const { dataDir } = await loadModule("db.mjs");
+  const dir = dataDir(__dirname);
+  await mkdir(dir, { recursive: true });
+  await appendFile(join(dir, "contact-requests.jsonl"), JSON.stringify(entry) + "\n", "utf8");
+  logger.info("contact request stored", { id });
+  sendJson(response, 201, { id, receivedAt });
+}
+
+// Enterprise risk alerts: the ingest webhook for the company's crisis-alerting system (regchain-ai/enterprise.mjs).
+// JSON only, 256 KB at most, validated alert by alert, rate-limited per address. With named users (password mode) the
+// caller sends "Authorization: Bearer <REGCHAIN_ENTERPRISE_TOKEN>", and the webhook is refused while that is unset; in
+// local mode only this computer may call it. Each alert is stored in the data folder and audited.
+const enterpriseLimit = createRateLimiter(config.writesPerMinute);
+const LOOPBACK = ["127.0.0.1", "::1", "::ffff:127.0.0.1"];
+function sameSecret(given, expected) {
+  const a = Buffer.from(String(given));
+  const b = Buffer.from(String(expected));
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+async function handleEnterpriseAlerts(request, response) {
+  const refuse = (status, error, headers = {}) => {
+    request.resume();
+    response.writeHead(status, { ...securityHeaders({ secure: config.secureCookies }), "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", ...headers });
+    response.end(JSON.stringify({ error }));
+  };
+  if (request.method !== "POST") return refuse(405, "Send enterprise alerts with POST.", { Allow: "POST" });
+  if (request.headers.origin && !allowedOrigins.includes(request.headers.origin)) return refuse(403, "Requests from other sites are refused.");
+  if (config.auth === "password") {
+    const token = String(process.env.REGCHAIN_ENTERPRISE_TOKEN ?? "").trim();
+    if (!token) return refuse(503, "The enterprise alert webhook is off: set REGCHAIN_ENTERPRISE_TOKEN on the server to turn it on.");
+    const given = /^Bearer\s+(.+)$/i.exec(String(request.headers.authorization ?? ""))?.[1]?.trim();
+    if (!given || !sameSecret(given, token)) return refuse(401, "Send the enterprise system's bearer token.", { "WWW-Authenticate": "Bearer" });
+  } else if (!LOOPBACK.includes(request.socket?.remoteAddress)) {
+    return refuse(403, "In local mode, only this computer may send enterprise alerts.");
+  }
+  const wait = enterpriseLimit(clientAddress(request, config.trustProxy));
+  if (wait) return refuse(429, "Too many requests. Try again in a minute.", { "Retry-After": String(wait) });
+  if (!String(request.headers["content-type"] || "").toLowerCase().startsWith("application/json")) return refuse(415, "Send the alerts as JSON (Content-Type: application/json).");
+  const maxBytes = 256 * 1024;
+  if (Number(request.headers["content-length"] || 0) > maxBytes) return refuse(413, "The request is too large: send at most 256 KB per request.");
+  const raw = await new Promise(done => {
+    const chunks = [];
+    let size = 0;
+    request.on("data", chunk => {
+      size += chunk.length;
+      if (size > maxBytes) {
+        request.removeAllListeners("data");
+        request.resume();
+        done(null);
+      } else chunks.push(chunk);
+    });
+    request.on("end", () => done(Buffer.concat(chunks)));
+    request.on("error", () => done(null));
+  });
+  if (raw === null) {
+    response.setHeader("Connection", "close");
+    sendJson(response, 413, { error: "The request is too large: send at most 256 KB per request." });
+    return;
+  }
+  let body;
+  try {
+    body = JSON.parse(raw.toString("utf8"));
+  } catch {
+    sendJson(response, 400, { error: "The request is not valid JSON." });
+    return;
+  }
+  const { validateAlerts, storeEnterpriseAlerts } = await loadModule("enterprise.mjs");
+  const { alerts, errors } = validateAlerts(body);
+  if (errors) {
+    sendJson(response, 422, { error: "Some alerts are not valid; none were stored.", details: errors.slice(0, 20) });
+    return;
+  }
+  const { dataDir, appendAudit, openDatabase, transaction } = await loadModule("db.mjs");
+  const stored = await storeEnterpriseAlerts(dataDir(__dirname), alerts);
+  const db = openDatabase(__dirname);
+  transaction(db, () => {
+    for (const alert of alerts) appendAudit(db, { actor: alert.system, role: null, type: "enterprise.alert_received", subjectType: "enterprise_alert", subjectId: alert.id,
+      detail: `${alert.severity ?? "Alert"} · ${alert.title}`, data: { country: alert.location.country, category: alert.category, window: alert.window, receivedAt: alert.receivedAt } });
+  });
+  // Say at once what ClinRadar made of each alert.
+  const { loadData } = await loadModule("rules.mjs");
+  const summary = (await loadData(__dirname)).supplyshield?.enterprise;
+  const results = alerts.map(alert => ({ id: alert.id, result: summary?.alerts.find(item => item.id === alert.id)?.result ?? "stored" }));
+  logger.info("enterprise alerts stored", { count: alerts.length });
+  sendJson(response, 202, { received: alerts.length, stored, results });
+}
+
 // The /v1 API (regchain-ai/api.mjs): the database, the regulation pipeline and the case workflow on the server.
 let apiPromise = null;
 const api = () => (apiPromise ??= loadModule("api.mjs").then(module => module.createApi({ root: __dirname, config, allowedOrigins, logger, analyze: caseId => runAnalysis(caseId) })));
 
-// SupplyShield's state for the page: the same payload the page carries for file mode, plus who is asking and what they
+// ClinRadar's state for the page: the same payload the page carries for file mode, plus who is asking and what they
 // may switch (Clinical Supply: external risk; the Regulatory SME: regulatory and customs).
 async function supplyShieldState(request) {
   const { loadData, supplyShieldPayload } = await loadModule("rules.mjs");
@@ -426,13 +662,13 @@ async function handleApi(request, response, path) {
     }
     return;
   }
-  // SupplyShield: the monitoring scope from the active-trial portfolio, the recommended countries and their switches, and
+  // ClinRadar: the monitoring scope from the active-trial portfolio, the recommended countries and their switches, and
   // every external signal matched to the shipments (regchain-ai/supplyshield.mjs, monitoring.mjs, feeds.mjs).
   if (path === "/api/supplyshield" && request.method === "GET") {
     try {
       sendJson(response, 200, await supplyShieldState(request));
     } catch (error) {
-      sendJson(response, error.statusCode || 500, { error: error.message || "SupplyShield could not be read." });
+      sendJson(response, error.statusCode || 500, { error: error.message || "ClinRadar could not be read." });
     }
     return;
   }
@@ -470,7 +706,7 @@ async function handleApi(request, response, path) {
         const { appendAudit, openDatabase, transaction } = await loadModule("db.mjs");
         const db = openDatabase(__dirname);
         const failed = Object.values(feeds.fcdo).filter(item => !item.ok).length;
-        transaction(db, () => appendAudit(db, { actor: label ?? "SupplyShield", role: session.role, type: "supplyshield.checked", subjectType: "monitoring", subjectId: feeds.fetchedAt,
+        transaction(db, () => appendAudit(db, { actor: label ?? "ClinRadar", role: session.role, type: "supplyshield.checked", subjectType: "monitoring", subjectId: feeds.fetchedAt,
           detail: `Official feeds checked for ${codes.length} monitored countries${failed ? ` (${failed} did not answer)` : ""}; ${after.counts.confirmed} confirmed disruptions, ${after.counts.potential} potential exposures, ${after.counts.observed} observed events`,
           data: { countries: codes, failed, gdacs: feeds.gdacs.ok, counts: after.counts } }));
       }
@@ -590,6 +826,20 @@ const server = createServer((request, response) => {
 async function handleRequest(request, response, path) {
   if (path.startsWith("/v1/")) {
     await (await api()).handle(request, response, new URL(request.url, origin));
+    return;
+  }
+  // The launch page and its contact form are public, also before sign-in in password mode.
+  if (path === "/site" || path.startsWith("/site/")) {
+    await serveSite(request, response, path);
+    return;
+  }
+  if (path === "/api/contact") {
+    await handleContact(request, response);
+    return;
+  }
+  // The enterprise alert webhook is called by another system, with its own bearer token, not a signed-in person.
+  if (path === "/api/enterprise-alerts") {
+    await handleEnterpriseAlerts(request, response);
     return;
   }
   // In a shared deployment, the agents and the dashboard (with its data) need a signed-in user.
