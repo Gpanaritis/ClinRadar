@@ -59,7 +59,8 @@ All settings are environment variables. An unset variable uses the default.
 | `REGCHAIN_ALLOW_LOCAL_AUTH_ON_NETWORK` | off | Lets local mode listen on a network address. Anyone who reaches it can act as any role. Not for a team |
 | `REGCHAIN_NEW_PASSWORD` | none | Read by `scripts/users.mjs` only: the password to set instead of a generated one |
 | `REGCHAIN_AI_PROVIDER` | `anthropic` | Which Claude service RegChain calls: `anthropic`, `aws`, `bedrock`, `google-cloud`, `vertex` or `foundry`. See [Which Claude service](#which-claude-service) |
-| `ANTHROPIC_API_KEY` | none | With `anthropic`: turns on the live AI check and live agent runs. `ANTHROPIC_AUTH_TOKEN` is also accepted |
+| `ANTHROPIC_API_KEY` | none | With `anthropic`: turns on the live AI check and live agent runs for everyone who may start them. `ANTHROPIC_AUTH_TOKEN` is also accepted. A key here wins over one an administrator connected in Settings |
+| `REGCHAIN_SECRET_KEY` | none: `vault.key`, generated once in the data folder | Password mode: encrypts the Claude API key an administrator connects in Settings (AES-256-GCM). 32 random bytes, base64-encoded, for example `openssl rand -base64 32`. The generated `vault.key` sits in the same folder as the encrypted key, so it only protects a copy of that one file; set this from the secret store to keep the two apart. Changing it makes a connected key unreadable, so connect it again afterwards. See [Administrators](#users-and-roles) |
 | `REGCHAIN_MODEL_ORCHESTRATOR`, `REGCHAIN_MODEL_SPECIALIST`, `REGCHAIN_MODEL_WATCH`, `REGCHAIN_MODEL_AI_CHECK` | the service's names for Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5 and Claude Opus 5.5 | The model for the master agent, the specialist agents, the watch team and the AI check. Claude models only |
 
 Switches accept `1`, `true`, `yes` or `on`. A number that is empty or not a number falls back to its default.
@@ -105,10 +106,10 @@ The image (`Dockerfile`):
 - keeps all data in the `/data` volume;
 - has a health check that calls `/v1/health` every 30 seconds on the configured port and passes only on HTTP 200, which needs an intact audit chain.
 
-`docker-compose.yml` runs one instance. It publishes port 4173 on `127.0.0.1` only, keeps `/data` in the named volume `regchain-data`, restarts unless stopped, and passes `REGCHAIN_AI_PROVIDER` and `ANTHROPIC_API_KEY` from your shell or from a `.env` file next to `docker-compose.yml`. `.dockerignore` keeps `.env`, the local database and the cache out of the image.
+`docker-compose.yml` runs one instance. It publishes port 4173 on `127.0.0.1` only, keeps `/data` in the named volume `regchain-data`, restarts unless stopped, and passes `REGCHAIN_AI_PROVIDER`, `ANTHROPIC_API_KEY` and `REGCHAIN_SECRET_KEY` from your shell or from a `.env` file next to `docker-compose.yml`. `.dockerignore` keeps `.env`, the local database and the cache out of the image.
 
 1. In `docker-compose.yml`, uncomment `REGCHAIN_PUBLIC_ORIGIN` and `REGCHAIN_TRUST_PROXY` and set the address (see the next section).
-2. For the live AI check and live agent runs, put `ANTHROPIC_API_KEY=` and your key in `.env` next to `docker-compose.yml`. To reach Claude through AWS, Google Cloud or Azure instead, follow [Which Claude service](#which-claude-service). Without AI, recorded results and scripted agent runs still work.
+2. For the live AI check and live agent runs, either put `ANTHROPIC_API_KEY=` and your key in `.env` next to `docker-compose.yml`, or leave it out and let an administrator connect the key in **Settings › AI agents & integrations** after step 4 (then set `REGCHAIN_SECRET_KEY` in the same `.env`, so the encryption key is not kept in the `/data` volume next to the encrypted key). To reach Claude through AWS, Google Cloud or Azure instead, follow [Which Claude service](#which-claude-service). Without AI, recorded results and offline demo runs of the agents still work.
 3. Build and start:
    ```sh
    docker compose build
@@ -121,6 +122,7 @@ The image (`Dockerfile`):
    docker compose exec regchain node scripts/users.mjs add olga.owner "Olga Owner" owner
    docker compose exec regchain node scripts/users.mjs add vic.verify "Vic Verifier" verifier
    ```
+   Add `--admin` to the person who will connect Claude in Settings (see [Administrators](#users-and-roles)).
 5. Check it answers: `curl -s http://127.0.0.1:4173/v1/health`.
 
 On first start, RegChain creates the database, runs the migrations, creates the cases and replays both fixture sets with the recorded extraction. A new volume has an empty cache, so this first replay fetches the UK official texts once from legislation.gov.uk and GOV.UK. It makes no AI call. Allow outbound HTTPS to `www.legislation.gov.uk` and `www.gov.uk`, and to the Claude service if you use the live AI check or live agents: `api.anthropic.com` for Anthropic's API, or the cloud service's endpoint in your region.

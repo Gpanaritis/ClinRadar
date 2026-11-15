@@ -14,6 +14,9 @@ services:
       # REGCHAIN_TRUST_PROXY: "1"
       REGCHAIN_AI_PROVIDER: ${REGCHAIN_AI_PROVIDER:-anthropic}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      # Encrypts a Claude key an administrator connects in Settings. Unset, a key is generated in the /data volume, next to
+      # the encrypted key. 32 random bytes, base64: openssl rand -base64 32
+      REGCHAIN_SECRET_KEY: ${REGCHAIN_SECRET_KEY:-}
       # For a cloud service, add its settings, for example Amazon Bedrock:
       # AWS_REGION: "eu-central-1"
       # and give the container the cloud identity that may call Claude (an IAM role, a service account, a managed identity).
