@@ -243,7 +243,7 @@ tr[data-act]{cursor:pointer}
 .tip-pop{display:none!important}
 #tip-layer{position:fixed;z-index:1300;display:none;max-width:min(300px,calc(100vw - 32px));background:#132446;color:#fff;font:500 12.5px/1.45 Inter,"Segoe UI",sans-serif;padding:9px 11px;border-radius:8px;box-shadow:0 8px 22px #13244640;pointer-events:none;text-align:left}
 #tip-layer.on{display:block}
-@media (max-width:760px){.team-row.watch .team-node:last-child{grid-column:auto}}
+@media (max-width:760px){.team-row.watch{grid-template-columns:repeat(2,minmax(0,1fr))}.team-row.watch .team-node:last-child{grid-column:auto}}
 </style>
 </head>
 <body>

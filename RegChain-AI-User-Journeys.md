@@ -132,7 +132,7 @@ flowchart TD
   K --> J
 ```
 
-1. **Overview** → **Needs your decision** shows the most urgent items, one sentence and one button each, in this order:
+1. **Overview** → the line under **Needs your decision** says what is at stake: the shipments that need action before dispatch, the patients on treatment who depend on them, and the first site that could run out of stock. Below it, the most urgent items, one sentence and one button each, in this order:
    - a confirmed disruption on a route;
    - a country that a recovery route needs;
    - escalations;
