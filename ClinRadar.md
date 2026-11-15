@@ -34,7 +34,8 @@ The full report, with sources, is [ClinRadar-Research.md](ClinRadar-Research.md)
 | 9 | Investigate missing evidence with authorised tools; never invent | A match is confirmed only by a record from the courier or the depot, with its time. Without one, the match stays a potential exposure, and the screen names what is missing and who must confirm it. The agents read the courier and depot systems over MCP, and their instructions forbid guessing a status. A route through a country nobody monitors is never called clear: it needs a confirmation. | Signal page, plan page |
 | 10 | Propose feasible mitigations and assign owners | The agents propose options, for example leave from Amsterdam instead of Brussels, or dispatch on 25 Nov. Fixed rules check each one. Each draft names its system and owner. | Plan page |
 | 11 | Human approval before changing the country intelligence, regulated systems or shipment instructions | Country Specification edits go through the Regulatory SME's decision. Plans need Clinical Supply's approval. Every system change is a draft that someone approves in IRT, ERP, the depot, the courier, the QMS or the site portal. | Plan page, change cases |
-| 12 | Keep evidence, timestamps, history and audit | Monitoring decisions, the CTMS connection, every check of the feeds, every approval and every agent run are in the hash-chained audit trail and the run history. | Settings, audit export |
+| 12 | Keep evidence, timestamps, history and audit | Monitoring decisions, the CTMS connection, every check of the feeds, every alert and its delivery, every approval and every agent run are in the hash-chained audit trail and the run history. | Settings, audit export |
+| 13 | Tell the supply lead, with the evidence | The server checks on its own schedule and polls the feeds between checks. Each new confirmed disruption, potential exposure or held shipment raises one alert to Clinical Supply, by email or Teams/Slack webhook, with the confirming record or what is missing, the patients as a count, the sources and the next step. | Overview, Settings › Alerts |
 
 With no CTMS connected, ClinRadar says that its monitoring scope cannot be determined and monitors nothing. It never assumes that every country with registered trials is in scope.
 
@@ -180,6 +181,10 @@ Without an API key, the agents run as the scripted walkthrough (no AI) through t
 | Scope, recommendations, routes, matching, tiers, route checks | `regchain-ai/supplyshield.mjs` |
 | Monitoring decisions and the CTMS connection, in the audit trail | `regchain-ai/monitoring.mjs` |
 | Live feeds (FCDO, GDACS) with a recorded copy | `regchain-ai/feeds.mjs`, `scripts/record-feeds.mjs` (`npm run record:feeds`), `demo-data/recorded-feeds.json` |
+| One check (regulatory sources, feeds, matching, alerts), from the page or the scheduler | `regchain-ai/check.mjs` |
+| The server's schedule: full checks, feed polls, regulatory polls, a missed check on start | `regchain-ai/scheduler.mjs` |
+| Alerts to Clinical Supply: what raises one, the message, deliveries and retries | `regchain-ai/alerts.mjs` |
+| Email (SMTP with STARTTLS or TLS) and the Teams, Slack or JSON webhook | `regchain-ai/notify.mjs` |
 | Route and import-approval checks inside every shipment check; the `reroute` action | `regchain-ai/rules.mjs` |
 | CTMS and courier MCP servers; scope and signal tools; facility status; approval terms | `regchain-ai/mcp-servers.mjs` |
 | ClinRadar orchestrator instructions; the scripted recovery of a confirmed disruption | `regchain-ai/agent.mjs` |
@@ -187,7 +192,13 @@ Without an API key, the agents run as the scripted walkthrough (no AI) through t
 | Public read API: `GET /v1/monitoring-scope`, `/v1/signals`, `/v1/signals/{id}`, `/v1/shipments/{id}/risk` | `regchain-ai/api.mjs`, `regchain-ai/openapi.mjs` |
 | Supply network, CTMS statuses, routes, permits, courier and depot records, geography | `demo-data/supply-network.json` |
 | Recorded external events (illustrative) | `demo-data/external-signals.json` |
-| Tests | `npm run check:supplyshield` (scope, recommendations, tiers, verifier, roles, audit, no portfolio, live feeds); `npm run check:agent` |
+| Tests | `npm run check:supplyshield` (scope, recommendations, tiers, verifier, roles, audit, no portfolio, live feeds); `npm run check:alerts` (alerts, email, webhooks, retries, a whole check offline, the schedule); `npm run check:agent` |
+
+## Alerts and the schedule
+
+The server runs the checks itself, on the monitoring schedule (Athens time), and polls the feeds every 30 minutes between them; the regulatory sources are read again every 24 hours. Nobody needs the page open. After each run, every new confirmed disruption, potential exposure, rule change that holds shipments or import approval problem raises one alert for Clinical Supply, with its evidence. All the alerts of a run go out as one email and one Teams or Slack message, most urgent first. In the prepared workspace the first check raises seven: the CRITICAL strike alert for SHP-IL-01 (the courier's cancellation at 08:10 UTC on 14 Nov, 14 patients, stock until 27 Nov, 2 days without treatment if nothing is done), three potential exposures and three rule changes holding shipments. An alert is raised once; a match that becomes confirmed is a new one. Settings and delivery: [RegChain-AI-Deployment.md](RegChain-AI-Deployment.md#alerts-and-the-schedule).
+
+The cost of delay ClinRadar quotes is Tufts CSDD's: about $40,000 a day in direct costs for a Phase II or III trial ($23,737 in Phase II, $55,716 in Phase III, 2023 dollars, excluding sponsor overhead). It prices a day of trial delay, not a held shipment.
 
 ## Limits and next steps
 

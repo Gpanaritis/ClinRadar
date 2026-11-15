@@ -515,7 +515,11 @@ function patientImpact(view, route, evidence, today) {
   }
   return impact;
 }
-export const COST_OF_DELAY = { perDay: 55716, currency: "USD", phase: "Phase III", basis: "direct cost of one day of trial delay, 2023 dollars", source: "Tufts CSDD, published 2024",
+// The cost of one trial day (Tufts CSDD, Smith, DiMasi and Getz, Therapeutic Innovation & Regulatory Science, 2024):
+// about $40,000 a day in direct costs for Phase II and III trials, the figure ClinRadar quotes, with the figure for each
+// phase. Direct costs only (no sponsor overhead), 2023 dollars. It prices a day of trial delay, not a held shipment.
+export const COST_OF_DELAY = { perDay: 40000, currency: "USD", phase: "Phase II and III", basis: "approximate direct cost of one trial day, 2023 dollars, excluding sponsor overhead",
+  byPhase: { "Phase I": 7829, "Phase II": 23737, "Phase III": 55716, "Phase IV": 14091 }, source: "Tufts CSDD, published 2024",
   url: "https://www.appliedclinicaltrialsonline.com/view/how-much-does-a-day-of-delay-in-a-clinical-trial-really-cost-" };
 const impactSentence = impact => {
   const nothing = impact?.ifNothingDone;

@@ -7,6 +7,7 @@ import { applyAnalysis, applyCommand, caseRow, caseView, createCaseModel, ensure
 import { FIXTURE_SETS, recordedAnalysis, runReplay } from "./pipeline.mjs";
 import { checkShipment, loadData, readApprovals, shipmentView } from "./rules.mjs";
 import { enterpriseFor } from "./enterprise.mjs";
+import { loadSources } from "./sources.mjs";
 import { OPENAPI } from "./openapi.mjs";
 import { sessionFor, signIn, signOut } from "./auth.mjs";
 import { createRateLimiter, clientAddress, securityHeaders } from "./security.mjs";
@@ -410,6 +411,25 @@ export function createApi({ root, config = loadConfig(), allowedOrigins = config
       json(response, status, { error: status >= 500 ? "The server could not complete the request." : error.message }, HSTS);
     }
   }
+  // Read the official regulatory sources again and compare them with the stored versions (by fingerprint, so a change
+  // in spacing or quote marks is not a change). Only a changed text runs the pipeline again: an unchanged day adds one
+  // audit entry and nothing else.
+  async function checkRegulatorySources({ actor = "ClinRadar scheduler", role = null } = {}) {
+    const { db, model } = await context();
+    const before = await loadSources(root, { refresh: false });
+    const after = await loadSources(root, { refresh: true });
+    const read = after.filter(source => source.origin === "live").length;
+    const failed = after.filter(source => source.origin !== "live").map(source => source.id);
+    const changed = after.filter(source => source.origin === "live" && source.hash && before.find(item => item.id === source.id)?.hash !== source.hash).map(source => source.id);
+    const replay = changed.length ? await runReplay(db, model, root, { fixtureSet: "uk-labelling", extractionMode: "recorded", actor }) : null;
+    const detail = `${read} of ${after.length} official regulatory sources read; ` +
+      (changed.length ? `${changed.length} changed since the stored version, so the pipeline ran again (${replay.comparison_status.replace(/_/g, " ")})` : "no change since the stored versions") +
+      (failed.length ? `; ${failed.length} did not answer, the last good copy is kept` : "");
+    transaction(db, () => appendAudit(db, { actor, role, type: "regulatory_sources.checked", subjectType: "sources", subjectId: "uk-labelling", detail,
+      data: { sources: after.map(source => source.id), read, failed, changed, run: replay?.run_id ?? null, comparison: replay?.comparison_status ?? null } }));
+    if (replay) dispatchOutbox(db);
+    return { sources: after.length, read, failed, changed, comparison: replay?.comparison_status ?? null };
+  }
   async function authenticate(request) {
     const { db } = await context();
     return session(db, request);
@@ -419,5 +439,5 @@ export function createApi({ root, config = loadConfig(), allowedOrigins = config
     const current = session(db, request);
     return { session: current, label: current ? actorLabel(model, current) : null };
   }
-  return { handle, context, recordAnalysisResult, authenticate, actorFor, config };
+  return { handle, context, recordAnalysisResult, checkRegulatorySources, authenticate, actorFor, config };
 }

@@ -22,6 +22,7 @@ jobs:
       - run: npm ci
       - run: npm run check:data
       - run: npm run check:supplyshield
+      - run: npm run check:alerts
       - run: npm run check:agent
       - run: npm run check:server
       - run: npm run check:security

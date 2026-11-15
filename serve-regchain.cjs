@@ -224,6 +224,18 @@ async function streamPortfolioRun(request, response) {
   const ai = mode === "live" ? await aiFor(request) : null;
   if (ai && !ai.ready) return fail(ai.message);
   if (agentRunning) return fail("An agent run is already in progress.");
+  try {
+    const record = await runPortfolio(mode, event => response.write("data: " + JSON.stringify(event) + "\n\n"), ai);
+    response.write("event: complete\ndata: " + JSON.stringify(record) + "\n\n");
+    response.end();
+  } catch (error) {
+    fail(error.message);
+  }
+}
+// The portfolio run itself: from the page (streamed) or after a scheduled check (in the background). `ai` is what
+// aiFor() allowed for a live run: the .env key, or an administrator's connected key; null for a scripted run.
+async function runPortfolio(mode, emit = () => {}, ai = null) {
+  if (agentRunning) throw new Error("An agent run is already in progress.");
   agentRunning = true;
   try {
     const { resolvePortfolio } = await loadModule("agent.mjs");
@@ -231,21 +243,88 @@ async function streamPortfolioRun(request, response) {
     const { cacheDir } = await loadModule("sources.mjs");
     const dir = cacheDir(__dirname);
     await mkdir(dir, { recursive: true });
-    const { record } = await resolvePortfolio({ root: __dirname, mode, client,
-      emit: event => response.write("data: " + JSON.stringify(event) + "\n\n"),
+    const { record } = await resolvePortfolio({ root: __dirname, mode, client, emit,
       onShipment: async run => (await loadModule("approvals.mjs")).saveRun(__dirname, run) });
     await writeFile(join(dir, "agent-portfolio-run.json"), JSON.stringify(record, null, 2));
-    response.write("event: complete\ndata: " + JSON.stringify(record) + "\n\n");
-    response.end();
+    return record;
   } catch (error) {
     const message = refusedMessage(error, ai) ? refusedMessage(error, ai) :
       error.code === "ERR_MODULE_NOT_FOUND" ? "The agent packages are not installed. Run npm install in the RegChain folder, then restart RegChain." :
       error.message || "The portfolio run failed.";
     console.error("Portfolio run failed: " + message);
-    fail(message);
+    throw new Error(message);
   } finally {
     agentRunning = false;
   }
+}
+
+// ClinRadar's check (regchain-ai/check.mjs), from "Run the check" or from the scheduler. One at a time: a second one
+// waits for the first to finish, then runs.
+let checkRunning = null;
+async function runCheck(options) {
+  while (checkRunning) await checkRunning.catch(() => {});
+  checkRunning = (async () => {
+    const { runCheck: run } = await loadModule("check.mjs");
+    return run({ root: __dirname, api: await api(), alerts: config.alerts, origin, ...options });
+  })();
+  try {
+    return await checkRunning;
+  } finally {
+    checkRunning = null;
+  }
+}
+
+// The server's own schedule (regchain-ai/scheduler.mjs): full checks on the monitoring schedule, feed polls between
+// them, and the agents after a scheduled check when Settings say so. REGCHAIN_SCHEDULER=off stops it.
+let scheduler = null;
+async function startScheduler() {
+  if (!config.scheduler) {
+    console.log("Scheduled checks are off (REGCHAIN_SCHEDULER=off). Checks run only from the page.");
+    return;
+  }
+  const { createScheduler, lastRuns } = await loadModule("scheduler.mjs");
+  const { readSettings } = await loadModule("settings.mjs");
+  const { openDatabase } = await loadModule("db.mjs");
+  const { loadData } = await loadModule("rules.mjs");
+  const policy = (await loadData(__dirname)).config ?? {};
+  const minutes = [policy.monitoring?.weather_poll_minutes, policy.monitoring?.disaster_poll_minutes].filter(value => Number.isFinite(value) && value >= 5);
+  scheduler = createScheduler({
+    readMonitoring: () => readSettings(__dirname).monitoring,
+    lastRuns: () => lastRuns(openDatabase(__dirname)),
+    cadence: { pollMinutes: minutes.length ? Math.min(...minutes) : 30, regulatoryHours: Number.isFinite(policy.monitoring?.regulatory_poll_hours) && policy.monitoring.regulatory_poll_hours >= 1 ? policy.monitoring.regulatory_poll_hours : 24 },
+    run: async job => {
+      const result = await runCheck({ kind: job, reason: job === "check" ? "scheduled" : job, actor: "ClinRadar scheduler", role: null });
+      logger.info("scheduled run", { job, counts: result.counts, alerts: result.alerts.raised });
+      if (job === "check") await agentsAfterCheck().catch(error => console.error("The agents did not start after the scheduled check: " + error.message));
+      return result;
+    },
+    logger,
+  });
+  scheduler.start();
+  const status = scheduler.status();
+  console.log(status.paused ? "Scheduled checks are paused (Settings › Monitoring schedule)." :
+    "Scheduled checks: next full check " + status.nextCheckAt + ", feeds polled every " + status.pollMinutes + " minutes, regulatory sources every " + status.regulatoryHours + " hours.");
+}
+// "Have the agents prepare plans": after a scheduled check, the agents plan every blocked shipment that has no plan yet.
+// Live with Claude when the server's own key (.env or cloud identity) is set up, otherwise the scripted walkthrough. A key
+// an administrator connected in Settings serves signed-in administrators only, so a scheduled run never spends it.
+// Plans are drafts; Clinical Supply approves.
+async function agentsAfterCheck() {
+  const { readSettings } = await loadModule("settings.mjs");
+  if (readSettings(__dirname).monitoring.onBlocked !== "plan" || agentRunning) return;
+  const { loadData, allShipmentChecks } = await loadModule("rules.mjs");
+  const { planSummaries } = await loadModule("approvals.mjs");
+  const plans = await planSummaries(__dirname);
+  const blocked = allShipmentChecks(await loadData(__dirname)).filter(item => item.result === "Blocked" && !plans[item.id]);
+  if (!blocked.length) return;
+  const server = claude.claudeStatus();
+  const ai = server.ready ? { ...server, apiKey: null, source: "env" } : null;
+  const mode = ai ? "live" : "scripted";
+  logger.info("agents after scheduled check", { mode, shipments: blocked.length });
+  await runPortfolio(mode, () => {}, ai);
+}
+function schedulerStatus() {
+  return scheduler ? scheduler.status() : { on: false, reason: config.scheduler ? "starting" : "off" };
 }
 
 // A small JSON body from the page. Requiring application/json means another site cannot post here without a preflight.
@@ -572,7 +651,10 @@ async function supplyShieldState(request) {
   const payload = supplyShieldPayload(await loadData(__dirname));
   if (!payload) return { available: false };
   const { session } = await (await api()).actorFor(request);
-  return { available: true, ...payload, role: session?.role ?? null, roles: MONITORING_ROLES, authMode: config.auth };
+  const { alertsSummary } = await loadModule("alerts.mjs");
+  const { openDatabase } = await loadModule("db.mjs");
+  return { available: true, ...payload, role: session?.role ?? null, roles: MONITORING_ROLES, authMode: config.auth,
+    alerts: alertsSummary(openDatabase(__dirname), config.alerts), scheduler: schedulerStatus() };
 }
 
 async function handleApi(request, response, path) {
@@ -762,23 +844,39 @@ async function handleApi(request, response, path) {
         if (config.auth !== "local") throw Object.assign(new Error("The CTMS connection is part of the deployment, not a page setting."), { statusCode: 403 });
         monitoring.setPortfolioConnection(__dirname, data.network, Boolean(body.connected), who);
       } else {
-        // A live check of the official feeds, for the countries monitored for external risk. A country that does not
-        // answer keeps its last good record; the audit entry says how many answered.
-        const { fetchFeeds, saveFeeds } = await loadModule("feeds.mjs");
-        const codes = data.supplyshield.scope.monitored.external;
-        const feeds = await fetchFeeds({ codes, geography: data.network.geography, today: data.today });
-        await saveFeeds(__dirname, feeds);
-        const after = (await loadData(__dirname)).supplyshield;
-        const { appendAudit, openDatabase, transaction } = await loadModule("db.mjs");
-        const db = openDatabase(__dirname);
-        const failed = Object.values(feeds.fcdo).filter(item => !item.ok).length;
-        transaction(db, () => appendAudit(db, { actor: label ?? "ClinRadar", role: session.role, type: "supplyshield.checked", subjectType: "monitoring", subjectId: feeds.fetchedAt,
-          detail: `Official feeds checked for ${codes.length} monitored countries${failed ? ` (${failed} did not answer)` : ""}; ${after.counts.confirmed} confirmed disruptions, ${after.counts.potential} potential exposures, ${after.counts.observed} observed events`,
-          data: { countries: codes, failed, gdacs: feeds.gdacs.ok, counts: after.counts } }));
+        // The full check (regchain-ai/check.mjs): the official regulatory sources, the live feeds for the countries
+        // monitored for external risk, the matching and the alerts to Clinical Supply. A source that does not answer keeps
+        // its last good copy; the audit entry says how many answered and how many alerts went out.
+        const result = await runCheck({ kind: "check", reason: "manual", actor: label ?? "ClinRadar", role: session.role });
+        sendJson(response, 200, { ...(await supplyShieldState(request)), check: { at: result.at, counts: result.counts, failed: result.failed, regulatory: result.regulatory, alerts: result.alerts } });
+        return;
       }
       sendJson(response, 200, await supplyShieldState(request));
     } catch (error) {
       sendJson(response, error.statusCode || 500, { error: error.message || "The change could not be recorded." });
+    }
+    return;
+  }
+  // The server's schedule: when the last check ran and when the next one will. The page asks every minute and reloads
+  // ClinRadar's state when a check ran without it.
+  if (path === "/api/scheduler" && request.method === "GET") {
+    sendJson(response, 200, schedulerStatus());
+    return;
+  }
+  // A test message to every alert channel that is set up, so the team sees where alerts arrive.
+  if (path === "/api/alerts/test" && request.method === "POST") {
+    try {
+      await readJson(request);
+      const { session, label } = await (await api()).actorFor(request);
+      if (!session?.role) throw Object.assign(new Error("Choose a role first."), { statusCode: 401 });
+      if (!["viewer", "owner"].includes(session.role)) throw Object.assign(new Error("Clinical Supply or the Quality owner sends a test alert."), { statusCode: 403 });
+      const { sendTestAlert, alertsSummary } = await loadModule("alerts.mjs");
+      const { openDatabase } = await loadModule("db.mjs");
+      const db = openDatabase(__dirname);
+      const results = await sendTestAlert(db, config.alerts, { origin, by: label, role: session.role });
+      sendJson(response, 200, { results, alerts: alertsSummary(db, config.alerts) });
+    } catch (error) {
+      sendJson(response, error.statusCode || 500, { error: error.message || "The test alert could not be sent." });
     }
     return;
   }
@@ -971,5 +1069,11 @@ server.listen(port, host, () => {
   console.log("RegChain AI is running at " + origin + (config.auth === "password" ? " (named users sign in)" : "") + "\nPress Ctrl+C to stop.");
   openBrowser();
   agentSystems().catch(error => console.error("The agent systems did not start: " + error.message));
-  api().then(instance => instance.context()).catch(error => console.error("The database did not start: " + error.message));
+  api().then(instance => instance.context()).then(() => startScheduler())
+    .catch(error => console.error("The database or the scheduler did not start: " + error.message));
+  const { channelStatus } = require("./regchain-ai/notify.mjs");
+  const channels = channelStatus(config.alerts);
+  console.log("Alerts to Clinical Supply: " + (channels.any ? [channels.email.ready ? "email to " + channels.email.recipients.join(", ") : "", channels.webhook.ready ? channels.webhook.format + " webhook (" + channels.webhook.host + ")" : ""].filter(Boolean).join(" and ") :
+    "shown in ClinRadar only. Set REGCHAIN_ALERT_EMAIL_TO and REGCHAIN_SMTP_*, or REGCHAIN_ALERT_WEBHOOK_URL, to send them.") +
+    [...channels.email.problems, ...channels.webhook.problems].map(problem => "\n  " + problem).join(""));
 });

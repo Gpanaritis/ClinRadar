@@ -14,7 +14,7 @@ On Windows, open **Start-ClinRadar.cmd** from the repository folder. If Node.js 
 
 From a terminal on any system with Node.js, run `node serve-regchain.cjs` from the repository folder and open **http://127.0.0.1:4173/**. Use the same address and browser profile to keep saved review decisions and replay settings across sessions. File-mode browser storage varies by browser and is separate from localhost.
 
-The prototype uses a real UK rule change, real official feeds (UK FCDO travel advice and GDACS disaster alerts), a fictional trial portfolio and supply network, illustrative events and rules (labelled so on screen) and simulated roles. The screens carry no demo labels; this README and the docs below say what is real and what is simulated. The configurable schedule re-runs recorded checks while the dashboard is open.
+The prototype uses a real UK rule change, real official feeds (UK FCDO travel advice and GDACS disaster alerts), a fictional trial portfolio and supply network, illustrative events and rules (labelled so on screen) and simulated roles. The screens carry no demo labels; this README and the docs below say what is real and what is simulated. Served by RegChain, the server runs the checks on the configurable schedule, polls the feeds between them and alerts Clinical Supply, whether or not anyone has the page open (see [Alerts and the schedule](#alerts-and-the-schedule)). Opened as a file, the page replays the recorded checks while it is open.
 
 The page carries a copy of the data in `demo-data/`, so the full portfolio and the Spain scenario also show when the file is opened directly. After changing anything in `demo-data/`, run `npm run embed:data` (and `npm run check:data` to confirm the copy is current). The local server always reads the files themselves.
 
@@ -25,7 +25,8 @@ Served by RegChain, the dashboard keeps nothing important in the browser:
 - the server holds the cases, decisions, publications, Quality tasks, shipment actions and change decisions in a SQLite database (`.regchain-data/`, ignored by Git);
 - every step is checked on the server against the session's role;
 - every step is written to an append-only, hash-chained audit trail;
-- events go through an outbox, including to a mock Quality system.
+- events go through an outbox, including to a mock Quality system;
+- the server runs the scheduled checks itself and sends the alerts to Clinical Supply by email or chat webhook.
 
 A regulation pipeline snapshots the official sources, detects meaningful changes, resolves the evidence passages, records the AI extraction and assesses the portfolio with fixed rules. The `/v1` API follows section 9 of the specification. Its contract is at http://127.0.0.1:4173/v1/openapi.json, and its health at http://127.0.0.1:4173/v1/health.
 
@@ -49,6 +50,14 @@ The orchestrator agent works under the starter pack's master instructions (`Clin
 **Run the check** reads the official feeds live for the monitored countries: UK FCDO travel advice through the GOV.UK content API (Open Government Licence) and GDACS alerts. A country that doesn't answer keeps its last good record. `npm run record:feeds` refreshes the recorded copy (`demo-data/recorded-feeds.json`) that the demo uses without internet. Only metadata is kept: the alert status, the update time and the change note.
 
 The public API has read-only routes for ClinRadar: `/v1/monitoring-scope`, `/v1/signals` (optionally `?tier=confirmed`), `/v1/signals/{id}` and `/v1/shipments/{id}/risk`. `npm run check:supplyshield` tests the scope, the recommendations, the tiers, the option verifier, the roles, the audit trail, the state with no portfolio connected and the live-feed rules, without network or AI calls.
+
+## Alerts and the schedule
+
+**The server watches on its own.** On the monitoring schedule (Settings › Monitoring schedule, Athens time, weekdays at 06:00 by default) the server reads the official regulatory sources again, reads the live feeds for every country monitored for external risk, matches every signal to the shipments and raises the alerts. Between checks it polls the feeds every 30 minutes and reads the regulatory sources again every 24 hours (`config/supplyshield.yaml`). A check missed while the server was down runs once when it starts. Nobody needs the page open. `REGCHAIN_SCHEDULER=off` stops all of it.
+
+**Alerts reach Clinical Supply with the evidence.** Each new confirmed disruption, potential exposure, rule change that holds shipments, or import approval that no longer covers a shipment raises one alert. It names the event, the shipment and leg, the record that confirmed it (or what is missing and who must confirm it), the patients behind it as a count, the sources with their times, the next step and a link to the signal. Today the Brussels strike gives a CRITICAL alert for SHP-IL-01: 14 patients in Tel Aviv, stock until 27 Nov, 2 days without treatment if nothing is done. All the alerts of one check go out together, by email (`REGCHAIN_ALERT_EMAIL_TO` and `REGCHAIN_SMTP_*`) and to a Teams or Slack webhook (`REGCHAIN_ALERT_WEBHOOK_URL`). Failed deliveries are tried again, and everything is in the audit trail. Without a channel, alerts are shown in ClinRadar only. **Settings › Alerts** shows the channels, the latest alerts and each delivery, and sends a test alert. Settings: [Alerts and the schedule](RegChain-AI-Deployment.md#alerts-and-the-schedule).
+
+`npm run check:alerts` tests the alerts, the email (through a stand-in mail server on this computer), the Teams, Slack and JSON webhooks, retries, a whole check with every official site unreachable, and the schedule, without network or AI calls.
 
 ## Running it for a team
 
