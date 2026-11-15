@@ -194,7 +194,7 @@ flowchart TD
 
 ### Before any demo (2 minutes)
 
-1. Open **Start-RegChain.cmd** and keep its window open.
+1. Open **Start-RegChain.cmd** and keep its window open. Always use the address **http://127.0.0.1:4173**, never the HTML file itself: opened as a file, the page shows an orange notice, and the agents, approvals and live checks don't work.
 2. Open **http://127.0.0.1:4173/?fresh**. This clears decisions saved in the browser and archives the approvals; the plans stay. The address goes back to normal by itself.
    - To start with no plans at all, open **http://127.0.0.1:4173/?fresh=all**.
 3. Check **Acting as**: P. Laine · Clinical Supply.
