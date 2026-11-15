@@ -4069,8 +4069,21 @@ function studyPage() {
 const worldLand = (()=>{
   try {
     const path=JSON.parse(byId("world-land")?.textContent??"{}").path??"";
-    // A ring wider than half the world wraps across the date line: leave it out.
-    return path.split("M").filter(Boolean).filter(ring=>{const xs=ring.split("L").map(point=>parseFloat(point));return Math.max(...xs)-Math.min(...xs)<500;}).map(ring=>"M"+ring).join("");
+    // A ring that crosses the date line (Russia's far east, Fiji, Wrangel) jumps from one edge to the other and draws a
+    // line across the map: move its far side by one world width, off the visible area, so the outline stays whole.
+    return path.split("M").filter(Boolean).map(ring=>{
+      const points=ring.replace("Z","").split("L").map(point=>point.split(",").map(Number));
+      const wraps=points.some((point,i)=>i&&Math.abs(point[0]-points[i-1][0])>500);
+      if(!wraps) return "M"+ring;
+      let offset=0;
+      const xs=points.map(([x],i)=>{
+        if(i) {const step=x-points[i-1][0];if(step<-500) offset+=1000; else if(step>500) offset-=1000;}
+        return x+offset;
+      });
+      const middle=[...xs].sort((a,b)=>a-b)[Math.floor(xs.length/2)];
+      const shift=middle<0?1000:middle>1000?-1000:0;
+      return "M"+points.map(([,y],i)=>(xs[i]+shift)+","+y).join("L")+"Z";
+    }).join("");
   } catch {return "";}
 })();
 // Public reference coordinates, [longitude, latitude].
