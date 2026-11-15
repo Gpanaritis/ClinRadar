@@ -46,7 +46,15 @@ export function createCaseModel(data) {
   const governedCases = esCase ? { uk: ukCase, es: esCase } : { uk: ukCase };
   const caseOf = state => governedCases[state?.caseId ?? "uk"];
 
+  // With named users, the signed-in person acts; without, the case's named people for each role.
+  let actorOverride = null;
+  function asActor(actor, work) {
+    const previous = actorOverride;
+    actorOverride = actor?.name ? actor : null;
+    try { return work(); } finally { actorOverride = previous; }
+  }
   function roleName(role, state) {
+    if (actorOverride && actorOverride.role === role) return actorOverride.name + " · " + ROLES[role];
     const person = role === "reviewer" ? caseOf(state)?.reviewer : workflowPeople[role];
     return person && ROLES[role] ? person + " · " + ROLES[role] : undefined;
   }
@@ -202,7 +210,7 @@ export function createCaseModel(data) {
     }
     return sections;
   }
-  return { governedCases, caseOf, roleName, initialWorkflow, workflowStep, adoptAiDraft, recordAnalysis, publishedSections, impact, countrySpecs,
+  return { governedCases, caseOf, roleName, asActor, initialWorkflow, workflowStep, adoptAiDraft, recordAnalysis, publishedSections, impact, countrySpecs,
     portfolioSeed: data.portfolio, spainSeed: data.spain?.trial ?? null };
 }
 
@@ -289,7 +297,7 @@ function persist(db, model, row, before, state, role, now) {
 }
 
 // Apply one command as the session's role. Returns the new state, or throws with an HTTP status.
-export function applyCommand(db, model, key, command, { role, now = new Date().toISOString(), analysis = null, unresolved = () => [] } = {}) {
+export function applyCommand(db, model, key, command, { role, actor = null, now = new Date().toISOString(), analysis = null, unresolved = () => [] } = {}) {
   return transaction(db, () => {
     const row = caseRow(db, key);
     if (!row) throw Object.assign(new Error("Unknown case."), { statusCode: 404 });
@@ -308,7 +316,7 @@ export function applyCommand(db, model, key, command, { role, now = new Date().t
       if (open.length) throw Object.assign(new Error("Can't close yet: " + open.join(", ") + " still blocked with no recorded action."), { statusCode: 409 });
     }
     try {
-      model.workflowStep(state, { ...command, override: ["approve", "edit"].includes(action) ? Boolean(command.override && !analysis) : false }, role, now);
+      model.asActor(actor ? { ...actor, role } : null, () => model.workflowStep(state, { ...command, override: ["approve", "edit"].includes(action) ? Boolean(command.override && !analysis) : false }, role, now));
     } catch (error) {
       throw Object.assign(error, { statusCode: error.statusCode ?? statusOf(error.message) });
     }
@@ -331,12 +339,12 @@ export function applyAnalysis(db, model, key, result, { now = new Date().toISOSt
 }
 
 // Start a case again for a rehearsal. The audit trail keeps everything; published versions from the earlier run are withdrawn.
-export function resetCase(db, model, key, { role, now = new Date().toISOString(), analysis = null } = {}) {
+export function resetCase(db, model, key, { role, actor = null, now = new Date().toISOString(), analysis = null } = {}) {
   return transaction(db, () => {
     const row = caseRow(db, key);
     if (!row) throw Object.assign(new Error("Unknown case."), { statusCode: 404 });
     const governed = model.governedCases[row.case_key];
-    appendAudit(db, { actor: model.roleName(role, row.state) ?? "RegChain", role, type: "case.reset", subjectType: "change_case", subjectId: row.id,
+    appendAudit(db, { actor: model.asActor(actor ? { ...actor, role } : null, () => model.roleName(role, row.state)) ?? "RegChain", role, type: "case.reset", subjectType: "change_case", subjectId: row.id,
       detail: "Case started again. The earlier run stays in the audit trail.", data: { previous_state_sha256: sha256(canonical(row.state)), previous_stage: row.state.stage }, correlationId: row.id, at: now });
     db.prepare("UPDATE requirement_version SET status = 'withdrawn' WHERE case_id = ? AND status = 'in_force'").run(row.id);
     db.prepare("UPDATE specification_version SET status = 'withdrawn' WHERE case_id = ? AND status = 'in_force'").run(row.id);

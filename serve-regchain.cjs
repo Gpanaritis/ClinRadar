@@ -7,10 +7,21 @@ const { join } = require("node:path");
 const { pathToFileURL } = require("node:url");
 const { spawn } = require("node:child_process");
 
-const host = "127.0.0.1";
-const port = Number(process.env.REGCHAIN_PORT) || 4173;
-const origin = "http://" + host + ":" + port;
-const allowedOrigins = [origin, "http://localhost:" + port];
+// Settings, security headers and logs (regchain-ai/config.mjs, security.mjs). Defaults serve one person on this computer.
+const { loadConfig } = require("./regchain-ai/config.mjs");
+const { securityHeaders, withNonce, newNonce, requestId, clientAddress, createLogger } = require("./regchain-ai/security.mjs");
+let config;
+try {
+  config = loadConfig();
+} catch (error) {
+  console.error(error.message);
+  process.exit(1);
+}
+const host = config.host;
+const port = config.port;
+const origin = config.publicOrigin ?? "http://" + (host === "0.0.0.0" ? "127.0.0.1" : host) + ":" + port;
+const allowedOrigins = config.origins;
+const logger = createLogger({ format: config.logFormat, level: config.logLevel });
 const identity = "regchain-dashboard";
 const dashboardHtml = readFileSync(join(__dirname, "RegChain-AI-Dashboard.html"), "utf8");
 // Data the page gets as JSON inside data script tags: the trial portfolio for the UK case
@@ -37,7 +48,20 @@ function dashboardPage() {
   }
   return Buffer.from(page);
 }
-const wantBrowser = process.argv.includes("--open");
+const wantBrowser = process.argv.includes("--open") && config.auth === "local";
+
+// The sign-in page of a shared deployment. The dashboard and its data are served only after sign-in.
+function signInPage(nonce) {
+  return Buffer.from(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>RegChain AI | Sign in</title>
+<style>:root{font:15px/1.5 Inter,"Segoe UI",sans-serif;color:#132446;background:#f5f8fc}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:16px}main{width:100%;max-width:380px;background:#fff;border:1px solid #e0e8f3;border-radius:12px;padding:28px;box-shadow:0 2px 5px #14356212}
+h1{font-size:22px;margin:0 0 4px}p{color:#536683;margin:0 0 18px;font-size:14px}label{display:grid;gap:4px;font-size:12px;font-weight:700;color:#445b7c;margin-bottom:12px}input{font:inherit;padding:9px 10px;border:1px solid #d5e2f1;border-radius:8px}
+button{width:100%;font:inherit;font-weight:700;color:#fff;background:#1a52d1;border:0;border-radius:8px;padding:10px;cursor:pointer}button:disabled{opacity:.6}#error{color:#9f2c42;font-size:13px;min-height:20px;margin:10px 0 0}</style></head>
+<body><main><h1>RegChain AI</h1><p>Sign in with your RegChain account.</p><form id="signin"><label>Username<input name="username" autocomplete="username" required maxlength="80"></label>
+<label>Password<input name="password" type="password" autocomplete="current-password" required maxlength="200"></label><button type="submit">Sign in</button><p id="error" role="alert"></p></form></main>
+<script nonce="${nonce}">document.getElementById("signin").addEventListener("submit",async event=>{event.preventDefault();const form=event.target;const button=form.querySelector("button");button.disabled=true;
+try{const response=await fetch("/v1/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:form.username.value,password:form.password.value})});
+const body=await response.json().catch(()=>({}));if(!response.ok) throw new Error(body.error||"Sign-in failed.");location.replace("/");}catch(error){document.getElementById("error").textContent=error.message;button.disabled=false;}});</script></body></html>`);
+}
 
 // The recorded company rule the UK AI draft is checked against (mirrors ukCase in the dashboard).
 const RULE = { requirement: "GB/IMP_LABELING", effective: "2026-04-28" };
@@ -94,6 +118,7 @@ function openBrowser() {
 function sendJson(response, status, body) {
   const data = Buffer.from(JSON.stringify(body));
   response.writeHead(status, {
+    ...securityHeaders({ secure: config.secureCookies }),
     "Content-Type": "application/json; charset=utf-8",
     "Content-Length": data.length,
     "Cache-Control": "no-store",
@@ -261,7 +286,7 @@ async function runAnalysis(caseId) {
 
 // The /v1 API (regchain-ai/api.mjs): the database, the regulation pipeline and the case workflow on the server.
 let apiPromise = null;
-const api = () => (apiPromise ??= loadModule("api.mjs").then(module => module.createApi({ root: __dirname, allowedOrigins, analyze: caseId => runAnalysis(caseId) })));
+const api = () => (apiPromise ??= loadModule("api.mjs").then(module => module.createApi({ root: __dirname, config, allowedOrigins, logger, analyze: caseId => runAnalysis(caseId) })));
 
 async function handleApi(request, response, path) {
   const caseId = caseFrom(request.url);
@@ -344,7 +369,16 @@ async function handleApi(request, response, path) {
     try {
       const body = await readJson(request);
       const { approvePlan, withdrawPlan, startFresh } = await loadModule("approvals.mjs");
-      sendJson(response, 200, path === "/api/agent/approve" ? await approvePlan(__dirname, body) : path === "/api/agent/withdraw" ? await withdrawPlan(__dirname, body) : await startFresh(__dirname, body));
+      const { session, label } = await (await api()).actorFor(request);
+      if (path === "/api/agent/start-fresh") {
+        if (config.auth !== "local") throw Object.assign(new Error("Starting fresh is only for rehearsals on one computer."), { statusCode: 403 });
+        sendJson(response, 200, await startFresh(__dirname, { plans: Boolean(body.plans), by: label ?? "Start fresh link" }));
+        return;
+      }
+      if (!session?.role) throw Object.assign(new Error("Choose a role first."), { statusCode: 401 });
+      if (path === "/api/agent/approve" && session.role !== "viewer") throw Object.assign(new Error("Clinical Supply approves supply plans."), { statusCode: 403 });
+      sendJson(response, 200, path === "/api/agent/approve" ? await approvePlan(__dirname, { shipment: body.shipment, option: body.option, runAt: body.runAt, by: label, role: session.role })
+        : await withdrawPlan(__dirname, { shipment: body.shipment, by: label, role: session.role }));
     } catch (error) {
       sendJson(response, error.statusCode || 500, { error: error.message || "The approval could not be recorded." });
     }
@@ -414,44 +448,62 @@ async function handleApi(request, response, path) {
 }
 
 const server = createServer((request, response) => {
-  const validHost = [host + ":" + port, "localhost:" + port].includes(request.headers.host);
-  if (!validHost) {
-    response.writeHead(400).end("Use " + origin);
-    return;
-  }
+  const started = Date.now();
+  const id = requestId(request);
+  response.setHeader("X-Request-Id", id);
   const path = request.url.split("?")[0];
-  if (path.startsWith("/v1/")) {
-    api().then(instance => instance.handle(request, response, new URL(request.url, origin))).catch(error => {
-      console.error(error);
-      if (!response.headersSent) sendJson(response, 500, { error: "Unexpected server error." });
-    });
+  response.on("finish", () => {
+    if (path === "/v1/health") return;
+    logger.info("request", { request_id: id, method: request.method, path, status: response.statusCode, ms: Date.now() - started, address: clientAddress(request, config.trustProxy) });
+  });
+  if (!config.hosts.includes(request.headers.host)) {
+    response.writeHead(400, securityHeaders()).end("Use " + origin);
     return;
   }
+  handleRequest(request, response, path).catch(error => {
+    logger.error("request failed", { request_id: id, path, error: error.stack ?? error.message });
+    if (!response.headersSent) sendJson(response, 500, { error: "Unexpected server error." });
+  });
+});
+
+async function handleRequest(request, response, path) {
+  if (path.startsWith("/v1/")) {
+    await (await api()).handle(request, response, new URL(request.url, origin));
+    return;
+  }
+  // In a shared deployment, the agents and the dashboard (with its data) need a signed-in user.
+  const signedIn = config.auth === "local" || Boolean((await (await api()).authenticate(request))?.user);
   if (path.startsWith("/api/")) {
-    handleApi(request, response, path).catch(error => {
-      console.error(error);
-      if (!response.headersSent) sendJson(response, 500, { error: "Unexpected server error." });
-    });
+    if (!signedIn) {
+      sendJson(response, 401, { error: "Sign in first." });
+      return;
+    }
+    await handleApi(request, response, path);
     return;
   }
   if (request.method !== "GET" && request.method !== "HEAD") {
-    response.writeHead(405, { Allow: "GET, HEAD" }).end();
+    response.writeHead(405, { ...securityHeaders(), Allow: "GET, HEAD" }).end();
     return;
   }
-  if (path !== "/" && path !== "/RegChain-AI-Dashboard.html") {
-    response.writeHead(404).end("Page not found");
+  if (path !== "/" && path !== "/RegChain-AI-Dashboard.html" && path !== "/signin") {
+    response.writeHead(404, securityHeaders()).end("Page not found");
     return;
   }
-  const dashboard = dashboardPage();
+  const nonce = newNonce();
+  const page = !signedIn || path === "/signin" ? (signedIn ? null : signInPage(nonce)) : Buffer.from(withNonce(dashboardPage().toString(), nonce));
+  if (!page) {
+    response.writeHead(302, { ...securityHeaders(), Location: "/" }).end();
+    return;
+  }
   response.writeHead(200, {
+    ...securityHeaders({ nonce, html: true, secure: config.secureCookies }),
     "Content-Type": "text/html; charset=utf-8",
-    "Content-Length": dashboard.length,
+    "Content-Length": page.length,
     "Cache-Control": "no-store",
-    "X-Content-Type-Options": "nosniff",
     "X-RegChain-Local": identity
   });
-  response.end(request.method === "HEAD" ? undefined : dashboard);
-});
+  response.end(request.method === "HEAD" ? undefined : page);
+}
 
 function reportStartError(error) {
   console.error("Could not start RegChain at " + origin + " (" + error.code + ").");
@@ -477,7 +529,7 @@ server.on("error", error => {
 });
 
 server.listen(port, host, () => {
-  console.log("RegChain AI is running at " + origin + "\nPress Ctrl+C to stop.");
+  console.log("RegChain AI is running at " + origin + (config.auth === "password" ? " (named users sign in)" : "") + "\nPress Ctrl+C to stop.");
   openBrowser();
   agentSystems().catch(error => console.error("The agent systems did not start: " + error.message));
   api().then(instance => instance.context()).catch(error => console.error("The database did not start: " + error.message));

@@ -4,12 +4,41 @@
 
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { readFileSync, renameSync } from "node:fs";
+import { appendAudit, openDatabase, transaction } from "./db.mjs";
 import { cacheDir } from "./sources.mjs";
+
+// Approvals made before they moved into the database were kept in agent-approvals.json in the cache folder. They are
+// imported once, each with an audit entry, and the file is renamed so it is never read again.
+const importedFrom = new Set();
+function importFileApprovals(root, db) {
+  const file = join(cacheDir(root), "agent-approvals.json");
+  if (importedFrom.has(file)) return;
+  importedFrom.add(file);
+  let approvals;
+  try { approvals = JSON.parse(readFileSync(file, "utf8")); } catch { return; }
+  transaction(db, () => {
+    for (const [shipment, approval] of Object.entries(approvals ?? {})) {
+      if (!/^SHP-[A-Z0-9-]+$/.test(shipment) || !approval?.option || db.prepare("SELECT 1 FROM agent_approval WHERE shipment_id = ?").get(shipment)) continue;
+      const by = String(approval.by ?? "unknown").slice(0, 120);
+      const at = approval.at ?? new Date().toISOString();
+      db.prepare("INSERT INTO agent_approval (shipment_id, option_id, title, actions, after, approved_by, role, approved_at, run_at, mode, drafts) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+        .run(shipment, approval.option, approval.title ?? approval.option, JSON.stringify(approval.actions ?? []), approval.after ?? null, by, null, at, approval.runAt ?? null, approval.mode ?? null, JSON.stringify(approval.drafts ?? []));
+      appendAudit(db, { actor: "RegChain upgrade", type: "approval.imported", subjectType: "shipment", subjectId: shipment,
+        detail: `${approval.title ?? approval.option}, approved by ${by} at ${at}, imported from agent-approvals.json`, data: { option: approval.option, title: approval.title ?? null, by, approvedAt: at, runAt: approval.runAt ?? null, drafts: approval.drafts ?? [] } });
+    }
+  });
+  try { renameSync(file, file.replace(/\.json$/,`.imported-${Date.now()}.json`)); } catch {}
+}
 
 // Plans people approved in RegChain. Each one holds the stock and relabelling capacity it uses until it is withdrawn,
 // so no two shipments are promised the same kits or the same slot.
 export async function readApprovals(root) {
-  try { return JSON.parse(await readFile(join(cacheDir(root), "agent-approvals.json"), "utf8")); } catch { return {}; }
+  const db = openDatabase(root);
+  importFileApprovals(root, db);
+  return Object.fromEntries(db.prepare("SELECT * FROM agent_approval").all().map(row => [row.shipment_id, {
+    option: row.option_id, title: row.title, actions: JSON.parse(row.actions), after: row.after, by: row.approved_by, role: row.role,
+    at: row.approved_at, runAt: row.run_at, mode: row.mode, drafts: JSON.parse(row.drafts) }]));
 }
 
 export async function loadData(root) {

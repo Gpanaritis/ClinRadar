@@ -88,7 +88,7 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 .plans-head{align-items:flex-start}.plans-filters{padding:0 15px 10px}.plan-title{display:block;font-size:13px;margin-top:4px}.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12.5px;color:var(--muted)}
 .run-line{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:15px;font-size:12px;color:var(--muted)}.run-line>span{flex:1;min-width:240px}.rerun{flex-basis:100%}.rerun>summary{cursor:pointer;color:var(--blue);font-weight:700}.rerun .actions{margin:8px 0 4px}
 .progress-card{padding:12px 15px;margin-bottom:15px}.progress-text{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px}.progress-text small{color:var(--muted)}.progress-bar{height:6px;border-radius:4px;background:#edf1f7;margin-top:8px;overflow:hidden}.progress-bar span{display:block;height:100%;background:var(--blue);transition:width .3s}
-.stack-label{display:none}.file-notice{display:flex;gap:8px;align-items:flex-start;margin:0 0 15px;padding:10px 14px;border-radius:10px;background:#fff2d9;color:#6b3d00;font-size:13px;border:1px solid #f1d39b}.file-notice svg{width:16px;height:16px;flex:none;margin-top:1px}.file-notice a{color:#6b3d00;font-weight:700}
+.stack-label{display:none}.signed-in span{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--ink)}.signed-in .btn{padding:2px 6px}.file-notice{display:flex;gap:8px;align-items:flex-start;margin:0 0 15px;padding:10px 14px;border-radius:10px;background:#fff2d9;color:#6b3d00;font-size:13px;border:1px solid #f1d39b}.file-notice svg{width:16px;height:16px;flex:none;margin-top:1px}.file-notice a{color:#6b3d00;font-weight:700}
 @media(max-width:760px){.stack-table thead{display:none}.stack-table,.stack-table tbody{display:block;width:100%}.stack-table tr{display:grid;gap:6px 12px;padding:12px 15px;border-top:1px solid var(--line)}.stack-table tr:first-child{border-top:0}.stack-table td{display:block;padding:0;border:0;min-width:0;white-space:normal}.stack-table td.hide-narrow,.stack-table td.col-num,.stack-table td.col-dispatch{display:none}.stack-table .stack-label{display:inline;color:var(--muted);font-size:11.5px}.stack-table td.col-prep{text-align:right}.stack-table td.col-prep .sub{display:block}
 .plans-table tr{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"ship prep" "plan plan" "next next"}.plans-table .col-ship{grid-area:ship}.plans-table .col-prep{grid-area:prep}.plans-table .col-plan{grid-area:plan}.plans-table .col-next{grid-area:next}.plans-table .col-next .btn{width:100%;justify-content:center}
 .ships-table tr{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"ship result" "dest prep" "plan plan"}.ships-table .col-ship{grid-area:ship}.ships-table .col-result{grid-area:result}.ships-table .col-dest{grid-area:dest}.ships-table .col-prep{grid-area:prep}.ships-table .col-plan{grid-area:plan}.ships-table .col-result .badge-stack{justify-content:flex-end}}
@@ -1147,7 +1147,10 @@ const displayDay = day => {
   const date=new Date(day);
   return date.getUTCDate()+" "+monthNames[date.getUTCMonth()]+" "+date.getUTCFullYear();
 };
+// With named users, the account decides the role: show who is signed in instead of a role switch.
+let signedInUser = null;
 function caseRoleSelect() {
+  if(signedInUser) return '<div class="field signed-in">Signed in as<span><strong>'+esc(signedInUser.name+" · "+workflowRoles[workflowRole])+'</strong>'+trigger("Sign out","sign-out","","quiet")+'</span></div>';
   return '<label class="field">Acting as<select id="workflow-role">'+options(Object.keys(workflowRoles).map(role=>[role,roleName(role,workflow)]),workflowRole)+'</select></label>';
 }
 // The AI gate for the case on screen: "pass", "fail", or "none" when no AI check has run.
@@ -2442,6 +2445,7 @@ const actions={
   "portfolio-approve":id=>{const plan=agentPlans[id];if(plan) approveAgentPlan(plan.status==="escalate"?"escalate":plan.recommended,id,plan.runAt);},
   "trail-filter":id=>{trailAgent=id;openPanels.add("agent-trail");render();document.querySelector('[data-act="trail-filter"][data-value="'+id+'"]')?.focus();},
   "plans-status":id=>{plansFilter=id;render();document.querySelector('[data-act="plans-status"][data-value="'+id+'"]')?.focus();},
+  "sign-out":()=>apiWrite("POST","/v1/auth/logout",{}).finally(()=>location.replace("/")),
   "clear-shipment-filters":()=>{shipmentFilter="all";shipmentCountry="all";shipmentPlanFilter="all";shipmentSearch="";render();},
   "agent-withdraw":async id=>{await withdrawAgentPlan(id);if(byId("drawer").open) shipmentDetail(id);},
   "agent-export":exportAgentRun,
@@ -2643,8 +2647,9 @@ async function loadServerState() {
   if(!serverMode()) return;
   try {
     const [session,cases,actions,decisions]=await Promise.all([aiRequest("/v1/session"),aiRequest("/v1/cases"),aiRequest("/v1/shipment-actions"),aiRequest("/v1/change-decisions")]);
+    signedInUser=session.mode==="password"?session.user:null;
     if(session.role) workflowRole=session.role;
-    else await apiWrite("POST","/v1/session",{role:workflowRole});
+    else if(session.mode!=="password") await apiWrite("POST","/v1/session",{role:workflowRole});
     for(const item of cases.cases) setWorkflow(item.workflow);
     manualShipmentActions=actions.actions??{};
     changeDecisions=decisions.decisions??{};

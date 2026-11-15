@@ -121,6 +121,24 @@ CREATE INDEX outbox_status ON outbox_event (status, seq);
 CREATE INDEX finding_assessment ON impact_finding (assessment_id);
 `,
   },
+  {
+    id: 2,
+    name: "users, sessions with expiry, sign-in attempts, agent plan approvals",
+    sql: `
+CREATE TABLE app_user (
+  id TEXT PRIMARY KEY, username TEXT NOT NULL UNIQUE COLLATE NOCASE, name TEXT NOT NULL, role TEXT NOT NULL,
+  password_hash TEXT NOT NULL, active INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL, password_changed_at TEXT NOT NULL, last_sign_in TEXT
+);
+ALTER TABLE session ADD COLUMN user_id TEXT REFERENCES app_user(id);
+ALTER TABLE session ADD COLUMN expires_at TEXT;
+CREATE TABLE login_attempt (key TEXT NOT NULL, at TEXT NOT NULL, ok INTEGER NOT NULL);
+CREATE INDEX login_attempt_key ON login_attempt (key, at);
+CREATE TABLE agent_approval (
+  shipment_id TEXT PRIMARY KEY, option_id TEXT NOT NULL, title TEXT NOT NULL, actions TEXT NOT NULL, after TEXT,
+  approved_by TEXT NOT NULL, role TEXT, approved_at TEXT NOT NULL, run_at TEXT, mode TEXT, drafts TEXT NOT NULL
+);
+`,
+  },
 ];
 
 const handles = new Map();

@@ -4,12 +4,17 @@
   "description": "RegChain AI hackathon prototype: regulatory change monitoring and pre-shipment checks for clinical supply, with an agent layer over MCP",
   "scripts": {
     "start": "node serve-regchain.cjs --open",
+    "serve": "node serve-regchain.cjs",
+    "users": "node scripts/users.mjs",
+    "backup": "node scripts/backup.mjs",
     "check:ai": "node scripts/check-ai-step.mjs",
     "embed:data": "node scripts/embed-data.mjs",
     "check:data": "node scripts/embed-data.mjs --check",
     "check:agent": "node scripts/check-agent.mjs",
     "check:server": "node scripts/check-server.mjs",
-    "check": "node scripts/embed-data.mjs --check && node scripts/check-ai-step.mjs && node scripts/check-agent.mjs && node scripts/check-server.mjs"
+    "check:security": "node scripts/check-security.mjs",
+    "check:offline": "node scripts/embed-data.mjs --check && node scripts/check-agent.mjs && node scripts/check-server.mjs && node scripts/check-security.mjs",
+    "check": "node scripts/embed-data.mjs --check && node scripts/check-ai-step.mjs && node scripts/check-agent.mjs && node scripts/check-server.mjs && node scripts/check-security.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.8.0",
@@ -17,6 +22,6 @@
     "zod": "^4.6.7"
   },
   "engines": {
-    "node": ">=20.12"
+    "node": ">=22.13"
   }
 }

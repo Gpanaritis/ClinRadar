@@ -7,10 +7,32 @@ import { applyAnalysis, applyCommand, caseRow, caseView, createCaseModel, ensure
 import { FIXTURE_SETS, recordedAnalysis, runReplay } from "./pipeline.mjs";
 import { checkShipment, loadData, readApprovals, shipmentView } from "./rules.mjs";
 import { OPENAPI } from "./openapi.mjs";
+import { sessionFor, signIn, signOut } from "./auth.mjs";
+import { createRateLimiter, clientAddress, securityHeaders } from "./security.mjs";
+import { loadConfig } from "./config.mjs";
+import { z } from "zod";
+
+// Request bodies, checked before anything else runs.
+const SCHEMAS = {
+  session: z.object({ role: z.enum(["viewer", "reviewer", "owner", "verifier"]) }),
+  login: z.object({ username: z.string().min(1).max(80), password: z.string().min(1).max(200) }),
+  command: z.object({ action: z.enum(["approve", "edit", "reject", "investigate", "defer", "resume", "ack", "implement", "return", "verify"]), revision: z.number().int().positive(),
+    reason: z.string().max(4000).nullish(), instruction: z.string().max(8000).nullish(), reviewOn: z.string().max(10).nullish(), override: z.boolean().optional(), today: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() }),
+  decision: z.object({ revision: z.number().int().positive(), outcome: z.enum(["approve", "reject"]), rationale: z.string().max(4000), override: z.boolean().optional(), today: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() }),
+  shipmentAction: z.object({ action: z.enum(["hold", "swap", "proceed"]), reason: z.string().max(4000) }),
+  changeDecision: z.object({ decision: z.enum(["not-relevant", "case", "assessing"]), reason: z.string().max(4000) }),
+  replay: z.object({ fixture_set: z.enum(["uk-labelling", "es-notice"]).optional(), extraction_mode: z.enum(["live", "recorded"]).optional(), analysis_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() }),
+  empty: z.object({}).passthrough(),
+};
+function validate(schema, body) {
+  const result = SCHEMAS[schema].safeParse(body);
+  if (!result.success) throw Object.assign(new Error("Invalid request: " + result.error.issues.map(issue => (issue.path.join(".") || "body") + " " + issue.message).join("; ")), { statusCode: 422 });
+  return result.data;
+}
 
 const SESSION_COOKIE = "rc_session";
 const json = (response, status, body, headers = {}) => {
-  response.writeHead(status, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", ...headers });
+  response.writeHead(status, { ...securityHeaders(), "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", ...headers });
   response.end(JSON.stringify(body));
 };
 const fail = (statusCode, message) => Object.assign(new Error(message), { statusCode });
@@ -28,8 +50,13 @@ function cookies(request) {
   return Object.fromEntries(String(request.headers.cookie || "").split(";").map(part => part.trim().split("=")).filter(([key]) => key).map(([key, ...value]) => [key, decodeURIComponent(value.join("="))]));
 }
 
-export function createApi({ root, allowedOrigins = [], analyze, now = () => new Date().toISOString() }) {
+// Routes anyone may call in a shared deployment; everything else needs a signed-in user.
+const PUBLIC_ROUTES = [["GET", /^\/v1\/health$/], ["GET", /^\/v1\/session$/], ["POST", /^\/v1\/auth\/login$/], ["GET", /^\/v1\/openapi\.json$/]];
+
+export function createApi({ root, config = loadConfig(), allowedOrigins = config.origins, analyze, now = () => new Date().toISOString(), logger = null }) {
   let ready = null;
+  const writeLimit = createRateLimiter(config.writesPerMinute);
+  const cookie = (id, maxAge) => `${SESSION_COOKIE}=${id}; Path=/; HttpOnly; SameSite=Strict${config.secureCookies ? "; Secure" : ""}${maxAge !== undefined ? "; Max-Age=" + maxAge : ""}`;
   // Open the database, build the case model from the data files, create the cases and replay the recorded sources once.
   async function context() {
     ready ??= (async () => {
@@ -50,11 +77,11 @@ export function createApi({ root, allowedOrigins = [], analyze, now = () => new 
   }
 
   function session(db, request) {
-    const id = cookies(request)[SESSION_COOKIE];
-    const row = id ? db.prepare("SELECT * FROM session WHERE id = ?").get(id) : null;
-    if (row) db.prepare("UPDATE session SET last_seen = ? WHERE id = ?").run(now(), row.id);
-    return row;
+    return sessionFor(db, config, cookies(request)[SESSION_COOKIE]);
   }
+  // Who is acting: the signed-in person, or in local mode the case's named person for the chosen role.
+  const actorOf = (model, current) => (current?.user ? { name: current.user.name, role: current.role } : null);
+  const actorLabel = (model, current) => (current?.user ? current.user.name + " · " + ROLES[current.role] : model.roleName(current?.role, { caseId: "uk" }));
   function requireSameSite(request) {
     const origin = request.headers.origin;
     const site = request.headers["sec-fetch-site"];
@@ -110,12 +137,25 @@ export function createApi({ root, allowedOrigins = [], analyze, now = () => new 
     ["GET", /^\/v1\/openapi\.json$/, async () => ({ status: 200, body: OPENAPI })],
     ["GET", /^\/v1\/session$/, async ({ db, request }) => {
       const row = session(db, request);
-      return { status: 200, body: { role: row?.role ?? null, roles: ROLES } };
+      return { status: 200, body: { mode: config.auth, role: row?.role ?? null, user: row?.user ?? null, roles: ROLES } };
+    }],
+    ["POST", /^\/v1\/auth\/login$/, async ({ db, request }) => {
+      requireSameSite(request);
+      if (config.auth !== "password") throw fail(404, "Sign-in is not used on this computer: choose a role instead.");
+      const body = validate("login", await readBody(request));
+      const result = signIn(db, config, { username: body.username, password: body.password, address: clientAddress(request, config.trustProxy) });
+      return { status: 200, body: { mode: config.auth, role: result.user.role, user: result.user, roles: ROLES, expires_at: result.expiresAt },
+        headers: { "Set-Cookie": cookie(result.sessionId, config.sessionMaxHours * 3600) } };
+    }],
+    ["POST", /^\/v1\/auth\/logout$/, async ({ db, request }) => {
+      requireSameSite(request);
+      signOut(db, session(db, request));
+      return { status: 200, body: { signed_out: true }, headers: { "Set-Cookie": cookie("", 0) } };
     }],
     ["POST", /^\/v1\/session$/, async ({ db, request, model }) => {
       requireSameSite(request);
-      const body = await readBody(request);
-      if (!ROLES[body.role]) throw fail(422, "Unknown role.");
+      if (config.auth === "password") throw fail(403, "Your role comes from your account. Sign in as the person who holds the other role.");
+      const body = validate("session", await readBody(request));
       let id = cookies(request)[SESSION_COOKIE];
       const existing = id ? db.prepare("SELECT id FROM session WHERE id = ?").get(id) : null;
       if (existing) db.prepare("UPDATE session SET role = ?, last_seen = ? WHERE id = ?").run(body.role, now(), id);
@@ -124,7 +164,7 @@ export function createApi({ root, allowedOrigins = [], analyze, now = () => new 
         db.prepare("INSERT INTO session (id, role, created_at, last_seen) VALUES (?, ?, ?, ?)").run(id, body.role, now(), now());
       }
       appendAudit(db, { actor: model.roleName(body.role, { caseId: "uk" }) ?? body.role, role: body.role, type: "session.role_selected", subjectType: "session", subjectId: id, detail: "Acting as " + ROLES[body.role] });
-      return { status: 200, body: { role: body.role, roles: ROLES }, headers: { "Set-Cookie": `${SESSION_COOKIE}=${id}; Path=/; HttpOnly; SameSite=Strict` } };
+      return { status: 200, body: { mode: config.auth, role: body.role, user: null, roles: ROLES }, headers: { "Set-Cookie": cookie(id) } };
     }],
     ["GET", /^\/v1\/cases$/, async ({ db, model }) => ({ status: 200, body: { cases: Object.keys(model.governedCases).map(key => caseView(db, model, key)) } })],
     ["GET", /^\/v1\/cases\/([^/]+)$/, async ({ db, model, match }) => {
@@ -134,14 +174,15 @@ export function createApi({ root, allowedOrigins = [], analyze, now = () => new 
     }],
     ["POST", /^\/v1\/cases\/([^/]+)\/commands$/, async ({ db, model, request, match }) => {
       requireSameSite(request);
-      const body = await readBody(request);
-      const role = session(db, request)?.role;
+      const body = validate("command", await readBody(request));
+      const current = session(db, request);
+      const role = current?.role;
       const row = caseRow(db, match[1]);
       if (!row) throw fail(404, "Unknown case.");
       return idempotent(db, request, "case-command:" + row.id, body, async () => {
         const unresolved = await unresolvedFor(db);
         const state = applyCommand(db, model, row.case_key, { action: body.action, revision: body.revision, reason: body.reason, instruction: body.instruction, reviewOn: body.reviewOn, override: Boolean(body.override), today: body.today },
-          { role, now: now(), analysis: await latestAnalysis(row.case_key), unresolved });
+          { role, actor: actorOf(model, current), now: now(), analysis: await latestAnalysis(row.case_key), unresolved });
         return { status: 200, body: { workflow: state } };
       });
     }],
@@ -149,14 +190,13 @@ export function createApi({ root, allowedOrigins = [], analyze, now = () => new 
     ["POST", /^\/v1\/proposals\/([^/]+)\/decisions$/, async ({ db, model, request, match }) => {
       requireSameSite(request);
       if (!request.headers["idempotency-key"]) throw fail(400, "Send an Idempotency-Key header.");
-      const body = await readBody(request);
-      if (!["approve", "reject"].includes(body.outcome)) throw fail(422, "outcome must be approve or reject.");
+      const body = validate("decision", await readBody(request));
       const row = caseRow(db, match[1]);
       if (!row) throw fail(404, "Unknown case.");
-      const role = session(db, request)?.role;
+      const current = session(db, request);
       return idempotent(db, request, "decision:" + row.id, body, async () => {
         const state = applyCommand(db, model, row.case_key, { action: body.outcome, revision: body.revision, reason: body.rationale, override: Boolean(body.override), today: body.today },
-          { role, now: now(), analysis: await latestAnalysis(row.case_key), unresolved: await unresolvedFor(db) });
+          { role: current?.role, actor: actorOf(model, current), now: now(), analysis: await latestAnalysis(row.case_key), unresolved: await unresolvedFor(db) });
         const decision = db.prepare("SELECT id FROM decision WHERE case_id = ? ORDER BY decided_at DESC LIMIT 1").get(row.id);
         const publication = db.prepare("SELECT id, number, receipt FROM requirement_version WHERE decision_id = ?").get(decision?.id ?? "");
         return { status: 200, body: { decision_id: decision?.id ?? null, publication: publication ?? null, workflow: state } };
@@ -168,9 +208,9 @@ export function createApi({ root, allowedOrigins = [], analyze, now = () => new 
       const action = db.prepare("SELECT * FROM action WHERE id = ?").get(match[1]);
       if (!action) throw fail(404, "Unknown action.");
       const row = db.prepare("SELECT case_key, state FROM change_case WHERE id = ?").get(action.case_id);
-      const role = session(db, request)?.role;
+      const current = session(db, request);
       return idempotent(db, request, "ack:" + action.id, body, async () => {
-        const state = applyCommand(db, model, row.case_key, { action: "ack", revision: JSON.parse(row.state).revision }, { role, now: now() });
+        const state = applyCommand(db, model, row.case_key, { action: "ack", revision: JSON.parse(row.state).revision }, { role: current?.role, actor: actorOf(model, current), now: now() });
         return { status: 200, body: { action_id: action.id, status: state.task.status, case_stage: state.stage } };
       });
     }],
@@ -179,7 +219,9 @@ export function createApi({ root, allowedOrigins = [], analyze, now = () => new 
       await readBody(request);
       const row = caseRow(db, match[1]);
       if (!row) throw fail(404, "Unknown case.");
-      const state = resetCase(db, model, row.case_key, { role: session(db, request)?.role ?? null, now: now(), analysis: await latestAnalysis(row.case_key) });
+      const current = session(db, request);
+      if (config.auth === "password" && !["reviewer", "verifier"].includes(current?.role)) throw fail(403, "Only Regulatory or Quality can start a case again.");
+      const state = resetCase(db, model, row.case_key, { role: current?.role ?? null, actor: actorOf(model, current), now: now(), analysis: await latestAnalysis(row.case_key) });
       return { status: 200, body: { workflow: state } };
     }],
     ["GET", /^\/v1\/cases\/([^/]+)\/impact$/, async ({ db, match }) => {
@@ -226,10 +268,10 @@ export function createApi({ root, allowedOrigins = [], analyze, now = () => new 
     ["GET", /^\/v1\/replays$/, async ({ db }) => ({ status: 200, body: { runs: db.prepare("SELECT * FROM replay_run ORDER BY started_at DESC LIMIT 50").all().map(item => ({ ...item, case_ids: JSON.parse(item.case_ids ?? "[]") })) } })],
     ["POST", /^\/v1\/replays$/, async ({ db, model, request }) => {
       requireSameSite(request);
-      const body = await readBody(request);
+      const body = validate("replay", await readBody(request));
       return idempotent(db, request, "replay", body, async () => {
         const result = await runReplay(db, model, root, { fixtureSet: body.fixture_set ?? "uk-labelling", extractionMode: body.extraction_mode ?? "recorded", analysisDate: body.analysis_date, analyze,
-          actor: model.roleName(session(db, request)?.role, { caseId: "uk" }) ?? "RegChain pipeline" });
+          actor: actorLabel(model, session(db, request)) ?? "RegChain pipeline" });
         return { status: 200, body: { ...result, workflow: caseRow(db, FIXTURE_SETS[body.fixture_set ?? "uk-labelling"].caseKey)?.state ?? null } };
       });
     }],
@@ -243,13 +285,13 @@ export function createApi({ root, allowedOrigins = [], analyze, now = () => new 
     ["GET", /^\/v1\/change-decisions$/, async ({ db }) => ({ status: 200, body: { decisions: Object.fromEntries(db.prepare("SELECT * FROM change_decision").all().map(row => [row.change_id, { decision: row.decision, reason: row.reason, by: row.actor, at: row.decided_at }])) } })],
     ["PUT", /^\/v1\/change-decisions\/([^/]+)$/, async ({ db, model, request, match }) => {
       requireSameSite(request);
-      const body = await readBody(request);
-      const role = session(db, request)?.role;
+      const body = validate("changeDecision", await readBody(request));
+      const current = session(db, request);
+      const role = current?.role;
       if (role !== "reviewer") throw fail(403, "Switch to Regulatory SME to record a decision on this change.");
-      if (!["not-relevant", "case", "assessing"].includes(body.decision)) throw fail(422, "decision must be not-relevant, case or assessing.");
       const reason = String(body.reason ?? "").trim();
       if (!reason) throw fail(422, "Give a reason for the decision.");
-      const actor = model.roleName(role, { caseId: "uk" });
+      const actor = actorLabel(model, current);
       const at = now();
       transaction(db, () => {
         db.prepare("INSERT INTO change_decision (change_id, decision, reason, actor, decided_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(change_id) DO UPDATE SET decision = excluded.decision, reason = excluded.reason, actor = excluded.actor, decided_at = excluded.decided_at")
@@ -261,15 +303,15 @@ export function createApi({ root, allowedOrigins = [], analyze, now = () => new 
     ["GET", /^\/v1\/shipment-actions$/, async ({ db }) => ({ status: 200, body: { actions: Object.fromEntries(db.prepare("SELECT * FROM shipment_action").all().map(row => [row.shipment_id, { action: row.action, reason: row.reason, by: row.actor, at: row.recorded_at }])) } })],
     ["PUT", /^\/v1\/shipment-actions\/([^/]+)$/, async ({ db, model, request, match }) => {
       requireSameSite(request);
-      const body = await readBody(request);
-      const role = session(db, request)?.role;
+      const body = validate("shipmentAction", await readBody(request));
+      const current = session(db, request);
+      const role = current?.role;
       if (!ROLES[role]) throw fail(401, "Choose a role first.");
-      if (!["hold", "swap", "proceed"].includes(body.action)) throw fail(422, "action must be hold, swap or proceed.");
       const reason = String(body.reason ?? "").trim();
       if (!reason) throw fail(422, "Give a reason for the action.");
       const data = await loadData(root);
       if (!shipmentView(data, match[1])) throw fail(404, "Unknown shipment.");
-      const actor = model.roleName(role, { caseId: "uk" });
+      const actor = actorLabel(model, current);
       const at = now();
       transaction(db, () => {
         db.prepare("INSERT INTO shipment_action (shipment_id, action, reason, actor, recorded_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(shipment_id) DO UPDATE SET action = excluded.action, reason = excluded.reason, actor = excluded.actor, recorded_at = excluded.recorded_at")
@@ -280,9 +322,10 @@ export function createApi({ root, allowedOrigins = [], analyze, now = () => new 
     }],
     ["DELETE", /^\/v1\/shipment-actions\/([^/]+)$/, async ({ db, model, request, match }) => {
       requireSameSite(request);
-      const role = session(db, request)?.role;
+      const current = session(db, request);
+      const role = current?.role;
       if (!ROLES[role]) throw fail(401, "Choose a role first.");
-      const actor = model.roleName(role, { caseId: "uk" });
+      const actor = actorLabel(model, current);
       transaction(db, () => {
         db.prepare("DELETE FROM shipment_action WHERE shipment_id = ?").run(match[1]);
         appendAudit(db, { actor, role, type: "shipment_action.cleared", subjectType: "shipment", subjectId: match[1], detail: "Action cleared" });
@@ -304,15 +347,31 @@ export function createApi({ root, allowedOrigins = [], analyze, now = () => new 
       return json(response, known ? 405 : 404, { error: known ? "Method not allowed." : "Not found." });
     }
     try {
+      if (request.method !== "GET") {
+        const wait = writeLimit(clientAddress(request, config.trustProxy));
+        if (wait) return json(response, 429, { error: "Too many requests. Try again in a minute." }, { "Retry-After": String(wait) });
+      }
       const { db, model, today } = await context();
+      if (config.auth === "password" && !PUBLIC_ROUTES.some(([method, pattern]) => method === request.method && pattern.test(url.pathname)) && !session(db, request)?.user) {
+        return json(response, 401, { error: "Sign in first." });
+      }
       if (request.method === "GET" && url.pathname.startsWith("/v1/cases")) returnDueDeferrals(db, model, today, now());
       const result = await route[2]({ db, model, request, response, url, match: url.pathname.match(route[1]) });
       json(response, result.status, result.body, result.headers);
     } catch (error) {
       const status = error.statusCode ?? 500;
-      if (status >= 500) console.error(`${request.method} ${url.pathname} failed: ${error.stack ?? error.message}`);
+      if (status >= 500) (logger?.error ?? console.error)(`${request.method} ${url.pathname} failed`, { error: error.stack ?? error.message });
       json(response, status, { error: status >= 500 ? "The server could not complete the request." : error.message });
     }
   }
-  return { handle, context, recordAnalysisResult };
+  async function authenticate(request) {
+    const { db } = await context();
+    return session(db, request);
+  }
+  async function actorFor(request) {
+    const { db, model } = await context();
+    const current = session(db, request);
+    return { session: current, label: current ? actorLabel(model, current) : null };
+  }
+  return { handle, context, recordAnalysisResult, authenticate, actorFor, config };
 }

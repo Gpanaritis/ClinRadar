@@ -1,0 +1,41 @@
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Data, agents and server (offline)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check:data
+      - run: npm run check:agent
+      - run: npm run check:server
+      - run: npm run check:security
+
+  official-sources:
+    name: AI step with the official sources (network)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # The official sites can be slow or rate-limit a runner; a failure here is reported but does not block a merge.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check:ai

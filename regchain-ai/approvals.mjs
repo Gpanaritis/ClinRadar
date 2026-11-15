@@ -8,27 +8,19 @@ import { join } from "node:path";
 import { cacheDir } from "./sources.mjs";
 import { loadData, readApprovals, verifyOptionSafe as verifyOption } from "./rules.mjs";
 import { draftApprovedOption } from "./agent.mjs";
+import { appendAudit, openDatabase, transaction } from "./db.mjs";
 
 const refuse = (statusCode, message) => Object.assign(new Error(message), { statusCode });
-const approvalsFile = root => join(cacheDir(root), "agent-approvals.json");
 const runFile = (root, shipment) => join(cacheDir(root), `agent-run-${shipment}.json`);
-const logFile = root => join(cacheDir(root), "agent-approvals-log.json");
+const LOG_TYPES = ["approval.imported", "plan.approved", "escalation.acknowledged", "plan.withdrawn", "approvals.archived", "approvals_and_plans.archived"];
 
-// Every approval and withdrawal is kept, in order, for the audit trail.
-async function log(root, entry) {
-  let entries = [];
-  try { entries = JSON.parse(await readFile(logFile(root), "utf8")); } catch {}
-  entries.push({ ...entry, at: new Date().toISOString() });
-  await mkdir(cacheDir(root), { recursive: true });
-  await writeFile(logFile(root), JSON.stringify(entries, null, 2));
-}
+// The approvals' history, from the hash-chained audit trail.
 export async function approvalLog(root) {
-  try { return JSON.parse(await readFile(logFile(root), "utf8")); } catch { return []; }
-}
-
-async function saveApprovals(root, approvals) {
-  await mkdir(cacheDir(root), { recursive: true });
-  await writeFile(approvalsFile(root), JSON.stringify(approvals, null, 2));
+  const db = openDatabase(root);
+  return db.prepare(`SELECT * FROM audit_entry WHERE type IN (${LOG_TYPES.map(() => "?").join(", ")}) ORDER BY seq`).all(...LOG_TYPES).map(row => {
+    const data = JSON.parse(row.data);
+    return { event: row.type, shipment: row.subject_type === "shipment" ? row.subject_id : null, by: row.actor, at: row.occurred_at, ...data };
+  });
 }
 // Every saved version of a run is kept: the latest one for the page, and a copy of each version for the audit trail.
 export async function saveRun(root, run) {
@@ -41,7 +33,7 @@ export async function lastRun(root, shipment) {
   try { return JSON.parse(await readFile(runFile(root, shipment), "utf8")); } catch { return null; }
 }
 
-export async function approvePlan(root, { shipment, option, by, runAt }) {
+export async function approvePlan(root, { shipment, option, by, runAt, role = null }) {
   if (!/^SHP-[A-Z0-9-]+$/.test(String(shipment))) throw refuse(400, "Unknown shipment.");
   if (!by) throw refuse(400, "Say who approves the plan.");
   const run = await lastRun(root, shipment);
@@ -72,10 +64,16 @@ export async function approvePlan(root, { shipment, option, by, runAt }) {
     }
   }
   const drafts = run.drafts.filter(draft => !draft.withdrawn && (draft.option_id ?? run.resolution.recommended) === option).map(draft => draft.draft_id);
-  approvals[shipment] = { ...entry, by: String(by).slice(0, 120), at: new Date().toISOString(), runAt: run.at, mode: run.mode, drafts };
-  await saveApprovals(root, approvals);
-  await log(root, { event: option === "escalate" ? "escalation.acknowledged" : "plan.approved", shipment, option, title: entry.title, by: approvals[shipment].by, runAt: run.at, drafts });
-  return { approval: approvals[shipment], run };
+  const approval = { ...entry, by: String(by).slice(0, 120), at: new Date().toISOString(), runAt: run.at, mode: run.mode, drafts };
+  const db = openDatabase(root);
+  transaction(db, () => {
+    if (db.prepare("SELECT 1 FROM agent_approval WHERE shipment_id = ?").get(shipment)) throw refuse(409, `A plan for ${shipment} is already approved. Withdraw it first.`);
+    db.prepare("INSERT INTO agent_approval (shipment_id, option_id, title, actions, after, approved_by, role, approved_at, run_at, mode, drafts) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+      .run(shipment, option, entry.title, JSON.stringify(entry.actions ?? []), entry.after ?? null, approval.by, role ?? null, approval.at, run.at, run.mode ?? null, JSON.stringify(drafts));
+    appendAudit(db, { actor: approval.by, role: role ?? null, type: option === "escalate" ? "escalation.acknowledged" : "plan.approved", subjectType: "shipment", subjectId: shipment,
+      detail: entry.title, data: { option, title: entry.title, runAt: run.at, drafts }, at: approval.at });
+  });
+  return { approval, run };
 }
 
 // Where each shipment's latest agent run stands: a plan that passes, a plan to review, or an escalation.
@@ -109,7 +107,8 @@ export async function startFresh(root, { plans = false, by = null } = {}) {
   const dir = cacheDir(root);
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
   await mkdir(join(dir, "agent-runs"), { recursive: true });
-  try { await rename(approvalsFile(root), join(dir, `agent-approvals-archived-${stamp}.json`)); } catch {}
+  const db = openDatabase(root);
+  const archived = db.prepare("SELECT * FROM agent_approval").all();
   let moved = 0;
   if (plans) {
     let names = [];
@@ -117,16 +116,23 @@ export async function startFresh(root, { plans = false, by = null } = {}) {
     await mkdir(join(dir, "agent-runs", `archived-${stamp}`), { recursive: true });
     for (const name of names) { await rename(join(dir, name), join(dir, "agent-runs", `archived-${stamp}`, name)); moved++; }
   }
-  await log(root, { event: plans ? "approvals_and_plans.archived" : "approvals.archived", by, runsArchived: moved });
-  return { archived: true, plans, runsArchived: moved };
+  // The audit entry keeps every archived approval in full, so nothing is lost.
+  transaction(db, () => {
+    db.prepare("DELETE FROM agent_approval").run();
+    appendAudit(db, { actor: by ?? "RegChain", type: plans ? "approvals_and_plans.archived" : "approvals.archived", subjectType: "rehearsal", subjectId: stamp,
+      detail: `${archived.length} approvals archived${plans ? ", " + moved + " runs moved to the history" : ""}`, data: { runsArchived: moved, approvals: archived } });
+  });
+  return { archived: true, plans, runsArchived: moved, approvalsArchived: archived.length };
 }
 
-export async function withdrawPlan(root, { shipment, by }) {
+export async function withdrawPlan(root, { shipment, by, role = null }) {
   const approvals = await readApprovals(root);
   if (!approvals[shipment]) throw refuse(404, "No approved plan for this shipment.");
   const withdrawn = approvals[shipment];
-  delete approvals[shipment];
-  await saveApprovals(root, approvals);
-  await log(root, { event: "plan.withdrawn", shipment, option: withdrawn.option, title: withdrawn.title, by: by ?? null });
+  const db = openDatabase(root);
+  transaction(db, () => {
+    db.prepare("DELETE FROM agent_approval WHERE shipment_id = ?").run(shipment);
+    appendAudit(db, { actor: by ?? "RegChain", role, type: "plan.withdrawn", subjectType: "shipment", subjectId: shipment, detail: withdrawn.title, data: { option: withdrawn.option, title: withdrawn.title } });
+  });
   return { withdrawn: shipment, by: by ?? null, at: new Date().toISOString() };
 }

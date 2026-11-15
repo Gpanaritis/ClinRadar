@@ -130,6 +130,7 @@ Migrations are numbered and run once. A shipped migration is never edited; a new
 `npm run check:server` runs in temporary folders, with no network and no AI calls. It checks:
 
 - **Database:** migrations, and that audit entries can't be changed or deleted and that tampering breaks the chain.
+- **Upgrade:** approvals that earlier versions kept in `agent-approvals.json` are imported once, with an audit entry, and the file is renamed.
 - **Parity:** five workflow sequences give identical states and refusals in the page and on the server.
 - **Answer key:** the UK impact matches all 33 batches and 10 shipments, and the totals.
 - **Pipeline:** detection happens once, identical inputs reuse the case, a whitespace-only change is ignored, and evidence resolves.
@@ -141,7 +142,7 @@ Migrations are numbered and run once. A shipped migration is never edited; a new
   - reset and the scheduled return from deferral;
   - an intact audit chain at the end.
 
-`npm run check` runs every check in the repository.
+`npm run check:security` tests sign-in, roles, headers, limits, the users command and a backup on the real server started with named users. `npm run check` runs every check in the repository; CI runs them on every pull request.
 
 ## Differences from the specification
 
@@ -149,11 +150,21 @@ Migrations are numbered and run once. A shipped migration is never edited; a new
 - **Proposals are addressed by case** (`/v1/proposals/uk/decisions`) and carry the revision in the body. The decision is bound to that exact revision.
 - **The impact rules run on portfolio snapshots** stored as JSON. Separate study, batch and label tables come with real portfolio imports.
 
-## Next: commercial hardening (the second pull request)
+## Commercial hardening
 
-- Real sign-in and named users instead of the role switch, with server-side authorisation on every route, reads included.
-- Security headers, rate limits, size limits and input schemas on every route.
-- Structured logs with correlation IDs, and readiness checks.
-- A Docker image, CI running every check, and backup and restore.
-- Agent runs and approvals moved from files into the database.
-- Deployment, security and validation documentation.
+The second pull request made the server fit for a team:
+
+- **Named users** (`REGCHAIN_AUTH=password`) instead of the role switch. Each person holds one role. Authorisation runs on the server for every route, reads included, and the page and the agent routes need a signed-in user.
+- **Sign-in rules:** salted scrypt hashes, a 12-character minimum, lockout per username and per client address, idle and maximum session length, and an audit entry for every attempt.
+- **Headers and limits:** a Content Security Policy with a per-page script nonce, `X-Frame-Options: DENY`, `nosniff`, HSTS over HTTPS, a Host header check, a write rate limit with `Retry-After`, a body size limit and a zod schema for every request body.
+- **Operations:** JSON logs with request IDs, `/v1/health` with the schema version and the audit chain, a Docker image, a Compose file, a CI workflow, `npm run users` and `npm run backup`.
+- **Agent approvals in the database:** each approval, acknowledgement and withdrawal is a row plus an audit entry. Approvals that earlier versions saved in `agent-approvals.json` are imported once and the file is renamed. Agent run outputs stay as files in the cache folder.
+- **The person, not the role:** with named users, every workflow step and every case reset is recorded under the signed-in person's name.
+
+`npm run check:security` tests these rules on the real server, started with named users in temporary folders. Running it: [RegChain-AI-Deployment.md](RegChain-AI-Deployment.md). Validation: [RegChain-AI-Validation.md](RegChain-AI-Validation.md).
+
+## Next
+
+- Single sign-on (OIDC or SAML) and electronic signatures with re-authentication for approvals and verification.
+- PostgreSQL when more than one instance is needed.
+- Real connections to the Quality system, IRT, ERP, the depot and the eTMF in place of the mock systems.
