@@ -364,6 +364,18 @@ How the tiers work, as the signal page explains:
 3. **Settings › Sources** → **Official feeds for external risk**: each monitored country's FCDO answer and its last update. GDACS alerts outside the monitored countries are counted, not matched.
 4. Current FCDO advice in a neighbouring country appears as evidence under **Current official advice** in Monitoring scope. It never turns monitoring on by itself.
 
+### J11b · Alerts from the company's enterprise risk system (illustrative)
+
+**Why:** most pharma companies already run a crisis-alerting system (for example Everbridge or Dataminr). It warns offices and travellers, but it doesn't know the trials, the sites or the IMP shipments. ClinRadar reads its alerts and says which ones matter for supply.
+
+1. The **Overview** line says what happened to the alerts: "Enterprise risk system: 7 alerts · 3 touch our trials · 1 coverage gap · 3 counted, not matched".
+2. **Signals** → **From your enterprise risk system** → **See what each alert became**:
+   - **Same event as a signal we have:** the Belgian national action day joins the strike as a third source. Shipments SHP-03 and SHP-IL-01 are unchanged, because an aggregator alone never confirms an impact.
+   - **New signal for our shipments:** a seasonal heat outlook for Andalusia in March 2027 is a potential exposure for the deliveries to Sevilla (SHP-ES-08) and Málaga (SHP-ES-10). The depot and the courier confirm that the qualified packaging holds its temperature range.
+   - **Coverage gap:** a power cut in Basel touches our drug-product manufacturer in Switzerland, which nobody monitors. ClinRadar suggests turning it on.
+   - **Nothing of ours affected:** a ransomware attack at a forwarder we don't use, a typhoon in Taiwan and a demonstration in Paris are counted, not raised.
+3. In a real deployment the enterprise system posts its alerts to `POST /api/enterprise-alerts` with a token (`REGCHAIN_ENTERPRISE_TOKEN`). The watch agents read them through MCP, and each alert is in the audit trail.
+
 ### J12 · A regulatory change reaches the shipments (UK labelling)
 
 ```mermaid
