@@ -78,7 +78,7 @@ const writers = described.flatMap(system => system.tools.filter(tool => !tool.re
 assert.deepEqual(writers, ["drafts.create_draft"]);
 console.log(`ok  MCP: ${described.map(system => `${system.name} (${system.tools.length})`).join(", ")}; only drafts.create_draft writes, and only drafts`);
 
-// 4b. The watch team: four agents on the watch model, each with read-only tools that exist on the SupplyShield server.
+// 4b. The watch team: four agents on the watch model, each with read-only tools that exist on the ClinRadar server.
 {
   const { AGENTS, WATCH_AGENTS, WATCH_MODEL } = await import("../regchain-ai/agent.mjs");
   assert.deepEqual(WATCH_AGENTS, ["weather", "transport", "security", "regulatory"]);
@@ -87,7 +87,7 @@ console.log(`ok  MCP: ${described.map(system => `${system.name} (${system.tools.
   const specsTools = described.find(system => system.id === "specs").tools;
   for (const id of WATCH_AGENTS) {
     assert.equal(AGENTS[id].model, "claude-haiku-5-5");
-    assert.ok(AGENTS[id].tools.includes("specs__get_watch_brief") && AGENTS[id].tools.every(name => name.startsWith("specs__") && specsTools.some(tool => tool.name === name.split("__")[1] && tool.readOnly)), `${id}: read-only SupplyShield tools only`);
+    assert.ok(AGENTS[id].tools.includes("specs__get_watch_brief") && AGENTS[id].tools.every(name => name.startsWith("specs__") && specsTools.some(tool => tool.name === name.split("__")[1] && tool.readOnly)), `${id}: read-only ClinRadar tools only`);
     assert.match(AGENTS[id].system, /Never treat a single unverified source as confirmed/);
     assert.match(AGENTS[id].system, /No probabilities/);
   }
@@ -119,7 +119,7 @@ for (const [shipment, recommended] of Object.entries(expectations)) {
   assert.equal(run.resolution.recommended, recommended, JSON.stringify(run.resolution));
   assert.ok(run.resolution.options.every(option => option.title && option.actions.length), "every option has a title and actions");
   if (recommended === "escalate") assert.ok(run.verification.every(item => !item.passes), "an escalation means no option passes");
-  else assert.ok(run.verification.find(item => item.id === recommended).passes, "the recommended option must pass SupplyShield's own verification");
+  else assert.ok(run.verification.find(item => item.id === recommended).passes, "the recommended option must pass ClinRadar's own verification");
   assert.ok(run.drafts.length >= 1 && run.drafts.every(draft => draft.executed === false && draft.option_id === recommended));
   saved[shipment] = run;
   console.log(`ok  scripted ${shipment}: ${run.events.length} steps, ${run.events.filter(e => e.type === "tool_call").length} MCP calls, ${run.drafts.length} draft${run.drafts.length === 1 ? "" : "s"}, recommends ${recommended}`);
@@ -130,7 +130,7 @@ for (const [shipment, recommended] of Object.entries(expectations)) {
   const delegations = events.filter(event => event.type === "delegate");
   assert.equal(delegations[0].to, "transport", "the watch agent for the hazard is consulted first");
   assert.ok(events.indexOf(delegations[0]) < events.findIndex(event => event.type === "delegate" && event.to === "logistics"));
-  assert.ok(events.some(event => event.agent === "transport" && event.type === "tool_call" && event.system === "SupplyShield" && event.input.hazard === "transport"));
+  assert.ok(events.some(event => event.agent === "transport" && event.type === "tool_call" && event.system === "ClinRadar" && event.input.hazard === "transport"));
   const confirmation = events.find(event => event.agent === "transport" && event.type === "report").text;
   assert.match(confirmation, /^Confirmed disruption, one day \(2026-11-24\)/);
   assert.match(confirmation, /two or more trusted sources/);
@@ -153,7 +153,7 @@ assert.deepEqual(board.board.map(row => row.shipment).slice(0, 4), ["SHP-IL-01",
   const before = events.slice(0, triageAt);
   assert.deepEqual(before.filter(event => event.type === "delegate").map(event => event.to), ["weather", "transport", "security", "regulatory"]);
   assert.deepEqual(before.filter(event => event.type === "report").map(event => event.agent), ["weather", "transport", "security", "regulatory"]);
-  assert.ok(["weather", "transport", "security", "regulatory"].every(id => before.some(event => event.agent === id && event.type === "tool_call" && event.system === "SupplyShield")));
+  assert.ok(["weather", "transport", "security", "regulatory"].every(id => before.some(event => event.agent === id && event.type === "tool_call" && event.system === "ClinRadar")));
   assert.ok(!events.slice(triageAt).some(event => event.type === "delegate" && !event.nested && ["weather", "transport", "security", "regulatory"].includes(event.to)), "the sweep comes before triage");
   assert.match(before.find(event => event.agent === "transport" && event.type === "report").text, /^Strikes & transport: 4 events in 17 monitored countries; 1 confirmed disruption — SHP-IL-01's flight BRU → TLV on 24 Nov cancelled \(courier\); SHP-03 checked, not affected\./);
   assert.match(before.find(event => event.agent === "weather" && event.type === "report").text, /US depot \(Allentown, Pennsylvania\).*winter storm watch/);
@@ -187,9 +187,9 @@ console.log(`ok  portfolio: ${board.summary.shipments} shipments, ${board.summar
 await approvePlan(root, { shipment: "SHP-01", option: "relabel-2026-11-16", by: "P. Laine · Clinical Supply", runAt: runs["SHP-01"].at });
 // SHP-06's first choice now loses to SHP-01's approved hold.
 const firstChoice06 = runs["SHP-06"].resolution.options.find(option => option.id === "relabel-2026-11-16");
-await assert.rejects(approvePlan(root, { shipment: "SHP-06", option: firstChoice06.id, by: "P. Laine · Clinical Supply", runAt: runs["SHP-06"].at }), /does not pass SupplyShield's rules now.*SHP-01/);
+await assert.rejects(approvePlan(root, { shipment: "SHP-06", option: firstChoice06.id, by: "P. Laine · Clinical Supply", runAt: runs["SHP-06"].at }), /does not pass ClinRadar's rules now.*SHP-01/);
 await approvePlan(root, { shipment: "SHP-06", option: moved.recommended, by: "P. Laine · Clinical Supply", runAt: runs["SHP-06"].at });
-await assert.rejects(approvePlan(root, { shipment: "SHP-04", option: "escalate", by: "P. Laine · Clinical Supply" }), /passes SupplyShield's rules now/);
+await assert.rejects(approvePlan(root, { shipment: "SHP-04", option: "escalate", by: "P. Laine · Clinical Supply" }), /passes ClinRadar's rules now/);
 await approvePlan(root, { shipment: "SHP-03", option: "escalate", by: "P. Laine · Clinical Supply" });
 await assert.rejects(approvePlan(root, { shipment: "SHP-01", option: "relabel-2026-11-16", by: "P. Laine · Clinical Supply" }), /already approved/);
 await assert.rejects(approvePlan(root, { shipment: "SHP-02", option: "swap-H-108", by: "P. Laine · Clinical Supply", runAt: "2020-01-01T00:00:00.000Z" }), /newer agent run/);
@@ -206,7 +206,7 @@ assert.deepEqual((await approvalLog(root)).map(entry => entry.event), ["plan.app
 console.log("ok  approvals: re-checked on the server, refused when stale, already approved or no longer passing; withdrawals free their holds; every step logged");
 
 // 8. The live loop with a stand-in AI client: delegation, MCP calls, verification, a draft and the resolution.
-// The orchestrator's system prompt is the SupplyShield master instructions plus its task, cached as one prefix.
+// The orchestrator's system prompt is the ClinRadar master instructions plus its task, cached as one prefix.
 const systemText = params => (Array.isArray(params.system) ? params.system.map(block => block.text).join("\n") : params.system);
 function standIn() {
   const turns = { orchestrator: 0, supply: 0 };
@@ -218,7 +218,7 @@ function standIn() {
       stream(params) {
         const who = systemText(params).includes("orchestrator") ? "orchestrator" : "supply";
         if (who === "orchestrator") {
-          assert.ok(Array.isArray(params.system) && /Non-negotiable country-scope rule/.test(params.system[0].text), "the orchestrator works under the SupplyShield master instructions");
+          assert.ok(Array.isArray(params.system) && /Non-negotiable country-scope rule/.test(params.system[0].text), "the orchestrator works under the ClinRadar master instructions");
           assert.equal(params.system.at(-1).cache_control?.type, "ephemeral", "tools and both system blocks are cached as one prefix");
         } else assert.equal(typeof params.system, "string", "specialists keep their short instructions");
         const step = turns[who]++;
@@ -230,7 +230,7 @@ function standIn() {
             reply([{ type: "text", text: "Reading the checks." }, use("specs__get_shipment_checks", { shipment_id: "SHP-04" })]),
             reply([use("delegate_to_agent", { agent: "supply", task: "Find IMP-004 batches at the UK depot." })]),
             reply([use("specs__verify_option", { shipment_id: "SHP-04", actions: plan })]),
-            // A draft for an option that will fail SupplyShield's check: it must come back withdrawn.
+            // A draft for an option that will fail ClinRadar's check: it must come back withdrawn.
             reply([use("drafts__create_draft", { target_system: "IRT", kind: "Dispatch date change", shipment_id: "SHP-04", option_id: "B", title: "Delay", body: "Unverified." })]),
             reply([use("drafts__create_draft", { target_system: "IRT", kind: "Shipment change request", shipment_id: "SHP-04", option_id: "A", title: "Swap to J-203", body: "Verified." })]),
             reply([use("submit_resolution", { summary: "Swap to J-203.", root_cause: "Legacy label after the cutoff.", options: [{ id: "A", title: "Swap to J-203", actions: plan, why: "Updated label." }, { id: "B", title: "Delay to 2026-11-30", actions: [{ type: "delay", new_dispatch_date: "2026-11-30" }], why: "Time." }], recommended: "A" })]),

@@ -1,6 +1,6 @@
-# SupplyShield AI · Which study data sets the scope
+# ClinRadar · Which study data sets the scope
 
-*15 November 2026. A short decision record: which level of trial data decides the countries SupplyShield monitors.*
+*15 November 2026. A short decision record: which level of trial data decides the countries ClinRadar monitors.*
 
 ## The question
 
@@ -14,7 +14,7 @@ Clinical trial data exists at several levels: the development **programme** (one
 | Protocol | No | The protocol is the document: versions and amendments change what is done, not where the trial runs. CTMS systems don't hold an operational status on the protocol. |
 | **Study** | **Yes: does the study count?** | The study's status in the CTMS (recruiting, enrolling by invitation, active not recruiting, treatment ongoing, follow-up ongoing) says whether supply is running. The same vocabulary is used for registry recruitment status (ClinicalTrials.gov), which is set per study. |
 | **Study country** | **Yes: does the country count?** | Authorisation and start are per country (under the EU Clinical Trials Regulation, per Member State concerned). The country record is active when at least one site there is activated and the company supplies investigational product to it. |
-| Site (IRT) | Cross-check only | Site activation in IRT is used to spot a contradictory status. Example: Portugal, where the CTMS says "approved, not started" but IRT shows site PT-01 activated. SupplyShield asks the study manager instead of guessing. |
+| Site (IRT) | Cross-check only | Site activation in IRT is used to spot a contradictory status. Example: Portugal, where the CTMS says "approved, not started" but IRT shows site PT-01 activated. ClinRadar asks the study manager instead of guessing. |
 
 So a country is monitored automatically when **an active study has an active study-country record there**. This matches `config/supplyshield.yaml` (`active_statuses`, `country_scope_from_active_sites: true`) and the demo CTMS in `demo-data/supply-network.json`, where every study has a study status and a status per country (`ACTIVE`, `NOT_STARTED`, `CLOSED`, `UNKNOWN`).
 
@@ -23,7 +23,7 @@ So a country is monitored automatically when **an active study has an active stu
 - **Monitoring scope** shows, per country, the active studies with their study status, and counts sites and patients from the active study-country records. The (i) next to "Active studies" explains the two levels.
 - Studies that are completed, suspended or not yet recruiting are listed under **Studies not counted**, with the reason.
 - A suspended study with product still at a site (Austria, 24 kits) is not monitored automatically but is **suggested**, because the product is still there.
-- Patient numbers are aggregate counts per site from the CTMS. SupplyShield uses no patient-level data.
+- Patient numbers are aggregate counts per site from the CTMS. ClinRadar uses no patient-level data.
 
 ## Checked in the demo data
 

@@ -252,7 +252,7 @@ try {
   assert.equal((await call("PUT", "/v1/change-decisions/import", { decision: "assessing", reason: "Watching" })).status, 403, "only the Regulatory SME decides on a change");
   await role("reviewer");
   assert.equal((await call("PUT", "/v1/change-decisions/import", { decision: "assessing", reason: "Watching" })).status, 200);
-  // SupplyShield, read-only: the scope, the signals and one shipment's route.
+  // ClinRadar, read-only: the scope, the signals and one shipment's route.
   const scope = (await call("GET", "/v1/monitoring-scope")).body;
   assert.equal(scope.status, "determined");
   assert.equal(scope.countries.length, 16);
@@ -281,7 +281,7 @@ try {
   returnDueDeferrals(db, model, "2026-12-01");
   const returned = caseRow(db, "es").state;
   assert.equal(returned.stage, "review");
-  assert.equal(returned.events.at(-1).actor, "SupplyShield scheduler");
+  assert.equal(returned.events.at(-1).actor, "ClinRadar scheduler");
   assert.equal((await call("GET", "/v1/audit/verify")).body.ok, true, "the audit chain is intact after every step");
   console.log("ok  API: 401/403/409/422 and other-site refusals, idempotent decisions, outbox delivery, acknowledgement by the owner only, closing blocked while shipments are blocked,");
   console.log("    requirement history and date lookup, evidence, impact, shipment actions, change decisions, rehearsal reset, scheduled return from deferral, intact audit chain");

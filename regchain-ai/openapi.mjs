@@ -14,7 +14,7 @@ const caseId = { name: "id", in: "path", required: true, schema: { type: "string
 
 export const OPENAPI = {
   openapi: "3.1.0",
-  info: { title: "SupplyShield AI API", version: "1.1.0", description: "External risk and country regulatory intelligence for global clinical supply: the monitoring scope set by the active-trial portfolio, external signals matched to shipments, regulatory change cases, evidence, impact, decisions and audit. Writes check the session's role on the server and accept an Idempotency-Key." },
+  info: { title: "ClinRadar API", version: "1.1.0", description: "External risk and country regulatory intelligence for global clinical supply: the monitoring scope set by the active-trial portfolio, external signals matched to shipments, regulatory change cases, evidence, impact, decisions and audit. Writes check the session's role on the server and accept an Idempotency-Key." },
   servers: [{ url: "/" }],
   paths: {
     "/v1/monitoring-scope": { get: { summary: "The monitoring scope: countries with an operationally active trial (monitored automatically), recommended countries with their evidence and monitoring switches (off until a person turns them on), and registered countries that are not operationally active. Undetermined when no active-trial portfolio is connected.", responses: ok("Scope") } },

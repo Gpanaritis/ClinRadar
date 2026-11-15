@@ -32,7 +32,7 @@ Blue: Giannis. Green: dashboard and product side. The API between them is the fi
 | Batch rules | The UK rule that sorts batches A-101 to F-106 by finished-IMP QP date | Inside the dashboard (`batchFinding`) | Runs in the browser; status names differ from the spec (see decision 4) |
 | Live AI check | Fetches regulation 46 before and from 28 April 2026, Schedule 14 paragraph 6 and the MHRA labelling guidance; Claude (`claude-opus-5-5`) drafts the change with quotes; RegChain checks every quote, the effective date and the change status; a failed check blocks SME approval | `regchain-ai/`, `serve-regchain.cjs`, panel at the top of the UK case | Tested with a stand-in AI only. The first real run needs an API key in `.env` |
 | Spain scenario (fictional) | A second case flagged before its rule applies: a Spanish information note, trial CTP-7842-201, 10 shipments to 8 Spanish sites, the Spain Country Specification, an AI check that quotes the note in Spanish and checks every edit against a real line, approval to Spain v5 and a Quality task | `demo-data/spain-scenario.json`, `regchain-ai/spain.mjs`, `RegChain-AI-Spain-Scenario.md` | Fictional data; tested with a stand-in AI only |
-| Local start | `Start-RegChain.cmd` starts the server at http://127.0.0.1:4173 and installs the Anthropic SDK the first time | `Start-RegChain.cmd`, `package.json`, `package-lock.json` | Needs Node.js 20.12 or later |
+| Local start | `Start-ClinRadar.cmd` starts the server at http://127.0.0.1:4173 and installs the Anthropic SDK the first time | `Start-ClinRadar.cmd`, `package.json`, `package-lock.json` | Needs Node.js 20.12 or later |
 | Tests | `npm run check:ai` fetches the four UK sources and reads the Spain demo file, then tests the quote, date, status and (for Spain) section-edit checks without calling the API | `scripts/check-ai-step.mjs` | No tests for the dashboard or the batch rules yet |
 | Backup idea | Build plan for a Challenge 3 entry (conversational ePRO) | `conversational-epro/PLAN.md` | Not being built; the team chose RegChain |
 
@@ -147,7 +147,7 @@ Keep, in this order: the official replay, the AI draft with checked quotes, the 
 
 1. Install Node.js 20.12 or later.
 2. Put `ANTHROPIC_API_KEY=your-key` in a file named `.env` next to `serve-regchain.cjs`. Git ignores this file.
-3. Double-click `Start-RegChain.cmd`. It installs the Anthropic SDK the first time and opens http://127.0.0.1:4173.
+3. Double-click `Start-ClinRadar.cmd`. It installs the Anthropic SDK the first time and opens http://127.0.0.1:4173.
 4. Open the **UK IMP labeling transition** case and press **Run AI check**.
 
 The server reads `.env` only when it starts, so restart the launcher after changing the key.
@@ -169,7 +169,7 @@ The server reads `.env` only when it starts, so restart the launcher after chang
 | `RegChain-AI-Dashboard.html` | The dashboard (current version) |
 | `RegChain-AI-Prototype.html` | Earlier prototype, kept for reference |
 | `RegChain-AI-Dashboard-Mockup.png` | Dashboard screenshot |
-| `serve-regchain.cjs`, `Start-RegChain.cmd` | Local server and Windows launcher |
+| `serve-regchain.cjs`, `Start-ClinRadar.cmd` | Local server and Windows launcher |
 | `regchain-ai/` | Source fetching and the AI check |
 | `scripts/check-ai-step.mjs` | Test for the AI check, no API call |
 | `package.json`, `package-lock.json` | Node dependency (Anthropic SDK 1.8.0) |

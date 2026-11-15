@@ -1,4 +1,4 @@
-// SupplyShield's live official feeds, read only for the countries it monitors.
+// ClinRadar's live official feeds, read only for the countries it monitors.
 //
 // - UK Foreign, Commonwealth & Development Office (FCDO) travel advice, through the GOV.UK content API: the machine-readable
 //   alert status (for example "avoid all travel to parts"), the last update and its change note. Contains public sector
@@ -13,7 +13,7 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { cacheDir } from "./sources.mjs";
 
-const AGENT = "SupplyShield-prototype/0.1 (official feed check)";
+const AGENT = "ClinRadar-prototype/0.1 (official feed check)";
 export const FCDO_ATTRIBUTION = "UK FCDO travel advice via the GOV.UK content API · Open Government Licence v3.0";
 export const GDACS_ATTRIBUTION = "GDACS · European Commission Joint Research Centre and UN OCHA";
 export const ALERT_WORDS = {

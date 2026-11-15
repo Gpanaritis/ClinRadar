@@ -1,6 +1,6 @@
-# SupplyShield AI · Agents that resolve blocked and disrupted shipments
+# ClinRadar · Agents that resolve blocked and disrupted shipments
 
-*15 November 2026. Design note for the hackathon team: what the agent layer does, how it is built, and how it fits validated clinical systems. SupplyShield AI was called RegChain AI; see [SupplyShield-AI.md](SupplyShield-AI.md).*
+*15 November 2026. Design note for the hackathon team: what the agent layer does, how it is built, and how it fits validated clinical systems. ClinRadar was called RegChain AI; see [ClinRadar.md](ClinRadar.md).*
 
 ## What it does
 
@@ -10,7 +10,7 @@ Fixing a blocked shipment today means asking several teams. Supply checks for an
 
 **Shipments › Needs action** is the work queue: every shipment that needs action, most urgent first. Opening one shows its plan page, where a team of AI agents works on that shipment:
 
-- An **orchestrator**, instructed as SupplyShield AI, reads the failed checks, the external signals on the shipment's route, the monitoring scope, the destination's Country Specification and what other plans already hold, and decides what it needs to know. It keeps an observed event, a potential exposure and a confirmed disruption apart, and never treats one as another without evidence.
+- An **orchestrator**, instructed as ClinRadar, reads the failed checks, the external signals on the shipment's route, the monitoring scope, the destination's Country Specification and what other plans already hold, and decides what it needs to know. It keeps an observed event, a potential exposure and a confirmed disruption apart, and never treats one as another without evidence.
 - It **delegates** to specialists. Each one can use only the tools of its own systems:
   - the **supply agent** works with IRT and ERP: stock, batches and QP plans;
   - the **logistics agent** works with the depot, the courier, ERP and IRT: the route and the day of each leg, the courier's and the depot's status, qualified alternative departures, relabelling, label approvals, site stock;
@@ -54,7 +54,7 @@ In the portfolio run on today's data, 19 shipments get 17 plans that pass, 2 esc
 
 ## Watching the team: Agents in action
 
-The **Agents in action** page shows who does what. The master agent (the orchestrator, Claude Opus 5.5) sits on top and hands tasks to four specialists (Claude Sonnet 5.5). Under them are the systems they reach over MCP, and next to them the SupplyShield verifier, which is fixed code, not AI. Each step draws a line from the one who acts to the one it reaches: a task handed out, a system read, an answer, a report back, an option tested, a draft put in the inbox. The master agent's card shows how the work was split between the specialists.
+The **Agents in action** page shows who does what. The master agent (the orchestrator, Claude Opus 5.5) sits on top and hands tasks to four specialists (Claude Sonnet 5.5). Under them are the systems they reach over MCP, and next to them the ClinRadar verifier, which is fixed code, not AI. Each step draws a line from the one who acts to the one it reaches: a task handed out, a system read, an answer, a report back, an option tested, a draft put in the inbox. The master agent's card shows how the work was split between the specialists.
 
 The page replays the last run, with each shipment's own run placed where the master agent handed it out, or follows a run live. It replays at 1× to 8×, steps one at a time, filters the steps by agent, and opens a single shipment's run. After the first check it replays the scripted run automatically, because a scripted run finishes in seconds.
 
@@ -69,14 +69,14 @@ flowchart LR
   O -->|delegate| C[Communications agent]
   S & L & R & C -.->|claude-sonnet-5-5| M
   O --> M[(MCP servers)]
-  M --- IRT & ERP & Depot & eTMF & CTMS & Courier & Specs[SupplyShield rules,<br/>scope and signals] & Drafts[Draft inbox]
-  O --> V[SupplyShield verifier<br/>fixed rules, no AI,<br/>counts what plans hold]
+  M --- IRT & ERP & Depot & eTMF & CTMS & Courier & Specs[ClinRadar rules,<br/>scope and signals] & Drafts[Draft inbox]
+  O --> V[ClinRadar verifier<br/>fixed rules, no AI,<br/>counts what plans hold]
   V --> H[Clinical Supply approves<br/>server re-checks]
   H --> D[Each draft approved in its own system]
 ```
 
 - **Eight MCP servers** (`regchain-ai/mcp-servers.mjs`), one per system. Each runs as its own process and is reached through the Model Context Protocol SDK. None of them receives the API key.
-  - **SupplyShield**: shipment checks (including the route and import-approval checks), Country Specifications, option checks, commitments (what approved plans already hold), the monitoring scope and the external signals.
+  - **ClinRadar**: shipment checks (including the route and import-approval checks), Country Specifications, option checks, commitments (what approved plans already hold), the monitoring scope and the external signals.
   - **IRT**: shipments, depot stock, site stock.
   - **ERP**: batches, label approvals, QP plans.
   - **Depot**: relabelling capacity, couriers, the facility's own status by day.
@@ -132,7 +132,7 @@ Clinical supply runs on validated systems: IRT, ERP, the depot's warehouse syste
   - commitments: kits and slots held by another plan are not offered again;
   - all eight MCP servers start, and only the draft inbox can write;
   - eight scripted runs end as expected (swap, relabel with a Monday dispatch, fix the data, escalate, proceed with a confirmation, leave from Amsterdam);
-  - the watch team: four agents on Claude Haiku 5.5 with read-only SupplyShield tools; the `hazard` and `region` filters; the SHP-IL-01 run consults the transport watch agent before logistics;
+  - the watch team: four agents on Claude Haiku 5.5 with read-only ClinRadar tools; the `hazard` and `region` filters; the SHP-IL-01 run consults the transport watch agent before logistics;
   - the portfolio run: the four watch agents report before triage; 19 shipments, patients first (SHP-IL-01), then by preparation date; SHP-06 and SHP-IL-03 re-planned, nothing promised twice;
   - approvals: re-checked on the server, refused when stale or failing, withdrawals free their holds, and every step is logged;
   - the live loop end to end with a stand-in for Claude, including a withdrawn draft for an option that fails, and a live watch sweep whose reads stay pinned to each agent's hazard.
@@ -140,7 +140,7 @@ Clinical supply runs on validated systems: IRT, ERP, the depot's warehouse syste
 
 ## Real and illustrative
 
-- **Real:** the MCP protocol and servers, the agent loop with Claude's tool use, the rule engine, the portfolio allocation, the streaming, the approval and the audit record, and the official feeds SupplyShield reads (UK FCDO travel advice, GDACS).
+- **Real:** the MCP protocol and servers, the agent loop with Claude's tool use, the rule engine, the portfolio allocation, the streaming, the approval and the audit record, and the official feeds ClinRadar reads (UK FCDO travel advice, GDACS).
 - **Illustrative:** the systems behind the MCP servers are fictional data files (`demo-data/supply-operations.json`, `demo-data/supply-network.json`), not IRT, ERP, a depot, an eTMF, a CTMS or a courier. The Belgian strike and the Ben Gurion runway works are invented for the scenario and labelled so on screen.
 
 ## Before it could be used for real

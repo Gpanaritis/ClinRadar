@@ -1,4 +1,4 @@
-// SupplyShield AI: external risk and country regulatory intelligence for global clinical supply.
+// ClinRadar: external risk and country regulatory intelligence for global clinical supply.
 //
 // The monitoring scope comes only from the company's authorised active-trial portfolio (the CTMS snapshot), read with
 // the status policy in config/supplyshield.yaml. Countries with an operationally active trial are monitored
@@ -160,7 +160,7 @@ export function buildScope({ network, portfolio, spain, israel, views = [], choi
   if (!ctms || !connected) {
     return {
       status: "undetermined",
-      message: "SupplyShield cannot identify the active-trial countries without the authorised CTMS or study-country export, so it monitors nothing. It will not substitute a global list of clinical-trial countries or monitor every country by default.",
+      message: "ClinRadar cannot identify the active-trial countries without the authorised CTMS or study-country export, so it monitors nothing. It will not substitute a global list of clinical-trial countries or monitor every country by default.",
       agentAnswer: NO_PORTFOLIO_ANSWER,
       source: ctms ? { system: ctms.system, snapshotAt: null, definition: ctms.definition } : null,
       studies: { total: 0, active: 0, excluded: [] }, countries: [], notInScope: [], recommendations: [], reviewWarnings: [], supranational: [], bordersUnknown: [],
@@ -381,7 +381,7 @@ export function routeFor(network, view, overrides = {}) {
 }
 
 // ---- signals ----
-// Live official-feed items for the countries SupplyShield monitors for external risk.
+// Live official-feed items for the countries ClinRadar monitors for external risk.
 function feedSignals(feeds, monitored, names, today) {
   if (!feeds) return [];
   const signals = [];
@@ -574,12 +574,12 @@ export function assessSignals({ signals, network, views, today }) {
 // ---- the route check for one shipment, as the shipment checks and the option verifier see it ----
 // With no overrides it repeats the assessment; with overrides (a new date or departure airport) it judges the new route:
 // a booking record only describes the original booking, so a new leg that meets an event is a potential exposure, and a
-// new route through a country SupplyShield does not monitor needs a decision first.
+// new route through a country ClinRadar does not monitor needs a decision first.
 export function riskChecks(ss, network, view, overrides = {}) {
   if (!ss || ss.scope?.status !== "determined") return [];
   const route = routeFor(network, view, overrides);
   if (!route) return [{ section: "risk", requirement: "The shipment's route is on record", result: "Confirm",
-    detail: "Insufficient data: no route is on record for this shipment, so SupplyShield cannot assess its external risk. It does not guess transit countries; add the route legs from the courier booking." }];
+    detail: "Insufficient data: no route is on record for this shipment, so ClinRadar cannot assess its external risk. It does not guess transit countries; add the route legs from the courier booking." }];
   const original = ss.routes?.[view.id] ?? routeFor(network, view);
   const changed = Boolean(overrides.dispatch || overrides.via);
   const checks = [];
@@ -608,7 +608,7 @@ export function riskChecks(ss, network, view, overrides = {}) {
     fresh = route.countries.filter(code => !(original?.countries ?? []).includes(code) && !monitored.includes(code));
     coverageGap = fresh.length > 0;
     if (coverageGap) checks.push({ section: "risk", requirement: "Every country on a new route is monitored for external risk", result: "Decision",
-      detail: `The new route passes through ${list(fresh.map(code => ss.names?.[code] ?? code))}, which SupplyShield does not monitor for external risk, so it cannot assess it. Turn external-risk monitoring on in Monitoring scope, or choose another route.` });
+      detail: `The new route passes through ${list(fresh.map(code => ss.names?.[code] ?? code))}, which ClinRadar does not monitor for external risk, so it cannot assess it. Turn external-risk monitoring on in Monitoring scope, or choose another route.` });
   }
   // No false assurance: a booked leg in a country nobody monitors for external risk is unknown, not clear.
   const blind = route.countries.filter(code => !monitored.includes(code) && !fresh.includes(code));
@@ -628,7 +628,7 @@ export function riskChecks(ss, network, view, overrides = {}) {
       return unique.length > 1 ? unique.filter(role => role !== "road") : unique;
     };
     checks.push({ section: "risk", requirement: "External risk is monitored on every country of the route", result: "Confirm", unmonitored: blind,
-      detail: `External risk is not monitored on this route: ${list(blind.map(code => `${ss.names?.[code] ?? code} (${list(roles(code))})`))}. SupplyShield cannot see strikes, weather or security events there, so it does not call the route clear. Turn it on in Monitoring scope or confirm with the ${lowerFirst(route.carrier)}.` });
+      detail: `External risk is not monitored on this route: ${list(blind.map(code => `${ss.names?.[code] ?? code} (${list(roles(code))})`))}. ClinRadar cannot see strikes, weather or security events there, so it does not call the route clear. Turn it on in Monitoring scope or confirm with the ${lowerFirst(route.carrier)}.` });
   }
   if (!findings.length && !route.problems.length && !coverageGap) {
     checks.push({ section: "risk", requirement: "No disruption on the route", result: "Pass",
@@ -638,7 +638,7 @@ export function riskChecks(ss, network, view, overrides = {}) {
 }
 
 // ---- one call for everything ----
-export function computeSupplyShield({ network, portfolio, spain, israel, views: plain, choices, connected, feeds, recorded, today, config = {}, catalogue = {}, specs = {} }) {
+export function computeClinRadar({ network, portfolio, spain, israel, views: plain, choices, connected, feeds, recorded, today, config = {}, catalogue = {}, specs = {} }) {
   const views = plain.filter(Boolean).map(view => { const route = routeFor(network, view); return route ? { ...view, lane: route.lane, originFacility: route.facility } : view; });
   const scope = buildScope({ network, portfolio, spain, israel, views, choices, connected, feeds, today, config, catalogue, specs });
   const names = { ...catalogue, ...(network?.geography?.names ?? {}) };

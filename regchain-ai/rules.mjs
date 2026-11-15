@@ -7,7 +7,7 @@ import { join } from "node:path";
 import { readFileSync, renameSync } from "node:fs";
 import { appendAudit, openDatabase, transaction } from "./db.mjs";
 import { cacheDir } from "./sources.mjs";
-import { computeSupplyShield, riskChecks, routeFor, watchSummary } from "./supplyshield.mjs";
+import { computeClinRadar, riskChecks, routeFor, watchSummary } from "./supplyshield.mjs";
 import { readFeeds } from "./feeds.mjs";
 import { readScopeState } from "./monitoring.mjs";
 import { parseYaml } from "./yaml-lite.mjs";
@@ -75,7 +75,7 @@ export async function loadData(root) {
   const data = { portfolio, spain, israel, specs, ops, network, today: portfolio.assessment_as_of.slice(0, 10), ukEffective: "2026-04-28", approvals };
   data.reservations = Object.entries(approvals).flatMap(([shipment, approval]) => planReservations(data, shipment, approval.actions ?? []));
   if (network) {
-    // SupplyShield: the monitoring scope from the active-trial portfolio, read with the company's status policy
+    // ClinRadar: the monitoring scope from the active-trial portfolio, read with the company's status policy
     // (config/supplyshield.yaml), and every external signal matched to our shipments.
     const [configText, catalogueText] = await Promise.all([
       readFile(join(root, "config", "supplyshield.yaml"), "utf8").catch(() => ""), readFile(join(root, "demo-data", "country-catalogue-iso3166.csv"), "utf8").catch(() => ""),
@@ -84,7 +84,7 @@ export async function loadData(root) {
     data.scopeState = state;
     data.config = configText ? parseYaml(configText) : {};
     data.catalogue = readCatalogue(catalogueText);
-    data.supplyshield = computeSupplyShield({ network, portfolio, spain, israel, views: allShipmentIds(data).map(id => shipmentView(data, id)), choices: state.choices,
+    data.supplyshield = computeClinRadar({ network, portfolio, spain, israel, views: allShipmentIds(data).map(id => shipmentView(data, id)), choices: state.choices,
       connected: state.connected, feeds, recorded, today: data.today, config: data.config, catalogue: data.catalogue, specs });
   }
   return data;
@@ -335,7 +335,7 @@ export function checkShipment(data, shipmentId, overrides = {}) {
     checks.push({ section: "ior", requirement: "Consignee: the hospital pharmacy of the trial site", result: "Pass", detail: `Consignee: ${view.hospital}.` });
     checks.push({ section: "invoice", requirement: "Pro-forma invoice statement", result: "Not checked", detail: "Invoice data is not connected yet." });
   }
-  // SupplyShield: external events on this shipment's route, as the carrier and the depot report them.
+  // ClinRadar: external events on this shipment's route, as the carrier and the depot report them.
   checks.push(...riskChecks(data.supplyshield, data.network, view, overrides));
   const results = checks.map(item => item.result);
   const result = results.some(item => ["Fail", "Missing", "Decision"].includes(item)) ? "Blocked" : results.includes("Confirm") ? "Confirm" : "Ready";
@@ -364,7 +364,7 @@ export function allShipmentChecks(data) {
   return allShipmentIds(data).map(id => checkShipment(data, id));
 }
 
-// What the page needs from SupplyShield: the scope, the assessed signals, and for each shipment the route and permit
+// What the page needs from ClinRadar: the scope, the assessed signals, and for each shipment the route and permit
 // checks these rules add, so the page shows exactly what the agents and the verifier see.
 export function supplyShieldPayload(data) {
   const ss = data.supplyshield;

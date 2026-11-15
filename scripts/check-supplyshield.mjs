@@ -1,4 +1,4 @@
-// Checks SupplyShield's fixed rules without network or AI calls: the monitoring scope comes only from the active-trial
+// Checks ClinRadar's fixed rules without network or AI calls: the monitoring scope comes only from the active-trial
 // portfolio and cannot be determined without it; recommended countries are never switched on by themselves, carry their
 // evidence and change only by the right role, with a reason, in the audit trail; external signals are matched to the
 // shipments and classified (observed event, potential exposure, confirmed disruption, not affected after check); the
@@ -17,7 +17,7 @@ process.env.REGCHAIN_DATA_DIR = join(temp, "data");
 process.env.REGCHAIN_CACHE_DIR = join(temp, "cache");
 
 const { loadData, checkShipment, verifyOption, allShipmentChecks, supplyShieldPayload } = await import("../regchain-ai/rules.mjs");
-const { computeSupplyShield, MONITORING_KINDS } = await import("../regchain-ai/supplyshield.mjs");
+const { computeClinRadar, MONITORING_KINDS } = await import("../regchain-ai/supplyshield.mjs");
 const { setMonitoring, setPortfolioConnection, emptyScope, readScopeState, reviewRecommendation } = await import("../regchain-ai/monitoring.mjs");
 const { openDatabase, verifyAudit, closeDatabase } = await import("../regchain-ai/db.mjs");
 const inScopeCodes = state => state.scope.countries.map(item => item.code);
@@ -119,7 +119,7 @@ const verdict = actions => verifyOption(data, "SHP-IL-01", actions);
 assert.equal(verdict([{ type: "reroute", via: "AMS" }]).after, "Ready", "leave from Amsterdam: delivery unchanged");
 const lux = verdict([{ type: "reroute", via: "LUX" }]);
 assert.equal(lux.passes, false);
-assert.match(lux.checks.find(item => item.result === "Decision").detail, /Luxembourg, which SupplyShield does not monitor/);
+assert.match(lux.checks.find(item => item.result === "Decision").detail, /Luxembourg, which ClinRadar does not monitor/);
 assert.match(verdict([{ type: "delay", new_dispatch_date: "2026-11-25" }]).notes.join(" "), /runs out on 2026-11-27, but the kits would arrive on 2026-11-30: 14 patients/, "a later dispatch arrives after the stock runs out");
 assert.equal(verdict([{ type: "delay", new_dispatch_date: "2026-11-25" }]).passes, false);
 assert.match(il01.checks.find(item => item.section === "risk").detail, /14 patients would go 2 days without treatment/, "the shipment's own check says who is at risk");
@@ -227,7 +227,7 @@ console.log("ok  no portfolio: the scope cannot be determined, nothing is monito
   const views = [...base.portfolio.shipments, ...base.spain.trial.shipments, ...base.israel.trial.shipments].map(item => item.id).map(id => (base.supplyshield.routes[id] ? { id } : null)).filter(Boolean);
   assert.ok(views.length > 0);
   const { shipmentView, allShipmentIds } = await import("../regchain-ai/rules.mjs");
-  const result = computeSupplyShield({ network: base.network, portfolio: base.portfolio, spain: base.spain, israel: base.israel, views: allShipmentIds(base).map(id => shipmentView(base, id)),
+  const result = computeClinRadar({ network: base.network, portfolio: base.portfolio, spain: base.spain, israel: base.israel, views: allShipmentIds(base).map(id => shipmentView(base, id)),
     choices: {}, connected: true, feeds, recorded: { signals: [] }, today: base.today });
   const germany = result.signals.find(item => item.id.startsWith("FCDO-DE"));
   assert.equal(germany.tier, "potential", "a whole-country alert touches every German shipment, unconfirmed");
@@ -238,7 +238,7 @@ console.log("ok  no portfolio: the scope cannot be determined, nothing is monito
   console.log("ok  live feeds: FCDO advice and GDACS alerts become signals only for monitored countries; a whole-country alert and an overlapping flood are potential exposures; the rest is counted, not matched");
 }
 
-// 8. The starter pack's acceptance tests that need a portfolio of their own (SupplyShield-AI-Master-Prompt.md, section M).
+// 8. The starter pack's acceptance tests that need a portfolio of their own (ClinRadar-Master-Prompt.md, section M).
 {
   const base = await loadData(root);
   const { buildScope, riskChecks } = await import("../regchain-ai/supplyshield.mjs");
@@ -272,7 +272,7 @@ console.log("ok  no portfolio: the scope cannot be determined, nothing is monito
     { id: "T-ROAD-B", category: "road", title: "Road protest B", country: "BE", authority: "Source B", publishedAt: "2026-11-13T12:00:00Z", window: { from: "2026-11-24", to: "2026-11-24" }, locations: [{ kind: "road", country: "BE", effect: "Slow traffic." }] },
     { id: "T-TRACK", category: "tracking", title: "Courier tracking outage", country: "BE", authority: "Status page", publishedAt: "2026-11-20T08:00:00Z", window: { from: "2026-11-23", to: "2026-11-26" }, locations: [{ kind: "provider", carrier: "EMEA specialty courier", effect: "Tracking delayed." }] },
   ] };
-  const result = computeSupplyShield({ network: base.network, portfolio: base.portfolio, spain: base.spain, israel: base.israel, views, choices: { "BE|external": { enabled: true, by: "test" } }, connected: true,
+  const result = computeClinRadar({ network: base.network, portfolio: base.portfolio, spain: base.spain, israel: base.israel, views, choices: { "BE|external": { enabled: true, by: "test" } }, connected: true,
     feeds: null, recorded, today: base.today, config: base.config, catalogue: base.catalogue, specs: base.specs });
   const roads = result.signals.filter(item => item.category === "road");
   assert.equal(roads.length, 1, "M16: two reports of the same protest are one signal");
@@ -293,4 +293,4 @@ console.log("ok  no portfolio: the scope cannot be determined, nothing is monito
 
 closeDatabase(root);
 await rm(temp, { recursive: true, force: true }).catch(() => {});
-console.log("All SupplyShield checks passed.");
+console.log("All ClinRadar checks passed.");

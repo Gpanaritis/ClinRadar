@@ -306,16 +306,16 @@ export function createApi({ root, config = loadConfig(), allowedOrigins = config
       return { status: 200, body: { change_id: match[1], decision: body.decision, reason, by: actor, at } };
     }],
     ["GET", /^\/v1\/shipment-actions$/, async ({ db }) => ({ status: 200, body: { actions: Object.fromEntries(db.prepare("SELECT * FROM shipment_action").all().map(row => [row.shipment_id, { action: row.action, reason: row.reason, by: row.actor, at: row.recorded_at }])) } })],
-    // SupplyShield, read-only: the monitoring scope, the external signals and one shipment's route. The scope changes only
+    // ClinRadar, read-only: the monitoring scope, the external signals and one shipment's route. The scope changes only
     // through the monitoring switches (Clinical Supply, the Regulatory SME), with a reason, in the audit trail.
     ["GET", /^\/v1\/monitoring-scope$/, async () => {
       const ss = (await loadData(root)).supplyshield;
-      if (!ss) throw fail(404, "SupplyShield's supply network data is not installed.");
+      if (!ss) throw fail(404, "ClinRadar's supply network data is not installed.");
       return { status: 200, body: ss.scope };
     }],
     ["GET", /^\/v1\/signals$/, async ({ url }) => {
       const ss = (await loadData(root)).supplyshield;
-      if (!ss) throw fail(404, "SupplyShield's supply network data is not installed.");
+      if (!ss) throw fail(404, "ClinRadar's supply network data is not installed.");
       const tier = url.searchParams.get("tier");
       if (tier && !["observed", "potential", "confirmed", "clear"].includes(tier)) throw fail(400, "tier is observed, potential, confirmed or clear.");
       const hazard = url.searchParams.get("hazard");

@@ -1,6 +1,6 @@
 # RegChain AI · product review, 15 November 2026
 
-> Later on 15 Nov 2026 this review, a deeper research round ([SupplyShield-AI-Research.md](SupplyShield-AI-Research.md)) and the team's SupplyShield brief led to **SupplyShield AI** ([SupplyShield-AI.md](SupplyShield-AI.md)). The review below is kept as it was written; its counts (13 blocked of 25, six MCP servers) are from before that change.
+> Later on 15 Nov 2026 this review, a deeper research round ([ClinRadar-Research.md](ClinRadar-Research.md)) and the team's ClinRadar brief led to **ClinRadar** ([ClinRadar.md](ClinRadar.md)). The review below is kept as it was written; its counts (13 blocked of 25, six MCP servers) are from before that change.
 
 A skeptical reassessment of the whole platform. It combines an independent screen-by-screen review, independent market research and a code review, and lists what was fixed today and what is still open.
 

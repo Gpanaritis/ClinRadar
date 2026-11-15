@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
-<meta name="description" content="SupplyShield AI: external risk and country regulatory intelligence for global clinical supply">
-<link rel="icon" href="data:,">
-<title>SupplyShield AI | Overview</title>
+<meta name="description" content="ClinRadar: external risk and country regulatory intelligence for global clinical supply">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%233b82f6'/%3E%3Cstop offset='1' stop-color='%231d4ed8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Cg fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M26.5 11.1A11.6 11.6 0 1 1 20.9 5.5'/%3E%3Ccircle cx='16' cy='16' r='6'/%3E%3Cpath d='M16 16l8.6-8.6'/%3E%3C/g%3E%3Ccircle cx='16' cy='16' r='1.9' fill='%23fff'/%3E%3C/svg%3E">
+<title>ClinRadar | Overview</title>
 <style>
 :root{font:14px/1.45 Inter,"Segoe UI",sans-serif;color:#132446;background:#f5f8fc;--ink:#132446;--muted:#536683;--line:#e0e8f3;--blue:#1a52d1;--deep:#123eaa;--pale:#edf4ff;--white:#fff;--shadow:0 2px 5px #14356207}
 *{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button,select{cursor:pointer}button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #3b72ef;outline-offset:3px}button:disabled{cursor:wait;opacity:.7}a{color:var(--blue);text-underline-offset:3px}h1,h2,h3,p{margin:0}[hidden]{display:none!important}
 svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round;flex:none;vertical-align:middle}
-.shell{display:grid;grid-template-columns:218px minmax(0,1fr);min-height:100vh}.rail{position:sticky;top:0;height:100vh;background:white;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:25px 13px 16px}.brand{display:flex;align-items:center;gap:10px;padding:0 10px;margin-bottom:42px;white-space:nowrap;font-size:17px;font-weight:750;letter-spacing:-.35px}.brand small{font-size:inherit;color:var(--blue)}.brand-mark{display:grid;place-items:center;background:var(--blue);color:white;width:34px;height:34px;border-radius:9px}.brand-mark svg{width:21px;height:21px}.rail nav{display:grid;gap:4px}.nav{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-radius:8px;background:white;color:#475b7c;padding:10px 11px;font-size:13px;font-weight:600}.nav:hover{background:#f3f7fe;color:var(--blue)}.nav[aria-current]{background:#e9f1ff;color:#1644ad;font-weight:750}.rail-foot{margin-top:auto;border-top:1px solid var(--line);padding:14px 8px 0;display:flex;align-items:center;gap:10px}.rail-avatar{display:grid;place-items:center;background:var(--pale);color:var(--deep);font-weight:750;font-size:12px;width:32px;height:32px;border-radius:50%;flex:none}.rail-foot strong,.rail-foot small{display:block}.rail-foot small{color:var(--muted);font-size:11px}
+.shell{display:grid;grid-template-columns:218px minmax(0,1fr);min-height:100vh}.rail{position:sticky;top:0;height:100vh;background:white;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:25px 13px 16px}.brand{display:flex;align-items:center;gap:10px;padding:0 10px;margin-bottom:42px;white-space:nowrap;font-size:17px;font-weight:750;letter-spacing:-.35px}.brand small{font-size:inherit;color:var(--blue)}.brand-mark{display:grid;place-items:center;background:linear-gradient(135deg,#3b82f6,#1d4ed8);box-shadow:0 4px 12px #1d4ed833;color:white;width:34px;height:34px;border-radius:9px}.brand-mark svg{width:21px;height:21px}.rail nav{display:grid;gap:4px}.nav{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-radius:8px;background:white;color:#475b7c;padding:10px 11px;font-size:13px;font-weight:600}.nav:hover{background:#f3f7fe;color:var(--blue)}.nav[aria-current]{background:#e9f1ff;color:#1644ad;font-weight:750}.rail-foot{margin-top:auto;border-top:1px solid var(--line);padding:14px 8px 0;display:flex;align-items:center;gap:10px}.rail-avatar{display:grid;place-items:center;background:var(--pale);color:var(--deep);font-weight:750;font-size:12px;width:32px;height:32px;border-radius:50%;flex:none}.rail-foot strong,.rail-foot small{display:block}.rail-foot small{color:var(--muted);font-size:11px}
 .main{min-width:0}.top{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:64px;padding:10px 29px;background:white;border-bottom:1px solid var(--line)}.crumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}.crumb strong{color:var(--ink)}.crumb svg{width:13px;height:13px}.demo{display:inline-flex;gap:7px;align-items:center;padding:5px 9px;border-radius:6px;background:#eff4fc;color:#385477;font-size:12px;font-weight:650}.demo svg{width:14px;height:14px}.content{max-width:1500px;margin:auto;padding:25px 29px 38px}
 .page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:13px;flex-wrap:wrap;margin-bottom:19px}.page-head h1{font-size:clamp(27px,3vw,37px);letter-spacing:-1.2px;line-height:1.1;font-weight:750;margin-bottom:6px}.page-head p{color:var(--muted);font-size:14px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:8px 11px;border:1px solid #d8e3f1;background:white;color:#23466e;text-decoration:none;font-weight:650;border-radius:8px;min-height:36px;white-space:nowrap;font-size:12px}.btn:hover{background:#edf4ff}.btn svg{width:15px;height:15px}.btn.primary{background:var(--blue);border-color:var(--blue);color:white}.btn.primary:hover{background:var(--deep)}.quiet{background:none;border:0;padding:0;color:var(--blue);font-weight:700;text-align:left;display:inline-flex;align-items:center;gap:5px;text-decoration:none}.quiet:hover{text-decoration:underline}.quiet svg{width:14px;height:14px}.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -248,7 +248,7 @@ tr[data-act]{cursor:pointer}
 </head>
 <body>
 <div class="shell">
- <aside class="rail"><div class="brand"><span class="brand-mark" id="brand-mark" aria-hidden="true"></span><span>SupplyShield <small>AI</small></span></div><nav id="nav" aria-label="Workspace"></nav><div class="rail-foot" id="rail-foot"><span class="rail-avatar">PL</span><div><strong>P. Laine</strong><small>Clinical Supply</small></div></div></aside>
+ <aside class="rail"><div class="brand"><span class="brand-mark" id="brand-mark" aria-hidden="true"></span><span>Clin<small>Radar</small></span></div><nav id="nav" aria-label="Workspace"></nav><div class="rail-foot" id="rail-foot"><span class="rail-avatar">PL</span><div><strong>P. Laine</strong><small>Clinical Supply</small></div></div></aside>
  <div class="main"><div class="top"><div class="crumb" id="crumb"></div><span class="demo" id="mode"></span></div><main class="content"><div id="view"></div><p id="announce" class="status-text" role="status" aria-live="polite"></p></main></div>
 </div>
 <dialog id="drawer" class="drawer" aria-labelledby="drawer-title"><div class="drawer-top"><div><div class="sub" id="drawer-type"></div><h2 id="drawer-title"></h2></div><form method="dialog"><button class="btn close" aria-label="Close details">×</button></form></div><div class="drawer-body" id="drawer-body"></div></dialog>
@@ -404,7 +404,7 @@ const sourceNotes = {
   ],
   lead:[
    {label:"Old-rules cutoff",value:"QP certification before 28 Apr 2026",basis:"Schedule 14 and MHRA guidance"},
-   {label:"QP certification on 28 Apr 2026 itself",value:"Expert decision",basis:"The guidance speaks of “before” and “after” the date, so SupplyShield escalates these batches",open:true}
+   {label:"QP certification on 28 Apr 2026 itself",value:"Expert decision",basis:"The guidance speaks of “before” and “after” the date, so ClinRadar escalates these batches",open:true}
   ]},
  "gb-import":{
   practice:[
@@ -598,7 +598,7 @@ function roleName(role,state) {
 function initialWorkflow(caseId="uk") {
  const governed=governedCases[caseId];
  return {schema:1,caseId,stage:"review",revision:1,draft:governed.initialText,decision:null,publication:null,task:null,events:[{
-  eventId:governed.id+"-01",type:"case.prepared",actor:"SupplyShield monitor",at:governed.preparedAt,
+  eventId:governed.id+"-01",type:"case.prepared",actor:"ClinRadar monitor",at:governed.preparedAt,
   revision:1,detail:caseId==="uk"?"Source evidence compared and portfolio assessment prepared.":"New information note found on publication and the trial's Spanish shipments assessed."
  }]};
 }
@@ -617,7 +617,7 @@ function saveWorkflow(state) {
 }
 function appendWorkflowEvent(state,type,role,now,detail) {
  const eventId=caseOf(state).id+"-"+String(state.events.length+1).padStart(2,"0");
- state.events.push({eventId,type,actor:roleName(role,state)??(role==="scheduler"?"SupplyShield scheduler":role==="ai"?"SupplyShield AI check":"SupplyShield publisher"),at:now,revision:state.revision,detail});
+ state.events.push({eventId,type,actor:roleName(role,state)??(role==="scheduler"?"ClinRadar scheduler":role==="ai"?"ClinRadar check":"ClinRadar publisher"),at:now,revision:state.revision,detail});
 }
 function workflowStep(state,command,role,now) {
  const {action,revision}=command;
@@ -739,7 +739,7 @@ function adoptAiDraft(state,result,now) {
 <script id="dashboard-ui">
 "use strict";
 const icons = {
-  logo:'<path d="M2.7 13 7.5 4l3.1 6 2.7-4m-2.1 0h2.3v2.3M2.7 13h10.6"/>',
+  logo:'<path d="M13.26 5.55A5.8 5.8 0 1 1 10.45 2.74"/><circle cx="8" cy="8" r="3"/><path d="M8 8l4.3-4.3"/><circle cx="8" cy="8" r=".9" fill="currentColor" stroke="none"/>',
   overview:'<rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/>',
   sources:'<circle cx="8" cy="8" r="5.5"/><path d="M2.5 8h11M8 2.5c-3 3.2-3 7.8 0 11m0-11c3 3.2 3 7.8 0 11"/>',
   changes:'<path d="M2.5 8h3l1.7-4 2.4 8 1.8-4h2.1"/>',
@@ -793,7 +793,7 @@ let sourceFilter = "all";
 let sourceSearch = "";
 let currentCountry = "uk";
 // One workflow per governed case; `workflow` is the one for the case on screen.
-// Served by SupplyShield, the server is the system of record and the page loads its state from /v1; opened as a file, browser storage is used.
+// Served by ClinRadar, the server is the system of record and the page loads its state from /v1; opened as a file, browser storage is used.
 const serverMode = () => location.protocol.startsWith("http");
 const workflows = Object.fromEntries(Object.keys(governedCases).map(id=>[id,serverMode()?initialWorkflow(id):readWorkflow(id)]));
 let workflow = workflows.uk;
@@ -857,7 +857,7 @@ function openFor(change) {
   return days>0?"open "+days+" days":"";
 }
 
-// ---------- SupplyShield: the monitoring scope, external signals and route checks ----------
+// ---------- ClinRadar: the monitoring scope, external signals and route checks ----------
 // Fixed rules on the server decide all of it (regchain-ai/supplyshield.mjs); the page only shows it. Opened as a file,
 // the page uses the copy scripts/embed-data.mjs embedded; served, it asks GET /api/supplyshield.
 const ssEmbedded = (()=>{try {const source=document.getElementById("supplyshield-state");return source?JSON.parse(source.textContent):null;} catch {return null;}})();
@@ -883,9 +883,9 @@ function shipmentRisk(id) {
   return (ss?.byShipment?.[id]??[]).map(match=>statusKey(match.tier,signalById(match.signal))).reduce((worst,key)=>worst&&statusRank[worst]>=statusRank[key]?worst:key,null);
 }
 const riskCell = id => {const key=shipmentRisk(id);return key?statusBadge(key):'<span class="muted">—</span>';};
-// What SupplyShield's rules add to a shipment's checks: external risk on its route and, for Israel, the import approval's terms.
-function withSupplyShieldChecks(shipment) {
-  const extra=(ss?.extraChecks?.[shipment.id]??[]).map(item=>({...item,pending:false,basis:item.section==="risk"?"SupplyShield route check · courier and depot records":"Import approval on record · its terms"}));
+// What ClinRadar's rules add to a shipment's checks: external risk on its route and, for Israel, the import approval's terms.
+function withClinRadarChecks(shipment) {
+  const extra=(ss?.extraChecks?.[shipment.id]??[]).map(item=>({...item,pending:false,basis:item.section==="risk"?"ClinRadar route check · courier and depot records":"Import approval on record · its terms"}));
   return extra.length?{...shipment,checks:[...shipment.checks,...extra]}:shipment;
 }
 // The page computes each result itself; the server's result for the same shipment must agree.
@@ -894,29 +894,29 @@ function checkServerResults(all) {
   ssWarned=ss;
   for(const shipment of all) {
     const expected=ss.results[shipment.id];
-    if(expected&&expected!==shipment.result) console.warn("SupplyShield: "+shipment.id+" is "+shipment.result+" on this page but "+expected+" on the server.");
+    if(expected&&expected!==shipment.result) console.warn("ClinRadar: "+shipment.id+" is "+shipment.result+" on this page but "+expected+" on the server.");
   }
 }
-async function loadSupplyShield(repaint=true) {
+async function loadClinRadar(repaint=true) {
   if(!serverMode()) return;
   try {
     const reply=await aiRequest("/api/supplyshield");
     ss=reply.available===false?null:reply;
     ssError="";
   } catch(error) {ssError=error.message;}
-  if(repaint) repaintForSupplyShield();
+  if(repaint) repaintForClinRadar();
 }
-function adoptSupplyShield(reply) {
+function adoptClinRadar(reply) {
   if(reply&&reply.available!==false&&reply.scope) {ss=reply;ssError="";}
 }
-// The pages that show SupplyShield's state are drawn again; a form being filled in, the first check and the agents' board are left alone.
-function repaintForSupplyShield() {
+// The pages that show ClinRadar's state are drawn again; a form being filled in, the first check and the agents' board are left alone.
+function repaintForClinRadar() {
   if(firstRun==="checking"||!["overview","scope","signals","signal","shipments","agent"].includes(page)) return;
   if(byId("view")?.querySelector("form")?.contains(document.activeElement)) return;
   render();
 }
 
-// The monitoring settings (Settings › Monitoring schedule). Served by SupplyShield, the server keeps them with every change in
+// The monitoring settings (Settings › Monitoring schedule). Served by ClinRadar, the server keeps them with every change in
 // the audit trail; this browser keeps the run state (last run, next run, run count). Same defaults as regchain-ai/settings.mjs.
 const monitoringDefaults = {enabled:true,frequency:"weekdays",every:7,weekday:1,time:"06:00",onBlocked:"notify"};
 const monitoringKeys = Object.keys(monitoringDefaults);
@@ -1014,7 +1014,7 @@ function shell() {
   const parent=pageParents[page];
   const here=pageTitle();
   byId("crumb").innerHTML=(parent?'<button type="button" class="crumb-link" data-act="nav" data-value="'+parent+'">'+esc(navItems[parent])+'</button>'+icon("chevron"):"")+'<strong>'+esc(here)+'</strong>';
-  document.title="SupplyShield AI | "+here;
+  document.title="ClinRadar | "+here;
   byId("nav").innerHTML=Object.entries(navItems).map(([id,name])=>'<button type="button" class="nav" data-act="nav" data-value="'+id+'"'+(page===id?' aria-current="page"':parent===id?' aria-current="location"':'')+'>'+icon(id)+esc(name)+'</button>').join("");
   // Who is acting: the switches on Monitoring scope and every approval depend on it.
   const person=signedInUser?.name??String(roleName(workflowRole,workflow)??"").split(" · ")[0];
@@ -1075,12 +1075,12 @@ const ctmsSnapshot = scope => scope?.source?(scope.source.system+" snapshot "+(s
 // Without the active-trial portfolio there is no scope, so nothing is monitored. Said the same way on every page.
 function undeterminedCard(withAction=true) {
   const action=canConnectCtms()?'<button type="button" class="btn primary" data-act="ss-connect">'+icon("plug")+'Connect the CTMS (read-only)</button>':
-    '<small>'+esc(serverMode()?"The CTMS connection is part of the deployment: the system owner connects it.":"Open SupplyShield at http://127.0.0.1:4173 to connect the CTMS.")+'</small>';
-  const message=ss?.scope?.message||"No authoritative active-trial portfolio is connected, so SupplyShield cannot determine its monitoring scope and monitors nothing. It never assumes that every country with registered clinical trials is in scope.";
-  return '<section class="card scope-line warn">'+icon("alert")+'<div><strong>SupplyShield monitors nothing yet.</strong><small>'+esc(message)+'</small>'+(ctmsError?'<small class="form-feedback">'+esc(ctmsError)+'</small>':"")+'</div>'+(withAction?action:"")+'</section>';
+    '<small>'+esc(serverMode()?"The CTMS connection is part of the deployment: the system owner connects it.":"Open ClinRadar at http://127.0.0.1:4173 to connect the CTMS.")+'</small>';
+  const message=ss?.scope?.message||"No authoritative active-trial portfolio is connected, so ClinRadar cannot determine its monitoring scope and monitors nothing. It never assumes that every country with registered clinical trials is in scope.";
+  return '<section class="card scope-line warn">'+icon("alert")+'<div><strong>ClinRadar monitors nothing yet.</strong><small>'+esc(message)+'</small>'+(ctmsError?'<small class="form-feedback">'+esc(ctmsError)+'</small>':"")+'</div>'+(withAction?action:"")+'</section>';
 }
 function ssUnavailable() {
-  return ssError?'<section class="card scope-line warn">'+icon("alert")+'<div><strong>SupplyShield\'s monitoring state could not be loaded.</strong><small>'+esc(ssError)+'</small></div>'+trigger("Try again","ss-reload","","","retry")+'</section>':
+  return ssError?'<section class="card scope-line warn">'+icon("alert")+'<div><strong>ClinRadar\'s monitoring state could not be loaded.</strong><small>'+esc(ssError)+'</small></div>'+trigger("Try again","ss-reload","","","retry")+'</section>':
     '<section class="card scope-line">'+icon("clock")+'<div><strong>Loading the monitoring scope…</strong></div></section>';
 }
 function scopeLine() {
@@ -1204,8 +1204,8 @@ const pause = ms => new Promise(resolve=>setTimeout(resolve,ms));
 let firstChoice = null;
 const waitForChoice = () => new Promise(resolve=>{firstChoice=resolve;});
 function emptyPage() {
-  return heading(esc(navItems[page]??"SupplyShield"),"This page fills once SupplyShield has run its first check.")+
-    '<section class="card first-empty">'+icon("info")+'<div><h2>Nothing here yet</h2><p>Run the first check on the Overview. SupplyShield connects the active-trial portfolio, reads the official sources and feeds for the countries it monitors, re-checks every planned shipment and asks the agent team for plans.</p>'+
+  return heading(esc(navItems[page]??"ClinRadar"),"This page fills once ClinRadar has run its first check.")+
+    '<section class="card first-empty">'+icon("info")+'<div><h2>Nothing here yet</h2><p>Run the first check on the Overview. ClinRadar connects the active-trial portfolio, reads the official sources and feeds for the countries it monitors, re-checks every planned shipment and asks the agent team for plans.</p>'+
     '<div class="actions">'+trigger("Go to the Overview","nav","overview","primary","arrow")+'</div></div></section>';
 }
 function firstRunView() {
@@ -1221,7 +1221,7 @@ function firstRunView() {
     [systems,"company systems over MCP, read-only or drafts only"],
     [5,"AI agents and one rule checker with no AI"+(agentServer()&&agentState.status&&!live?" · scripted without a Claude key":"")]
   ];
-  const head=heading("Overview",firstRun==="checking"?"The first check is running. Each step shows what SupplyShield found.":"External risk and country regulatory intelligence for global clinical supply. Nothing has been checked yet.");
+  const head=heading("Overview",firstRun==="checking"?"The first check is running. Each step shows what ClinRadar found.":"External risk and country regulatory intelligence for global clinical supply. Nothing has been checked yet.");
   if(firstRun==="empty") {
     return head+(connected?"":undeterminedCard(false))+'<section class="card first-run"><div class="first-grid"><div><div class="plan-eyebrow">Ready for the first check</div><h2>Which countries do we watch, and what does each event mean for our shipments?</h2>'+
       '<p class="muted">The first check takes about a minute and stops once for your decision. You can follow every step.</p><ol class="first-list">'+firstStepNames.map(name=>'<li>'+esc(name)+'</li>').join("")+'</ol>'+
@@ -1261,9 +1261,9 @@ async function runFirstCheck() {
   };
   // 1. The active-trial portfolio sets the scope; nothing else does.
   await step(0,async current=>{
-    if(serverMode()) adoptSupplyShield(await agentPost("/api/supplyshield/portfolio",{connected:true}));
+    if(serverMode()) adoptClinRadar(await agentPost("/api/supplyshield/portfolio",{connected:true}));
     const scope=ss?.scope;
-    if(scope?.status!=="determined") {current.lines.push(serverMode()?"The monitoring scope could not be determined, so nothing is monitored.":"Connecting the CTMS needs SupplyShield running.");return;}
+    if(scope?.status!=="determined") {current.lines.push(serverMode()?"The monitoring scope could not be determined, so nothing is monitored.":"Connecting the CTMS needs ClinRadar running.");return;}
     const excluded=scope.studies.excluded??[];
     const byStatus=[...new Set(excluded.map(item=>item.statusWords??statusText(item.status).toLowerCase()))].map(words=>listWords(excluded.filter(item=>(item.statusWords??statusText(item.status).toLowerCase())===words).map(item=>item.id))+" ("+words+")");
     current.lines.push(ctmsSnapshot(scope)+": "+scope.studies.active+" of "+scope.studies.total+" studies active"+(excluded.length?"; not counted: "+byStatus.join(", "):""));
@@ -1288,7 +1288,7 @@ async function runFirstCheck() {
       const choice=await waitForChoice();
       if(choice!=="on") {current.lines.push("Continued without "+top.name+": events there are not matched to our shipments until someone turns it on in Monitoring scope.");break;}
       try {
-        adoptSupplyShield(await agentPost("/api/supplyshield/monitoring",{country:top.code,kind:"external",enabled:true,reason:current.ask.reason}));
+        adoptClinRadar(await agentPost("/api/supplyshield/monitoring",{country:top.code,kind:"external",enabled:true,reason:current.ask.reason}));
         current.lines.push("External-risk monitoring on for "+top.name+", turned on by "+roleName(workflowRole,workflow)+": “"+current.ask.reason+"”");
         break;
       } catch(error) {current.ask.error="Not turned on: "+error.message;}
@@ -1309,7 +1309,7 @@ async function runFirstCheck() {
       current.lines.push("Reading UK FCDO travel advice and GDACS alerts for the "+plural(external.length,"country","countries")+" monitored for external risk…");
       paintFirst();
       try {
-        adoptSupplyShield(await agentPost("/api/supplyshield/check",{}));
+        adoptClinRadar(await agentPost("/api/supplyshield/check",{}));
         current.lines[current.lines.length-1]="Official feeds read live for the "+plural(external.length,"country","countries")+" monitored for external risk: UK FCDO travel advice and GDACS alerts";
       } catch(error) {current.lines[current.lines.length-1]="The live feeds did not answer ("+error.message+"), so the recorded copy is used";}
     } else if(ss?.feeds&&ssDetermined()) current.lines.push("Official feeds: the recorded copy from "+scheduleDate(Date.parse(ss.feeds.fetchedAt)));
@@ -1380,7 +1380,7 @@ async function startFromEmpty() {
   scopeEdit=null;scopeDenied=null;scopeEditError="";ctmsError="";
   setFirstRun("empty");
   page="overview";
-  await loadSupplyShield(false);
+  await loadClinRadar(false);
   await loadServerState();
   await loadAgentData();
   render();
@@ -1450,7 +1450,7 @@ function sectionState(countryId,sectionId) {
     const why=governed.key==="uk"?"Out of date since 28 Apr 2026, when the amended Part 7 came into force. ":
       "A new rule applies from "+displayDay(governed.effective)+", set by an information note published on "+displayDay(spain.notice.published)+". ";
     return {label:rejected?"Edit rejected":"Edit suggested",tone:"red",key:"edit",change:governed.key,caseId:governed.id,
-      note:why+(rejected?"The suggested edit was rejected in case "+governed.id+". The rule still applies, so reopen the case or record why the current text is right.":"SupplyShield drafted an edit from "+(governed.key==="uk"?"the official sources":"the note")+". It is waiting for approval in case "+governed.id+".")};
+      note:why+(rejected?"The suggested edit was rejected in case "+governed.id+". The rule still applies, so reopen the case or record why the current text is right.":"ClinRadar drafted an edit from "+(governed.key==="uk"?"the official sources":"the note")+". It is waiting for approval in case "+governed.id+".")};
   }
   const change=openChanges().find(item=>item.id===section.change);
   if(change) return {label:"Change to assess",tone:"amber",key:"changing",change:change.id,note:"An open change may alter this section: "+change.title+" ("+change.when+"). Regulatory Affairs is assessing it."};
@@ -1680,7 +1680,7 @@ function sectionTrials(id) {
     '<div class="actions">'+trigger("Back to the section","spec-section",id,"","arrow")+(caseId&&caseOpen(caseId)?trigger("Open the "+(caseId==="uk"?"UK":"Spain")+" case","open-case",caseId,"primary","arrow"):"")+'</div>');
 }
 // ---------- Settings: the monitoring schedule and the AI connections ----------
-// Served by SupplyShield, the server keeps the settings and records every change in the audit trail (regchain-ai/settings.mjs).
+// Served by ClinRadar, the server keeps the settings and records every change in the audit trail (regchain-ai/settings.mjs).
 // Opened as a file, the schedule is kept in this browser and the connections cannot be reached.
 let settingsTab = "monitoring";
 let settingsState = {loaded:false,loading:false,error:"",changed:null,connections:[],log:[],roles:{monitoring:["reviewer","owner"],decide:["owner"]}};
@@ -1712,7 +1712,7 @@ function choice(name,value,checked,title,text) {
 function settingsView() {
   if(serverMode()&&!settingsState.loaded&&!settingsState.loading&&!settingsState.error) queueMicrotask(loadSettings);
   const tabs=[["monitoring","Monitoring schedule","schedule"],["ai","AI connections","plug"],["sources","Sources","file"]];
-  return heading("Settings","When SupplyShield checks, what the AI agents connect to, and every official source it reads."+tip("Served by SupplyShield, settings are kept on the server and every change is recorded in the audit trail with who made it and when. Keys and passwords are never entered here.","About the settings"),
+  return heading("Settings","When ClinRadar checks, what the AI agents connect to, and every official source it reads."+tip("Served by ClinRadar, settings are kept on the server and every change is recorded in the audit trail with who made it and when. Keys and passwords are never entered here.","About the settings"),
     serverMode()?'<div class="actions settings-role">'+caseRoleSelect()+'</div>':"")+
     '<div class="settings-tabs" role="tablist" aria-label="Settings">'+tabs.map(([id,label,symbol])=>'<button type="button" role="tab" id="settings-tab-'+id+'" class="settings-tab" aria-selected="'+(settingsTab===id)+'" aria-controls="settings-panel" data-act="settings-tab" data-value="'+id+'">'+icon(symbol)+esc(label)+'</button>').join("")+'</div>'+
     (settingsState.error?'<p class="form-feedback" role="alert">'+esc("The settings could not be loaded: "+settingsState.error)+'</p>':"")+
@@ -1743,10 +1743,10 @@ function monitoringPanel() {
   const next='<section class="card"><div class="card-head"><div><h2>Next checks</h2><p>Athens time</p></div></div><div class="settings-body">'+
     (upcoming.length?'<ol class="next-runs">'+upcoming.map(at=>'<li>'+icon("clock")+esc(checkDate(at))+'</li>').join("")+'</ol>':'<p class="muted">Automatic checks are paused. Run checks from here or from the Overview whenever you need them.</p>')+
     '<div id="run-status">'+runStatus()+'</div>'+
-    '<p class="key-note">'+icon("info")+'<span>Checks run while SupplyShield is open in a browser. A check that was missed runs once on the next visit.</span></p></div></section>';
+    '<p class="key-note">'+icon("info")+'<span>Checks run while ClinRadar is open in a browser. A check that was missed runs once on the next visit.</span></p></div></section>';
   const monitored=ss?.scope?.monitored?.external?.length;
   const steps='<section class="card"><div class="card-head"><div><h2>What each check does</h2></div></div><div class="settings-body"><ol class="check-steps">'+
-    '<li>Reads the '+sources.length+' official regulatory sources SupplyShield watches and compares them with the stored versions.</li>'+
+    '<li>Reads the '+sources.length+' official regulatory sources ClinRadar watches and compares them with the stored versions.</li>'+
     '<li>'+(monitored?"Reads the official feeds, UK FCDO travel advice and GDACS alerts, for the "+plural(monitored,"country","countries")+" monitored for external risk.":"Reads the official feeds, UK FCDO travel advice and GDACS alerts, for the countries monitored for external risk. Nothing is monitored until the active-trial portfolio is connected.")+'</li>'+
     '<li>Matches every signal and change to the shipments, sites and routes it touches, and links each change to the Country Specification it affects.</li>'+
     '<li>Checks the '+plannedShipments().length+' planned shipments against the current specification of their destination and the risk on their route.</li>'+
@@ -1760,10 +1760,10 @@ function settingsLog(kind) {
   const entries=settingsState.log.filter(entry=>kind==="monitoring"?entry.event==="settings.monitoring_changed":entry.event.startsWith("connection."));
   return '<section class="card"><div class="card-head"><div><h2>Changes</h2><p>From the audit trail</p></div></div><div class="settings-body">'+
     (entries.length?'<ul class="settings-log">'+entries.slice(0,6).map(entry=>'<li><span>'+esc(entry.detail)+'</span><small>'+esc(entry.by+" · "+checkDate(Date.parse(entry.at)))+'</small></li>').join("")+'</ul>':
-      '<p class="muted">'+(kind==="monitoring"?"No change yet. The schedule is SupplyShield's default.":"No connection requests yet.")+'</p>')+'</div></section>';
+      '<p class="muted">'+(kind==="monitoring"?"No change yet. The schedule is ClinRadar's default.":"No connection requests yet.")+'</p>')+'</div></section>';
 }
 // What each agent works with: the systems behind its tools (regchain-ai/agent.mjs).
-const teamUses = {orchestrator:["SupplyShield","CTMS","Draft inbox"],supply:["IRT","ERP"],logistics:["IRT","ERP","Depot","Courier"],records:["eTMF","IRT"],communications:["SupplyShield"],verifier:["SupplyShield rules"]};
+const teamUses = {orchestrator:["ClinRadar","CTMS","Draft inbox"],supply:["IRT","ERP"],logistics:["IRT","ERP","Depot","Courier"],records:["eTMF","IRT"],communications:["ClinRadar"],verifier:["ClinRadar rules"]};
 function modelName(id) {
   const match=/claude-(opus|sonnet|haiku|fable)-(\d+)-(\d+)/i.exec(String(id??""));
   return match?match[1][0].toUpperCase()+match[1].slice(1).toLowerCase()+" "+match[2]+"."+match[3]:String(id??"");
@@ -1779,15 +1779,15 @@ function aiServiceCard() {
   const server=serverMode();
   const ready=server&&status?.keySet&&status?.sdk;
   const service=typeof status?.service==="string"?status.service:typeof status?.models?.service==="string"?status.models.service:"Claude API (Anthropic)";
-  const [tone,title,text]=!server?["off","Not reachable from this file","Open SupplyShield at http://127.0.0.1:4173 to see the connection."]:
-    !status?["off","Checking","Asking the SupplyShield server."]:
+  const [tone,title,text]=!server?["off","Not reachable from this file","Open ClinRadar at http://127.0.0.1:4173 to see the connection."]:
+    !status?["off","Checking","Asking the ClinRadar server."]:
     ready?["ready","Ready for live runs","The agents and the regulation check call Claude."]:
-    ["partial","Scripted walkthrough only",typeof status.setup==="string"&&status.setup?humanDates(status.setup):!status.sdk?"The Claude package for this service is not installed: run npm install in the SupplyShield folder, then restart SupplyShield.":"The service is not set up yet: add its settings to the .env file next to serve-regchain.cjs, then restart SupplyShield."];
+    ["partial","Scripted walkthrough only",typeof status.setup==="string"&&status.setup?humanDates(status.setup):!status.sdk?"The Claude package for this service is not installed: run npm install in the ClinRadar folder, then restart ClinRadar.":"The service is not set up yet: add its settings to the .env file next to serve-regchain.cjs, then restart ClinRadar."];
   const known=server&&status;
   return '<section class="card"><div class="card-head"><div><h2>Claude service</h2><p>The AI the agents and the regulation check use</p></div></div><div class="settings-body">'+
     '<div class="service-state '+tone+'"><span class="light" aria-hidden="true"></span><span><strong>'+esc(title)+'</strong><small>'+esc(text)+'</small></span></div>'+
     factlist([["Service",service],["Settings and credentials",!known?"—":status.keySet?"Set on the server":"Missing"],["Claude package",!known?"—":status.sdk?"Installed":"Not installed"],["Without AI","The scripted walkthrough runs the same steps with recorded answers"]])+
-    '<p class="key-note">'+icon("review")+'<span><strong>Keys are never entered on this page.</strong> SupplyShield reaches Claude through Anthropic or the company\'s own cloud (AWS, Google Cloud or Microsoft Azure), chosen on the server with REGCHAIN_AI_PROVIDER. Keys stay in the server\'s .env file or the cloud identity SupplyShield runs under, so no key reaches a browser, a log or the audit trail. Changing the service or a model is a change to a validated system and goes through change control (RegChain-AI-Deployment.md, "Which Claude service").</span></p>'+
+    '<p class="key-note">'+icon("review")+'<span><strong>Keys are never entered on this page.</strong> ClinRadar reaches Claude through Anthropic or the company\'s own cloud (AWS, Google Cloud or Microsoft Azure), chosen on the server with REGCHAIN_AI_PROVIDER. Keys stay in the server\'s .env file or the cloud identity ClinRadar runs under, so no key reaches a browser, a log or the audit trail. Changing the service or a model is a change to a validated system and goes through change control (RegChain-AI-Deployment.md, "Which Claude service").</span></p>'+
   '</div></section>';
 }
 function agentsCard() {
@@ -1799,7 +1799,7 @@ function agentsCard() {
     const rules=id==="verifier";
     return '<tr><td><span class="name-cell"><span class="agent-dot '+profile.tone+'" aria-hidden="true">'+teamInitials[id]+'</span><span><strong>'+esc(id==="orchestrator"?"Master agent":profile.name)+'</strong><small>'+esc(profile.job)+'</small></span></span></td>'+
       '<td><span class="access'+(rules?" rules":"")+'">'+esc(agentModel(id))+'</span></td><td>'+esc(teamUses[id].join(", "))+'</td></tr>';
-  }).join("")+'<tr><td><span class="name-cell"><span class="agent-dot agent-orchestrator" aria-hidden="true">AI</span><span><strong>Regulation check</strong><small>Reads the old and new legal text and drafts the change; SupplyShield verifies every quote</small></span></span></td><td><span class="access">'+esc(check)+'</span></td><td>Official sources</td></tr>';
+  }).join("")+'<tr><td><span class="name-cell"><span class="agent-dot agent-orchestrator" aria-hidden="true">AI</span><span><strong>Regulation check</strong><small>Reads the old and new legal text and drafts the change; ClinRadar verifies every quote</small></span></span></td><td><span class="access">'+esc(check)+'</span></td><td>Official sources</td></tr>';
   return '<section class="card"><div class="card-head"><div><h2>Agents and their models</h2><p>Who does what, and which systems each one reads</p></div></div>'+
     '<div class="table-wrap" tabindex="0"><table class="stack-table conn-table"><caption class="sr">Agents, their models and the systems they use</caption><thead><tr><th>Agent</th><th>Model</th><th>Works with</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>';
 }
@@ -1810,7 +1810,7 @@ function systemsCard() {
   const rows=teamSystems.map(([name,job])=>{
     const system=reached.get(name);
     return '<tr><td><strong>'+esc(name)+'</strong><small>'+esc(job)+'</small>'+(system?'<span class="tool-list" aria-label="Tools">'+system.tools.map(tool=>'<code>'+esc(tool.name)+'</code>').join("")+'</span>':"")+'</td>'+
-      '<td>'+access(name==="Draft inbox"?"draft-only":"read-only")+'</td><td>MCP server run by SupplyShield<small>stdio</small></td>'+
+      '<td>'+access(name==="Draft inbox"?"draft-only":"read-only")+'</td><td>MCP server run by ClinRadar<small>stdio</small></td>'+
       '<td>'+(system?badge("Connected","green"):serverMode()&&!status?badge("Checking"):badge("Not reached"))+'</td></tr>';
   });
   const requests=settingsState.connections.map(request=>{
@@ -1889,7 +1889,7 @@ function tableMatches(source) {
 }
 function sourceCard() {
   const filters='<div class="filters"><label class="field">Find a page<input id="source-search" type="search" placeholder="Page or authority" value="'+esc(sourceSearch)+'"></label><label class="field">Check status<select id="source-filter">'+options([["all","All statuses"],...[...new Set(sources.map(source=>source.status))].map(status=>[status,status])],sourceFilter)+'</select></label></div>';
-  return '<section class="card"><div class="card-head"><div><h2>Regulatory sources'+tip("Every official page SupplyShield reads for regulatory changes. New or Changed: a difference was found and linked to a change. Retry needed: the page did not answer, so coverage has a gap until it is read again.","About the sources")+'</h2><p>'+esc(plural(sources.length,"page")+" checked · "+(retryCount()?plural(retryCount(),"check")+" to retry":"none to retry"))+'</p></div>'+filters+'</div><div id="source-results">'+sourceTable(sources.filter(tableMatches))+'</div></section>';
+  return '<section class="card"><div class="card-head"><div><h2>Regulatory sources'+tip("Every official page ClinRadar reads for regulatory changes. New or Changed: a difference was found and linked to a change. Retry needed: the page did not answer, so coverage has a gap until it is read again.","About the sources")+'</h2><p>'+esc(plural(sources.length,"page")+" checked · "+(retryCount()?plural(retryCount(),"check")+" to retry":"none to retry"))+'</p></div>'+filters+'</div><div id="source-results">'+sourceTable(sources.filter(tableMatches))+'</div></section>';
 }
 // The official feeds behind external risk: one line per monitored country, and the GDACS alerts.
 function feedsCard() {
@@ -1921,8 +1921,8 @@ function sourceReferences() {
 }
 // Short explanations for panel titles people ask about.
 const panelTips = {
-  "AI reading of the source change":"Claude reads the official texts and drafts the change. SupplyShield then checks every quote word for word against the source, and the effective date against the recorded rule. A failed check blocks approval, and the Regulatory SME decides.",
-  "Regulatory evidence":"Tier 1 is binding law. Tier 2 is official guidance on how the authority reads it. Each excerpt comes from the source version SupplyShield stored, so it can be checked later.",
+  "AI reading of the source change":"Claude reads the official texts and drafts the change. ClinRadar then checks every quote word for word against the source, and the effective date against the recorded rule. A failed check blocks approval, and the Regulatory SME decides.",
+  "Regulatory evidence":"Tier 1 is binding law. Tier 2 is official guidance on how the authority reads it. Each excerpt comes from the source version ClinRadar stored, so it can be checked later.",
   "Assessment":"Act: work is needed before dispatch. Check: confirm the specification, no change expected. Look back: batches that may already have shipped under the old label.",
   "Batch applicability":"For the UK rule, the date that decides is the finished-IMP QP certification date, compared with 28 Apr 2026.",
   "Owner decision":"A change without a governed case still needs a decision from the Regulatory SME: not relevant, open a case, or keep assessing. It never sits open without one.",
@@ -2215,7 +2215,7 @@ function aiSetupHints() {
   const status=aiState.status;
   if(!status) return "";
   const hints=[];
-  if(status.setup) hints.push(status.setup); else { if(!status.sdk) hints.push("Run npm install once in the SupplyShield folder, then restart the launcher."); if(!status.keySet) hints.push("Add ANTHROPIC_API_KEY to a .env file next to serve-regchain.cjs."); }
+  if(status.setup) hints.push(status.setup); else { if(!status.sdk) hints.push("Run npm install once in the ClinRadar folder, then restart the launcher."); if(!status.keySet) hints.push("Add ANTHROPIC_API_KEY to a .env file next to serve-regchain.cjs."); }
   return hints.length?'<details class="setup-note"><summary>The AI check is not set up on this computer</summary><p>'+esc(hints.join(" "))+'</p></details>':"";
 }
 function aiResult(result) {
@@ -2256,11 +2256,11 @@ function aiCard() {
   const mode=busy?badge("Running","blue"):offline?badge("Needs the local server"):result?badge(aiState.fresh?"Live":"Recorded",aiState.fresh?"blue":""):badge("Not run yet");
   const action=offline?mode:'<div class="actions">'+mode+'<button id="ai-run" type="button" class="btn primary" data-act="ai-run"'+(busy?" disabled":"")+'>'+icon("retry")+(busy?"Checking…":result?"Run again":"Run AI check")+'</button></div>';
   const uk=currentChange!=="es";
-  const intro=uk?'<p>Claude reads the official versions of regulation 46 before and after 28 April 2026, Schedule 14 paragraph 6 and the MHRA labelling guidance, then drafts the change. SupplyShield checks every quote against the source text and the effective date against the recorded rule. A failed check blocks SME approval.</p>':
-    '<p>Claude reads the new information note in Spanish and the current Spain Country Specification, then drafts the edits in English. SupplyShield checks that every quote appears word for word in the note (in Spanish, never translated), that the effective date matches the recorded rule, and that every edit targets a real line of the specification. A failed check blocks SME approval.</p>';
-  const body=offline?'<p>Open SupplyShield with Start-RegChain.cmd to use the AI check. It needs the local server.</p>':
+  const intro=uk?'<p>Claude reads the official versions of regulation 46 before and after 28 April 2026, Schedule 14 paragraph 6 and the MHRA labelling guidance, then drafts the change. ClinRadar checks every quote against the source text and the effective date against the recorded rule. A failed check blocks SME approval.</p>':
+    '<p>Claude reads the new information note in Spanish and the current Spain Country Specification, then drafts the edits in English. ClinRadar checks that every quote appears word for word in the note (in Spanish, never translated), that the effective date matches the recorded rule, and that every edit targets a real line of the specification. A failed check blocks SME approval.</p>';
+  const body=offline?'<p>Open ClinRadar with Start-ClinRadar.cmd to use the AI check. It needs the local server.</p>':
     aiSetupHints()+(aiState.error?'<p class="form-feedback" role="alert">'+esc(aiState.error)+'</p>':"")+(result?aiResult(result):"");
-  return '<div id="ai-card" class="ai-card">'+panel("AI reading of the source change",uk?"Official texts fetched live · checked by SupplyShield, decided by the SME":"Note in Spanish · checked by SupplyShield, decided by the SME",casePad(intro+body),action)+'</div>';
+  return '<div id="ai-card" class="ai-card">'+panel("AI reading of the source change",uk?"Official texts fetched live · checked by ClinRadar, decided by the SME":"Note in Spanish · checked by ClinRadar, decided by the SME",casePad(intro+body),action)+'</div>';
 }
 // Spain (fictional): the trials with Spanish sites and every planned shipment to them.
 function spainCaseImpact() {
@@ -2515,7 +2515,7 @@ function israelLabelPool() {
     israelOnlyKits:batches.filter(batch=>!batch.shared).reduce((sum,batch)=>sum+batch.kits,0),
     needed:after.reduce((sum,item)=>sum+(trial.shipments.find(entry=>entry.id===item.id)?.kits??0),0),
     // labelResult: under the label rule alone, for the change's own impact; result: everything, as on Shipments.
-    israeli:israeli.map(item=>{const full=withSupplyShieldChecks(item);return {...full,result:shipmentResult(full),labelResult:shipmentResult(item)};}),after};
+    israeli:israeli.map(item=>{const full=withClinRadarChecks(item);return {...full,result:shipmentResult(full),labelResult:shipmentResult(item)};}),after};
 }
 function shipmentResult(shipment) {
   const results=shipment.checks.map(item=>item.result);
@@ -2524,7 +2524,7 @@ function shipmentResult(shipment) {
 const resultStyle = {Blocked:["Blocked","red"],Confirm:["Confirm before dispatch","amber"],Ready:["Ready to ship","green"]};
 function plannedShipments() {
   const order={Blocked:0,Confirm:1,Ready:2};
-  const all=[...portfolioShipmentChecks(),...spainShipmentChecks(),...israelShipmentChecks()].map(withSupplyShieldChecks).map(shipment=>({...shipment,result:shipmentResult(shipment),action:shipmentActions[shipment.id]}));
+  const all=[...portfolioShipmentChecks(),...spainShipmentChecks(),...israelShipmentChecks()].map(withClinRadarChecks).map(shipment=>({...shipment,result:shipmentResult(shipment),action:shipmentActions[shipment.id]}));
   checkServerResults(all);
   return all.sort((a,b)=>order[a.result]-order[b.result]||a.prepareBy.localeCompare(b.prepareBy));
 }
@@ -2565,7 +2565,7 @@ function matchesSearch(shipment,query) {
   return String(query).toLowerCase().split(/\s+/).filter(Boolean).every(word=>text.includes(word));
 }
 const dayDistance = day => {const days=daysFrom(day);return days<0?Math.abs(days)+" days late":days===0?"today":"in "+days+" days";};
-const riskTip = "External risk on the route, from SupplyShield's signals: Confirmed disruption, Potential exposure, Not affected after check, or a dash when no monitored signal touches it.";
+const riskTip = "External risk on the route, from ClinRadar's signals: Confirmed disruption, Potential exposure, Not affected after check, or a dash when no monitored signal touches it.";
 function shipmentRow(shipment) {
   const manual=shipment.action&&!["plan","escalated"].includes(shipment.action.action)?shipment.action:null;
   const tier=shipmentRisk(shipment.id);
@@ -2585,7 +2585,7 @@ function shipmentTable() {
   const shown=shownShipments();
   const total=plannedShipments().length;
   return '<p class="result-count">'+esc(shown.length===total?"Showing all "+total+" shipments":"Showing "+shown.length+" of "+total+" shipments")+'</p>'+
-    (shown.length?'<div class="table-wrap" tabindex="0"><table class="stack-table ships-table"><caption class="sr">Planned shipments, their check results, the external risk on their route and their agent plans</caption><thead><tr><th>Shipment</th><th>Destination</th><th>Dispatch</th><th>Prepare by'+tip("The day the depot must start preparing the shipment: the dispatch date minus the destination's lead time.","About Prepare by")+'</th><th>Result'+tip("Blocked: a check fails, data is missing or an expert must decide, so the shipment must not leave. Confirm before dispatch: nothing fails, but someone confirms a point. Ready to ship: every connected check passes.","About the result")+'</th><th>Risk'+tip(riskTip,"About the risk")+'</th><th>Agent plan'+tip("Where the agents' plan stands. Approving it in SupplyShield changes nothing in IRT, ERP or the depot: each draft is approved in that system.","About agent plans")+'</th><th class="hide-narrow">What needs attention</th></tr></thead><tbody>'+
+    (shown.length?'<div class="table-wrap" tabindex="0"><table class="stack-table ships-table"><caption class="sr">Planned shipments, their check results, the external risk on their route and their agent plans</caption><thead><tr><th>Shipment</th><th>Destination</th><th>Dispatch</th><th>Prepare by'+tip("The day the depot must start preparing the shipment: the dispatch date minus the destination's lead time.","About Prepare by")+'</th><th>Result'+tip("Blocked: a check fails, data is missing or an expert must decide, so the shipment must not leave. Confirm before dispatch: nothing fails, but someone confirms a point. Ready to ship: every connected check passes.","About the result")+'</th><th>Risk'+tip(riskTip,"About the risk")+'</th><th>Agent plan'+tip("Where the agents' plan stands. Approving it in ClinRadar changes nothing in IRT, ERP or the depot: each draft is approved in that system.","About agent plans")+'</th><th class="hide-narrow">What needs attention</th></tr></thead><tbody>'+
       shown.map(shipmentRow).join("")+'</tbody></table></div>':'<p class="nothing">No shipments match these filters. '+trigger("Clear the filters","clear-shipment-filters","","quiet")+'</p>');
 }
 // ---------- Shipments: what needs action (the agents' plans) and every planned shipment (the checks), on one page ----------
@@ -2607,7 +2607,7 @@ function allShipmentsPanel(all) {
     '<label class="field">Destination<select id="shipment-country">'+options(countryOptions,shipmentCountry)+'</select></label>'+
     '<label class="field">Agent plan<select id="shipment-plan">'+options([["all","Any"],["none","No plan yet"],["plan","Plan to approve"],["review","Plan to review"],["escalate","Escalation to acknowledge"],["approved","Plan approved"],["acknowledged","Escalation acknowledged"]],shipmentPlanFilter)+'</select></label></div>'+
     '<div id="shipment-results">'+shipmentTable()+'</div>'+
-    '<div class="inline-note">'+icon("info")+'<span>'+esc("Checks use the specification in force and any change still waiting for approval, marked as pending, and SupplyShield's check of the external risk on each route. "+plural(notCheckedCount,"kind")+" of requirement can't be checked yet because the data isn't connected (for example invoices).")+'</span></div></section>';
+    '<div class="inline-note">'+icon("info")+'<span>'+esc("Checks use the specification in force and any change still waiting for approval, marked as pending, and ClinRadar's check of the external risk on each route. "+plural(notCheckedCount,"kind")+" of requirement can't be checked yet because the data isn't connected (for example invoices).")+'</span></div></section>';
 }
 
 // ---------- Agents: an orchestrator and specialist agents plan each shipment through MCP ----------
@@ -2634,7 +2634,7 @@ const agentProfiles = {
   logistics:{name:"Logistics agent",tone:"agent-logistics",job:"Relabelling, label approvals, site stock, couriers"},
   records:{name:"Records agent",tone:"agent-records",job:"Authorisations and site contacts in the eTMF"},
   communications:{name:"Communications agent",tone:"agent-comms",job:"Messages in English and the local language"},
-  verifier:{name:"SupplyShield verifier",tone:"agent-verifier",job:"Fixed rules, no AI: does each option pass, and is anything promised twice?"},
+  verifier:{name:"ClinRadar verifier",tone:"agent-verifier",job:"Fixed rules, no AI: does each option pass, and is anything promised twice?"},
   weather:{name:"Weather & natural hazards agent",tone:"agent-weather",job:"Sweeps GDACS alerts (floods, cyclones, earthquakes, wildfires) in the monitored countries and on our routes"},
   transport:{name:"Strikes & transport agent",tone:"agent-transport",job:"Sweeps strikes, airport, port and road notices, and the courier's and depot's operations"},
   security:{name:"Security & travel advice agent",tone:"agent-security",job:"Sweeps UK FCDO travel advice, unrest and border closures in the monitored countries"},
@@ -2650,7 +2650,7 @@ const canApprovePlans = () => workflowRole==="viewer";
 const clip = (text,size) => {text=String(text??"");return text.length>size?text.slice(0,size-1)+"…":text;};
 const isoDay = day => /^\d{4}-\d{2}-\d{2}$/.test(String(day??""))?displayDay(day):day;
 // Dates in words; and texts recorded before the product was renamed show its current name.
-const humanDates = text => String(text??"").replace(/\b\d{4}-\d{2}-\d{2}\b/g,day=>displayDay(day)).replace(/\bRegChain\b/g,"SupplyShield");
+const humanDates = text => String(text??"").replace(/\b\d{4}-\d{2}-\d{2}\b/g,day=>displayDay(day)).replace(/\bRegChain\b/g,"ClinRadar");
 const escd = text => esc(humanDates(text));
 function describeAction(action) {
   const detail=action.batch_id??action.relabel_date??action.new_dispatch_date??(action.authorisation_route?action.authorisation_route.replace("_"," "):null)??action.qp_date??action.via;
@@ -2678,8 +2678,8 @@ async function agentPost(path,body) {
 async function loadAgentData() {
   if(!agentServer()) return;
   try {
-    // SupplyShield's state is read again too: an approval or a run can change what needs a decision.
-    const [reply,plans]=await Promise.all([aiRequest("/api/agent/approvals"),aiRequest("/api/agent/plans"),loadSupplyShield(false)]);
+    // ClinRadar's state is read again too: an approval or a run can change what needs a decision.
+    const [reply,plans]=await Promise.all([aiRequest("/api/agent/approvals"),aiRequest("/api/agent/plans"),loadClinRadar(false)]);
     agentApprovals=reply.approvals??{};
     agentApprovalLog=reply.log??[];
     agentPlans=plans??{};
@@ -2845,7 +2845,7 @@ function guardrails(status) {
   return '<ul class="guardrail-list">'+
     '<li>'+icon("review")+'<span><strong>Read-only access.</strong> The agents read the CTMS, IRT, ERP, the depot, the courier and the eTMF through MCP servers that expose no write tools.</span></li>'+
     '<li>'+icon("file")+'<span><strong>Drafts, never changes.</strong> Their only output is drafts. A named person approves each one in its own validated system, with an electronic signature.</span></li>'+
-    '<li>'+icon("alert")+'<span><strong>Rules decide, not the AI.</strong> SupplyShield checks every option with fixed rules, and again when someone approves it. Kits and relabelling slots are never promised twice.</span></li>'+
+    '<li>'+icon("alert")+'<span><strong>Rules decide, not the AI.</strong> ClinRadar checks every option with fixed rules, and again when someone approves it. Kits and relabelling slots are never promised twice.</span></li>'+
     '<li>'+icon("clock")+'<span><strong>Every step is logged:</strong> the plan, each system call with its inputs and answers, the models, and who approved or withdrew what.</span></li></ul>'+
     (systems?'<div class="card-foot"><small>Connected over MCP</small><ul class="system-list">'+systems+'</ul></div>':agentServer()&&!status?'<div class="card-foot"><small>Connecting to the systems over MCP…</small></div>':"");
 }
@@ -2856,7 +2856,7 @@ function controlsPanel(id,status) {
 }
 function agentSetupNote(status) {
   const live=agentServer()&&status?.keySet&&status?.sdk;
-  return !agentServer()?'<div class="inline-note">'+icon("info")+'<span>The agents need the local server: open SupplyShield with Start-RegChain.cmd.</span></div>':
+  return !agentServer()?'<div class="inline-note">'+icon("info")+'<span>The agents need the local server: open ClinRadar with Start-ClinRadar.cmd.</span></div>':
     !live?'<p class="setup-line">'+icon("info")+'<span>AI agents are not connected yet, so the scripted walkthrough runs the same steps with coded decisions. An administrator connects Claude under <button type="button" class="link-button" data-act="open-settings" data-value="ai">Settings › AI connections</button>.</span></p>':"";
 }
 const approverNote = () => canApprovePlans()?"":'<p class="form-feedback">Clinical Supply approves supply plans. Choose '+esc(roleName("viewer",workflow))+' under Acting as.</p>';
@@ -2872,7 +2872,7 @@ function runButtons(scope,primaryLabel) {
 function journeySteps(steps) {
   return '<ol class="journey" aria-label="Where this shipment stands">'+steps.map((step,index)=>'<li class="journey-step '+step.state+'"'+(step.state==="active"?' aria-current="step"':'')+'><span class="journey-num">'+(step.state==="done"?"✓":index+1)+'</span><span><strong>'+esc(step.label)+'</strong><small>'+esc(step.sub)+'</small></span></li>').join("")+'</ol>';
 }
-// Why an option fails: not feasible, a route through a country SupplyShield does not watch, or another blocking check.
+// Why an option fails: not feasible, a route through a country ClinRadar does not watch, or another blocking check.
 function optionReason(check) {
   if(!check||check.passes) return "";
   const infeasible=(check.notes??[]).find(note=>note.startsWith("Not feasible"));
@@ -2880,13 +2880,13 @@ function optionReason(check) {
   const item=check.checks?.find(entry=>entry.result==="Decision"&&entry.section==="risk")??check.checks?.find(entry=>blocking.includes(entry.result));
   return humanDates("The shipment would still be blocked"+(item?": "+item.detail:"."));
 }
-// A new route through a country SupplyShield does not monitor needs a decision first: offer that country on Monitoring scope.
+// A new route through a country ClinRadar does not monitor needs a decision first: offer that country on Monitoring scope.
 function unmonitoredCountries(check) {
   const codes=new Set();
   const byName=Object.fromEntries(Object.entries(ss?.names??{}).map(([code,name])=>[name,code]));
   for(const item of check?.checks??[]) {
     if(item.result!=="Decision"||item.section!=="risk") continue;
-    const found=/passes through (.+?), which SupplyShield does not monitor/.exec(item.detail??"");
+    const found=/passes through (.+?), which ClinRadar does not monitor/.exec(item.detail??"");
     for(const name of found?found[1].split(/, | and /):[]) if(byName[name.trim()]) codes.add(byName[name.trim()]);
   }
   return [...codes];
@@ -2937,7 +2937,7 @@ function issueText(item,shipment) {
 // The checks this shipment fails or must confirm.
 function problemCard(shipment,issues) {
   const governed=shipment.caseId&&isGoverned(shipment.caseId)?governedCases[shipment.caseId]:null;
-  return '<section class="card"><div class="card-head"><div><h2>Why it needs action'+tip("The checks this shipment fails or must confirm: its destination's Country Specification and the external risk on its route. A pending change is a rule SupplyShield already applies while the Regulatory SME reviews it.","About the checks")+'</h2><p>'+esc(plural(issues.length,"check")+" of "+shipment.checks.length)+'</p></div>'+trigger("All checks","show-checks","","quiet")+'</div>'+
+  return '<section class="card"><div class="card-head"><div><h2>Why it needs action'+tip("The checks this shipment fails or must confirm: its destination's Country Specification and the external risk on its route. A pending change is a rule ClinRadar already applies while the Regulatory SME reviews it.","About the checks")+'</h2><p>'+esc(plural(issues.length,"check")+" of "+shipment.checks.length)+'</p></div>'+trigger("All checks","show-checks","","quiet")+'</div>'+
     '<ul class="issue-list">'+issues.map(item=>'<li>'+badge(...checkStyle[item.result])+'<span><strong>'+esc(specSectionNames[item.section]??item.section)+'</strong> '+issueText(item,shipment)+(item.pending?' <small class="pending-basis">'+esc(item.basis)+'</small>':'')+'</span></li>').join("")+'</ul>'+
     (governed?'<div class="card-foot"><small>'+esc("The "+(governed.key==="uk"?"UK":"Spain")+" rules come from case "+governed.id)+'</small>'+trigger("Open the "+(governed.key==="uk"?"UK":"Spain")+" case","open-case",governed.key,"quiet","arrow")+'</div>':"")+'</section>';
 }
@@ -2989,12 +2989,12 @@ function agentView() {
   const steps=needs||record?journeySteps([
     {label:"Checked",sub:resultStyle[shipment.result][0]+" · "+plural(issues.length,"issue"),state:"done"},
     {label:"Agents planned",sub:agentState.running?"Working… "+agentState.events.length+" steps":record?(chosenId==="escalate"?"Escalation recommended":plural(passing.length,"option")+" pass"):"Not run yet",state:record?"done":"active"},
-    {label:"Approved in SupplyShield",sub:approval?(approval.option==="escalate"?"Escalation acknowledged":"By "+approval.by.split(" · ")[0]):"By Clinical Supply",state:approval?"done":record?"active":"todo"},
+    {label:"Approved in ClinRadar",sub:approval?(approval.option==="escalate"?"Escalation acknowledged":"By "+approval.by.split(" · ")[0]):"By Clinical Supply",state:approval?"done":record?"active":"todo"},
     {label:"Approved in each system",sub:(()=>{const targets=[...new Set(activeDrafts.map(draft=>draft.target_system==="Depot"?"the depot":draft.target_system))];const list=targets.length>1?targets.slice(0,-1).join(", ")+" and "+targets.at(-1):targets[0]??"each system";return approval&&thisRun?plural(activeDrafts.length,"draft")+" waiting in "+list:"Drafts go to "+list;})(),state:approval&&thisRun?"active":"todo"}
   ]):"";
   let main="";
   if(agentState.running) {
-    main='<section class="card plan-hero working"><div class="plan-eyebrow">The agents are working</div><h2>Reading the systems and building options…</h2><p class="muted">Follow each step below. The plan appears here when SupplyShield has checked it.</p></section>';
+    main='<section class="card plan-hero working"><div class="plan-eyebrow">The agents are working</div><h2>Reading the systems and building options…</h2><p class="muted">Follow each step below. The plan appears here when ClinRadar has checked it.</p></section>';
   } else if(!record&&!needs) {
     main='<section class="card plan-hero empty"><div class="plan-eyebrow">No plan needed</div><h2>Ready to ship</h2><p>Every connected check passes, including the external risk on its route. Nothing to approve.</p></section>';
   } else if(!record) {
@@ -3016,11 +3016,11 @@ function agentView() {
     const recommendationFailed=!thisRun&&recommendedId!==chosenId&&recommendedId!=="escalate";
     main='<section class="card plan-hero'+(thisRun?" approved":"")+'"><div class="plan-eyebrow">'+(thisRun?"Approved plan":recommendationFailed?"First option that passes":"Recommended plan")+'</div>'+
       '<div class="block-head"><h2>'+escd(chosen.title)+'</h2>'+badge("Passes the rules · "+(afterNames[check?.after]??check?.after),"green")+'</div>'+
-      (recommendationFailed?'<p class="form-feedback">'+escd("The agents recommended \""+(options.find(option=>option.id===recommendedId)?.title??recommendedId)+"\", but SupplyShield's rules reject it: "+optionReason(verification[recommendedId]))+'</p>':"")+
+      (recommendationFailed?'<p class="form-feedback">'+escd("The agents recommended \""+(options.find(option=>option.id===recommendedId)?.title??recommendedId)+"\", but ClinRadar's rules reject it: "+optionReason(verification[recommendedId]))+'</p>':"")+
       (record.resolution.allocation&&chosenId===recommendedId?'<p class="replanned-note">'+esc(record.resolution.allocationShort||record.resolution.allocation)+'</p>':"")+
       '<div class="plan-columns"><div><h3>What changes</h3><ul class="change-list">'+chosen.actions.map(action=>'<li>'+esc(actionSentence(action,shipment))+'</li>').join("")+'</ul></div>'+
       '<div><h3>Why this plan</h3><p>'+escd(chosen.why)+'</p>'+(chosen.risks?'<p class="muted"><strong>Risk:</strong> '+escd(chosen.risks)+'</p>':"")+'</div></div>'+
-      (evidence.length?'<div class="evidence"><h3>What SupplyShield checked</h3><ul>'+evidence.map(note=>'<li>'+escd(note)+'</li>').join("")+'</ul></div>':"")+
+      (evidence.length?'<div class="evidence"><h3>What ClinRadar checked</h3><ul>'+evidence.map(note=>'<li>'+escd(note)+'</li>').join("")+'</ul></div>':"")+
       (remaining.length?'<div class="evidence"><h3>Still to confirm before dispatch</h3>'+(fresh.length?'<ul>'+fresh.map(item=>'<li>'+escd(item.detail)+'</li>').join("")+'</ul>':"")+
         '</div>':"")+
       planDecision(record,chosenId,thisRun,approval)+'</section>';
@@ -3061,7 +3061,7 @@ function draftsCard(record,chosenId,thisRun,approval) {
 function otherOptionsCard(record,chosenId,verification,approval,shipment) {
   const others=(record.resolution.options??[]).filter(option=>option.id!==chosenId);
   if(!others.length) return "";
-  return '<section class="card space"><div class="card-head"><div><h2>Other options the agents considered'+tip("Every option the agents built, with the verdict of SupplyShield's rules. An option that fails the rules cannot be approved, whatever the agents recommended. A new route through a country SupplyShield does not monitor needs a decision first.","About the options")+'</h2><p>Each one checked by SupplyShield\'s rules</p></div></div><ul class="option-rows">'+
+  return '<section class="card space"><div class="card-head"><div><h2>Other options the agents considered'+tip("Every option the agents built, with the verdict of ClinRadar's rules. An option that fails the rules cannot be approved, whatever the agents recommended. A new route through a country ClinRadar does not monitor needs a decision first.","About the options")+'</h2><p>Each one checked by ClinRadar\'s rules</p></div></div><ul class="option-rows">'+
     others.map(option=>{
       const check=verification[option.id];
       const scope=scopeButtons(check);
@@ -3115,7 +3115,7 @@ function plansTable() {
   const shown=shownPlans();
   const total=planRows().length;
   return '<p class="result-count">'+esc(shown.length===total?"Showing all "+total+" shipments that need action":"Showing "+shown.length+" of "+total+" shipments that need action")+'</p>'+
-    (shown.length?'<div class="table-wrap" tabindex="0"><table class="stack-table plans-table"><caption class="sr">Agent plans for every shipment that needs action, most urgent first</caption><thead><tr><th>#</th><th>Shipment</th><th>Prepare by</th><th>Risk'+tip(riskTip,"About the risk")+'</th><th class="hide-narrow">Problem</th><th>Agent plan'+tip("Plan to approve: an option passed SupplyShield's rules. Escalation: no option passes, so a person decides. Approved: Clinical Supply approved it, and the drafts wait in each system.","About agent plans")+'</th><th>Next step</th></tr></thead><tbody>'+
+    (shown.length?'<div class="table-wrap" tabindex="0"><table class="stack-table plans-table"><caption class="sr">Agent plans for every shipment that needs action, most urgent first</caption><thead><tr><th>#</th><th>Shipment</th><th>Prepare by</th><th>Risk'+tip(riskTip,"About the risk")+'</th><th class="hide-narrow">Problem</th><th>Agent plan'+tip("Plan to approve: an option passed ClinRadar's rules. Escalation: no option passes, so a person decides. Approved: Clinical Supply approved it, and the drafts wait in each system.","About agent plans")+'</th><th>Next step</th></tr></thead><tbody>'+
       shown.map(planRow).join("")+'</tbody></table></div>':'<p class="nothing">No shipments match these filters. '+trigger("Show all","plans-status","all","quiet")+'</p>');
 }
 // The Shipments "Needs action" tab: the agents' plans for every shipment that needs action, most urgent first.
@@ -3130,7 +3130,7 @@ function needsActionPanel() {
   const record=portfolioState.record;
   const lastRun=record&&!portfolioState.running?'<section class="run-line"><span>'+esc("Planned together on "+scheduleDate(Date.parse(record.at))+" · "+(record.mode==="live"?"AI agents":"scripted walkthrough, no AI")+" · "+
       plural(record.summary?.calls??0,"system call")+" · "+plural(record.summary?.reallocated??0,"plan")+" re-planned so nothing is promised twice")+'</span>'+trigger("Export the audit record","portfolio-export","","quiet","file")+'</section>':"";
-  return '<div class="section-intro"><p>Most urgent first. The agents propose a plan, SupplyShield\'s rules check it, and Clinical Supply approves.'+tip("Only options that pass SupplyShield's fixed rules can be approved, and the server checks them again when someone approves. Kits and relabelling slots promised to one plan are never offered to another.","About agent plans")+'</p>'+runButtons("all","Plan all with AI agents")+'</div>'+
+  return '<div class="section-intro"><p>Most urgent first. The agents propose a plan, ClinRadar\'s rules check it, and Clinical Supply approves.'+tip("Only options that pass ClinRadar's fixed rules can be approved, and the server checks them again when someone approves. Kits and relabelling slots promised to one plan are never offered to another.","About agent plans")+'</p>'+runButtons("all","Plan all with AI agents")+'</div>'+
     agentSetupNote(status)+
     (portfolioState.error?'<p class="form-feedback" role="alert">'+esc(portfolioState.error)+'</p>':"")+
     portfolioProgress()+
@@ -3143,14 +3143,14 @@ function needsActionPanel() {
       esc(portfolioState.running?"Live":plural(portfolioState.events.length,"step"))+'</small></summary><ol id="portfolio-feed" class="agent-timeline">'+portfolioFeed()+'</ol></details>':"")+
     lastRun;
 }
-// ---------- Agents in action: the master agent hands out the work, specialists read the systems, SupplyShield checks ----------
+// ---------- Agents in action: the master agent hands out the work, specialists read the systems, ClinRadar checks ----------
 const teamSpecialists = ["supply","logistics","records","communications","verifier"];
 // The watch team sweeps one kind of hazard each, across every monitored country, before the master agent plans.
 const teamWatch = ["weather","transport","security","regulatory"];
 const teamShows = event => teamFilter==="all"||(teamFilter==="watch"?teamWatch.includes(teamActor(event)):teamActor(event)===teamFilter);
-const teamSystems = [["SupplyShield","Specifications, shipment checks and external risk"],["CTMS","Active-trial portfolio"],["IRT","Stock, sites and shipments"],["ERP","Batches, labels, QP plans"],["Depot","Relabelling and collections"],["Courier","Bookings and tracking"],["eTMF","Authorisations, approvals, contacts"],["Draft inbox","Drafts for people to approve"]];
+const teamSystems = [["ClinRadar","Specifications, shipment checks and external risk"],["CTMS","Active-trial portfolio"],["IRT","Stock, sites and shipments"],["ERP","Batches, labels, QP plans"],["Depot","Relabelling and collections"],["Courier","Bookings and tracking"],["eTMF","Authorisations, approvals, contacts"],["Draft inbox","Drafts for people to approve"]];
 // Runs recorded before the rename call the specifications system "RegChain".
-const systemName = name => name==="RegChain"?"SupplyShield":name;
+const systemName = name => ["RegChain","SupplyShield"].includes(name)?"ClinRadar":name;
 const teamModels = {orchestrator:"Claude Opus 5.5",supply:"Claude Sonnet 5.5",logistics:"Claude Sonnet 5.5",records:"Claude Sonnet 5.5",communications:"Claude Sonnet 5.5",verifier:"Fixed rules · no AI",
   weather:"Claude Haiku 5.5",transport:"Claude Haiku 5.5",security:"Claude Haiku 5.5",regulatory:"Claude Haiku 5.5"};
 const teamInitials = {orchestrator:"M",supply:"S",logistics:"L",records:"R",communications:"C",verifier:"V",weather:"W",transport:"T",security:"A",regulatory:"G"};
@@ -3243,10 +3243,10 @@ function teamSentence(event) {
     case "triage": return ["Ranks the work, most urgent first",event.text];
     case "delegate_shipment": return ["Starts the team on "+event.shipment,event.text];
     case "delegate": return ["Hands a task to the "+name(event.to),event.text];
-    case "tool_call": return event.tool==="verify_option"?["Asks the SupplyShield verifier to test an option",(event.input?.actions??[]).map(action=>actionSentence(action)).join(" · ")]:
+    case "tool_call": return event.tool==="verify_option"?["Asks the ClinRadar verifier to test an option",(event.input?.actions??[]).map(action=>actionSentence(action)).join(" · ")]:
       event.tool==="create_draft"?["Puts a draft in the Draft inbox",[event.input?.target_system,event.input?.title].filter(Boolean).join(" · ")]:
       ["Reads "+systemName(event.system),event.tool.replaceAll("_"," ")+" · "+clip(Object.values(event.input??{}).filter(value=>typeof value!=="object").join(", "),120)];
-    case "tool_result": return event.tool==="verify_option"?["The SupplyShield verifier answers",teamVerdict(event.text)]:event.tool==="create_draft"?["The Draft inbox keeps the draft",teamAnswer(event.text)]:[systemName(event.system)+" answers",teamAnswer(event.text)];
+    case "tool_result": return event.tool==="verify_option"?["The ClinRadar verifier answers",teamVerdict(event.text)]:event.tool==="create_draft"?["The Draft inbox keeps the draft",teamAnswer(event.text)]:[systemName(event.system)+" answers",teamAnswer(event.text)];
     case "report": return ["Reports back to the master agent",event.text];
     case "draft": return ["Drafts a change for a person to approve",event.text??event.title??""];
     case "verified": return ["Checks every option against the rules",event.text];
@@ -3300,8 +3300,8 @@ function teamControls() {
 function teamCard(id) {
   const profile=agentProfiles[id];
   const master=id==="orchestrator";
-  const tips={orchestrator:"The master agent reads the shipment checks, splits the work into tasks for the specialists, builds two or three options and has SupplyShield test each one. It never changes a validated system.",
-    verifier:"Not an AI. Fixed rules in SupplyShield decide whether each option passes the destination's specification and whether stock or relabelling slots are already promised to another shipment."};
+  const tips={orchestrator:"The master agent reads the shipment checks, splits the work into tasks for the specialists, builds two or three options and has ClinRadar test each one. It never changes a validated system.",
+    verifier:"Not an AI. Fixed rules in ClinRadar decide whether each option passes the destination's specification and whether stock or relabelling slots are already promised to another shipment."};
   // Every part of a card has a fixed height, so the board does not move while the run is replayed.
   return '<div class="team-node'+(master?" team-master":"")+(id==="verifier"?" team-rules":"")+'" data-node="'+id+'">'+
     '<div class="team-node-head"><span class="agent-dot '+profile.tone+'">'+teamInitials[id]+'</span><span class="team-name"><strong>'+(master?"Master agent":esc(teamShort[id]))+'</strong><span class="team-light" aria-hidden="true"></span></span></div>'+
@@ -3309,20 +3309,20 @@ function teamCard(id) {
     '<div class="team-stats" data-stats="'+id+'"></div><p class="team-last" data-last="'+id+'"></p>'+(master?'<div class="team-split" data-split></div>':"")+'</div>';
 }
 function teamView() {
-  const head=heading("Agents in action","The master agent hands work to the specialists, they read the company's systems, and SupplyShield tests every option before a person approves it.",
+  const head=heading("Agents in action","The master agent hands work to the specialists, they read the company's systems, and ClinRadar tests every option before a person approves it.",
     '<div class="actions">'+trigger("Shipments","nav","shipments","quiet","arrow")+'</div>');
-  if(!agentServer()) return head+'<section class="card plan-hero empty"><div class="plan-eyebrow">Needs SupplyShield running</div><h2>Open SupplyShield at http://127.0.0.1:4173/ to watch the agents</h2></section>';
+  if(!agentServer()) return head+'<section class="card plan-hero empty"><div class="plan-eyebrow">Needs ClinRadar running</div><h2>Open ClinRadar at http://127.0.0.1:4173/ to watch the agents</h2></section>';
   if(portfolioState.running&&teamSource==="portfolio"&&!teamData.live) {teamData={key:"portfolio",events:portfolioState.events,record:null,loading:false,error:"",live:true};teamIndex=portfolioState.events.length;teamShown=0;}
   if(teamData.key!==teamSource&&!teamData.loading) queueMicrotask(()=>loadTeamTimeline());
   const busy=portfolioState.running||agentState.running;
   const loading=teamData.loading||teamData.key!==teamSource;
   const empty=!loading&&!teamData.events.length;
   const runCard='<section class="card team-empty"><div class="plan-eyebrow">'+(loading?"Loading the last run…":"No run on this computer yet")+'</div><h2>Run the team on every shipment that needs action</h2>'+
-    '<p>The master agent ranks the shipments by urgency, starts the specialists on each one and has SupplyShield check the plans together, so no kits or relabelling slot are promised twice.</p>'+runButtons("all","Run the AI agents")+agentSetupNote(agentState.status)+'</section>';
+    '<p>The master agent ranks the shipments by urgency, starts the specialists on each one and has ClinRadar check the plans together, so no kits or relabelling slot are promised twice.</p>'+runButtons("all","Run the AI agents")+agentSetupNote(agentState.status)+'</section>';
   if(empty||loading) return head+(teamData.error?'<p class="form-feedback">'+esc(teamData.error)+'</p>':"")+runCard;
   const board='<section class="card team-stage"><div class="team-now" id="team-now" aria-live="off"></div>'+
     '<div class="team-board" id="team-board"><svg class="team-edges" id="team-edges" aria-hidden="true"></svg>'+
-      '<div class="team-systems-head">'+icon("signals")+'<strong>Watch team: one hazard each, every monitored country</strong>'+tip("Before planning, the master agent sends four watch agents out at once. Each sweeps one kind of hazard across the countries SupplyShield monitors and reports what touches our shipments, routes and facilities: observed, potential or confirmed, with the evidence and who must confirm what is missing.","About the watch team")+'</div>'+
+      '<div class="team-systems-head">'+icon("signals")+'<strong>Watch team: one hazard each, every monitored country</strong>'+tip("Before planning, the master agent sends four watch agents out at once. Each sweeps one kind of hazard across the countries ClinRadar monitors and reports what touches our shipments, routes and facilities: observed, potential or confirmed, with the evidence and who must confirm what is missing.","About the watch team")+'</div>'+
       '<div class="team-row watch">'+teamWatch.map(teamCard).join("")+'</div>'+
       teamCard("orchestrator")+'<div class="team-row">'+teamSpecialists.map(teamCard).join("")+'</div>'+
       '<div class="team-systems-head"><strong>Company systems over MCP</strong>'+tip("Each system is reached through its own MCP server. IRT, ERP, the depot and the eTMF are read-only to the agents. The only thing an agent can create is a draft in the draft inbox, which a person approves in the real system.","About the systems")+'</div>'+
@@ -3540,7 +3540,7 @@ async function startFreshFromUrl() {
   return true;
 }
 startFreshFromUrl().then(started=>{if(!started) {loadAgentData();loadSettings();}});
-// ---------- Monitoring scope: which countries SupplyShield watches, and why ----------
+// ---------- Monitoring scope: which countries ClinRadar watches, and why ----------
 let scopeQuery = "";
 let scopeFocus = null;
 // A switch or a dismissal waiting for its reason: {code, kind} with kind external, regulatory, dismiss or restore.
@@ -3555,7 +3555,7 @@ const kindRole = kind => ss?.roles?.[kind]??(kind==="external"?"viewer":"reviewe
 // The same words the server uses when it refuses a change.
 const switchOwnerText = kind => monitoringRoleNames[kindRole(kind)]+" turns "+(kind==="external"?"external risk":"regulatory and customs")+" monitoring on or off.";
 function canChange(kind) {
-  if(!serverMode()) return {ok:false,why:"Changing the monitoring scope needs SupplyShield running: open http://127.0.0.1:4173."};
+  if(!serverMode()) return {ok:false,why:"Changing the monitoring scope needs ClinRadar running: open http://127.0.0.1:4173."};
   if(kind==="dismiss"||kind==="restore") return ["viewer","reviewer"].includes(workflowRole)?{ok:true,why:""}:{ok:false,why:"Clinical Supply or the Regulatory SME dismisses or restores a suggestion."};
   return workflowRole===kindRole(kind)?{ok:true,why:""}:{ok:false,why:switchOwnerText(kind)};
 }
@@ -3745,7 +3745,7 @@ function policyFold(scope) {
     '<div class="case-pad" style="padding-top:12px">'+factlist(policyRows(config))+'</div></details>';
 }
 function scopeView() {
-  const head=heading("Monitoring scope","Which countries SupplyShield watches for external risk and regulatory change, and why."+tip("Countries with an operationally active trial in the CTMS are monitored automatically and cannot be switched off here. Every other country is only suggested, with its evidence, and stays off until a person turns it on: Clinical Supply for external risk, the Regulatory SME for regulatory and customs.","About the monitoring scope"),
+  const head=heading("Monitoring scope","Which countries ClinRadar watches for external risk and regulatory change, and why."+tip("Countries with an operationally active trial in the CTMS are monitored automatically and cannot be switched off here. Every other country is only suggested, with its evidence, and stays off until a person turns it on: Clinical Supply for external risk, the Regulatory SME for regulatory and customs.","About the monitoring scope"),
     serverMode()?'<div class="actions settings-role">'+caseRoleSelect()+'</div>':"");
   if(!ss) return head+ssUnavailable();
   if(!ssDetermined()) return head+undeterminedCard()+scopeNeeds();
@@ -3771,7 +3771,7 @@ async function setMonitoring(code,kind,enabled,reason) {
   scopeSaving=true;scopeEditError="";render();
   const name=ssName(code);
   try {
-    adoptSupplyShield(await agentPost("/api/supplyshield/monitoring",{country:code,kind,enabled,reason}));
+    adoptClinRadar(await agentPost("/api/supplyshield/monitoring",{country:code,kind,enabled,reason}));
     scopeEdit=null;scopeSaving=false;scopeDenied=null;scopeFocus=code;
     render();
     notify(monitoringKinds[kind]+" monitoring for "+name+" is "+(enabled?"on":"off")+"."+(kind==="external"&&enabled?" Signals there are matched to our shipments from now on.":""));
@@ -3783,7 +3783,7 @@ async function reviewSuggestion(code,decision,reason) {
   if(reason.length<3) {scopeEditError="Say why, in a few words. It is kept with the decision.";render();refillReason(reason);return;}
   scopeSaving=true;scopeEditError="";render();
   try {
-    adoptSupplyShield(await agentPost("/api/supplyshield/recommendation",{country:code,decision,reason}));
+    adoptClinRadar(await agentPost("/api/supplyshield/recommendation",{country:code,decision,reason}));
     scopeEdit=null;scopeSaving=false;scopeDenied=null;
     if(decision==="dismiss") openFolds.add("rec-dismissed"); else scopeFocus=code;
     render();
@@ -3795,7 +3795,7 @@ async function reviewSuggestion(code,decision,reason) {
 async function connectCtms() {
   ctmsError="";
   try {
-    adoptSupplyShield(await agentPost("/api/supplyshield/portfolio",{connected:true}));
+    adoptClinRadar(await agentPost("/api/supplyshield/portfolio",{connected:true}));
     notify("The CTMS is connected, read-only. Its active-trial portfolio now sets the monitoring scope.");
   } catch(error) {ctmsError="The CTMS was not connected: "+error.message;notify(ctmsError);}
   render();
@@ -3853,7 +3853,7 @@ function feedLine() {
     '<small>'+esc([feeds.attribution?.fcdo,feeds.attribution?.gdacs].filter(Boolean).join(" · "))+'</small></span></div>';
 }
 function signalsView() {
-  const head=heading("Signals","External events and regulatory changes in the countries SupplyShield monitors, matched to our shipments, sites and routes.",'<button id="replay" class="btn primary" type="button" data-act="replay">'+icon("retry")+'Run the check</button>');
+  const head=heading("Signals","External events and regulatory changes in the countries ClinRadar monitors, matched to our shipments, sites and routes.",'<button id="replay" class="btn primary" type="button" data-act="replay">'+icon("retry")+'Run the check</button>');
   if(!ss) return head+ssUnavailable();
   if(!ssDetermined()) return head+undeterminedCard();
   const inCountry=signal=>signalCountry==="all"||signalCountries(signal).includes(signalCountry);
@@ -3914,7 +3914,7 @@ function signalView() {
   const touches='<section class="card"><div class="card-head"><div><h2>What it touches</h2><p>'+esc(signal.matches.length?plural(signal.matches.length,"match","matches")+" with our planned shipments":"Nothing of ours in place and time")+'</p></div></div>'+
     (signal.matches.length?'<div class="match-stack">'+[...signal.matches].sort((a,b)=>tierRank[b.tier]-tierRank[a.tier]).map(match=>matchCard(match,signal)).join("")+'</div>':"")+
     (signal.notes?.length?'<div class="case-pad"><h3>Notes</h3>'+listItems(signal.notes.map(escd))+'</div>':"")+'</section>';
-  const legend='<section class="card"><div class="card-head"><div><h2>The four tiers</h2><p>How SupplyShield classifies a signal and each match</p></div></div><ul class="tier-legend">'+["confirmed","potential","clear","observed"].map(tier=>'<li>'+tierBadge(tier)+'<span>'+esc(tierHelp[tier])+'</span></li>').join("")+
+  const legend='<section class="card"><div class="card-head"><div><h2>The four tiers</h2><p>How ClinRadar classifies a signal and each match</p></div></div><ul class="tier-legend">'+["confirmed","potential","clear","observed"].map(tier=>'<li>'+tierBadge(tier)+'<span>'+esc(tierHelp[tier])+'</span></li>').join("")+
     '<li>'+badge("Tracking visibility lost")+'<span>The courier\'s tracking is down. The shipments may be moving normally; it is never counted as a disruption.</span></li></ul></section>';
   return heading(esc(signal.title),esc((signal.category==="tracking"?"Courier tracking":"External risk")+" · "+signalCountries(signal).map(ssName).join(", ")),signalChips(signal))+
     '<div class="case-layout space"><div class="case-stack">'+happened+touches+'</div><div class="case-stack">'+legend+'</div></div>';
@@ -3946,7 +3946,7 @@ const views = {
   case:changeWorkspace
 };
 // Opened as a file, the page cannot reach the agents, approvals or live source checks: say so on every page, with the address to open.
-const fileNotice = () => location.protocol.startsWith("http")?"":'<div class="file-notice" role="note">'+icon("info")+'<span><strong>This is the page opened as a file.</strong> Agent plans, approvals, monitoring changes and live feeds work when SupplyShield is running: open '+'<a href="http://127.0.0.1:4173/">http://127.0.0.1:4173</a>'+' after starting Start-RegChain.cmd.</span></div>';
+const fileNotice = () => location.protocol.startsWith("http")?"":'<div class="file-notice" role="note">'+icon("info")+'<span><strong>This is the page opened as a file.</strong> Agent plans, approvals, monitoring changes and live feeds work when ClinRadar is running: open '+'<a href="http://127.0.0.1:4173/">http://127.0.0.1:4173</a>'+' after starting Start-ClinRadar.cmd.</span></div>';
 // Long tables show their first rows and a button for the rest, so no page turns into an endless scroll.
 const expandedTables = new Set();
 function collapseLongTables(root) {
@@ -4010,7 +4010,7 @@ function sourceDetail(id) {
     ["Source edition",source.edition],["Compared section",source.status==="Retry needed"?"Comparison pending":source.section]
   ])+block("Check result",source.result)+(source.url?'<section><h3>Page URL</h3><a class="url" href="'+esc(source.url)+'" target="_blank" rel="noopener noreferrer">'+esc(source.url)+'</a></section>':
     '<section class="drawer-block"><h3>Text of the note (in Spanish)</h3><p class="note-text" lang="es">'+esc(source.text??"")+'</p></section>')+
-  (source.status==="Retry needed"?'<div class="actions">'+(location.protocol.startsWith("http")?trigger("Retry this check","retry-source",source.id,"primary","retry"):'<p>Retry needs the local server: open SupplyShield with Start-RegChain.cmd.</p>')+'</div>':"")+
+  (source.status==="Retry needed"?'<div class="actions">'+(location.protocol.startsWith("http")?trigger("Retry this check","retry-source",source.id,"primary","retry"):'<p>Retry needs the local server: open ClinRadar with Start-ClinRadar.cmd.</p>')+'</div>':"")+
   (source.change && page==="settings"?'<div>'+trigger("View related change","open-case",source.change,"","arrow")+'</div>':""));
 }
 function studyDetail(id) {
@@ -4052,7 +4052,7 @@ async function replay(reason="manual") {
   const feeds=serverMode()&&ssDetermined();
   notify(feeds?"Running the check: the official sources and the live feeds for the monitored countries.":"Running "+sources.length+" source checks.");
   let problem="";
-  if(feeds) {try {adoptSupplyShield(await agentPost("/api/supplyshield/check",{}));} catch(error) {problem=error.message;}}
+  if(feeds) {try {adoptClinRadar(await agentPost("/api/supplyshield/check",{}));} catch(error) {problem=error.message;}}
   else await pause(350);
   scheduleState=readScheduleOrCurrent();
   const now=Date.now();
@@ -4216,7 +4216,7 @@ const actions={
   },
   "ss-cancel":()=>{const value=scopeEdit?scopeEdit.code+"|"+scopeEdit.kind:"";scopeEdit=null;scopeEditError="";render();if(value) document.querySelector('[data-value="'+CSS.escape(value)+'"]')?.focus();},
   "ss-connect":()=>connectCtms(),
-  "ss-reload":()=>loadSupplyShield(),
+  "ss-reload":()=>loadClinRadar(),
   "first-choice":value=>{if(firstChoice){const resolve=firstChoice;firstChoice=null;resolve(value);}},
   "case-follow-up":id=>openCase(id,"follow-up"),
   "open-agents":openAgents,
@@ -4668,11 +4668,11 @@ async function loadServerState() {
     composeShipmentActions();
     render();
   } catch(error) {
-    notify("SupplyShield's server did not answer: "+error.message);
+    notify("ClinRadar's server did not answer: "+error.message);
   }
 }
 render();
-loadSupplyShield();
+loadClinRadar();
 loadServerState().then(loadAi);
 checkDue();
 window.setInterval(checkDue,15000);

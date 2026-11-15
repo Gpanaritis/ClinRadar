@@ -15,11 +15,11 @@
 
 Records made in local mode do not name a real person. Use password mode for anything you intend to keep.
 
-In local mode, `node serve-regchain.cjs` starts RegChain at `http://127.0.0.1:4173/`. On Windows, `npm start` or **Start-RegChain.cmd** also opens the browser.
+In local mode, `node serve-regchain.cjs` starts RegChain at `http://127.0.0.1:4173/`. On Windows, `npm start` or **Start-ClinRadar.cmd** also opens the browser.
 
 In password mode:
 
-- The dashboard and its data are served only after sign-in. Before that, `/` shows the sign-in page. The public launch page at `/site/` (`sites/supplyshield/`) is served before and after sign-in.
+- The dashboard and its data are served only after sign-in. Before that, `/` shows the sign-in page. The public launch page at `/site/` (`sites/clinradar/`) is served before and after sign-in.
 - Every `/api` route and every `/v1` route needs a signed-in user, except `GET /v1/health`, `GET /v1/session`, `POST /v1/auth/login`, `GET /v1/openapi.json` and the launch page's contact form, `POST /api/contact` (same-site JSON, validated, at most `REGCHAIN_CONTACTS_PER_HOUR` per client address, stored as one line in `<data dir>/contact-requests.jsonl` without the client address). Other requests get 401.
 - `POST /v1/session`, the role switch, answers 403. A person cannot change role.
 

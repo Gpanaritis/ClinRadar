@@ -1,9 +1,9 @@
 @echo off
 setlocal
-rem SupplyShield with its launch page and named sign-in (password mode) at http://127.0.0.1:4173/site/
+rem ClinRadar with its launch page and named sign-in (password mode) at http://127.0.0.1:4173/site/
 where node.exe >nul 2>nul
 if errorlevel 1 (
-  echo SupplyShield needs Node.js 22.13 or later. Install it from https://nodejs.org, then open this file again.
+  echo ClinRadar needs Node.js 22.13 or later. Install it from https://nodejs.org, then open this file again.
   pause
   exit /b 1
 )

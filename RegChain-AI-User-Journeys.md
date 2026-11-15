@@ -1,6 +1,6 @@
-# SupplyShield AI · User journeys and demo scenarios
+# ClinRadar · User journeys and demo scenarios
 
-*15 November 2026. Every path through the dashboard, who takes it, and the exact clicks for each demo. Updated for SupplyShield: the new menu, the monitoring scope, the signals and the route checks.*
+*15 November 2026. Every path through the dashboard, who takes it, and the exact clicks for each demo. Updated for ClinRadar: the new menu, the monitoring scope, the signals and the route checks.*
 
 ## The people in the journeys
 
@@ -13,7 +13,7 @@ The **Acting as** menu switches between them. It appears wherever a decision is 
 | **Quality owner** | M. Okafor | Acknowledge the Quality task, submit evidence; approve or reject a connection request; change the monitoring schedule | Close the case |
 | **Quality verifier** | L. Chen | Verify the evidence and close the case, but only once every blocked shipment has an action | Approve a supply plan |
 
-Nobody switches off a country with an active trial: the CTMS puts it in scope and it stays on. People outside SupplyShield approve each draft in their own validated system: IRT, ERP, the depot, the courier, the QMS or the site portal.
+Nobody switches off a country with an active trial: the CTMS puts it in scope and it stays on. People outside ClinRadar approve each draft in their own validated system: IRT, ERP, the depot, the courier, the QMS or the site portal.
 
 ## Where everything is
 
@@ -60,7 +60,7 @@ The menu has: **Overview · Monitoring scope · Signals · Shipments · Agents i
 | Screen | The question it answers | Main action |
 |---|---|---|
 | **Overview** | What needs a decision today, and what did the last check find? | One button per line under **Needs your decision**; **Run the check** |
-| **Monitoring scope** | Which countries does SupplyShield watch, and why? | Turn a suggested country on or off, with a reason; dismiss or restore a suggestion |
+| **Monitoring scope** | Which countries does ClinRadar watch, and why? | Turn a suggested country on or off, with a reason; dismiss or restore a suggestion |
 | **Signals** | What happened in the monitored countries, and does it touch our shipments? | Open a signal or a regulatory change; **Run the check** |
 | **Signal page** | For one event: the sources, each match with our shipments, the owner and the next step | **Plan a recovery with the agents** |
 | **Shipments › Needs action** | What do I need to approve, most urgent first? | **Plan all with AI agents**; **Approve** or **Acknowledge** each row |
@@ -86,7 +86,7 @@ The menu has: **Overview · Monitoring scope · Signals · Shipments · Agents i
 
 ## The shipment page, top to bottom
 
-1. **Where the shipment stands**: Checked → Agents planned → Approved in SupplyShield → Approved in each system.
+1. **Where the shipment stands**: Checked → Agents planned → Approved in ClinRadar → Approved in each system.
 2. **Why it needs action**: the failing checks, each with its specification section. For a risk on the route it also says:
    - which system confirmed it, and when;
    - what happens to the patients if nothing is done.
@@ -96,10 +96,10 @@ The menu has: **Overview · Monitoring scope · Signals · Shipments · Agents i
 4. **The recommended plan**:
    - what changes, in plain words;
    - why, and the risk;
-   - what SupplyShield checked, and what is still to confirm;
+   - what ClinRadar checked, and what is still to confirm;
    - **Acting as**, then **Approve this plan**.
 5. **What approval sends**: one draft per system, for example IRT, the depot or the courier. After approval this becomes **What happens next**.
-6. **Other options the agents considered**: each with SupplyShield's verdict.
+6. **Other options the agents considered**: each with ClinRadar's verdict.
    - **Approve instead** appears when an option passes.
    - An option through a country nobody monitors says **Decision needed**, with a link to that country in Monitoring scope.
 7. **All checks**, and **Or record an action yourself**: hold, swap the batch or proceed, with a reason.
@@ -183,7 +183,7 @@ flowchart TD
    - Delivery stays on 26 Nov.
    - The risk: a new booking, which the courier must confirm.
 6. **Other options the agents considered**:
-   - **Leave from Luxembourg Airport instead of BRU**: **Decision needed**. Luxembourg is not monitored for external risk, so SupplyShield can't assess it. **Open Monitoring scope: Luxembourg** leads to J9.
+   - **Leave from Luxembourg Airport instead of BRU**: **Decision needed**. Luxembourg is not monitored for external risk, so ClinRadar can't assess it. **Open Monitoring scope: Luxembourg** leads to J9.
    - **Dispatch on 25 Nov 2026 instead**: **Does not pass**. The kits would arrive on 30 Nov, after the site runs out on 27 Nov.
 7. **Approve this plan** as P. Laine. **What approval sends**:
    - a booking change for the courier (a new departure airport);
@@ -214,7 +214,7 @@ flowchart TD
    - "Ship batch J-203 instead of J-202";
    - "Correct the trial's authorisation route in IRT: old rules".
 
-   SupplyShield checked that the UK depot holds 48 kits of J-203 (the shipment needs 12) and that the eTMF holds the MHRA letter.
+   ClinRadar checked that the UK depot holds 48 kits of J-203 (the shipment needs 12) and that the eTMF holds the MHRA letter.
 4. **Approve this plan** as P. Laine. The step strip moves to **Approved in each system**: two drafts for IRT and a pre-dispatch confirmation for the depot. The route (UK depot to Birmingham by road) has no external risk.
 
 ### J4 · Approving another option
@@ -231,7 +231,7 @@ On SHP-04, **Other options the agents considered** shows "Relabel J-202 on 16 No
 flowchart LR
   A[Plan all with agents] --> B[SHP-01 plan:<br/>16 Nov slot, 10 places]
   A --> C[SHP-06 first choice:<br/>16 Nov slot, 14 places]
-  B --> D{SupplyShield checks the plans<br/>most urgent first}
+  B --> D{ClinRadar checks the plans<br/>most urgent first}
   C --> D
   D --> E[SHP-01 keeps 16 Nov]
   D --> F[SHP-06 moves to 18 Nov,<br/>first drafts withdrawn]
@@ -272,14 +272,14 @@ SHP-07 is "Confirm before dispatch": its post-cutoff label needs checking agains
    - **Regulatory & customs**: the open changes and the import permits.
 2. **Master agent** (Claude Opus 5.5) ranks the shipments, patients first: SHP-IL-01, whose site runs out on 27 Nov, comes before the shipments ranked by preparation date. It then hands tasks to the specialists.
 3. **Specialists** (Claude Sonnet 5.5): supply, logistics, records and communications read the company's systems over MCP, read-only.
-4. **SupplyShield verifier** (fixed rules, no AI) tests every option and checks the plans together, so nothing is promised twice.
+4. **ClinRadar verifier** (fixed rules, no AI) tests every option and checks the plans together, so nothing is promised twice.
 5. **Clinical Supply** approves.
 
 On a single shipment with a route risk, the master agent first asks the matching watch agent to confirm the event, its evidence and how long it lasts, then sends logistics to look for alternatives.
 
-### J9 · Deciding what SupplyShield monitors
+### J9 · Deciding what ClinRadar monitors
 
-**Who:** Clinical Supply for external risk; the Regulatory SME for regulatory and customs. **Why it matters:** SupplyShield watches only the countries that the active-trial portfolio puts in scope. Every other country is a suggestion with its evidence. It stays off until a person turns it on, with a reason.
+**Who:** Clinical Supply for external risk; the Regulatory SME for regulatory and customs. **Why it matters:** ClinRadar watches only the countries that the active-trial portfolio puts in scope. Every other country is a suggestion with its evidence. It stays off until a person turns it on, with a reason.
 
 ```mermaid
 flowchart TD
@@ -336,7 +336,7 @@ How the tiers work, as the signal page explains:
 
 ### J11 · Checking the official feeds
 
-1. **Signals** or the Overview → **Run the check**. SupplyShield does two things:
+1. **Signals** or the Overview → **Run the check**. ClinRadar does two things:
    - re-reads the official sources;
    - reads UK FCDO travel advice (GOV.UK content API) and GDACS alerts for each country monitored for external risk.
 2. The line under the title says where the signals come from: "Official feeds read live" with the time, or the recorded copy when the feeds don't answer.
@@ -372,10 +372,10 @@ The case also opens from **Signals** → **Regulatory & customs** → **UK IMP l
 1. Open **http://127.0.0.1:4173/?empty**, or choose **Start from empty** in the Overview's run line (click twice to confirm). This does three things:
    - archives the plans and approvals;
    - disconnects the active-trial portfolio;
-   - makes the Overview say "SupplyShield monitors nothing yet": without the authorised CTMS or study-country export, it monitors nothing and assumes no country.
+   - makes the Overview say "ClinRadar monitors nothing yet": without the authorised CTMS or study-country export, it monitors nothing and assumes no country.
 
    Every other page says "Nothing here yet".
-2. The Overview lists what SupplyShield works with:
+2. The Overview lists what ClinRadar works with:
    - the CTMS (read-only, not connected yet);
    - 8 official regulatory sources and 2 official feeds;
    - 25 planned shipments;
@@ -434,7 +434,7 @@ With **Continue without it**, Belgium stays off. The strike is not matched to SH
 ### J19 · From the launch page to sign-in
 
 1. **http://127.0.0.1:4173/site/** is the public launch page. It covers:
-   - what SupplyShield prevents;
+   - what ClinRadar prevents;
    - how it works (watch, check, plan, verify, approve);
    - the Belgian strike example;
    - validation;
@@ -454,8 +454,8 @@ With **Continue without it**, Belgium stays off. The strike is not matched to SH
 ### Before any demo (2 minutes)
 
 1. Choose the launcher, and keep its window open:
-   - **Start-RegChain.cmd** for the scenarios below: one computer, with **Acting as** to switch roles;
-   - **Start-SupplyShield-Site.cmd** to start from the launch page with sign-in (J19).
+   - **Start-ClinRadar.cmd** for the scenarios below: one computer, with **Acting as** to switch roles;
+   - **Start-ClinRadar-Site.cmd** to start from the launch page with sign-in (J19).
 
    Only one of them can run at a time on port 4173. Always use the address **http://127.0.0.1:4173**, never the HTML file itself. Opened as a file, the page shows an orange notice, and the agents, approvals, monitoring decisions and live checks don't work.
 2. Open **http://127.0.0.1:4173/?empty** for Scenario A: an empty workspace, with the CTMS disconnected, plans and approvals archived and the cases started again. The address goes back to normal by itself.
@@ -463,17 +463,17 @@ With **Continue without it**, Belgium stays off. The strike is not matched to SH
 3. Check **Acting as**: P. Laine · Clinical Supply.
 4. On **Shipments › Needs action**, check that **Plan all with AI agents** is enabled. If it isn't, the key is missing; use the scripted walkthrough.
 5. The day before, run **Plan all with AI agents** once. The plans stay, so the demo works even if the venue's internet fails.
-6. The official feeds need the internet. Without it, SupplyShield says so and uses the recorded copy.
+6. The official feeds need the internet. Without it, ClinRadar says so and uses the recorded copy.
 
 ### Scenario A · The 5-minute pitch, from an empty workspace
 
 | Time | Screen | Click | Say |
 |---|---|---|---|
-| 0:00 | Overview, empty | Nothing yet | "SupplyShield monitors nothing yet. Without the trial portfolio, it won't guess which countries matter." |
+| 0:00 | Overview, empty | Nothing yet | "ClinRadar monitors nothing yet. Without the trial portfolio, it won't guess which countries matter." |
 | 0:15 | Overview | **Connect the CTMS and run the first check** | "First, the active trials set the scope: 16 countries, always on. Closed and suspended studies are left out. Portugal's status is contradictory, so a person confirms it." |
-| 0:45 | Overview | **Turn it on as P. Laine · Clinical Supply** | "Our central EU depot is in Belgium, where we have no active trial. SupplyShield suggests it with the evidence. I decide, and my reason goes into the audit trail." |
+| 0:45 | Overview | **Turn it on as P. Laine · Clinical Supply** | "Our central EU depot is in Belgium, where we have no active trial. ClinRadar suggests it with the evidence. I decide, and my reason goes into the audit trail." |
 | 1:15 | Overview | Watch steps 3 to 6 | "A national strike day in Belgium cancels SHP-IL-01's flight to Tel Aviv. The courier confirmed it; it isn't just a news item. SHP-03's truck leaves the day before, so it is not affected. 14 shipments are blocked." |
-| 1:45 | Agents in action | Watch the replay; chips **Watch team**, then **Verifier** | "Four watch agents sweep one hazard each across the 17 monitored countries: weather, strikes and transport, security advice, regulatory change. The master agent ranks 19 shipments, patients first, and hands tasks to four specialists. They read the company's systems over MCP, read-only. Every option goes to SupplyShield's rules: fixed code, not AI." |
+| 1:45 | Agents in action | Watch the replay; chips **Watch team**, then **Verifier** | "Four watch agents sweep one hazard each across the 17 monitored countries: weather, strikes and transport, security advice, regulatory change. The master agent ranks 19 shipments, patients first, and hands tasks to four specialists. They read the company's systems over MCP, read-only. Every option goes to ClinRadar's rules: fixed code, not AI." |
 | 2:45 | Shipment page SHP-IL-01 | Overview → **Review the plan** | "If nothing is done, 14 patients go 2 days without treatment. The agents propose leaving from Amsterdam: same delivery day. Luxembourg would need a monitoring decision first, and a later dispatch arrives after the site runs out." |
 | 3:45 | Shipment page | **Approve this plan** | "I approve as Clinical Supply. The courier and the depot get drafts to approve in their own systems. Nothing changed in any validated system." |
 | 4:15 | Shipments › Needs action | Chips **Re-planned**, then **Escalations** | "The same team works on every shipment. Nothing is promised twice, and when nothing is safe, the agents escalate instead of guessing." |
@@ -483,12 +483,12 @@ With **Continue without it**, Belgium stays off. The strike is not matched to SH
 
 | Time | Screen | Click | Say |
 |---|---|---|---|
-| 0:00 | Overview | **Needs your decision** | "Every morning SupplyShield shows what needs a decision. First, a confirmed disruption on a route; then the plans to approve." |
+| 0:00 | Overview | **Needs your decision** | "Every morning ClinRadar shows what needs a decision. First, a confirmed disruption on a route; then the plans to approve." |
 | 0:30 | Signals | **National strike day in Belgium** | "Two trusted sources, merged as one event. It touches two of our shipments. One flight is cancelled, confirmed by the courier. The other shipment was checked and is not affected." |
 | 1:00 | Signal page | **Plan a recovery with the agents** | "The master agent asks for the patient impact first." While it runs, open **How the agents worked it out**. |
 | 2:00 | Shipment page SHP-IL-01 | Read the recommended plan, then **Approve this plan** | "Leave from Amsterdam: same delivery day. The rules refused the later dispatch, and Luxembourg waits for a monitoring decision." |
 | 2:45 | Monitoring scope | Belgium, then Luxembourg | "Belgium is watched because the depot is there and a person decided so. Luxembourg is suggested because the courier can fly from there. It stays off until someone decides." |
-| 3:30 | Shipments › Needs action | Chip **Re-planned** | "SHP-06's agents wanted the 16 Nov slot. SHP-01 needs it first, so SupplyShield moved SHP-06 to 18 Nov. Nothing is promised twice." |
+| 3:30 | Shipments › Needs action | Chip **Re-planned** | "SHP-06's agents wanted the 16 Nov slot. SHP-01 needs it first, so ClinRadar moved SHP-06 to 18 Nov. Nothing is promised twice." |
 | 4:00 | Shipments › Needs action | Chip **Escalations** → SHP-03 | "When nothing is safe, the agents escalate instead of guessing." |
 | 4:30 | Shipment page | **How the agents are controlled** | "Read-only, drafts only, rules decide, Clinical Supply approves, every step logged, in line with the draft EU GMP Annex 22." |
 
@@ -504,9 +504,9 @@ With **Continue without it**, Belgium stays off. The strike is not matched to SH
 | Question | Show |
 |---|---|
 | "Which countries do you watch, and why?" | **Monitoring scope**. The active trials set the scope. Every other country is a suggestion with its evidence, off until a person decides. No list of risky countries is used. |
-| "What if there's no trial portfolio?" | **Start from empty**. SupplyShield monitors nothing and assumes no country until the CTMS is connected. |
+| "What if there's no trial portfolio?" | **Start from empty**. ClinRadar monitors nothing and assumes no country until the CTMS is connected. |
 | "Is a news story enough to block a shipment?" | The signal tiers. A **Potential exposure** (SHP-IL-02, one source) names what is missing and who confirms it. Only a system of record, the courier or the depot, makes it a **Confirmed disruption**. A tracking outage is never counted as a disruption. |
-| "What if the AI is wrong?" | SHP-IL-01 → **Other options**: the later dispatch fails, with its reason. In a live run, a recommendation that fails SupplyShield's rules has its drafts withdrawn. |
+| "What if the AI is wrong?" | SHP-IL-01 → **Other options**: the later dispatch fails, with its reason. In a live run, a recommendation that fails ClinRadar's rules has its drafts withdrawn. |
 | "Who decides?" | Change **Acting as** to Regulatory SME: **Approve this plan** is disabled, with "Clinical Supply approves supply plans". In Monitoring scope, the External risk switch belongs to Clinical Supply. |
 | "Can it double-book stock?" | **Re-planned** chip, SHP-06. Then approve SHP-01 and try to approve SHP-04's relabel option: it is refused because the 16 Nov slot is now held. |
 | "What does it change in our validated systems?" | **What happens next**: drafts only, each waiting for approval in its own system. |

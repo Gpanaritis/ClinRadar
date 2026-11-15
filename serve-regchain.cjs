@@ -78,14 +78,14 @@ const wantBrowser = process.argv.includes("--open-site") || (process.argv.includ
 
 // The sign-in page of a shared deployment. The dashboard and its data are served only after sign-in.
 function signInPage(nonce) {
-  return Buffer.from(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SupplyShield AI | Sign in</title><link rel="icon" href="/site/assets/favicon.svg" type="image/svg+xml">
+  return Buffer.from(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ClinRadar | Sign in</title><link rel="icon" href="/site/assets/favicon.svg" type="image/svg+xml">
 <style>:root{font:15px/1.5 Inter,"Segoe UI",sans-serif;color:#132446;background:#f5f8fc}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:16px}main{width:100%;max-width:380px;background:#fff;border:1px solid #e0e8f3;border-radius:12px;padding:28px;box-shadow:0 2px 5px #14356212}
 h1{font-size:22px;margin:0 0 4px}p{color:#536683;margin:0 0 18px;font-size:14px}label{display:grid;gap:4px;font-size:12px;font-weight:700;color:#445b7c;margin-bottom:12px}input{font:inherit;padding:9px 10px;border:1px solid #d5e2f1;border-radius:8px}
 button{width:100%;font:inherit;font-weight:700;color:#fff;background:#1a52d1;border:0;border-radius:8px;padding:10px;cursor:pointer}button:disabled{opacity:.6}#error{color:#9f2c42;font-size:13px;min-height:20px;margin:10px 0 0}
 .foot{margin:18px 0 0;padding-top:14px;border-top:1px solid #e0e8f3;font-size:13px}.foot a{color:#1a52d1;font-weight:700}</style></head>
-<body><main><h1>SupplyShield AI</h1><p>Sign in with your SupplyShield account.</p><form id="signin"><label>Username<input name="username" autocomplete="username" required maxlength="80"></label>
+<body><main><h1>ClinRadar</h1><p>Sign in with your ClinRadar account.</p><form id="signin"><label>Username<input name="username" autocomplete="username" required maxlength="80"></label>
 <label>Password<input name="password" type="password" autocomplete="current-password" required maxlength="200"></label><button type="submit">Sign in</button><p id="error" role="alert"></p></form>
-<p class="foot" id="no-signup">Accounts are set up by your administrator. There is no self sign-up. <a href="/site/">About SupplyShield</a></p></main>
+<p class="foot" id="no-signup">Accounts are set up by your administrator. There is no self sign-up. <a href="/site/">About ClinRadar</a></p></main>
 <script nonce="${nonce}">document.getElementById("signin").addEventListener("submit",async event=>{event.preventDefault();const form=event.target;const button=form.querySelector("button");button.disabled=true;
 try{const response=await fetch("/v1/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({username:form.username.value,password:form.password.value})});
 const body=await response.json().catch(()=>({}));if(!response.ok) throw new Error(body.error||"Sign-in failed.");location.replace("/");}catch(error){document.getElementById("error").textContent=error.message;button.disabled=false;}});</script></body></html>`);
@@ -304,9 +304,9 @@ async function runAnalysis(caseId) {
   return result;
 }
 
-// The public launch page (sites/supplyshield/), served at /site/ before and after sign-in. Only files inside that folder
+// The public launch page (sites/clinradar/), served at /site/ before and after sign-in. Only files inside that folder
 // with a known type; index.html gets a fresh script nonce like every other page.
-const SITE_DIR = join(__dirname, "sites", "supplyshield");
+const SITE_DIR = join(__dirname, "sites", "clinradar");
 const SITE_TYPES = {
   ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8",
   ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".ico": "image/x-icon", ".txt": "text/plain; charset=utf-8",
@@ -458,7 +458,7 @@ async function handleContact(request, response) {
 let apiPromise = null;
 const api = () => (apiPromise ??= loadModule("api.mjs").then(module => module.createApi({ root: __dirname, config, allowedOrigins, logger, analyze: caseId => runAnalysis(caseId) })));
 
-// SupplyShield's state for the page: the same payload the page carries for file mode, plus who is asking and what they
+// ClinRadar's state for the page: the same payload the page carries for file mode, plus who is asking and what they
 // may switch (Clinical Supply: external risk; the Regulatory SME: regulatory and customs).
 async function supplyShieldState(request) {
   const { loadData, supplyShieldPayload } = await loadModule("rules.mjs");
@@ -583,13 +583,13 @@ async function handleApi(request, response, path) {
     }
     return;
   }
-  // SupplyShield: the monitoring scope from the active-trial portfolio, the recommended countries and their switches, and
+  // ClinRadar: the monitoring scope from the active-trial portfolio, the recommended countries and their switches, and
   // every external signal matched to the shipments (regchain-ai/supplyshield.mjs, monitoring.mjs, feeds.mjs).
   if (path === "/api/supplyshield" && request.method === "GET") {
     try {
       sendJson(response, 200, await supplyShieldState(request));
     } catch (error) {
-      sendJson(response, error.statusCode || 500, { error: error.message || "SupplyShield could not be read." });
+      sendJson(response, error.statusCode || 500, { error: error.message || "ClinRadar could not be read." });
     }
     return;
   }
@@ -627,7 +627,7 @@ async function handleApi(request, response, path) {
         const { appendAudit, openDatabase, transaction } = await loadModule("db.mjs");
         const db = openDatabase(__dirname);
         const failed = Object.values(feeds.fcdo).filter(item => !item.ok).length;
-        transaction(db, () => appendAudit(db, { actor: label ?? "SupplyShield", role: session.role, type: "supplyshield.checked", subjectType: "monitoring", subjectId: feeds.fetchedAt,
+        transaction(db, () => appendAudit(db, { actor: label ?? "ClinRadar", role: session.role, type: "supplyshield.checked", subjectType: "monitoring", subjectId: feeds.fetchedAt,
           detail: `Official feeds checked for ${codes.length} monitored countries${failed ? ` (${failed} did not answer)` : ""}; ${after.counts.confirmed} confirmed disruptions, ${after.counts.potential} potential exposures, ${after.counts.observed} observed events`,
           data: { countries: codes, failed, gdacs: feeds.gdacs.ok, counts: after.counts } }));
       }

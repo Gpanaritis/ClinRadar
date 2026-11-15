@@ -1,4 +1,4 @@
-// Records the live official feeds SupplyShield reads (UK FCDO travel advice and GDACS alerts) into
+// Records the live official feeds ClinRadar reads (UK FCDO travel advice and GDACS alerts) into
 // demo-data/recorded-feeds.json, for every country it could monitor: the active-trial countries and every candidate it
 // may recommend. The demo then works without internet; Run the check refreshes the copy in .regchain-cache/.
 // Usage: node scripts/record-feeds.mjs

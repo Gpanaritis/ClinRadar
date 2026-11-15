@@ -65,7 +65,7 @@ try {
 }
 
 const lines = [
-  "# SupplyShield demo accounts for password mode (REGCHAIN_AUTH=password). Keep this file private; it is outside Git.",
+  "# ClinRadar demo accounts for password mode (REGCHAIN_AUTH=password). Keep this file private; it is outside Git.",
   "# Sign in at http://127.0.0.1:4173/ . Reset all passwords with: npm run demo:accounts -- --reset",
   "# username\tpassword\tname\trole",
   ...DEMO_ACCOUNTS.map(account => [account.username, known.get(account.username) ?? "(not recorded here: run with --reset)", account.name, account.title + " (" + account.role + ")"].join("\t")),

@@ -1,6 +1,6 @@
 'use strict';
 
-// The contact form: checked here first, then sent as JSON to the SupplyShield server, which checks it again.
+// The contact form: checked here first, then sent as JSON to the ClinRadar server, which checks it again.
 const form = document.getElementById('contact-form');
 const statusLine = document.getElementById('cf-status');
 const submit = document.getElementById('cf-submit');

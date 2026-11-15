@@ -1,7 +1,7 @@
 {
   "name": "regchain-ai",
   "private": true,
-  "description": "SupplyShield AI (formerly RegChain AI) hackathon prototype: external risk and country regulatory intelligence for global clinical supply, scoped by the active-trial portfolio, with pre-shipment checks and an agent layer over MCP",
+  "description": "ClinRadar (formerly RegChain AI) hackathon prototype: external risk and country regulatory intelligence for global clinical supply, scoped by the active-trial portfolio, with pre-shipment checks and an agent layer over MCP",
   "scripts": {
     "start": "node serve-regchain.cjs --open",
     "serve": "node serve-regchain.cjs",

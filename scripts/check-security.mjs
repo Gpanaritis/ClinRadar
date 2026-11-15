@@ -227,7 +227,7 @@ try {
   const front = await call("GET", "/");
   assert.equal(front.status, 200);
   assert.match(front.text, /id="signin"/);
-  assert.match(front.text, /<a href="\/site\/">About SupplyShield<\/a>/, "the sign-in page links to the launch page");
+  assert.match(front.text, /<a href="\/site\/">About ClinRadar<\/a>/, "the sign-in page links to the launch page");
   assert.match(front.text, /There is no self sign-up/);
   assert.ok(!front.text.includes("portfolio-data"), "the dashboard and its data are not sent before sign-in");
   const frontNonce = front.headers["content-security-policy"].match(/'nonce-([^']+)'/)[1];
@@ -243,7 +243,7 @@ try {
   const site = await call("GET", "/site/");
   assert.equal(site.status, 200, "the launch page is public in password mode");
   assert.match(site.headers["content-type"], /^text\/html/);
-  assert.match(site.text, /SupplyShield/);
+  assert.match(site.text, /ClinRadar/);
   assert.match(site.text, /id="contact-form"/);
   assert.ok(!site.text.includes("portfolio-data"), "the launch page carries no dashboard data");
   const siteNonce = site.headers["content-security-policy"].match(/script-src 'nonce-([^']+)'/)?.[1];

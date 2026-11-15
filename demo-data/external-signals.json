@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "note": "External-risk items recorded by SupplyShield's last check, for countries it monitors. Items marked illustrative are invented for the scenario: never present them as real news. Live items from official feeds are in recorded-feeds.json and are refreshed by Run the check.",
+  "note": "External-risk items recorded by ClinRadar's last check, for countries it monitors. Items marked illustrative are invented for the scenario: never present them as real news. Live items from official feeds are in recorded-feeds.json and are refreshed by Run the check.",
   "checked_at": "2026-11-14T06:12:00Z",
   "signals": [
     {
