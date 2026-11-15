@@ -15,7 +15,7 @@
     "SHP-ES-01": 12, "SHP-ES-02": 12, "SHP-ES-03": 12, "SHP-ES-04": 12, "SHP-ES-05": 12, "SHP-ES-06": 12, "SHP-ES-07": 6, "SHP-ES-08": 12, "SHP-ES-09": 6, "SHP-ES-10": 12
   },
   "depotStock": {
-    "UK depot": {"A-101": 4, "B-102": 24, "C-103": 40, "D-104": 18, "F-106": 10, "G-107": 20, "H-108": 36, "J-201": 6, "J-202": 30, "J-203": 48, "K-301": 16, "K-302": 30, "L-401": 8, "L-402": 12, "L-403": 34, "M-501": 20, "M-502": 28, "N-601": 22, "N-602": 26, "P-701": 12, "P-702": 18},
+    "UK depot": {"A-101": 4, "B-102": 24, "C-103": 6, "D-104": 18, "F-106": 10, "G-107": 20, "H-108": 36, "J-201": 6, "J-202": 30, "J-203": 48, "K-301": 16, "K-302": 30, "L-401": 8, "L-402": 12, "L-403": 34, "M-501": 20, "M-502": 28, "N-601": 22, "N-602": 26, "P-701": 12, "P-702": 18},
     "Central EU depot, Belgium": {"E-105": 14, "J-204": 20, "K-303": 12, "R-803": 18, "R-804": 10, "R-807": 9, "XZ417-26A": 96, "XZ417-26B": 120, "XZ417-26C": 0}
   },
   "siteStockDays": {
@@ -23,7 +23,7 @@
     "SITE-DE-01": 7, "SITE-DE-02": 9
   },
   "relabel": {
-    "UK depot": {"slots": [{"date": "2026-11-16", "kits": 40}, {"date": "2026-11-18", "kits": 60}, {"date": "2026-11-20", "kits": 60}], "turnaroundBusinessDays": 1},
+    "UK depot": {"slots": [{"date": "2026-11-16", "kits": 20}, {"date": "2026-11-18", "kits": 60}, {"date": "2026-11-20", "kits": 60}], "turnaroundBusinessDays": 1},
     "Central EU depot, Belgium": {"slots": [{"date": "2026-11-19", "kits": 50}, {"date": "2026-11-26", "kits": 50}], "turnaroundBusinessDays": 2}
   },
   "labelApprovals": {
@@ -47,7 +47,7 @@
     "EU logistics partner": {"from": "Central EU depot, Belgium", "to": ["DE", "ES", "FR", "IT", "PL"], "standardTransitBusinessDays": 2, "expressTransitBusinessDays": 1, "weekend": false}
   },
   "qpPlan": {
-    "XZ417-26C": {"status": "QP slot available, not booked", "earliestRelease": "2027-03-02", "qpSite": "Packaging site, Netherlands"}
+    "XZ417-26C": {"status": "QP slot available, not booked", "earliestRelease": "2027-03-02", "qpSite": "Packaging site, Netherlands", "kitsAfterRelease": 60, "transferBusinessDays": 2}
   },
   "trialAuthorisations": {
     "STUDY-004|GB": {"route": "old_rules", "document": "MHRA clinical trial authorisation letter, 12 Jun 2025", "reference": "TMF-004-GB-0137", "irtRecord": "unknown"},

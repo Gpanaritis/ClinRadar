@@ -70,6 +70,7 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 .agent-timeline{list-style:none;margin:0;padding:0 15px 12px;max-height:620px;overflow:auto}.agent-step{display:grid;grid-template-columns:158px minmax(0,1fr);gap:10px;align-items:start;padding:8px 0;border-top:1px solid #edf1f7;font-size:13px;overflow-wrap:anywhere}.agent-step:first-child{border-top:0}.agent-step code{font-size:12px;color:#173f9e}.agent-step .muted{font-size:12px}.agent-step-tool_result{padding-top:0;border-top:0}.agent-step-tool_result .agent-chip{visibility:hidden}.agent-step-verified,.agent-step-resolution,.agent-step-goal{background:#f5f9ff;margin:0 -15px;padding-left:15px;padding-right:15px}
 .roster{list-style:none;margin:0;padding:0 15px 10px}.roster li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 8px;align-items:center;padding:8px 0;border-top:1px solid #edf1f7}.roster li:first-child{border-top:0}.roster small{grid-column:1/-1;color:var(--muted);font-size:11px}.roster-state{grid-row:1;grid-column:2}
 .guardrail-list{list-style:none;margin:0;padding:2px 15px 14px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.guardrail-list li{display:flex;gap:8px;font-size:12.5px;color:#3f597c}.guardrail-list svg{width:16px;height:16px;flex:none;color:var(--blue);margin-top:2px}.guardrail-list strong{color:var(--ink)}.system-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 16px}.system-list li{display:flex;gap:6px;align-items:center}.system-list small{color:var(--muted);font-size:11px}
+.warning-text{color:#9f2c42}.case-list li.withdrawn>strong,.case-list li.withdrawn>small:last-child{text-decoration:line-through;opacity:.6}.case-list li.withdrawn>small:first-of-type{color:#9f2c42}.shipment-chip{margin-right:2px}.sub.replanned{color:#8a5300;font-weight:650;white-space:normal}.btn.small{min-height:28px;padding:4px 10px;font-size:12px}
 .option-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;margin:8px 0 16px}.option-card{border:1px solid var(--line);border-radius:10px;padding:12px 13px;background:white;min-width:0}.option-card.recommended{border-color:#9db8f2;box-shadow:inset 3px 0 var(--blue)}.option-card h3{font-size:13.5px;margin:0}.case-pad .option-card p{font-size:13px;margin:6px 0}.action-list{margin:8px 0 4px;padding-left:18px;font-size:13px;color:var(--ink)}.option-card small{display:block;font-size:11.5px}
 @media(max-width:1100px){.guardrail-list{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:640px){.guardrail-list{grid-template-columns:minmax(0,1fr)}.agent-step{grid-template-columns:minmax(0,1fr);gap:4px}.agent-step-tool_result .agent-chip{display:none}}
 </style>
@@ -81,7 +82,7 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 </div>
 <dialog id="drawer" class="drawer" aria-labelledby="drawer-title"><div class="drawer-top"><div><div class="sub" id="drawer-type"></div><h2 id="drawer-title"></h2></div><form method="dialog"><button class="btn close" aria-label="Close details">×</button></form></div><div class="drawer-body" id="drawer-body"></div></dialog>
 <script id="portfolio-data" type="application/json">{"schema_version":"0.1","synthetic_operational_data":true,"note":"Fictional sponsor portfolio for the RegChain demo. No real studies, sites, products or patients.","assessment_as_of":"2026-11-14T10:00:00Z","studies":[{"id":"STUDY-001","title":"UK legacy-cohort study","phase":"III","therapy_area":"Oncology","status":"active","countries":["GB"],"source_ref":"SRC-CTMS"},{"id":"STUDY-002","title":"Germany-only distribution study","phase":"II","therapy_area":"Immunology","status":"active","countries":["DE"],"source_ref":"SRC-CTMS"},{"id":"STUDY-003","title":"UK labeling and supply study","phase":"III","therapy_area":"Cardiology","status":"active","countries":["GB"],"source_ref":"SRC-CTMS"},{"id":"STUDY-004","title":"Multinational asthma maintenance study","phase":"III","therapy_area":"Respiratory","status":"active","countries":["GB","DE","PL","ES"],"source_ref":"SRC-CTMS"},{"id":"STUDY-005","title":"Rare disease enzyme replacement study","phase":"II","therapy_area":"Rare disease","status":"active","countries":["GB","FR","IT"],"source_ref":"SRC-CTMS"},{"id":"STUDY-006","title":"Paediatric vaccine booster study","phase":"III","therapy_area":"Vaccines","status":"active","countries":["GB","NL"],"source_ref":"SRC-CTMS"},{"id":"STUDY-007","title":"Migraine prevention study","phase":"II","therapy_area":"Neurology","status":"active","countries":["GB","IE"],"source_ref":"SRC-CTMS"},{"id":"STUDY-008","title":"Type 2 diabetes outcomes study","phase":"III","therapy_area":"Metabolic","status":"active","countries":["GB","US","CA"],"source_ref":"SRC-CTMS"},{"id":"STUDY-009","title":"Rheumatoid arthritis biologic study","phase":"III","therapy_area":"Immunology","status":"active","countries":["GB","DE"],"source_ref":"SRC-CTMS"},{"id":"STUDY-010","title":"US oncology dose-finding study","phase":"I","therapy_area":"Oncology","status":"active","countries":["US"],"source_ref":"SRC-CTMS"},{"id":"STUDY-011","title":"Japan bridging study","phase":"I","therapy_area":"Metabolic","status":"active","countries":["JP"],"source_ref":"SRC-CTMS"},{"id":"STUDY-012","title":"EU psoriasis study","phase":"III","therapy_area":"Dermatology","status":"active","countries":["DE","FR","ES"],"source_ref":"SRC-CTMS"},{"id":"STUDY-013","title":"Spain and Portugal hepatitis study","phase":"II","therapy_area":"Infectious disease","status":"active","countries":["ES","PT"],"source_ref":"SRC-CTMS"},{"id":"STUDY-014","title":"Nordic heart failure study","phase":"III","therapy_area":"Cardiology","status":"active","countries":["SE","DK","FI"],"source_ref":"SRC-CTMS"},{"id":"STUDY-015","title":"US and Canada obesity study","phase":"II","therapy_area":"Metabolic","status":"active","countries":["US","CA"],"source_ref":"SRC-CTMS"},{"id":"STUDY-016","title":"France and Belgium lupus study","phase":"II","therapy_area":"Immunology","status":"active","countries":["FR","BE"],"source_ref":"SRC-CTMS"},{"id":"STUDY-017","title":"Australia chronic pain study","phase":"II","therapy_area":"Neurology","status":"active","countries":["AU"],"source_ref":"SRC-CTMS"},{"id":"STUDY-018","title":"UK oncology follow-up study, supply closed","phase":"III","therapy_area":"Oncology","status":"completed","countries":["GB"],"source_ref":"SRC-CTMS"}],"study_countries":[{"id":"STUDY-001-GB","study_id":"STUDY-001","country_code":"GB","jurisdiction":"UK","authorization_cohort":"old_rules","site_ids":["SITE-GB-02","SITE-GB-03"],"source_ref":"SRC-CTMS"},{"id":"STUDY-002-DE","study_id":"STUDY-002","country_code":"DE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-DE-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-003-GB","study_id":"STUDY-003","country_code":"GB","jurisdiction":"UK","authorization_cohort":"old_rules","site_ids":["SITE-GB-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-004-GB","study_id":"STUDY-004","country_code":"GB","jurisdiction":"UK","authorization_cohort":"unknown","site_ids":["SITE-GB-04","SITE-GB-05"],"source_ref":"SRC-CTMS"},{"id":"STUDY-004-DE","study_id":"STUDY-004","country_code":"DE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-DE-02"],"source_ref":"SRC-CTMS"},{"id":"STUDY-004-PL","study_id":"STUDY-004","country_code":"PL","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-PL-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-004-ES","study_id":"STUDY-004","country_code":"ES","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-ES-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-005-GB","study_id":"STUDY-005","country_code":"GB","jurisdiction":"UK","authorization_cohort":"new_rules","site_ids":["SITE-GB-06"],"source_ref":"SRC-CTMS"},{"id":"STUDY-005-FR","study_id":"STUDY-005","country_code":"FR","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-FR-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-005-IT","study_id":"STUDY-005","country_code":"IT","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-IT-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-006-GB","study_id":"STUDY-006","country_code":"GB","jurisdiction":"UK","authorization_cohort":"old_rules","site_ids":["SITE-GB-07"],"source_ref":"SRC-CTMS"},{"id":"STUDY-006-NL","study_id":"STUDY-006","country_code":"NL","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-NL-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-007-GB","study_id":"STUDY-007","country_code":"GB","jurisdiction":"UK","authorization_cohort":"new_rules","site_ids":["SITE-GB-08"],"source_ref":"SRC-CTMS"},{"id":"STUDY-007-IE","study_id":"STUDY-007","country_code":"IE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-IE-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-008-GB","study_id":"STUDY-008","country_code":"GB","jurisdiction":"UK","authorization_cohort":"new_rules","site_ids":["SITE-GB-09"],"source_ref":"SRC-CTMS"},{"id":"STUDY-008-US","study_id":"STUDY-008","country_code":"US","jurisdiction":"US","authorization_cohort":"not_applicable","site_ids":["SITE-US-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-008-CA","study_id":"STUDY-008","country_code":"CA","jurisdiction":"CA","authorization_cohort":"not_applicable","site_ids":["SITE-CA-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-009-GB","study_id":"STUDY-009","country_code":"GB","jurisdiction":"UK","authorization_cohort":"old_rules","site_ids":["SITE-GB-10"],"source_ref":"SRC-CTMS"},{"id":"STUDY-009-DE","study_id":"STUDY-009","country_code":"DE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-DE-03"],"source_ref":"SRC-CTMS"},{"id":"STUDY-010-US","study_id":"STUDY-010","country_code":"US","jurisdiction":"US","authorization_cohort":"not_applicable","site_ids":["SITE-US-02"],"source_ref":"SRC-CTMS"},{"id":"STUDY-011-JP","study_id":"STUDY-011","country_code":"JP","jurisdiction":"JP","authorization_cohort":"not_applicable","site_ids":["SITE-JP-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-012-DE","study_id":"STUDY-012","country_code":"DE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-DE-04"],"source_ref":"SRC-CTMS"},{"id":"STUDY-012-FR","study_id":"STUDY-012","country_code":"FR","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-012-ES","study_id":"STUDY-012","country_code":"ES","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-013-ES","study_id":"STUDY-013","country_code":"ES","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-ES-02"],"source_ref":"SRC-CTMS"},{"id":"STUDY-013-PT","study_id":"STUDY-013","country_code":"PT","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-014-SE","study_id":"STUDY-014","country_code":"SE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-SE-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-014-DK","study_id":"STUDY-014","country_code":"DK","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-014-FI","study_id":"STUDY-014","country_code":"FI","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-015-US","study_id":"STUDY-015","country_code":"US","jurisdiction":"US","authorization_cohort":"not_applicable","site_ids":["SITE-US-03"],"source_ref":"SRC-CTMS"},{"id":"STUDY-015-CA","study_id":"STUDY-015","country_code":"CA","jurisdiction":"CA","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-016-FR","study_id":"STUDY-016","country_code":"FR","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-FR-02"],"source_ref":"SRC-CTMS"},{"id":"STUDY-016-BE","study_id":"STUDY-016","country_code":"BE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-017-AU","study_id":"STUDY-017","country_code":"AU","jurisdiction":"AU","authorization_cohort":"not_applicable","site_ids":["SITE-AU-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-018-GB","study_id":"STUDY-018","country_code":"GB","jurisdiction":"UK","authorization_cohort":"old_rules","site_ids":["SITE-GB-11"],"source_ref":"SRC-CTMS"}],"sites":[{"id":"SITE-GB-01","study_id":"STUDY-003","country_code":"GB","city":"London","patients_on_treatment":14,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-02","study_id":"STUDY-001","country_code":"GB","city":"Manchester","patients_on_treatment":9,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-03","study_id":"STUDY-001","country_code":"GB","city":"Glasgow","patients_on_treatment":7,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-04","study_id":"STUDY-004","country_code":"GB","city":"Birmingham","patients_on_treatment":22,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-05","study_id":"STUDY-004","country_code":"GB","city":"Leeds","patients_on_treatment":17,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-06","study_id":"STUDY-005","country_code":"GB","city":"Cambridge","patients_on_treatment":6,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-07","study_id":"STUDY-006","country_code":"GB","city":"Bristol","patients_on_treatment":40,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-08","study_id":"STUDY-007","country_code":"GB","city":"Edinburgh","patients_on_treatment":25,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-09","study_id":"STUDY-008","country_code":"GB","city":"Newcastle","patients_on_treatment":31,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-10","study_id":"STUDY-009","country_code":"GB","city":"Oxford","patients_on_treatment":19,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-11","study_id":"STUDY-018","country_code":"GB","city":"Cardiff","patients_on_treatment":0,"source_ref":"SRC-CTMS"},{"id":"SITE-DE-01","study_id":"STUDY-002","country_code":"DE","city":"Berlin","patients_on_treatment":12,"source_ref":"SRC-CTMS"},{"id":"SITE-DE-02","study_id":"STUDY-004","country_code":"DE","city":"Munich","patients_on_treatment":20,"source_ref":"SRC-CTMS"},{"id":"SITE-PL-01","study_id":"STUDY-004","country_code":"PL","city":"Warsaw","patients_on_treatment":15,"source_ref":"SRC-CTMS"},{"id":"SITE-ES-01","study_id":"STUDY-004","country_code":"ES","city":"Madrid","patients_on_treatment":11,"source_ref":"SRC-CTMS"},{"id":"SITE-FR-01","study_id":"STUDY-005","country_code":"FR","city":"Lyon","patients_on_treatment":5,"source_ref":"SRC-CTMS"},{"id":"SITE-IT-01","study_id":"STUDY-005","country_code":"IT","city":"Milan","patients_on_treatment":4,"source_ref":"SRC-CTMS"},{"id":"SITE-NL-01","study_id":"STUDY-006","country_code":"NL","city":"Utrecht","patients_on_treatment":35,"source_ref":"SRC-CTMS"},{"id":"SITE-IE-01","study_id":"STUDY-007","country_code":"IE","city":"Dublin","patients_on_treatment":13,"source_ref":"SRC-CTMS"},{"id":"SITE-US-01","study_id":"STUDY-008","country_code":"US","city":"Boston","patients_on_treatment":44,"source_ref":"SRC-CTMS"},{"id":"SITE-CA-01","study_id":"STUDY-008","country_code":"CA","city":"Toronto","patients_on_treatment":18,"source_ref":"SRC-CTMS"},{"id":"SITE-DE-03","study_id":"STUDY-009","country_code":"DE","city":"Hamburg","patients_on_treatment":16,"source_ref":"SRC-CTMS"},{"id":"SITE-US-02","study_id":"STUDY-010","country_code":"US","city":"Houston","patients_on_treatment":12,"source_ref":"SRC-CTMS"},{"id":"SITE-JP-01","study_id":"STUDY-011","country_code":"JP","city":"Osaka","patients_on_treatment":10,"source_ref":"SRC-CTMS"},{"id":"SITE-DE-04","study_id":"STUDY-012","country_code":"DE","city":"Frankfurt","patients_on_treatment":21,"source_ref":"SRC-CTMS"},{"id":"SITE-ES-02","study_id":"STUDY-013","country_code":"ES","city":"Seville","patients_on_treatment":14,"source_ref":"SRC-CTMS"},{"id":"SITE-SE-01","study_id":"STUDY-014","country_code":"SE","city":"Gothenburg","patients_on_treatment":27,"source_ref":"SRC-CTMS"},{"id":"SITE-US-03","study_id":"STUDY-015","country_code":"US","city":"Chicago","patients_on_treatment":33,"source_ref":"SRC-CTMS"},{"id":"SITE-FR-02","study_id":"STUDY-016","country_code":"FR","city":"Lille","patients_on_treatment":8,"source_ref":"SRC-CTMS"},{"id":"SITE-AU-01","study_id":"STUDY-017","country_code":"AU","city":"Melbourne","patients_on_treatment":16,"source_ref":"SRC-CTMS"}],"products":[{"id":"IMP-001","study_id":"STUDY-001","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-002","study_id":"STUDY-002","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-003","study_id":"STUDY-003","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-004","study_id":"STUDY-004","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-005","study_id":"STUDY-005","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-006","study_id":"STUDY-006","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-007","study_id":"STUDY-007","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-008","study_id":"STUDY-008","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-009","study_id":"STUDY-009","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-010","study_id":"STUDY-010","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-011","study_id":"STUDY-011","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-012","study_id":"STUDY-012","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-013","study_id":"STUDY-013","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-014","study_id":"STUDY-014","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-015","study_id":"STUDY-015","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-016","study_id":"STUDY-016","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-017","study_id":"STUDY-017","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-018","study_id":"STUDY-018","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"}],"label_specs":[{"id":"IMP-001-UK-v1","product_id":"IMP-001","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-001-UK-v2","product_id":"IMP-001","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-002-UK-v1","product_id":"IMP-002","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-002-UK-v2","product_id":"IMP-002","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-003-UK-v1","product_id":"IMP-003","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-003-UK-v2","product_id":"IMP-003","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-004-UK-v1","product_id":"IMP-004","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-004-UK-v2","product_id":"IMP-004","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-005-UK-v1","product_id":"IMP-005","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-005-UK-v2","product_id":"IMP-005","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-006-UK-v1","product_id":"IMP-006","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-006-UK-v2","product_id":"IMP-006","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-007-UK-v1","product_id":"IMP-007","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-007-UK-v2","product_id":"IMP-007","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-008-UK-v1","product_id":"IMP-008","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-008-UK-v2","product_id":"IMP-008","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-009-UK-v1","product_id":"IMP-009","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-009-UK-v2","product_id":"IMP-009","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-010-UK-v1","product_id":"IMP-010","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-010-UK-v2","product_id":"IMP-010","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-011-UK-v1","product_id":"IMP-011","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-011-UK-v2","product_id":"IMP-011","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-012-UK-v1","product_id":"IMP-012","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-012-UK-v2","product_id":"IMP-012","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-013-UK-v1","product_id":"IMP-013","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-013-UK-v2","product_id":"IMP-013","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-014-UK-v1","product_id":"IMP-014","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-014-UK-v2","product_id":"IMP-014","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-015-UK-v1","product_id":"IMP-015","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-015-UK-v2","product_id":"IMP-015","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-016-UK-v1","product_id":"IMP-016","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-016-UK-v2","product_id":"IMP-016","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-017-UK-v1","product_id":"IMP-017","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-017-UK-v2","product_id":"IMP-017","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-018-UK-v1","product_id":"IMP-018","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-018-UK-v2","product_id":"IMP-018","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"}],"batches":[{"id":"A-101","study_id":"STUDY-001","study_country_id":"STUDY-001-GB","product_id":"IMP-001","label_spec_id":"IMP-001-UK-v1","physical_manufacture_date":"2026-04-10","finished_imp_qp_certification_date":"2026-04-20","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"B-102","study_id":"STUDY-003","study_country_id":"STUDY-003-GB","product_id":"IMP-003","label_spec_id":"IMP-003-UK-v1","physical_manufacture_date":"2026-04-20","finished_imp_qp_certification_date":"2026-05-05","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"C-103","study_id":"STUDY-003","study_country_id":"STUDY-003-GB","product_id":"IMP-003","label_spec_id":"IMP-003-UK-v2","physical_manufacture_date":"2026-04-24","finished_imp_qp_certification_date":"2026-05-05","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"D-104","study_id":"STUDY-001","study_country_id":"STUDY-001-GB","product_id":"IMP-001","label_spec_id":"IMP-001-UK-v1","physical_manufacture_date":"2026-05-12","finished_imp_qp_certification_date":null,"intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"E-105","study_id":"STUDY-002","study_country_id":"STUDY-002-DE","product_id":"IMP-002","label_spec_id":null,"physical_manufacture_date":"2026-04-22","finished_imp_qp_certification_date":"2026-05-05","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"F-106","study_id":"STUDY-003","study_country_id":"STUDY-003-GB","product_id":"IMP-003","label_spec_id":"IMP-003-UK-v1","physical_manufacture_date":"2026-04-15","finished_imp_qp_certification_date":"2026-04-28","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"G-107","study_id":"STUDY-001","study_country_id":"STUDY-001-GB","product_id":"IMP-001","label_spec_id":"IMP-001-UK-v1","physical_manufacture_date":"2026-05-29","finished_imp_qp_certification_date":"2026-06-10","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"H-108","study_id":"STUDY-001","study_country_id":"STUDY-001-GB","product_id":"IMP-001","label_spec_id":"IMP-001-UK-v2","physical_manufacture_date":"2026-08-20","finished_imp_qp_certification_date":"2026-09-02","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"J-201","study_id":"STUDY-004","study_country_id":"STUDY-004-GB","product_id":"IMP-004","label_spec_id":"IMP-004-UK-v1","physical_manufacture_date":"2026-03-18","finished_imp_qp_certification_date":"2026-03-30","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"J-202","study_id":"STUDY-004","study_country_id":"STUDY-004-GB","product_id":"IMP-004","label_spec_id":"IMP-004-UK-v1","physical_manufacture_date":"2026-07-01","finished_imp_qp_certification_date":"2026-07-14","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"J-203","study_id":"STUDY-004","study_country_id":"STUDY-004-GB","product_id":"IMP-004","label_spec_id":"IMP-004-UK-v2","physical_manufacture_date":"2026-09-17","finished_imp_qp_certification_date":"2026-10-01","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"J-204","study_id":"STUDY-004","study_country_id":"STUDY-004-DE","product_id":"IMP-004","label_spec_id":null,"physical_manufacture_date":"2026-07-01","finished_imp_qp_certification_date":"2026-07-14","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"K-301","study_id":"STUDY-005","study_country_id":"STUDY-005-GB","product_id":"IMP-005","label_spec_id":"IMP-005-UK-v1","physical_manufacture_date":"2026-05-08","finished_imp_qp_certification_date":"2026-05-20","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"K-302","study_id":"STUDY-005","study_country_id":"STUDY-005-GB","product_id":"IMP-005","label_spec_id":"IMP-005-UK-v1","physical_manufacture_date":"2026-07-30","finished_imp_qp_certification_date":"2026-08-11","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"K-303","study_id":"STUDY-005","study_country_id":"STUDY-005-FR","product_id":"IMP-005","label_spec_id":null,"physical_manufacture_date":"2026-07-30","finished_imp_qp_certification_date":"2026-08-11","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"L-401","study_id":"STUDY-006","study_country_id":"STUDY-006-GB","product_id":"IMP-006","label_spec_id":"IMP-006-UK-v1","physical_manufacture_date":"2026-02-02","finished_imp_qp_certification_date":"2026-02-15","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"L-402","study_id":"STUDY-006","study_country_id":"STUDY-006-GB","product_id":"IMP-006","label_spec_id":"IMP-006-UK-v1","physical_manufacture_date":"2026-04-14","finished_imp_qp_certification_date":"2026-04-27","intended_trial_use_confirmed":false,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"L-403","study_id":"STUDY-006","study_country_id":"STUDY-006-GB","product_id":"IMP-006","label_spec_id":"IMP-006-UK-v2","physical_manufacture_date":"2026-06-17","finished_imp_qp_certification_date":"2026-06-30","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"M-501","study_id":"STUDY-007","study_country_id":"STUDY-007-GB","product_id":"IMP-007","label_spec_id":"IMP-007-UK-v2","physical_manufacture_date":"2026-09-04","finished_imp_qp_certification_date":"2026-09-18","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"M-502","study_id":"STUDY-007","study_country_id":"STUDY-007-GB","product_id":"IMP-007","label_spec_id":"IMP-007-UK-v2","physical_manufacture_date":"2026-10-06","finished_imp_qp_certification_date":"2026-10-20","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"N-601","study_id":"STUDY-008","study_country_id":"STUDY-008-GB","product_id":"IMP-008","label_spec_id":"IMP-008-UK-v1","physical_manufacture_date":"2026-05-14","finished_imp_qp_certification_date":"2026-05-28","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"N-602","study_id":"STUDY-008","study_country_id":"STUDY-008-GB","product_id":"IMP-008","label_spec_id":null,"physical_manufacture_date":"2026-08-11","finished_imp_qp_certification_date":"2026-08-25","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"N-603","study_id":"STUDY-008","study_country_id":"STUDY-008-US","product_id":"IMP-008","label_spec_id":null,"physical_manufacture_date":"2026-08-11","finished_imp_qp_certification_date":"2026-08-25","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"P-701","study_id":"STUDY-009","study_country_id":"STUDY-009-GB","product_id":"IMP-009","label_spec_id":"IMP-009-UK-v1","physical_manufacture_date":"2026-03-20","finished_imp_qp_certification_date":"2026-04-01","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"P-702","study_id":"STUDY-009","study_country_id":"STUDY-009-GB","product_id":"IMP-009","label_spec_id":"IMP-009-UK-v1","physical_manufacture_date":"2026-06-23","finished_imp_qp_certification_date":"2026-07-07","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-801","study_id":"STUDY-010","study_country_id":"STUDY-010-US","product_id":"IMP-010","label_spec_id":null,"physical_manufacture_date":"2026-09-01","finished_imp_qp_certification_date":"2026-09-15","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-802","study_id":"STUDY-011","study_country_id":"STUDY-011-JP","product_id":"IMP-011","label_spec_id":null,"physical_manufacture_date":"2026-08-05","finished_imp_qp_certification_date":"2026-08-19","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-803","study_id":"STUDY-012","study_country_id":"STUDY-012-DE","product_id":"IMP-012","label_spec_id":null,"physical_manufacture_date":"2026-07-20","finished_imp_qp_certification_date":"2026-08-03","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-804","study_id":"STUDY-013","study_country_id":"STUDY-013-ES","product_id":"IMP-013","label_spec_id":null,"physical_manufacture_date":"2026-06-01","finished_imp_qp_certification_date":"2026-06-15","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-805","study_id":"STUDY-014","study_country_id":"STUDY-014-SE","product_id":"IMP-014","label_spec_id":null,"physical_manufacture_date":"2026-09-09","finished_imp_qp_certification_date":"2026-09-23","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-806","study_id":"STUDY-015","study_country_id":"STUDY-015-US","product_id":"IMP-015","label_spec_id":null,"physical_manufacture_date":"2026-10-05","finished_imp_qp_certification_date":"2026-10-19","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-807","study_id":"STUDY-016","study_country_id":"STUDY-016-FR","product_id":"IMP-016","label_spec_id":null,"physical_manufacture_date":"2026-08-26","finished_imp_qp_certification_date":"2026-09-09","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-808","study_id":"STUDY-017","study_country_id":"STUDY-017-AU","product_id":"IMP-017","label_spec_id":null,"physical_manufacture_date":"2026-07-08","finished_imp_qp_certification_date":"2026-07-22","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"}],"shipments":[{"id":"SHP-01","batch_ids":["B-102"],"site_id":"SITE-GB-01","study_country_id":"STUDY-003-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-11-22","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-02","batch_ids":["D-104"],"site_id":"SITE-GB-02","study_country_id":"STUDY-001-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-11-25","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-03","batch_ids":["E-105"],"site_id":"SITE-DE-01","study_country_id":"STUDY-002-DE","destination_jurisdiction":"EU","planned_dispatch_date":"2026-11-23","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-EU-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-04","batch_ids":["J-202"],"site_id":"SITE-GB-04","study_country_id":"STUDY-004-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-11-19","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-05","batch_ids":["K-301"],"site_id":"SITE-GB-06","study_country_id":"STUDY-005-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-11-27","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-06","batch_ids":["N-601"],"site_id":"SITE-GB-09","study_country_id":"STUDY-008-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-12-02","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-07","batch_ids":["L-403"],"site_id":"SITE-GB-07","study_country_id":"STUDY-006-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-11-24","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-08","batch_ids":["P-702"],"site_id":"SITE-GB-10","study_country_id":"STUDY-009-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-12-04","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-09","batch_ids":["M-501"],"site_id":"SITE-GB-08","study_country_id":"STUDY-007-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-12-08","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-10","batch_ids":["J-204"],"site_id":"SITE-DE-02","study_country_id":"STUDY-004-DE","destination_jurisdiction":"EU","planned_dispatch_date":"2026-11-26","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-EU-01","source_ref":"SRC-SUPPLY"}],"partners":[{"id":"PARTNER-PACKAGING-01","role":"packaging_and_labeling"},{"id":"PARTNER-LOGISTICS-UK-01","role":"logistics_uk"},{"id":"PARTNER-LOGISTICS-EU-01","role":"logistics_eu"}],"regulatory_case":{"id":"RC-UK-001","jurisdiction":"UK","requirement_record_id":"GB/IMP_LABELING","effective_date":"2026-04-28","rule_event":"finished_imp_qp_certification_date","evidence_source_ids":["reg46-before","reg46-after","sch14-para6","mhra-labelling-transition"]},"source_records":[{"id":"SRC-CTMS","source_system":"CTMS demo","record_version":"1","observed_at":"2026-11-14T09:00:00Z"},{"id":"SRC-SUPPLY","source_system":"Clinical supply demo","record_version":"1","observed_at":"2026-11-14T09:00:00Z"}]}</script>
-<script id="spain-data" type="application/json">{"schema_version":1,"note":"FICTIONAL demo scenario. The information note, the authority, the trial, the sites, the companies and the people are invented for the RegChain demo. None of it is a real rule or a real record.","case":{"id":"RC-ES-001","requirement":"ES/IMP_SHIPPING_DOCUMENTS","effective":"2027-03-01","transitionDeliveredBy":"2027-03-08","noticeBusinessDays":3,"preparedAt":"2026-11-10T09:44:00Z","policy":"From 1 Mar 2027, every IMP shipment to a trial site in Spain carries a delivery note in Spanish with the EU trial number, the hospital pharmacy code and each batch number, and the hospital pharmacy gets an electronic notice at least 3 business days before delivery.","instruction":"For each shipment to a Spanish site dispatched from 1 Mar 2027, or delivered after 8 Mar 2027, print the Spanish delivery note at the depot and send the hospital pharmacy notice 3 business days before delivery. Complete the missing hospital pharmacy codes before the first affected shipment.","conditions":["Applies to IMP shipments to clinical trial sites in Spain.","Shipments dispatched before 1 Mar 2027 and delivered by 8 Mar 2027 can follow the earlier procedure.","Labeling requirements do not change."],"sectionEdits":[{"section":"invoice","replaces":"Delivery note in English or Spanish with the trial number and kit numbers.","text":"From 1 Mar 2027: a delivery note in Spanish with the EU trial number, the hospital pharmacy code and the batch number of each product."},{"section":"logistics","replaces":"","text":"From 1 Mar 2027: send the hospital pharmacy an electronic notice at least 3 business days before delivery. Shipments without the notice or the Spanish delivery note are refused and returned."},{"section":"contacts","replaces":"","text":"From 1 Mar 2027: keep the hospital pharmacy code of every Spanish site. It must be on each delivery note."}],"evidence":[{"id":"EV-ES-01","point":"Point 1","excerpt":"cada envío de medicamentos en investigación a un centro de ensayo clínico en España deberá ir acompañado de un albarán de entrega redactado en español"},{"id":"EV-ES-02","point":"Point 3","excerpt":"con una antelación mínima de tres días hábiles respecto a la fecha prevista de entrega"},{"id":"EV-ES-03","point":"Point 5","excerpt":"Los envíos despachados antes del 1 de marzo de 2027 y entregados a más tardar el 8 de marzo de 2027 podrán seguir el procedimiento anterior"}]},"notice":{"id":"es-notice","title":"Nota informativa 12/2026 (escenario ilustrativo)","titleEn":"Information note 12/2026 (illustrative scenario)","authority":"Autoridad nacional de medicamentos (escenario ilustrativo)","published":"2026-11-10","effective":"2027-03-01","language":"es","text":"Nota informativa 12/2026 (escenario ilustrativo)\nDocumentación que debe acompañar a los envíos de medicamentos en investigación a los centros de ensayos clínicos en España\n1. A partir del 1 de marzo de 2027, cada envío de medicamentos en investigación a un centro de ensayo clínico en España deberá ir acompañado de un albarán de entrega redactado en español.\n2. El albarán de entrega indicará el número de ensayo clínico de la UE, el código del servicio de farmacia del hospital receptor y el número de lote de cada medicamento incluido en el envío.\n3. El promotor enviará al servicio de farmacia del hospital receptor un aviso electrónico de cada envío con una antelación mínima de tres días hábiles respecto a la fecha prevista de entrega.\n4. El servicio de farmacia rechazará los envíos que no cumplan los requisitos de los puntos 1 a 3, y los medicamentos rechazados se devolverán al remitente.\n5. Los envíos despachados antes del 1 de marzo de 2027 y entregados a más tardar el 8 de marzo de 2027 podrán seguir el procedimiento anterior.\n6. Esta nota no modifica los requisitos de etiquetado de los medicamentos en investigación.\nEscenario ilustrativo: esta nota no procede de ninguna autoridad real."},"trial":{"id":"CTP-7842-201","title":"Phase III study of XZ-417 in rheumatology","product":"XZ-417 50 mg film-coated tablets","phase":"III","countries":["DE","ES","IT","PL"],"plannedSites":64,"plannedPatients":480,"firstPatientIn":"2027-02-15","depot":"Central EU depot, Belgium","standardLeadBusinessDays":5,"expeditedLeadBusinessDays":2,"labelSpec":{"id":"XZ417-BKL-v1","type":"Multilingual booklet label","languages":["de","es","it","pl","en"]},"batches":[{"id":"XZ417-26A","qp":"2027-01-12"},{"id":"XZ417-26B","qp":"2027-02-15"},{"id":"XZ417-26C","qp":null}],"sites":[{"id":"ES-01","city":"Madrid","hospital":"Hospital pharmacy, site ES-01","pharmacyCode":"FH-28-0101","plannedPatients":12},{"id":"ES-02","city":"Madrid","hospital":"Hospital pharmacy, site ES-02","pharmacyCode":"FH-28-0207","plannedPatients":10},{"id":"ES-03","city":"Barcelona","hospital":"Hospital pharmacy, site ES-03","pharmacyCode":"FH-08-0112","plannedPatients":12},{"id":"ES-04","city":"Barcelona","hospital":"Hospital pharmacy, site ES-04","pharmacyCode":"FH-08-0315","plannedPatients":8},{"id":"ES-05","city":"Valencia","hospital":"Hospital pharmacy, site ES-05","pharmacyCode":"FH-46-0104","plannedPatients":9},{"id":"ES-06","city":"Sevilla","hospital":"Hospital pharmacy, site ES-06","pharmacyCode":null,"plannedPatients":8},{"id":"ES-07","city":"Bilbao","hospital":"Hospital pharmacy, site ES-07","pharmacyCode":"FH-48-0109","plannedPatients":7},{"id":"ES-08","city":"Málaga","hospital":"Hospital pharmacy, site ES-08","pharmacyCode":null,"plannedPatients":6}],"shipments":[{"id":"SHP-ES-01","batch":"XZ417-26A","carrier":"EU logistics partner","site":"ES-01","kind":"Initial site supply","dispatch":"2027-02-01","delivery":"2027-02-03","kits":12},{"id":"SHP-ES-02","batch":"XZ417-26A","carrier":"EU logistics partner","site":"ES-03","kind":"Initial site supply","dispatch":"2027-02-02","delivery":"2027-02-04","kits":12},{"id":"SHP-ES-03","batch":"XZ417-26A","carrier":"EU logistics partner","site":"ES-05","kind":"Initial site supply","dispatch":"2027-02-08","delivery":"2027-02-10","kits":12},{"id":"SHP-ES-04","batch":"XZ417-26A","carrier":"EU logistics partner","site":"ES-02","kind":"Initial site supply","dispatch":"2027-02-15","delivery":"2027-02-17","kits":12},{"id":"SHP-ES-05","batch":"XZ417-26B","carrier":"EU logistics partner","site":"ES-04","kind":"Initial site supply, held for the site initiation visit","dispatch":"2027-02-26","delivery":"2027-03-09","kits":12},{"id":"SHP-ES-06","batch":"XZ417-26B","carrier":"EU logistics partner","site":"ES-07","kind":"Initial site supply","dispatch":"2027-03-01","delivery":"2027-03-03","kits":12},{"id":"SHP-ES-07","batch":"XZ417-26B","carrier":"EU logistics partner","site":"ES-01","kind":"Resupply forecast","dispatch":"2027-03-04","delivery":"2027-03-08","kits":6},{"id":"SHP-ES-08","batch":"XZ417-26B","carrier":"EU logistics partner","site":"ES-06","kind":"Initial site supply","dispatch":"2027-03-08","delivery":"2027-03-10","kits":12},{"id":"SHP-ES-09","batch":"XZ417-26C","carrier":"EU logistics partner","site":"ES-03","kind":"Resupply forecast","dispatch":"2027-03-15","delivery":"2027-03-17","kits":6},{"id":"SHP-ES-10","batch":"XZ417-26C","carrier":"EU logistics partner","site":"ES-08","kind":"Initial site supply","dispatch":"2027-03-22","delivery":"2027-03-24","kits":12}]},"specification":{"version":4,"published":"2026-10-05","next":"2027-01-20","owner":"C. Ruiz, Regulatory Affairs Spain","sections":{"regulatory":{"owner":"C. Ruiz, Regulatory Affairs Spain","checked":"2026-10-05","review":"2027-04-05","sources":["annex","qa"],"change":"eu","notes":["eu-pack"],"items":["Label under Annex VI of Regulation (EU) 536/2014. The expiry date may be left off the immediate pack when the outer pack stays with it, or for blisters and small units (B.6.2 and B.6.3).","Label language: Spanish (company standard; Article 69 lets each Member State set it)."]},"import":{"owner":"D. Ortega, Trade Compliance EU","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["Supply comes from the central depot in Belgium, within the EU.","Each shipment travels with the QP release documentation of its batches."]},"invoice":{"owner":"D. Ortega, Trade Compliance EU","checked":"2026-10-05","review":"2027-01-20","sources":["es-notice"],"case":"es","items":["Pro-forma invoice: “No commercial value. Value for customs purposes only.”","Delivery note in English or Spanish with the trial number and kit numbers."]},"logistics":{"owner":"M. Silva, Clinical Supply Logistics EU","checked":"2026-10-05","review":"2027-01-20","sources":["es-notice"],"case":"es","items":["Prepare each shipment 5 business days before dispatch, or 2 when expedited.","Road transport from the central depot in Belgium at 15–25 °C with a temperature monitor.","Hospital pharmacies receive deliveries on working days only."]},"carriers":{"owner":"M. Silva, Clinical Supply Logistics EU","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["EU logistics partner: road shipments from the central depot to sites."]},"ior":{"owner":"D. Ortega, Trade Compliance EU","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["Consignee: the hospital pharmacy of each trial site."]},"contacts":{"owner":"Local affiliate, Spain","checked":"2026-10-05","review":"2027-01-20","sources":[],"case":"es","items":["Hospital pharmacy contact for each site, kept in the site file."]},"notes":{"owner":"C. Ruiz, Regulatory Affairs Spain","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["Check regional public holidays: hospital pharmacies do not receive deliveries on them."]}}}}</script>
+<script id="spain-data" type="application/json">{"schema_version":1,"note":"FICTIONAL demo scenario. The information note, the authority, the trial, the sites, the companies and the people are invented for the RegChain demo. None of it is a real rule or a real record.","case":{"id":"RC-ES-001","requirement":"ES/IMP_SHIPPING_DOCUMENTS","effective":"2027-03-01","transitionDeliveredBy":"2027-03-08","noticeBusinessDays":3,"preparedAt":"2026-11-10T09:44:00Z","policy":"From 1 Mar 2027, every IMP shipment to a trial site in Spain carries a delivery note in Spanish with the EU trial number, the hospital pharmacy code and each batch number, and the hospital pharmacy gets an electronic notice at least 3 business days before delivery.","instruction":"For each shipment to a Spanish site dispatched from 1 Mar 2027, or delivered after 8 Mar 2027, print the Spanish delivery note at the depot and send the hospital pharmacy notice 3 business days before delivery. Complete the missing hospital pharmacy codes before the first affected shipment.","conditions":["Applies to IMP shipments to clinical trial sites in Spain.","Shipments dispatched before 1 Mar 2027 and delivered by 8 Mar 2027 can follow the earlier procedure.","Labeling requirements do not change."],"sectionEdits":[{"section":"invoice","replaces":"Delivery note in English or Spanish with the trial number and kit numbers.","text":"From 1 Mar 2027: a delivery note in Spanish with the EU trial number, the hospital pharmacy code and the batch number of each product."},{"section":"logistics","replaces":"","text":"From 1 Mar 2027: send the hospital pharmacy an electronic notice at least 3 business days before delivery. Shipments without the notice or the Spanish delivery note are refused and returned."},{"section":"contacts","replaces":"","text":"From 1 Mar 2027: keep the hospital pharmacy code of every Spanish site. It must be on each delivery note."}],"evidence":[{"id":"EV-ES-01","point":"Point 1","excerpt":"cada envío de medicamentos en investigación a un centro de ensayo clínico en España deberá ir acompañado de un albarán de entrega redactado en español"},{"id":"EV-ES-02","point":"Point 3","excerpt":"con una antelación mínima de tres días hábiles respecto a la fecha prevista de entrega"},{"id":"EV-ES-03","point":"Point 5","excerpt":"Los envíos despachados antes del 1 de marzo de 2027 y entregados a más tardar el 8 de marzo de 2027 podrán seguir el procedimiento anterior"}]},"notice":{"id":"es-notice","title":"Nota informativa 12/2026 (escenario ilustrativo)","titleEn":"Information note 12/2026 (illustrative scenario)","authority":"Autoridad nacional de medicamentos (escenario ilustrativo)","published":"2026-11-10","effective":"2027-03-01","language":"es","text":"Nota informativa 12/2026 (escenario ilustrativo)\nDocumentación que debe acompañar a los envíos de medicamentos en investigación a los centros de ensayos clínicos en España\n1. A partir del 1 de marzo de 2027, cada envío de medicamentos en investigación a un centro de ensayo clínico en España deberá ir acompañado de un albarán de entrega redactado en español.\n2. El albarán de entrega indicará el número de ensayo clínico de la UE, el código del servicio de farmacia del hospital receptor y el número de lote de cada medicamento incluido en el envío.\n3. El promotor enviará al servicio de farmacia del hospital receptor un aviso electrónico de cada envío con una antelación mínima de tres días hábiles respecto a la fecha prevista de entrega.\n4. El servicio de farmacia rechazará los envíos que no cumplan los requisitos de los puntos 1 a 3, y los medicamentos rechazados se devolverán al remitente.\n5. Los envíos despachados antes del 1 de marzo de 2027 y entregados a más tardar el 8 de marzo de 2027 podrán seguir el procedimiento anterior.\n6. Esta nota no modifica los requisitos de etiquetado de los medicamentos en investigación.\nEscenario ilustrativo: esta nota no procede de ninguna autoridad real."},"trial":{"id":"CTP-7842-201","title":"Phase III study of XZ-417 in rheumatology","product":"XZ-417 50 mg film-coated tablets","phase":"III","countries":["DE","ES","IT","PL"],"plannedSites":64,"plannedPatients":480,"firstPatientIn":"2027-02-15","depot":"Central EU depot, Belgium","standardLeadBusinessDays":5,"expeditedLeadBusinessDays":2,"labelSpec":{"id":"XZ417-BKL-v1","type":"Multilingual booklet label","languages":["de","es","it","pl","en"]},"batches":[{"id":"XZ417-26A","qp":"2026-11-02"},{"id":"XZ417-26B","qp":"2027-02-15"},{"id":"XZ417-26C","qp":null}],"sites":[{"id":"ES-01","city":"Madrid","hospital":"Hospital pharmacy, site ES-01","pharmacyCode":"FH-28-0101","plannedPatients":12},{"id":"ES-02","city":"Madrid","hospital":"Hospital pharmacy, site ES-02","pharmacyCode":"FH-28-0207","plannedPatients":10},{"id":"ES-03","city":"Barcelona","hospital":"Hospital pharmacy, site ES-03","pharmacyCode":"FH-08-0112","plannedPatients":12},{"id":"ES-04","city":"Barcelona","hospital":"Hospital pharmacy, site ES-04","pharmacyCode":"FH-08-0315","plannedPatients":8},{"id":"ES-05","city":"Valencia","hospital":"Hospital pharmacy, site ES-05","pharmacyCode":"FH-46-0104","plannedPatients":9},{"id":"ES-06","city":"Sevilla","hospital":"Hospital pharmacy, site ES-06","pharmacyCode":null,"plannedPatients":8},{"id":"ES-07","city":"Bilbao","hospital":"Hospital pharmacy, site ES-07","pharmacyCode":"FH-48-0109","plannedPatients":7},{"id":"ES-08","city":"Málaga","hospital":"Hospital pharmacy, site ES-08","pharmacyCode":null,"plannedPatients":6}],"shipments":[{"id":"SHP-ES-01","batch":"XZ417-26A","carrier":"EU logistics partner","site":"ES-01","kind":"Initial site supply","dispatch":"2027-02-01","delivery":"2027-02-03","kits":12},{"id":"SHP-ES-02","batch":"XZ417-26A","carrier":"EU logistics partner","site":"ES-03","kind":"Initial site supply","dispatch":"2027-02-02","delivery":"2027-02-04","kits":12},{"id":"SHP-ES-03","batch":"XZ417-26A","carrier":"EU logistics partner","site":"ES-05","kind":"Initial site supply","dispatch":"2027-02-08","delivery":"2027-02-10","kits":12},{"id":"SHP-ES-04","batch":"XZ417-26A","carrier":"EU logistics partner","site":"ES-02","kind":"Initial site supply","dispatch":"2027-02-15","delivery":"2027-02-17","kits":12},{"id":"SHP-ES-05","batch":"XZ417-26B","carrier":"EU logistics partner","site":"ES-04","kind":"Initial site supply, held for the site initiation visit","dispatch":"2027-02-26","delivery":"2027-03-09","kits":12},{"id":"SHP-ES-06","batch":"XZ417-26B","carrier":"EU logistics partner","site":"ES-07","kind":"Initial site supply","dispatch":"2027-03-01","delivery":"2027-03-03","kits":12},{"id":"SHP-ES-07","batch":"XZ417-26B","carrier":"EU logistics partner","site":"ES-01","kind":"Resupply forecast","dispatch":"2027-03-04","delivery":"2027-03-08","kits":6},{"id":"SHP-ES-08","batch":"XZ417-26B","carrier":"EU logistics partner","site":"ES-06","kind":"Initial site supply","dispatch":"2027-03-08","delivery":"2027-03-10","kits":12},{"id":"SHP-ES-09","batch":"XZ417-26C","carrier":"EU logistics partner","site":"ES-03","kind":"Resupply forecast","dispatch":"2027-03-15","delivery":"2027-03-17","kits":6},{"id":"SHP-ES-10","batch":"XZ417-26C","carrier":"EU logistics partner","site":"ES-08","kind":"Initial site supply","dispatch":"2027-03-22","delivery":"2027-03-24","kits":12}]},"specification":{"version":4,"published":"2026-10-05","next":"2027-01-20","owner":"C. Ruiz, Regulatory Affairs Spain","sections":{"regulatory":{"owner":"C. Ruiz, Regulatory Affairs Spain","checked":"2026-10-05","review":"2027-04-05","sources":["annex","qa"],"change":"eu","notes":["eu-pack"],"items":["Label under Annex VI of Regulation (EU) 536/2014. The expiry date may be left off the immediate pack when the outer pack stays with it, or for blisters and small units (B.6.2 and B.6.3).","Label language: Spanish (company standard; Article 69 lets each Member State set it)."]},"import":{"owner":"D. Ortega, Trade Compliance EU","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["Supply comes from the central depot in Belgium, within the EU.","Each shipment travels with the QP release documentation of its batches."]},"invoice":{"owner":"D. Ortega, Trade Compliance EU","checked":"2026-10-05","review":"2027-01-20","sources":["es-notice"],"case":"es","items":["Pro-forma invoice: “No commercial value. Value for customs purposes only.”","Delivery note in English or Spanish with the trial number and kit numbers."]},"logistics":{"owner":"M. Silva, Clinical Supply Logistics EU","checked":"2026-10-05","review":"2027-01-20","sources":["es-notice"],"case":"es","items":["Prepare each shipment 5 business days before dispatch, or 2 when expedited.","Road transport from the central depot in Belgium at 15–25 °C with a temperature monitor.","Hospital pharmacies receive deliveries on working days only."]},"carriers":{"owner":"M. Silva, Clinical Supply Logistics EU","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["EU logistics partner: road shipments from the central depot to sites."]},"ior":{"owner":"D. Ortega, Trade Compliance EU","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["Consignee: the hospital pharmacy of each trial site."]},"contacts":{"owner":"Local affiliate, Spain","checked":"2026-10-05","review":"2027-01-20","sources":[],"case":"es","items":["Hospital pharmacy contact for each site, kept in the site file."]},"notes":{"owner":"C. Ruiz, Regulatory Affairs Spain","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["Check regional public holidays: hospital pharmacies do not receive deliveries on them."]}}}}</script>
 <script id="specifications-data" type="application/json">{"schema_version":1,"note":"FICTIONAL Country Specifications, shaped like real ones. Regulatory lines paraphrase official sources checked on 14 Nov 2026; company details and people are invented.","countries":{"uk":{"version":12,"published":"2026-09-09","next":"2026-12-09","owner":"A. Novak, Regulatory Affairs UK","sections":{"regulatory":{"owner":"A. Novak, Regulatory Affairs UK","checked":"2026-02-02","review":"2026-05-02","sources":["statute","transition"],"case":"uk","notes":["uk-label","uk-transition"],"items":["Label IMPs under Part 7 as it stood before the 2025 amendment: regulation 46 applies Article 15 of Directive 2003/94/EC.","Each trial needs MHRA authorisation and a favourable ethics opinion before IMP is released to sites.","Label language: English (company standard)."]},"import":{"owner":"M. Okafor, Trade Compliance UK","checked":"2026-06-03","review":"2026-09-03","sources":["imports","list"],"change":"import","notes":["gb-import"],"items":["From approved countries (initially the EU and EEA): the QP of a UK MIA(IMP) holder checks each batch's QP certification before release to the trial. The batch is not certified again.","From any other country: import and QP certification by the UK MIA(IMP) holder.","Each shipment travels with a commercial invoice and the batch's QP certification evidence."]},"permits":{"owner":"A. Novak, Regulatory Affairs UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["MHRA clinical trial authorisation for each trial, tracked in the trial system.","The UK depot holds the UK MIA(IMP) used for import oversight. Licence copy filed in the quality system.","Controlled drugs need a Home Office import licence for each shipment."]},"controlled":{"owner":"A. Novak, Regulatory Affairs UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["No IMP in our active UK trials is a controlled drug.","Check every new IMP against the schedules of the Misuse of Drugs Regulations 2001 before its first UK shipment."]},"invoice":{"owner":"M. Okafor, Trade Compliance UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["“No commercial value. Value for customs purposes only.”","“Investigational medicinal product for clinical trial use only.”","The trial reference and the UK importer of record on every invoice."]},"ports":{"owner":"S. Hughes, Clinical Supply Logistics UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["Air: London Heathrow (LHR), for shipments from outside Europe.","Road: Dover, for shipments from the EU depot."]},"logistics":{"owner":"S. Hughes, Clinical Supply Logistics UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["Prepare each shipment 5 calendar days before dispatch.","2–8 °C products: validated shipper, transit under 72 hours.","The depot dispatches and receives on working days only."]},"carriers":{"owner":"S. Hughes, Clinical Supply Logistics UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["UK logistics partner: deliveries from the UK depot to sites.","EU logistics partner: shipments from the EU depot to the UK."]},"ior":{"owner":"M. Okafor, Trade Compliance UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["Importer of record: the UK affiliate.","Consignee: the UK depot, the UK MIA(IMP) holder."]},"contacts":{"owner":"Local affiliate, UK","checked":"2026-06-03","review":"2026-09-03","sources":[],"items":["Clinical supply lead: R. Evans","Depot QP: K. Shah","Customs broker: contracted UK customs broker"]},"notes":{"owner":"A. Novak, Regulatory Affairs UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["Allow two extra working days for customs clearance in December."]}}},"de":{"version":8,"published":"2026-10-01","next":"2027-01-15","owner":"L. Weber, Regulatory Affairs EU","sections":{"regulatory":{"owner":"L. Weber, Regulatory Affairs EU","checked":"2026-10-01","review":"2027-04-01","sources":["annex","qa"],"change":"eu","notes":["eu-pack"],"items":["Label under Annex VI of Regulation (EU) 536/2014. The expiry date may be left off the immediate pack when the outer pack stays with it, or for blisters and small units (B.6.2 and B.6.3).","Label language: German (company standard; Article 69 lets each Member State set it)."]}}},"fr":{"version":9,"published":"2026-09-24","next":"2027-01-08","owner":"L. Weber, Regulatory Affairs EU","sections":{"regulatory":{"owner":"L. Weber, Regulatory Affairs EU","checked":"2026-09-24","review":"2027-03-24","sources":["annex","qa"],"change":"eu","notes":["eu-pack"],"items":["Label under Annex VI of Regulation (EU) 536/2014. The expiry date may be left off the immediate pack when the outer pack stays with it, or for blisters and small units (B.6.2 and B.6.3).","Label language: French (company standard; Article 69 lets each Member State set it)."]}}},"us":{"version":15,"published":"2026-08-20","next":"2026-11-20","owner":"J. Carter, Regulatory Affairs US","sections":{"regulatory":{"owner":"J. Carter, Regulatory Affairs US","checked":"2026-08-20","review":"2027-02-20","sources":[],"notes":["us-label"],"items":["Immediate package label: “Caution: New Drug—Limited by Federal (or United States) law to investigational use.” (21 CFR 312.6(a))","No label statement may be false or misleading, or present the drug as safe or effective for what is being investigated (21 CFR 312.6(b))."]},"import":{"owner":"J. Carter, Regulatory Affairs US","checked":"2026-08-20","review":"2027-02-20","sources":[],"notes":["us-import"],"items":["Import only under an IND in effect, for the investigation it covers (21 CFR 312.110).","Ship to investigators 30 days after FDA receives the IND, or earlier if FDA authorises it (21 CFR 312.40(c)).","Consignee: the sponsor, a qualified investigator named in the IND, or the US agent of a foreign sponsor named in the IND (21 CFR 312.110(a))."]}}}}}</script>
 <script id="dashboard-data">
 "use strict";
@@ -458,7 +459,7 @@ function workflowStep(state,command,role,now) {
   const governed=caseOf(state);
   const spec=countrySpecs[governed.country];
   const sectionEdits=governed.edits(state);
-  state.publication={version:spec.version+1,previousVersion:spec.version,revision:state.revision,at:now,inForce:now.slice(0,10),effective:governed.effective,policy:state.policy??governed.policy,instruction:state.draft,
+  state.publication={version:spec.version+1,previousVersion:spec.version,revision:state.revision,at:now,inForce:command.today??now.slice(0,10),effective:governed.effective,policy:state.policy??governed.policy,instruction:state.draft,
    sectionEdits,source:state.draftSource??"seed",evidenceIds:governed.evidence.map(item=>item.id)};
   const sectionList=[...new Set(sectionEdits.map(edit=>edit.section))].map(id=>specSectionNames[id]??id).join(", ");
   appendWorkflowEvent(state,"country_record.published","publisher",now,specCountryName(governed.country)+" Country Specification v"+(spec.version+1)+" · "+sectionList+" · "+governed.requirement+" · Receipt "+governed.receipt);
@@ -665,8 +666,9 @@ function shell() {
   byId("mode").innerHTML=icon("clock")+" Checked "+replayDate;
   byId("crumb").innerHTML=page==="case"?'Clinical Supply '+icon("chevron")+" <strong>Change details</strong>":
     page==="agent"?'Clinical Supply '+icon("chevron")+" Shipment checks "+icon("chevron")+" <strong>Agents</strong>":
+    page==="agents-all"?'Clinical Supply '+icon("chevron")+" Shipment checks "+icon("chevron")+" <strong>Agents · all shipments</strong>":
     'Clinical Supply '+icon("chevron")+' <strong>'+esc(navItems[page])+'</strong>';
-  byId("nav").innerHTML=Object.entries(navItems).map(([id,name])=>'<button type="button" class="nav" data-act="nav" data-value="'+id+'"'+(page===id?' aria-current="page"':(page==="case"&&id==="overview")||(page==="agent"&&id==="shipments")?' aria-current="location"':'')+'>'+icon(id)+name+'</button>').join("");
+  byId("nav").innerHTML=Object.entries(navItems).map(([id,name])=>'<button type="button" class="nav" data-act="nav" data-value="'+id+'"'+(page===id?' aria-current="page"':(page==="case"&&id==="overview")||(["agent","agents-all"].includes(page)&&id==="shipments")?' aria-current="location"':'')+'>'+icon(id)+name+'</button>').join("");
 }
 function heading(title,description,action="") {
   return '<header class="page-head"><div><h1 id="page-title" tabindex="-1">'+title+'</h1><p>'+description+'</p></div>'+action+'</header>';
@@ -1264,13 +1266,22 @@ function asOfText(day) {
  const version=countrySpecs[governed.country].version;
  const inForce=workflow.publication?(workflow.publication.inForce??workflow.publication.at.slice(0,10)):null;
  if(!day) return "Choose a date.";
- const rule=day>=governed.effective?"The new rule applies on this date. ":"The earlier rule applies on this date. ";
+ // Spain's earlier procedure also depends on the delivery date, so a dispatch date alone can't settle it.
+ const spainTransition=governed.key!=="uk"&&spain?.case.transitionDeliveredBy;
+ const rule=day>=governed.effective?"The new rule applies on this date. ":spainTransition?"The earlier procedure applies only if the shipment is delivered by "+displayDay(spainTransition)+"; delivered later, it needs the new documents. ":"The earlier rule applies on this date. ";
  if(inForce && day>=inForce) return rule+"Specification v"+(version+1)+" is in force"+(day<governed.effective?" and already describes the coming rule.":" and describes it.");
  if(day>=governed.effective) return rule+"The specification in force, v"+version+", still has the earlier text"+(inForce?" until v"+(version+1)+" came into force on "+displayDay(inForce)+".":", and no update is published yet.");
  return rule+"Specification v"+version+" describes it.";
 }
 function taskStateLabel(status) {
   return {assigned:"Assigned",acknowledged:"Acknowledged",submitted:"Evidence submitted",verified:"Verified"}[status];
+}
+// Shipments in the case's Quality task that are still blocked and have no recorded action.
+function unresolvedTaskShipments() {
+  const task=workflow.task;
+  if(!task) return [];
+  const ids=new Set([...(task.shipmentIds??[]),...(task.checkShipmentIds??[])]);
+  return plannedShipments().filter(item=>ids.has(item.id)&&item.result==="Blocked"&&!item.action).map(item=>item.id);
 }
 function workflowFollowUp() {
   const task=workflow.task;
@@ -1284,7 +1295,11 @@ function workflowFollowUp() {
       ...(task.evidence?[["Last submitted evidence",task.evidence.reference]]:[])]);
     if(task.status==="assigned"&&workflowRole==="owner") content+=actionForm("",[["ack","Acknowledge task","primary"]]);
     else if(task.status==="acknowledged"&&workflowRole==="owner") content+=actionForm(reasonField("Implementation evidence reference"),[["implement","Submit evidence","primary"]]);
-    else if(task.status==="submitted"&&workflowRole==="verifier") content+=actionForm(reasonField("Verification rationale"),[["verify","Verify & close case","primary"],["return","Return evidence"]]);
+    else if(task.status==="submitted"&&workflowRole==="verifier") {
+      const open=unresolvedTaskShipments();
+      content+=(open.length?'<p class="form-feedback">'+esc("Can't close yet: "+open.join(", ")+" "+(open.length===1?"is":"are")+" still blocked with no recorded action. Hold or swap them, or approve an agent plan, on Shipment checks.")+'</p>':"")+
+        actionForm(reasonField("Verification rationale"),open.length?[["return","Return evidence"]]:[["verify","Verify & close case","primary"],["return","Return evidence"]]);
+    }
     else if(task.status!=="verified") content+='<p>Select '+(task.status==="submitted"?"Quality verifier":"Quality action owner")+' to continue the follow-up.</p>';
   }
   return panel("Quality follow-up",task?task.id+" · Quality management system":"Awaiting publication",casePad(content),caseRoleSelect());
@@ -1504,7 +1519,7 @@ const checkStyle = {Pass:["Pass","green"],Confirm:["Confirm","amber"],Fail:["Fai
 const blocking = ["Fail","Missing","Decision"];
 const weekdayName = day => ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][new Date(day+"T00:00:00Z").getUTCDay()];
 const isWeekend = day => [0,6].includes(new Date(day+"T00:00:00Z").getUTCDay());
-const shipmentActionNames = {hold:"On hold",swap:"Batch swap requested",proceed:"Proceeding as planned"};
+const shipmentActionNames = {hold:"On hold",swap:"Batch swap requested",proceed:"Proceeding as planned",plan:"Agent plan approved",escalated:"Escalated"};
 // Where a requirement comes from: the specification in force, or a change that is still waiting for approval.
 function requirementBasis(countryId,section,caseId) {
   const spec=specFor(countryId);
@@ -1549,7 +1564,7 @@ function portfolioShipmentChecks() {
         studyCountry.authorization_cohort==="unknown"?"The trial's authorisation route (old or new rules) is not recorded.":"Authorised under the "+(studyCountry.authorization_cohort==="old_rules"?"old":"new")+" rules."));
       checks.push(check("uk","controlled","Not a controlled drug, or a Home Office import licence for this shipment","Pass","No IMP in the active UK trials is a controlled drug."));
       checks.push(preparationCheck("uk",prepareBy,"Prepared "+shipment.preparation_lead_calendar_days+" calendar days before dispatch"));
-      checks.push(check("uk","logistics","Dispatched on a working day",isWeekend(dispatch)?"Confirm":"Pass",
+      checks.push(check("uk","logistics","Dispatched on a working day",isWeekend(dispatch)?"Fail":"Pass",
         isWeekend(dispatch)?"Dispatch is planned for "+weekdayName(dispatch)+" "+displayDay(dispatch)+", but the depot dispatches on working days only.":"Dispatch on "+weekdayName(dispatch)+" "+displayDay(dispatch)+"."));
       const approved=countrySpecs.uk.sections.carriers.items.some(item=>item.startsWith(carrier));
       checks.push(check("uk","carriers","Carrier on the approved list",approved?"Pass":"Fail",carrier+(approved?" is approved.":" is not on the approved list.")));
@@ -1573,10 +1588,11 @@ function spainShipmentChecks() {
     const batch=trial.batches.find(entry=>entry.id===item.batch);
     const checks=[];
     checks.push(check("es","regulatory","The label includes Spanish",trial.labelSpec.languages.includes("es")?"Pass":"Fail",trial.labelSpec.type+" "+trial.labelSpec.id+" covers "+trial.labelSpec.languages.join(", ").toUpperCase()+"."));
-    const qpResult=!batch?.qp?"Missing":batch.qp>item.dispatch?"Fail":"Pass";
+    // A batch only planned for QP release is not yet a Pass: someone confirms the release happens.
+    const qpResult=!batch?.qp?"Missing":batch.qp>item.dispatch?"Fail":batch.qp>libraryToday?"Confirm":"Pass";
     checks.push(check("es","import","The batch's QP release documentation travels with the shipment",qpResult,
       !batch?.qp?"No QP release is planned yet for batch "+item.batch+".":batch.qp>item.dispatch?"Batch "+item.batch+" is released on "+displayDay(batch.qp)+", after dispatch.":
-      "Batch "+item.batch+(batch.qp>libraryToday?" is planned for QP release on ":" was QP released on ")+displayDay(batch.qp)+", before dispatch."));
+      "Batch "+item.batch+(batch.qp>libraryToday?" is planned for QP release on ":" was QP released on ")+displayDay(batch.qp)+(batch.qp>libraryToday?", before dispatch. Confirm the release happens.":".")));
     checks.push(check("es","invoice","From 1 Mar 2027: a delivery note in Spanish with the EU trial number, the hospital pharmacy code and the batch number",
       !item.affected?"Pass":!item.site.pharmacyCode?"Missing":"Confirm",
       !item.affected?"Not needed: dispatched before 1 Mar 2027 and delivered by 8 Mar 2027.":!item.site.pharmacyCode?item.site.hospital+" has no pharmacy code for the delivery note.":
@@ -1624,7 +1640,7 @@ function shipmentChecks() {
   const shown=all.filter(item=>(shipmentFilter==="all"||item.result===shipmentFilter)&&(shipmentCountry==="all"||item.countryId===shipmentCountry));
   const first=all.find(item=>item.result==="Blocked");
   const countryOptions=[["all","All countries"],...[...new Set(all.map(item=>item.countryId))].map(id=>[id,specCountryName(id)])];
-  return heading("Shipment checks","Every planned shipment, checked against its destination's Country Specification before it leaves the depot.")+
+  return heading("Shipment checks","Every planned shipment, checked against its destination's Country Specification before it leaves the depot.",agentServer()?'<div class="actions">'+trigger("Resolve all with agents","open-portfolio","","primary","arrow")+'</div>':"")+
     '<div class="tiles" aria-label="Shipment check summary">'+
       tile("Planned shipments",all.length,plural(new Set(all.map(item=>item.countryId)).size,"country","countries")+" · next 4 months","studies")+
       tile("Blocked",count("Blocked"),first?"First: "+first.id+", prepare by "+displayDay(first.prepareBy):"Nothing blocked","alert")+
@@ -1653,77 +1669,152 @@ function shipmentDetail(id) {
     '<section class="drawer-block"><h3>Checks against the specification</h3><ul class="practice">'+rows+'</ul></section>'+
     (action?'<section class="drawer-block"><h3>Recorded action</h3>'+factlist([["Action",shipmentActionNames[action.action]],["By",action.by],["Recorded",scheduleDate(action.at)],["Reason",action.reason]])+'</section>':"")+
     (shipment.result!=="Ready"?'<section class="drawer-block"><h3>Resolve with agents</h3><p>An orchestrator and four specialist agents read IRT, ERP, the depot and the eTMF, propose fixes, check each one against the rules and draft the changes for people to approve.</p><div class="actions">'+trigger("Resolve with agents","open-agents",shipment.id,"primary","arrow")+'</div></section>':"")+
-    '<section class="drawer-block"><div class="block-head"><h3>'+(shipment.result==="Ready"?"What to do":"Or record an action yourself")+'</h3>'+caseRoleSelect()+'</div>'+form+'</section>'+
+    '<section class="drawer-block"><div class="block-head"><h3>'+(shipment.result==="Ready"?"What to do":"Or record an action yourself")+'</h3>'+caseRoleSelect()+'</div>'+(agentApprovals[shipment.id]?'<p>'+esc("An agent plan is approved for this shipment: "+agentApprovals[shipment.id].title+", by "+agentApprovals[shipment.id].by+". Withdraw it to record a different action.")+'</p><div class="actions">'+trigger("Withdraw the approval","agent-withdraw",shipment.id)+'</div>':form)+'</section>'+
     (shipment.caseId&&isGoverned(shipment.caseId)?'<div class="actions">'+trigger("Open the "+(shipment.caseId==="uk"?"UK":"Spain")+" case","open-case",shipment.caseId,"","arrow")+'</div>':""));
 }
-// ---------- Agents: an orchestrator and specialist agents resolve a shipment through MCP ----------
-const agentApprovalsKey = "regchain-agent-approvals-v1";
-let agentApprovals = storedJson(agentApprovalsKey);
+// ---------- Agents: an orchestrator and specialist agents resolve shipments through MCP ----------
+// Approvals live on the local server, which checks each plan again before it records it, so two shipments are never
+// promised the same kits or relabelling slot. Only Clinical Supply approves supply plans.
+let agentApprovals = {};
+let agentApprovalLog = [];
 let agentShipment = null;
 let agentState = {status:null,running:false,events:[],record:null,error:"",mode:null};
+let portfolioState = {running:false,events:[],record:null,error:"",mode:null,order:[]};
 const agentProfiles = {
   orchestrator:{name:"Orchestrator",tone:"agent-orchestrator",job:"Plans, delegates, builds and ranks the options"},
   supply:{name:"Supply agent",tone:"agent-supply",job:"Stock, batches and QP plans in IRT and ERP"},
   logistics:{name:"Logistics agent",tone:"agent-logistics",job:"Relabelling, label approvals, site stock, couriers"},
   records:{name:"Records agent",tone:"agent-records",job:"Authorisations and site contacts in the eTMF"},
   communications:{name:"Communications agent",tone:"agent-comms",job:"Messages in English and the local language"},
-  verifier:{name:"RegChain verifier",tone:"agent-verifier",job:"Fixed rules, no AI: does each option pass?"}
+  verifier:{name:"RegChain verifier",tone:"agent-verifier",job:"Fixed rules, no AI: does each option pass, and is anything promised twice?"}
 };
 const afterNames = {Ready:"ready to ship",Confirm:"confirm before dispatch",Blocked:"still blocked"};
 const actionNames = {swap_batch:"Swap batch",relabel:"Relabel",delay:"Delay dispatch",record_authorisation_route:"Record the authorisation route",book_qp_release:"Book the QP release",obtain_pharmacy_code:"Obtain the pharmacy code",create_label_specification:"Create the label specification",proceed:"Proceed as planned"};
+const agentServer = () => location.protocol.startsWith("http");
+const canApprovePlans = () => workflowRole==="viewer";
 function describeAction(action) {
   const detail=action.batch_id??action.relabel_date??action.new_dispatch_date??(action.authorisation_route?action.authorisation_route.replace("_"," "):null)??action.qp_date;
   return (actionNames[action.type]??action.type)+(detail?" · "+detail:"");
 }
+async function agentPost(path,body) {
+  return aiRequest(path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+}
+// The server's approvals are the record; the shipment's recorded action follows them.
+async function loadAgentApprovals() {
+  if(!agentServer()) return;
+  try {
+    const reply=await aiRequest("/api/agent/approvals");
+    agentApprovals=reply.approvals??{};
+    agentApprovalLog=reply.log??[];
+  } catch {return;}
+  let changed=false;
+  const next={...shipmentActions};
+  for(const [id,approval] of Object.entries(agentApprovals)) {
+    const action=approval.option==="escalate"?"escalated":"plan";
+    if(next[id]?.action!==action||next[id]?.at!==approval.at) {next[id]={action,reason:(approval.option==="escalate"?"Escalated: no option passes RegChain's rules.":"Agent plan approved: "+approval.title),by:approval.by,at:approval.at};changed=true;}
+  }
+  for(const [id,action] of Object.entries(next)) if(["plan","escalated"].includes(action.action)&&!agentApprovals[id]) {delete next[id];changed=true;}
+  if(changed) {shipmentActions=next;storeJson(shipmentActionsKey,shipmentActions);}
+  if(["agent","agents-all","shipments","overview"].includes(page)) render();
+}
 async function loadAgentStatus() {
-  if(!location.protocol.startsWith("http")) return;
+  if(!agentServer()) return;
   try {agentState.status=await aiRequest("/api/agent/status");} catch(error) {agentState.error=agentState.error||"The agent systems did not answer: "+error.message;}
-  if(page==="agent") render();
+  if(["agent","agents-all"].includes(page)) render();
 }
 async function loadAgentRun(id) {
-  if(!location.protocol.startsWith("http")) return;
+  if(!agentServer()) return;
   try {
     const record=await aiRequest("/api/agent/last?shipment="+encodeURIComponent(id));
-    if(agentShipment===id && !agentState.running) agentState={...agentState,record,events:record.events,mode:record.mode,error:""};
+    if(agentShipment===id && !agentState.running) agentState={...agentState,shipment:id,record,events:record.events,mode:record.mode,error:""};
   } catch {}
   if(page==="agent") render();
+}
+async function loadPortfolioRun() {
+  if(!agentServer()) return;
+  try {
+    const record=await aiRequest("/api/agent/portfolio-last");
+    if(!portfolioState.running) portfolioState={...portfolioState,record,events:record.events,mode:record.mode,error:""};
+  } catch {}
+  if(page==="agents-all") render();
 }
 function openAgents(id) {
   if(byId("drawer").open) byId("drawer").close();
   agentShipment=id;
-  agentState={...agentState,running:false,events:[],record:null,error:"",mode:null};
+  // A run in progress belongs to its own shipment: it is never reset or shown under another one.
+  if(!agentState.running) agentState={...agentState,shipment:id,events:[],record:null,error:"",mode:null};
   navigate("agent");
   loadAgentStatus();
+  loadAgentApprovals();
   loadAgentRun(id);
 }
+function openPortfolio() {
+  if(byId("drawer").open) byId("drawer").close();
+  navigate("agents-all");
+  loadAgentStatus();
+  loadAgentApprovals();
+  loadPortfolioRun();
+}
 function startAgentRun(mode) {
-  if(agentState.running) return;
-  agentState={...agentState,running:true,events:[],record:null,error:"",mode};
+  if(agentState.running||portfolioState.running) return;
+  const shipment=agentShipment;
+  agentState={...agentState,shipment,running:true,events:[],record:null,error:"",mode};
   render();
   notify(mode==="live"?"The agents are working. This takes a minute or two.":"Running the scripted walkthrough.");
-  const source=new EventSource("/api/agent/run?shipment="+encodeURIComponent(agentShipment)+"&mode="+mode);
-  source.onmessage=event=>{agentState.events.push(JSON.parse(event.data));updateAgentTimeline();};
-  source.addEventListener("complete",event=>{source.close();agentState={...agentState,running:false,record:JSON.parse(event.data)};render();notify("The agents finished. Review the options and approve one.");});
+  const source=new EventSource("/api/agent/run?shipment="+encodeURIComponent(shipment)+"&mode="+mode);
+  source.onmessage=event=>{agentState.events.push(JSON.parse(event.data));if(page==="agent"&&agentShipment===shipment) updateAgentTimeline();};
+  source.addEventListener("complete",event=>{
+    source.close();
+    agentState={...agentState,running:false,record:JSON.parse(event.data)};
+    // If someone moved to another shipment meanwhile, show that one's own last run.
+    if(page==="agent"&&agentShipment!==shipment) {agentState={...agentState,shipment:agentShipment,events:[],record:null};loadAgentRun(agentShipment);}
+    render();
+    notify("The agents finished "+shipment+". Review the options and approve one.");
+  });
   source.addEventListener("failure",event=>{source.close();agentState={...agentState,running:false,error:JSON.parse(event.data).error};render();notify("The agent run did not start.");});
   source.onerror=()=>{if(!agentState.running) return;source.close();agentState={...agentState,running:false,error:"The connection to the agents was lost."};render();};
 }
-function agentEvent(event) {
-  const profile=agentProfiles[event.agent]??{name:event.agent,tone:""};
-  const who='<span class="agent-chip '+profile.tone+'">'+esc(profile.name)+'</span>';
-  const body={
+function startPortfolioRun(mode) {
+  if(agentState.running||portfolioState.running) return;
+  portfolioState={...portfolioState,running:true,events:[],record:null,error:"",mode,order:[]};
+  render();
+  notify(mode==="live"?"The agents are working through every shipment. This takes several minutes.":"Running the scripted walkthrough for every shipment.");
+  const source=new EventSource("/api/agent/portfolio-run?mode="+mode);
+  source.onmessage=event=>{
+    const data=JSON.parse(event.data);
+    if(data.type==="triage"&&data.order) portfolioState.order=data.order;
+    portfolioState.events.push(data);
+    updatePortfolioFeed();
+  };
+  source.addEventListener("complete",event=>{source.close();portfolioState={...portfolioState,running:false,record:JSON.parse(event.data)};render();notify("Every shipment has a plan or an escalation. Review and approve.");});
+  source.addEventListener("failure",event=>{source.close();portfolioState={...portfolioState,running:false,error:JSON.parse(event.data).error};render();notify("The run did not start.");});
+  source.onerror=()=>{if(!portfolioState.running) return;source.close();portfolioState={...portfolioState,running:false,error:"The connection to the agents was lost."};render();};
+}
+const clip = (text,size) => {text=String(text??"");return text.length>size?text.slice(0,size-1)+"…":text;};
+function eventBody(event) {
+  return {
     goal:'<strong>Goal:</strong> '+esc(event.text),
-    message:esc(event.text),
+    message:esc(clip(event.text,900)),
+    triage:'<strong>Triage:</strong> '+esc(event.text),
     delegate:'asks the <strong>'+esc(agentProfiles[event.to]?.name??event.to)+'</strong>: '+esc(event.text),
+    delegate_shipment:'starts the agent team on '+esc(event.text),
+    shipment_done:esc(event.text),
     tool_call:'calls <span class="system-chip">'+esc(event.system)+'</span> <code>'+esc(event.tool)+'</code> <span class="muted">'+esc(JSON.stringify(event.input))+'</span>',
-    tool_result:'<span class="muted">'+esc(event.system)+' answered: '+esc(event.text)+'</span>',
-    report:'reports back: '+esc(event.text),
+    tool_result:'<span class="muted">'+esc(event.system)+' answered: '+esc(clip(event.text,420))+'</span>',
+    report:'reports back: '+esc(clip(event.text,900)),
     draft:'created a draft: '+esc(event.text),
     verified:'<strong>Checked every option against the rules:</strong> '+esc(event.text),
+    allocation:'<strong>Re-planned:</strong> '+esc(event.text),
+    warning:'<strong class="warning-text">Check failed:</strong> '+esc(event.text),
     resolution:'<strong>Resolution:</strong> '+esc(event.text),
     error:'<span class="form-feedback">'+esc(event.text)+'</span>',
     done:esc(event.text)
   }[event.type]??esc(event.text??"");
-  return '<li class="agent-step agent-step-'+esc(event.type)+'">'+who+'<div>'+body+'</div></li>';
+}
+function agentEvent(event) {
+  const profile=agentProfiles[event.agent]??{name:event.agent,tone:""};
+  return '<li class="agent-step agent-step-'+esc(event.type)+'"><span class="agent-chip '+profile.tone+'">'+esc(profile.name)+'</span><div>'+
+    (event.nested?'<span class="system-chip shipment-chip">'+esc(event.shipment)+'</span> ':'')+eventBody(event)+'</div></li>';
 }
 function updateAgentTimeline() {
   const list=byId("agent-timeline");
@@ -1731,102 +1822,209 @@ function updateAgentTimeline() {
   list.innerHTML=agentState.events.map(agentEvent).join("")||'<li class="nothing">No run yet.</li>';
   list.scrollTop=list.scrollHeight;
   const roster=byId("agent-roster");
-  if(roster) roster.outerHTML=agentRoster();
+  if(roster) roster.outerHTML=agentRoster(agentState);
 }
-function agentRoster() {
-  const events=agentState.events;
+// While the whole portfolio runs, the feed shows the latest steps across every shipment.
+function portfolioFeed() {
+  const shown=portfolioState.events.filter(event=>event.type!=="tool_result").slice(-120);
+  return shown.map(agentEvent).join("")||'<li class="nothing">Start a run to watch the orchestrator triage the shipments and run the agent team on each one.</li>';
+}
+function updatePortfolioFeed() {
+  const list=byId("portfolio-feed");
+  if(!list) return;
+  list.innerHTML=portfolioFeed();
+  list.scrollTop=list.scrollHeight;
+  const progress=byId("portfolio-progress");
+  if(progress) progress.textContent=portfolioProgress();
+  const roster=byId("agent-roster");
+  if(roster) roster.outerHTML=agentRoster(portfolioState);
+}
+function portfolioProgress() {
+  const done=portfolioState.events.filter(event=>event.type==="shipment_done").length;
+  const total=portfolioState.order.length;
+  const current=[...portfolioState.events].reverse().find(event=>event.type==="delegate_shipment");
+  return portfolioState.running?(total?done+" of "+total+" shipments done"+(current&&done<total?" · working on "+current.shipment:""):"Triage…"):portfolioState.record?"Last run":"No run yet";
+}
+function agentRoster(state) {
+  const events=state.events;
   const last=events[events.length-1];
   return '<section id="agent-roster" class="card"><div class="card-head"><div><h2>Agents</h2><p>One orchestrator, four specialists and a rules-based verifier</p></div></div><ul class="roster">'+
     Object.entries(agentProfiles).map(([id,profile])=>{
       const own=events.filter(event=>event.agent===id);
       const calls=own.filter(event=>event.type==="tool_call").length;
-      const busy=agentState.running&&last?.agent===id;
+      const busy=state.running&&last?.agent===id;
+      const checked=own.filter(event=>event.type==="verified").length;
       return '<li><span class="agent-chip '+profile.tone+'">'+esc(profile.name)+'</span><small>'+esc(profile.job)+'</small><span class="roster-state">'+
-        (busy?badge("Working","blue"):id==="verifier"&&own.length?badge("Checked "+plural(agentState.record?.verification?.length??0,"option"),"green"):own.length?badge(calls?plural(calls,"tool call"):"Reported back","green"):badge("Idle",""))+'</span></li>';
+        (busy?badge("Working","blue"):id==="verifier"&&own.length?badge(state===agentState?"Checked "+plural(state.record?.verification?.length??0,"option"):"Checked "+plural(checked,"shipment"),"green"):own.length?badge(calls?plural(calls,"tool call"):"Reported back","green"):badge("Idle",""))+'</span></li>';
     }).join("")+'</ul></section>';
 }
+function guardrails(status) {
+  const systems=(status?.systems??[]).map(system=>'<li><span class="system-chip">'+esc(system.name)+'</span><small>'+esc(plural(system.tools.length,"tool")+" · "+(system.tools.every(tool=>tool.readOnly)?"read-only":"draft-only"))+'</small></li>').join("");
+  return '<section class="card guardrails"><div class="card-head"><div><h2>How the agents are kept in bounds</h2><p>Validated systems stay the system of record</p></div></div><ul class="guardrail-list">'+
+    '<li>'+icon("review")+'<span><strong>Read-only access.</strong> The agents read IRT, ERP, the depot and the eTMF through MCP servers that expose no write tools.</span></li>'+
+    '<li>'+icon("file")+'<span><strong>Drafts, never changes.</strong> Their only output is drafts. A named person approves each one in its own validated system, with an electronic signature.</span></li>'+
+    '<li>'+icon("alert")+'<span><strong>Rules decide, not the AI.</strong> RegChain re-checks every option with fixed rules, and again when someone approves it. Kits and relabelling slots are never promised twice.</span></li>'+
+    '<li>'+icon("clock")+'<span><strong>Every step is logged:</strong> the plan, each tool call with its inputs and answers, the models, and who approved or withdrew what.</span></li></ul>'+
+    (systems?'<div class="card-foot"><small>Connected over MCP</small><ul class="system-list">'+systems+'</ul></div>':agentServer()&&!status?'<div class="card-foot"><small>Connecting to the systems over MCP…</small></div>':"")+'</section>';
+}
+function agentSetupNote(status) {
+  const live=agentServer()&&status?.keySet&&status?.sdk;
+  return (!agentServer()?'<div class="inline-note">'+icon("info")+'<span>The agents need the local server: open RegChain with Start-RegChain.cmd.</span></div>':
+    !live?'<details class="setup-note"><summary>The AI agents are not set up on this computer</summary><p>Add ANTHROPIC_API_KEY to the .env file next to serve-regchain.cjs and restart RegChain. The scripted walkthrough runs the same steps without AI.</p></details>':"");
+}
+const approverNote = () => canApprovePlans()?"":'<p class="form-feedback">Clinical Supply approves supply plans. Choose '+esc(roleName("viewer",workflow))+' under Acting as.</p>';
 function agentResolution(record) {
   const resolution=record.resolution;
   if(!resolution) return "";
   const approval=agentApprovals[record.shipment];
+  const thisRun=approval&&approval.runAt===record.at;
   const verification=Object.fromEntries((record.verification??[]).map(item=>[item.id,item]));
+  const anyPasses=resolution.options.some(option=>verification[option.id]?.passes);
+  const recommendedFails=resolution.recommended!=="escalate"&&verification[resolution.recommended]&&!verification[resolution.recommended].passes;
+  const escalate=!anyPasses;
   const options=resolution.options.map(option=>{
     const check=verification[option.id];
     const recommended=option.id===resolution.recommended;
-    const approved=approval?.option===option.id;
+    const approved=thisRun&&approval.option===option.id;
     return '<article class="option-card'+(recommended?" recommended":"")+'"><div class="block-head"><h3>'+esc(option.title)+'</h3><div class="badge-stack">'+(recommended?badge("Recommended","blue"):"")+
       (check?badge(check.passes?"Passes the rules · "+(afterNames[check.after]??check.after):"Does not pass"+(check.feasible?" · "+(afterNames[check.after]??check.after):" · not feasible"),check.passes?"green":"red"):"")+(approved?badge("Approved","purple"):"")+'</div></div>'+
       '<ul class="action-list">'+option.actions.map(action=>'<li>'+esc(describeAction(action))+'</li>').join("")+'</ul>'+
       '<p>'+esc(option.why)+(option.risks?' <span class="muted">Risk: '+esc(option.risks)+'</span>':'')+'</p>'+
       (check?.notes?.length?'<small class="muted">'+esc(check.notes.join(" "))+'</small>':"")+
-      (check?.passes&&!approval?'<div class="actions">'+trigger("Approve this plan","agent-approve",option.id,recommended?"primary":"","arrow")+'</div>':"")+'</article>';
+      (check?.passes&&!approval?'<div class="actions"><button type="button" class="btn '+(recommended?"primary":"")+'" data-act="agent-approve" data-value="'+esc(option.id)+'"'+(canApprovePlans()?"":" disabled")+'>'+icon("arrow")+'Approve this plan</button></div>':"")+'</article>';
   }).join("");
-  const escalate=resolution.recommended==="escalate";
-  const drafts=(record.drafts??[]).map(draft=>'<li><strong>'+esc(draft.draft_id)+'</strong> · '+esc(draft.title)+'<small>'+esc(approval?(approval.option==="escalate"?"Escalation acknowledged in RegChain on ":"Plan approved in RegChain on ")+scheduleDate(approval.at)+". Next: "+(approval.option==="escalate"?"Quality picks it up in ":"approve this draft in ")+draft.target_system+".":draft.status)+'</small><small class="muted">'+esc(draft.body)+'</small></li>').join("");
+  const nextStep=draft=>draft.withdrawn?"Withdrawn: "+draft.withdrawn:thisRun&&(draft.option_id??resolution.recommended)===approval.option?
+    (approval.option==="escalate"?"Escalation acknowledged in RegChain on ":"Plan approved in RegChain on ")+scheduleDate(approval.at)+". Next: "+(approval.option==="escalate"?"Quality picks it up in ":"approve this draft in ")+draft.target_system+".":draft.status;
+  const drafts=(record.drafts??[]).map(draft=>'<li'+(draft.withdrawn?' class="withdrawn"':'')+'><strong>'+esc(draft.draft_id)+'</strong> · '+esc(draft.title)+'<small>'+esc(nextStep(draft))+'</small><small class="muted">'+esc(draft.body)+'</small></li>').join("");
+  const approvalNote=approval?'<div class="inline-note">'+icon("info")+'<span>'+esc((approval.option==="escalate"?"Escalation acknowledged":"Plan approved: "+approval.title+",")+" by "+approval.by+" on "+scheduleDate(approval.at)+"."+
+    (thisRun?" Nothing has changed in the validated systems; each draft below still needs approval there.":" It came from an earlier run, on "+scheduleDate(Date.parse(approval.runAt))+". Withdraw it to approve a plan from this run."))+'</span>'+
+    trigger("Withdraw the approval","agent-withdraw",record.shipment,"quiet")+'</div>':"";
   return panel("Resolution",record.mode==="live"?"Proposed by the agents":"Scripted walkthrough",casePad(
-    '<p class="impact-headline">'+esc(resolution.summary)+'</p>'+factlist([["Root cause",resolution.root_cause],...(escalate?[["Escalation",resolution.escalation||"No option passes the rules."]]:[])])+
-    (escalate&&!approval?'<div class="actions">'+trigger("Acknowledge the escalation","agent-approve","escalate","primary","arrow")+'</div>':"")+
-    (approval?'<div class="inline-note">'+icon("info")+'<span>'+esc((approval.option==="escalate"?"Escalation acknowledged":"Plan approved")+" by "+approval.by+" on "+scheduleDate(approval.at)+". Nothing has changed in the validated systems; each draft below still needs approval there.")+'</span></div>':"")+
+    '<p class="impact-headline">'+esc(resolution.summary)+'</p>'+factlist([["Root cause",resolution.root_cause],...(resolution.allocation?[["Re-planned",resolution.allocation]]:[]),...(escalate?[["Escalation",resolution.escalation||"No option passes the rules."]]:[])])+
+    (recommendedFails?'<p class="form-feedback" role="alert">The agents recommended "'+esc(resolution.options.find(option=>option.id===resolution.recommended)?.title??resolution.recommended)+'", but it does not pass RegChain\'s rules. Its drafts are withdrawn. Approve a passing option'+(escalate?"":" below")+' or escalate.</p>':"")+
+    (escalate&&!approval?'<div class="actions"><button type="button" class="btn primary" data-act="agent-approve" data-value="escalate"'+(canApprovePlans()?"":" disabled")+'>'+icon("arrow")+'Acknowledge the escalation</button></div>':"")+
+    approvalNote+(approval?"":approverNote())+
     '<h3>Options</h3><div class="option-grid">'+options+'</div>'+
     '<h3>Drafts for people to approve</h3>'+(drafts?'<ul class="case-list">'+drafts+'</ul>':'<p>No drafts.</p>')),approval?"":caseRoleSelect())+
     '<div class="actions space">'+trigger("Export the run (audit JSON)","agent-export","","","file")+'</div>';
 }
 function agentView() {
   const status=agentState.status;
+  if(agentState.running&&agentState.shipment!==agentShipment) {
+    return heading("Agents · "+esc(agentShipment??""),"The agents are working on another shipment.")+
+      '<div class="inline-note">'+icon("info")+'<span>'+esc("The agents are working on "+agentState.shipment+". This shipment's last run shows when they finish.")+'</span>'+trigger("Watch "+agentState.shipment,"open-agents",agentState.shipment,"quiet","arrow")+'</div>';
+  }
   const record=agentState.record;
   const shipment=plannedShipments().find(item=>item.id===agentShipment);
-  const server=location.protocol.startsWith("http");
-  const live=server&&status?.keySet&&status?.sdk;
+  const live=agentServer()&&status?.keySet&&status?.sdk;
+  const busy=agentState.running||portfolioState.running;
   const actions='<div class="actions">'+
-    '<button type="button" class="btn primary" data-act="agent-run" data-value="live"'+(live&&!agentState.running?"":" disabled")+'>'+icon("retry")+(agentState.running&&agentState.mode==="live"?"Agents working…":"Run the AI agents")+'</button>'+
-    '<button type="button" class="btn" data-act="agent-run" data-value="scripted"'+(server&&!agentState.running?"":" disabled")+'>'+(agentState.running&&agentState.mode==="scripted"?"Running…":"Scripted walkthrough (no AI)")+'</button></div>';
-  const systems=(status?.systems??[]).map(system=>'<li><span class="system-chip">'+esc(system.name)+'</span><small>'+esc(plural(system.tools.length,"tool")+" · "+(system.tools.every(tool=>tool.readOnly)?"read-only":"draft-only"))+'</small></li>').join("");
+    '<button type="button" class="btn primary" data-act="agent-run" data-value="live"'+(live&&!busy?"":" disabled")+'>'+icon("retry")+(agentState.running&&agentState.mode==="live"?"Agents working…":"Run the AI agents")+'</button>'+
+    '<button type="button" class="btn" data-act="agent-run" data-value="scripted"'+(agentServer()&&!busy?"":" disabled")+'>'+(agentState.running&&agentState.mode==="scripted"?"Running…":"Scripted walkthrough (no AI)")+'</button></div>';
   const runFacts=record?factlist([["Run",(record.mode==="live"?"AI agents · "+record.models.orchestrator+" orchestrator, "+record.models.specialists+" specialists":"Scripted walkthrough · no AI call")+" · "+scheduleDate(Date.parse(record.at))],
-    ["Steps",plural(record.events.length,"step")+" · "+plural(record.events.filter(event=>event.type==="tool_call").length,"MCP call")+" · "+plural(record.drafts.length,"draft")],
+    ["Steps",plural(record.events.length,"step")+" · "+plural(record.events.filter(event=>event.type==="tool_call").length,"MCP call")+" · "+plural(record.drafts.filter(draft=>!draft.withdrawn).length,"draft")],
     ...(record.mode==="live"?[["Tokens",record.usage.input_tokens+" in · "+record.usage.output_tokens+" out"]]:[])]):"";
   return heading("Agents · "+esc(agentShipment??""),esc(shipment?specCountryName(shipment.countryId)+" · "+shipment.site+" · dispatch "+displayDay(shipment.dispatch)+" · "+resultStyle[shipment.result][0]:"Choose a shipment on the Shipment checks page."),actions)+
-    (!server?'<div class="inline-note">'+icon("info")+'<span>The agents need the local server: open RegChain with Start-RegChain.cmd.</span></div>':
-      !live?'<details class="setup-note"><summary>The AI agents are not set up on this computer</summary><p>Add ANTHROPIC_API_KEY to the .env file next to serve-regchain.cjs and restart RegChain. The scripted walkthrough runs the same steps without AI.</p></details>':"")+
+    agentSetupNote(status)+
     (agentState.error?'<p class="form-feedback" role="alert">'+esc(agentState.error)+'</p>':"")+
-    '<section class="card guardrails"><div class="card-head"><div><h2>How the agents are kept in bounds</h2><p>Validated systems stay the system of record</p></div></div><ul class="guardrail-list">'+
-      '<li>'+icon("review")+'<span><strong>Read-only access.</strong> The agents read IRT, ERP, the depot and the eTMF through MCP servers that expose no write tools.</span></li>'+
-      '<li>'+icon("file")+'<span><strong>Drafts, never changes.</strong> Their only output is drafts. A named person approves each one in its own validated system, with an electronic signature.</span></li>'+
-      '<li>'+icon("alert")+'<span><strong>Rules decide, not the AI.</strong> RegChain re-checks every option with fixed rules. An option that fails can\'t be approved.</span></li>'+
-      '<li>'+icon("clock")+'<span><strong>Every step is logged:</strong> the plan, each tool call with its inputs and answers, the models, and who approved what.</span></li></ul>'+
-      (systems?'<div class="card-foot"><small>Connected over MCP</small><ul class="system-list">'+systems+'</ul></div>':server&&!status?'<div class="card-foot"><small>Connecting to the systems over MCP…</small></div>':"")+'</section>'+
+    guardrails(status)+
     '<div class="case-layout space"><section class="card"><div class="card-head"><div><h2>What the agents are doing</h2><p>'+esc(agentState.running?"Live":record?"Last run":"No run yet")+'</p></div></div>'+
       '<ol id="agent-timeline" class="agent-timeline">'+(agentState.events.map(agentEvent).join("")||'<li class="nothing">Start a run to watch the orchestrator plan, delegate and check each option.</li>')+'</ol></section>'+
-      '<div class="case-stack">'+agentRoster()+(runFacts?panel("This run","",casePad(runFacts)):"")+'</div></div>'+
-    (record?'<div class="space">'+agentResolution(record)+'</div>':"");
+      '<div class="case-stack">'+agentRoster(agentState)+(runFacts?panel("This run","",casePad(runFacts)):"")+'</div></div>'+
+    (record?'<div class="space">'+agentResolution(record)+'</div>':"")+
+    '<p class="reset-link">'+trigger("All shipments that need action","open-portfolio","","quiet","arrow")+'</p>';
 }
-function approveAgentPlan(optionId) {
-  const record=agentState.record;
-  const option=record.resolution.options.find(item=>item.id===optionId);
-  const by=roleName(workflowRole,workflow);
-  const at=new Date().toISOString();
-  agentApprovals={...agentApprovals,[record.shipment]:{option:optionId,title:option?.title??"Escalation",by,at,runAt:record.at,drafts:record.drafts.map(draft=>draft.draft_id)}};
-  storeJson(agentApprovalsKey,agentApprovals);
-  const swap=option?.actions.some(action=>action.type==="swap_batch");
-  shipmentActions={...shipmentActions,[record.shipment]:{action:swap?"swap":"hold",reason:option?"Agent plan approved: "+option.title:"Escalated: no option passes the rules. "+(record.resolution.escalation??""),by,at}};
-  storeJson(shipmentActionsKey,shipmentActions);
-  render();
-  notify(option?"Plan approved. Each draft still needs approval in its own system.":"Escalation acknowledged.");
+// Every shipment that needs action, in one orchestrated run.
+function portfolioView() {
+  const status=agentState.status;
+  const record=portfolioState.record;
+  const live=agentServer()&&status?.keySet&&status?.sdk;
+  const busy=agentState.running||portfolioState.running;
+  const actions='<div class="actions">'+
+    '<button type="button" class="btn primary" data-act="portfolio-run" data-value="live"'+(live&&!busy?"":" disabled")+'>'+icon("retry")+(portfolioState.running&&portfolioState.mode==="live"?"Agents working…":"Run the AI agents on all")+'</button>'+
+    '<button type="button" class="btn" data-act="portfolio-run" data-value="scripted"'+(agentServer()&&!busy?"":" disabled")+'>'+(portfolioState.running&&portfolioState.mode==="scripted"?"Running…":"Scripted walkthrough (no AI)")+'</button></div>';
+  const summary=record?.summary;
+  const tiles=summary?'<div class="tiles" aria-label="Portfolio run summary">'+
+    tile("Shipments handled",summary.shipments,esc("Blocked or to confirm, most urgent first"),"studies")+
+    tile("Plans that pass",summary.plans,esc(plural(summary.drafts,"draft")+" waiting for people"),"overview")+
+    tile("Re-planned",summary.reallocated,"So no kits or slot is promised twice","retry")+
+    tile("Escalated",summary.escalated,"No option passes the rules","alert")+'</div>':"";
+  const rows=(record?.board??[]).map((row,index)=>{
+    const approval=agentApprovals[row.shipment];
+    const approvedHere=approval&&approval.runAt===row.runAt;
+    const action=approval?(approvedHere?badge(approval.option==="escalate"?"Escalation acknowledged":"Approved","purple")+'<small class="sub">'+esc(approval.by)+'</small>':badge("Earlier plan approved","purple")):
+      row.status==="error"?badge("No result","red"):
+      '<button type="button" class="btn small" data-act="portfolio-approve" data-value="'+esc(row.shipment)+'"'+(canApprovePlans()?"":" disabled")+'>'+(row.status==="escalate"?"Acknowledge":"Approve")+'</button>';
+    return '<tr><td class="nowrap">'+(index+1)+'</td><td><button type="button" class="entity-button" data-act="open-agents" data-value="'+esc(row.shipment)+'"><span>'+esc(row.shipment)+'<small class="sub">'+esc(specCountryName(row.country)+" · "+row.site)+'</small></span></button></td>'+
+      '<td class="nowrap">'+esc(displayDay(row.prepareBy))+'</td><td>'+badge(...resultStyle[row.before])+'</td>'+
+      '<td>'+esc(row.title)+(row.changed?'<small class="sub replanned">'+esc(row.note)+'</small>':"")+'</td>'+
+      '<td>'+(row.status==="plan"?badge("Passes · "+(afterNames[row.after]??row.after),"green"):row.status==="escalate"?badge("Escalate","red"):badge("Error","red"))+'</td>'+
+      '<td>'+action+'</td></tr>';
+  }).join("");
+  const facts=record?factlist([["Run",(record.mode==="live"?"AI agents · "+record.models.orchestrator+" orchestrator, "+record.models.specialists+" specialists":"Scripted walkthrough · no AI call")+" · "+scheduleDate(Date.parse(record.at))],
+    ["Steps",plural(summary?.calls??0,"MCP call")+" across "+plural(summary?.shipments??0,"shipment")],
+    ...(record.mode==="live"?[["Tokens",record.usage.input_tokens+" in · "+record.usage.output_tokens+" out"]]:[])]):"";
+  return heading("Agents · every shipment that needs action","The orchestrator runs the agent team on each blocked or to-confirm shipment, most urgent first. RegChain then checks the plans together, so no kits or relabelling slot is promised twice.",actions)+
+    agentSetupNote(status)+
+    (portfolioState.error?'<p class="form-feedback" role="alert">'+esc(portfolioState.error)+'</p>':"")+
+    guardrails(status)+tiles+
+    (rows?'<section class="card space"><div class="card-head"><div><h2>Plans, most urgent first</h2><p>Approve each plan as Clinical Supply. Each draft still needs approval in its own system.</p></div>'+caseRoleSelect()+'</div>'+approverNote()+
+      '<div class="table-wrap" tabindex="0"><table><caption class="sr">Agent plans for every shipment that needs action</caption><thead><tr><th>#</th><th>Shipment</th><th>Prepare by</th><th>Before</th><th>Plan</th><th>RegChain</th><th>Approval</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>':"")+
+    '<div class="case-layout space"><section class="card"><div class="card-head"><div><h2>What the agents are doing</h2><p id="portfolio-progress">'+esc(portfolioProgress())+'</p></div></div>'+
+      '<ol id="portfolio-feed" class="agent-timeline">'+portfolioFeed()+'</ol></section>'+
+      '<div class="case-stack">'+agentRoster(portfolioState)+(facts?panel("This run","",casePad(facts)):"")+'</div></div>'+
+    (record?'<div class="actions space">'+trigger("Export the run (audit JSON)","portfolio-export","","","file")+'</div>':"");
 }
-function exportAgentRun() {
-  const record=agentState.record;
-  if(!record) return;
-  const data={...record,approval:agentApprovals[record.shipment]??null};
+async function approveAgentPlan(optionId,shipmentId=agentShipment,runAt=agentState.record?.at) {
+  if(!canApprovePlans()) return;
+  try {
+    const reply=await agentPost("/api/agent/approve",{shipment:shipmentId,option:optionId,by:roleName(workflowRole,workflow),runAt});
+    if(agentState.record?.shipment===shipmentId) agentState={...agentState,record:reply.run,error:""};
+    portfolioState={...portfolioState,error:""};
+    await loadAgentApprovals();
+    render();
+    notify(optionId==="escalate"?"Escalation acknowledged.":"Plan approved. Each draft still needs approval in its own system.");
+  } catch(error) {
+    if(page==="agents-all") portfolioState={...portfolioState,error:error.message}; else agentState={...agentState,error:error.message};
+    render();
+    notify("The plan was not approved: "+error.message);
+  }
+}
+async function withdrawAgentPlan(shipmentId) {
+  try {
+    await agentPost("/api/agent/withdraw",{shipment:shipmentId,by:roleName(workflowRole,workflow)});
+    await loadAgentApprovals();
+    render();
+    notify("Approval withdrawn. The kits and slots it held are free again.");
+  } catch(error) {
+    agentState={...agentState,error:error.message};
+    render();
+  }
+}
+function downloadJson(name,data) {
   const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));
   const anchor=document.createElement("a");
   anchor.href=url;
-  anchor.download="RegChain-agent-run-"+record.shipment+".json";
+  anchor.download=name;
   document.body.append(anchor);
   anchor.click();
   anchor.remove();
   window.setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
+function exportAgentRun() {
+  const record=agentState.record;
+  if(!record) return;
+  downloadJson("RegChain-agent-run-"+record.shipment+".json",{...record,approval:agentApprovals[record.shipment]??null,approvalLog:agentApprovalLog.filter(entry=>entry.shipment===record.shipment)});
+}
+function exportPortfolioRun() {
+  const record=portfolioState.record;
+  if(!record) return;
+  downloadJson("RegChain-agent-portfolio-run.json",{...record,approvals:agentApprovals,approvalLog:agentApprovalLog});
+}
+loadAgentApprovals();
 const views = {
   agent:agentView,
+  "agents-all":portfolioView,
   shipments:shipmentChecks,
   overview,
   countries:countryLibrary,
@@ -1946,7 +2144,7 @@ function checkDue() {
   scheduleState=readScheduleOrCurrent();
   for(const caseId of Object.keys(governedCases)) {
     const latest=readWorkflow(caseId,workflows[caseId]);
-    if(latest.stage==="deferred" && latest.decision?.reviewOn<=athensDay()) {
+    if(latest.stage==="deferred" && latest.decision?.reviewOn<=libraryToday) {
       latest.revision++;
       latest.stage="review";
       latest.decision=null;
@@ -2021,9 +2219,14 @@ const actions={
   "source-detail":sourceDetail,
   shipment:shipmentDetail,
   "open-agents":openAgents,
+  "open-portfolio":openPortfolio,
   "agent-run":startAgentRun,
-  "agent-approve":approveAgentPlan,
+  "portfolio-run":startPortfolioRun,
+  "agent-approve":optionId=>approveAgentPlan(optionId),
+  "portfolio-approve":id=>{const row=portfolioState.record?.board.find(item=>item.shipment===id);if(row) approveAgentPlan(row.status==="escalate"?"escalate":row.recommended,id,row.runAt);},
+  "agent-withdraw":async id=>{await withdrawAgentPlan(id);if(byId("drawer").open) shipmentDetail(id);},
   "agent-export":exportAgentRun,
+  "portfolio-export":exportPortfolioRun,
   "clear-shipment-action":id=>{const next={...shipmentActions};delete next[id];shipmentActions=next;storeJson(shipmentActionsKey,shipmentActions);if(page==="shipments"||page==="overview") render();shipmentDetail(id);notify("Action cleared.");},
   "retry-source":retrySource,
   "study-detail":studyDetail,
@@ -2091,7 +2294,9 @@ document.addEventListener("submit",event=>{
     if(!event.submitter) return;
     const fields=new FormData(event.target);
     const command={action:event.submitter.value,revision:Number(event.target.dataset.revision),
-      reason:fields.get("reason"),instruction:fields.get("instruction"),reviewOn:fields.get("reviewOn"),today:athensDay()};
+      reason:fields.get("reason"),instruction:fields.get("instruction"),reviewOn:fields.get("reviewOn"),today:libraryToday};
+    // A case cannot close while shipments it covers are still blocked with nothing recorded.
+    if(command.action==="verify" && unresolvedTaskShipments().length) {byId("workflow-error").textContent="Can't close yet: "+unresolvedTaskShipments().join(", ")+" still blocked with no recorded action.";return;}
     if(["approve","edit"].includes(command.action)) {
       const gate=aiGate();
       if(gate==="fail") {byId("workflow-error").textContent="The latest AI check failed, so approval is blocked. Re-run the AI check, reject, or request an investigation.";return;}

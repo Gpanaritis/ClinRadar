@@ -50,7 +50,7 @@
     "expeditedLeadBusinessDays": 2,
     "labelSpec": {"id": "XZ417-BKL-v1", "type": "Multilingual booklet label", "languages": ["de", "es", "it", "pl", "en"]},
     "batches": [
-      {"id": "XZ417-26A", "qp": "2027-01-12"},
+      {"id": "XZ417-26A", "qp": "2026-11-02"},
       {"id": "XZ417-26B", "qp": "2027-02-15"},
       {"id": "XZ417-26C", "qp": null}
     ],
