@@ -131,6 +131,28 @@ To keep the story global, the recorded events include an illustrative US Nationa
 
 The page gets `watch` (one summary per agent: `agent`, `name`, `hazard`, `sources`, `countries`, `regions`, `events`, `touching`, `confirmed`, `potential`, `top`, `gaps`, `finding`) and `regulatoryItems` in the ClinRadar payload. The portfolio run record keeps the same four summaries, each with the agent's own finding.
 
+## Enterprise risk alerts
+
+Most pharma companies already run an enterprise risk or crisis-alerting system (Everbridge, Dataminr, Crisis24, Resilinc, Interos). It alerts offices, sites, suppliers and travellers, and knows nothing about trials, patients, IMP shipments or depots. ClinRadar ingests those alerts and says which ones touch our studies, sites, routes and facilities, and counts the rest. *Your enterprise system told everyone about the strike; ClinRadar told Clinical Supply which patients.*
+
+Each alert becomes a ClinRadar signal (`regchain-ai/enterprise.mjs`): its category and hazard, country, window and place (an airport, one of our facilities in the named city, our trial sites in the named cities, a provider's systems, or the country's roads for strikes and unrest). Then the usual merging, matching and tiers apply. An aggregator alone is a single source. It can corroborate an incident another source already reported, but it never confirms an impact on a shipment: only the courier or the depot can.
+
+The seven illustrative alerts in `demo-data/enterprise-alerts.json`:
+
+| Alert | What ClinRadar makes of it |
+|---|---|
+| Belgian national action day, 24 Nov | Merged into SIG-BE-STRIKE-1124 as a third source (SHP-IL-01, SHP-03) |
+| Winter storm, eastern Pennsylvania, 16–17 Nov | Merged into SIG-US-WINTER-1116 as a second source (the US depot) |
+| Seasonal heat outlook for Andalusia, March 2027 | New signal SIG-ENT-ERS-26-114-0042: a single-source potential exposure for the deliveries to Sevilla (SHP-ES-08) and Málaga (SHP-ES-10). The depot and the courier must confirm that the qualified packaging holds the shipments' 15–25 °C range. Both shipments were already blocked, so the results stay at 14, 5 and 6 |
+| Ransomware at a forwarder we don't use | Counted, not matched: no study, site, route or facility affected |
+| Typhoon warning, northern Taiwan | Counted, not matched |
+| Demonstration in central Paris, 21 Nov | Counted, not matched: no shipment of ours is on French roads that day |
+| Planned power cut in the Basel industrial area, 19 Nov | Coverage gap: it touches our drug-product manufacturer in Switzerland, which nobody monitors, so ClinRadar suggests turning Switzerland on |
+
+The watch agents read the alerts of their own kind (`specs.get_enterprise_alerts`) and report them, for example "Enterprise risk system: 3 alerts, 1 touches our network (merged into SIG-BE-STRIKE-1124), 1 coverage gap".
+
+**For a real deployment**, the enterprise system posts to `POST /api/enterprise-alerts`: one alert, an array, or `{ "alerts": [...] }`. The webhook takes JSON only, at most 256 KB and 100 alerts per request, and is rate-limited per address. Every alert is validated before any is stored. With named users it requires `Authorization: Bearer <REGCHAIN_ENTERPRISE_TOKEN>` and is refused (503) while that variable is unset; in local mode only this computer may call it. Alerts are stored in the data folder (`enterprise-alerts.json`), merged with the demo file on load, and audited as `enterprise.alert_received`. The answer says what ClinRadar made of each alert. `GET /v1/enterprise-alerts` (optional `hazard`) reads the same summary, and the page gets it as `enterprise` in the ClinRadar payload.
+
 ## The demonstration, in five minutes
 
 | Time | Screen | What happens | What to say |

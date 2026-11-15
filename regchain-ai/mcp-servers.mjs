@@ -10,6 +10,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadData, checkShipment, allShipmentChecks, verifyOptionSafe, shipmentView, sectionNames, watchBriefs } from "./rules.mjs";
 import { HAZARDS } from "./supplyshield.mjs";
+import { enterpriseFor } from "./enterprise.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 export const SYSTEMS = {
@@ -99,6 +100,9 @@ export function registerTools(server, system, data) {
           illustrative: Boolean(signal.illustrative), live: Boolean(signal.live), counts: signal.counts,
           matches: signal.matches.map(match => `${match.shipment} · ${match.label} on ${match.date} · ${match.tier}`), notes: signal.notes })));
       });
+    server.registerTool("get_enterprise_alerts", { title: "Enterprise risk alerts", description: "Returns the alerts from the company's enterprise risk system (which alerts offices, sites, suppliers and travellers, and knows nothing about trials) and what ClinRadar made of each: merged into an existing signal as an extra source, a new signal with the shipments it touches, no study, site, route or facility affected (counted, not matched), or a coverage gap at one of our facilities in a country nobody monitors. Optional filter: hazard.",
+      inputSchema: { hazard: z.enum(Object.keys(HAZARDS)).optional().describe("Only this kind of hazard.") }, annotations: READ },
+      async ({ hazard }) => json(!ss?.enterprise ? { status: "No enterprise risk system is connected." } : enterpriseFor(ss.enterprise, hazard)));
     server.registerTool("get_watch_brief", { title: "Watch brief", description: "For one kind of hazard (weather, transport, security or regulatory): the sources watched, every monitored country with its region, how many events were found and how many touch our shipments, routes or facilities, the most relevant event ids, and the coverage gaps. For regulatory: the rule changes and import approvals with the planned shipments each affects.",
       inputSchema: { hazard: z.enum(Object.keys(HAZARDS)) }, annotations: READ },
       async ({ hazard }) => {

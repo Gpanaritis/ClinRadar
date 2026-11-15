@@ -136,7 +136,9 @@ const port = await new Promise(resolve => {
   const probe = createServer().listen(0, "127.0.0.1", () => { const { port: free } = probe.address(); probe.close(() => resolve(free)); });
 });
 const env = { ...process.env, REGCHAIN_AUTH: "password", REGCHAIN_HOST: "127.0.0.1", REGCHAIN_PORT: String(port), REGCHAIN_DATA_DIR: dataDir, REGCHAIN_CACHE_DIR: cacheDir,
-  REGCHAIN_LOGIN_ATTEMPTS: "3", REGCHAIN_LOGIN_ATTEMPTS_PER_ADDRESS: "12", REGCHAIN_WRITES_PER_MINUTE: "60", REGCHAIN_CONTACTS_PER_HOUR: "8", REGCHAIN_LOG_LEVEL: "warn", ANTHROPIC_API_KEY: "" };
+  REGCHAIN_LOGIN_ATTEMPTS: "3", REGCHAIN_LOGIN_ATTEMPTS_PER_ADDRESS: "12", REGCHAIN_WRITES_PER_MINUTE: "60", REGCHAIN_CONTACTS_PER_HOUR: "8", REGCHAIN_LOG_LEVEL: "warn", ANTHROPIC_API_KEY: "",
+  REGCHAIN_ENTERPRISE_TOKEN: "enterprise-test-token-4f1c9a7e2b" };
+const ENTERPRISE_TOKEN = env.REGCHAIN_ENTERPRISE_TOKEN;
 const users = (args, extra = {}) => spawnSync(process.execPath, [join(root, "scripts", "users.mjs"), ...args], { env: { ...env, ...extra }, encoding: "utf8" });
 {
   for (const [username, name, role] of [["sam.supply", "Sam Supply", "viewer"], ["rita.reg", "Rita Regulatory", "reviewer"], ["olga.owner", "Olga Owner", "owner"]]) {
@@ -336,6 +338,40 @@ try {
   assert.equal((await call("POST", "/api/agent/start-fresh", { cookie: sam.cookie, body: { plans: true } })).status, 403, "no wiping approvals on a shared deployment");
   console.log("ok  signed in as Clinical Supply: HttpOnly SameSite=Strict cookie, the page with a fresh script nonce, role fixed by the account");
 
+  // The enterprise alert webhook: another system's bearer token, never a session; JSON only, validated, size-limited, audited.
+  {
+    const alert = { id: "ERS-WEBHOOK-0001", system: "Enterprise risk system", category: "Labour action", severity: "Severe", title: "Belgium: second national action day on 24 Nov 2026",
+      location: { country: "BE", city: "Brussels", airport: "BRU" }, window: { from: "2026-11-24", to: "2026-11-24" }, audience: "All EMEA offices" };
+    const bearer = token => ({ Authorization: `Bearer ${token}` });
+    assert.equal((await call("GET", "/api/enterprise-alerts", { headers: bearer(ENTERPRISE_TOKEN) })).status, 405);
+    assert.equal((await call("POST", "/api/enterprise-alerts", { body: { alerts: [alert] } })).status, 401, "no token, no ingest");
+    assert.equal((await call("POST", "/api/enterprise-alerts", { body: { alerts: [alert] }, cookie: sam.cookie })).status, 401, "a person's session is not the enterprise system's token");
+    assert.equal((await call("POST", "/api/enterprise-alerts", { body: { alerts: [alert] }, headers: bearer("enterprise-test-token-4f1c9a7e2c") })).status, 401, "a wrong token is refused");
+    assert.equal((await call("POST", "/api/enterprise-alerts", { body: "id=1", headers: { ...bearer(ENTERPRISE_TOKEN), "Content-Type": "text/plain" } })).status, 415, "JSON only");
+    assert.equal((await call("POST", "/api/enterprise-alerts", { body: "{not json", headers: bearer(ENTERPRISE_TOKEN) })).status, 400);
+    assert.equal((await call("POST", "/api/enterprise-alerts", { body: { alerts: [alert], padding: "x".repeat(300 * 1024) }, headers: bearer(ENTERPRISE_TOKEN) })).status, 413, "size limit");
+    const invalid = await call("POST", "/api/enterprise-alerts", { body: { alerts: [alert, { ...alert, id: "ERS-WEBHOOK-0002", location: { country: "Belgium" } }] }, headers: bearer(ENTERPRISE_TOKEN) });
+    assert.equal(invalid.status, 422);
+    assert.match(invalid.json.details[0], /location.country/);
+    assert.equal((await call("POST", "/api/enterprise-alerts", { body: { alerts: [alert] }, headers: { ...bearer(ENTERPRISE_TOKEN), Origin: "https://evil.example" } })).status, 403, "never from a page on another site");
+    const accepted = await call("POST", "/api/enterprise-alerts", { body: { alerts: [alert] }, headers: bearer(ENTERPRISE_TOKEN) });
+    assert.equal(accepted.status, 202, accepted.text);
+    assert.deepEqual(accepted.json.results, [{ id: "ERS-WEBHOOK-0001", result: "merged into SIG-BE-STRIKE-1124" }], "the server says at once what ClinRadar made of the alert");
+    const stored = JSON.parse(await readFile(join(dataDir, "enterprise-alerts.json"), "utf8"));
+    assert.deepEqual(stored.alerts.map(item => item.id), ["ERS-WEBHOOK-0001"], "only the valid request was stored");
+    const audit = new DatabaseSync(join(dataDir, "regchain.db"), { readOnly: true });
+    const entries = audit.prepare("SELECT actor, subject_id, detail FROM audit_entry WHERE type = 'enterprise.alert_received'").all();
+    audit.close();
+    assert.deepEqual(entries.map(row => [row.actor, row.subject_id]), [["Enterprise risk system", "ERS-WEBHOOK-0001"]]);
+    assert.equal((await call("GET", "/v1/enterprise-alerts")).status, 401, "reading needs sign-in");
+    const read = await call("GET", "/v1/enterprise-alerts?hazard=transport", { cookie: sam.cookie });
+    assert.equal(read.status, 200);
+    assert.ok(read.json.alerts.some(item => item.id === "ERS-WEBHOOK-0001" && item.origin === "webhook") && read.json.alerts.every(item => item.hazard === "transport"));
+    assert.equal((await call("GET", "/v1/enterprise-alerts?hazard=nonsense", { cookie: sam.cookie })).status, 400);
+    assert.ok((await call("GET", "/v1/openapi.json")).json.paths["/v1/enterprise-alerts"]);
+    console.log("ok  enterprise alert webhook: bearer token only (no session, no wrong token, no other site), JSON only, 256 KB limit, every alert validated before any is stored, stored and audited, answered with what ClinRadar made of each; /v1/enterprise-alerts needs sign-in");
+  }
+
   const rita = await signInAs("rita.reg", "rita.reg-password");
   assert.equal((await call("POST", "/api/agent/approve", { cookie: rita.cookie, body: { shipment: "SHP-1", option: "hold" } })).status, 403, "only Clinical Supply approves supply plans");
   assert.equal((await call("POST", "/v1/cases/uk/reset", { cookie: rita.cookie, body: {} })).status, 200);
@@ -390,6 +426,27 @@ try {
   const broken = await call("GET", "/v1/health");
   assert.deepEqual([broken.status, broken.json.status], [503, "audit_chain_broken"]);
   console.log("ok  health: 503 and audit_chain_broken once an audit entry is edited outside RegChain");
+
+  // With named users and no REGCHAIN_ENTERPRISE_TOKEN, the webhook stays off: no token can be right.
+  server.kill();
+  await Promise.race([exited, new Promise(resolve => setTimeout(resolve, 5000))]);
+  const plain = { ...env, REGCHAIN_ENTERPRISE_TOKEN: "", REGCHAIN_DATA_DIR: join(temp, "data-no-token") };
+  const second = spawn(process.execPath, [join(root, "serve-regchain.cjs")], { cwd: root, env: plain, stdio: "ignore" });
+  try {
+    let up = null;
+    for (let attempt = 0; attempt < 120 && !up; attempt += 1) {
+      up = await call("GET", "/v1/health").catch(() => null);
+      if (up?.status !== 200) { up = null; await new Promise(resolve => setTimeout(resolve, 500)); }
+    }
+    assert.ok(up, "the second server answers");
+    const off = await call("POST", "/api/enterprise-alerts", { body: { alerts: [] }, headers: { Authorization: "Bearer " } });
+    assert.equal(off.status, 503);
+    assert.match(off.json.error, /REGCHAIN_ENTERPRISE_TOKEN/);
+    assert.equal((await call("POST", "/api/enterprise-alerts", { body: { alerts: [] }, headers: { Authorization: `Bearer ${ENTERPRISE_TOKEN}` } })).status, 503, "an unset token refuses everything");
+  } finally {
+    second.kill();
+  }
+  console.log("ok  enterprise alert webhook off: with named users and no REGCHAIN_ENTERPRISE_TOKEN it answers 503 and stores nothing");
 } finally {
   server.kill();
   await Promise.race([exited, new Promise(resolve => setTimeout(resolve, 5000))]);

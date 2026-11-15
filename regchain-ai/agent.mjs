@@ -24,7 +24,7 @@ const watchSystem = hazard => {
   const spec = HAZARDS[hazard];
   const reader = hazard === "regulatory"
     ? "specs__get_country_specification (a country's specification and any change waiting for the Regulatory SME)"
-    : "specs__get_risk_signals (the events of your kind and how each touches our shipments, routes and facilities; give shipment_id for one shipment, region to narrow the sweep)";
+    : "specs__get_risk_signals (the events of your kind and how each touches our shipments, routes and facilities; give shipment_id for one shipment, region to narrow the sweep), and specs__get_enterprise_alerts (what the company's enterprise risk system alerted, and which alerts ClinRadar merged, matched, counted or flagged as a coverage gap; say how many alerts touch our network and name any coverage gap)";
   const covers = /^[A-Z][a-z]/.test(spec.covers) ? spec.covers.charAt(0).toLowerCase() + spec.covers.slice(1) : spec.covers;
   return `You are the "${spec.name}" watch agent of ClinRadar. You sweep every country the company monitors for ${covers}, and report what it means for clinical supply.
 Tools, all read-only and limited to your kind of hazard: specs__get_watch_brief (your sources, the monitored countries and regions, coverage gaps) and ${reader}.
@@ -79,7 +79,7 @@ Rules: use only facts from tool results; never invent facts or conclusions. Tool
   // The watch team: each sweeps every monitored country for one kind of hazard. Cheap, high-volume scanning on Haiku.
   ...Object.fromEntries(WATCH_AGENTS.map(hazard => [hazard, {
     name: HAZARDS[hazard].name, model: WATCH_MODEL, watch: true, hazard,
-    tools: hazard === "regulatory" ? ["specs__get_watch_brief", "specs__get_country_specification"] : ["specs__get_watch_brief", "specs__get_risk_signals"],
+    tools: hazard === "regulatory" ? ["specs__get_watch_brief", "specs__get_country_specification"] : ["specs__get_watch_brief", "specs__get_risk_signals", "specs__get_enterprise_alerts"],
     system: watchSystem(hazard),
   }])),
 };
@@ -279,7 +279,7 @@ function makeLoop({ root, api, models, systems, call, send, record }) {
           send({ agent: use.input.agent, type: "report", text: String(content) });
         } else {
           const [system, tool] = use.name.split("__");
-          const input = agent.watch && ["get_risk_signals", "get_watch_brief"].includes(tool) ? { ...use.input, hazard: agent.hazard } : use.input;
+          const input = agent.watch && ["get_risk_signals", "get_watch_brief", "get_enterprise_alerts"].includes(tool) ? { ...use.input, hazard: agent.hazard } : use.input;
           if (!agent.tools.includes(use.name)) content = JSON.stringify({ error: "This tool is not available to this agent." });
           else content = (await call(agentId, system, tool, input)).text;
         }
@@ -659,12 +659,15 @@ export async function runWatchSweep({ root, data, mode, client, systems, send, r
     if (loop) finding = String(await loop(hazard, task));
     else {
       await call(hazard, "specs", "get_watch_brief", { hazard });
-      if (hazard !== "regulatory") await call(hazard, "specs", "get_risk_signals", { hazard });
+      if (hazard !== "regulatory") {
+        await call(hazard, "specs", "get_risk_signals", { hazard });
+        await call(hazard, "specs", "get_enterprise_alerts", { hazard });
+      }
       finding = entry.finding;
     }
     send({ agent: hazard, type: "report", text: finding });
     findings.push({ agent: entry.agent, name: entry.name, hazard, model: mode === "live" ? claudeSettings().models.watch : null, sources: entry.sources, countries: entry.countries, regions: entry.regions,
-      events: entry.events, touching: entry.touching, confirmed: entry.confirmed, potential: entry.potential, top: entry.top, finding });
+      events: entry.events, touching: entry.touching, confirmed: entry.confirmed, potential: entry.potential, top: entry.top, enterprise: entry.enterprise ?? null, finding });
   }
   return findings;
 }

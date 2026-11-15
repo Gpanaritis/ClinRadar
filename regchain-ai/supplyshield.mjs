@@ -16,6 +16,7 @@
 // Nothing here uses AI and nothing here changes anything: these are the fixed rules the agents and the page rely on.
 
 import { ALERT_WORDS, FCDO_ATTRIBUTION, GDACS_ATTRIBUTION } from "./feeds.mjs";
+import { enterpriseSignal, enterpriseSummary, enterpriseFor } from "./enterprise.mjs";
 
 export const TIER_NAMES = { observed: "Observed event", potential: "Potential exposure", confirmed: "Confirmed disruption", clear: "Not affected after check" };
 const TIER_ORDER = { confirmed: 3, potential: 2, clear: 1, observed: 0 };
@@ -34,7 +35,7 @@ export const STATUS_WORDS = {
 const DEFAULT_ACTIVE = ["RECRUITING", "ENROLLING_BY_INVITATION", "ACTIVE_NOT_RECRUITING", "TREATMENT_ONGOING", "FOLLOW_UP_ONGOING"];
 const INACTIVE = ["COMPLETED", "TERMINATED", "WITHDRAWN", "CANCELLED", "ARCHIVED"];
 // Which monitored category each kind of signal belongs to (config: monitored_categories).
-const CATEGORY_OF = { strike: "transport", airport: "transport", road: "transport", "official-advice": "geopolitical", "natural-hazard": "natural_disasters",
+const CATEGORY_OF = { strike: "transport", airport: "transport", road: "transport", port: "transport", "official-advice": "geopolitical", unrest: "geopolitical", security: "geopolitical", "natural-hazard": "natural_disasters",
   weather: "weather", tracking: "cyber_outage", supplier: "supplier", outage: "cyber_outage" };
 // The watch team: four agents, each sweeping every monitored country for one kind of hazard. Every signal carries the
 // kind it belongs to (`hazard`), so each agent reads only its own.
@@ -421,7 +422,8 @@ function mergeDuplicates(signals) {
   const out = [];
   const placeOf = signal => (signal.locations ?? []).map(location => location.code ?? location.id ?? location.country).find(Boolean) ?? signal.country;
   for (const signal of signals) {
-    const source = { authority: signal.authority, url: signal.url ?? null, publishedAt: signal.publishedAt ?? null, illustrative: Boolean(signal.illustrative), id: signal.id };
+    const source = { authority: signal.authority, url: signal.url ?? null, publishedAt: signal.publishedAt ?? null, illustrative: Boolean(signal.illustrative), id: signal.id,
+      ...(signal.enterprise ? { enterprise: true, alert: signal.enterpriseId } : {}) };
     const twin = out.find(item => (signal.incident && item.incident === signal.incident) || (!signal.live && !item.live && item.category === signal.category && item.country === signal.country
       && item.window && signal.window && overlaps(signal.window.from, signal.window.to, item.window) && placeOf(item) === placeOf(signal)));
     if (twin) { twin.sources.push(source); twin.mergedIds.push(signal.id); continue; }
@@ -430,14 +432,16 @@ function mergeDuplicates(signals) {
   return out.map(signal => ({ ...signal, evidence: signal.evidence ?? (signal.sources.length > 1 ? "TRUSTED_CORROBORATED" : "SINGLE_SOURCE") }));
 }
 
-export function collectSignals({ recorded, feeds, scope, names, today, policy = scopePolicy() }) {
+export function collectSignals({ recorded, feeds, scope, names, today, policy = scopePolicy(), enterprise = [] }) {
   const monitored = scope.monitored?.external ?? [];
   const allowed = signal => {
     const category = signal.category === "natural-hazard" && signal.hazardType === "DR" ? "weather" : CATEGORY_OF[signal.category] ?? signal.category;
     return policy.categories[category] !== false;
   };
   const own = (recorded?.signals ?? []).filter(signal => monitored.includes(signal.country)).map(signal => ({ ...signal, live: false }));
-  return mergeDuplicates([...own, ...feedSignals(feeds, monitored, names, today)]).filter(allowed).map(signal => ({ ...signal, hazard: hazardOf(signal) }));
+  // Enterprise alerts come after the recorded items, so a report of an incident we already hold merges into it.
+  const fromEnterprise = enterprise.filter(signal => monitored.includes(signal.country)).map(signal => ({ ...signal, live: false }));
+  return mergeDuplicates([...own, ...fromEnterprise, ...feedSignals(feeds, monitored, names, today)]).filter(allowed).map(signal => ({ ...signal, hazard: hazardOf(signal) }));
 }
 
 // What a signal touches on one route, leg by leg.
@@ -449,6 +453,9 @@ function legMatches(signal, route) {
         matches.push({ leg: "air", node: location.code, date: leg.date, label: leg.label, effect: location.effect });
       if (location.kind === "facility" && leg.kind === "collection" && leg.facility === location.id && inWindow(leg.date, signal.window))
         matches.push({ leg: "collection", node: location.id, date: leg.date, label: `Collection at the ${leg.name}`, effect: location.effect });
+      // Our trial sites in the named cities: the delivery to the site on a day of the event.
+      if (location.kind === "sites" && leg.kind === "delivery" && location.sites.includes(leg.site) && inWindow(leg.date, signal.window))
+        matches.push({ leg: "delivery", node: leg.site, date: leg.date, label: leg.label, effect: location.effect, confirm: location.confirm ?? null, confirmWith: location.confirmWith ?? null });
       if (location.kind === "road" && leg.kind === "road" && leg.countries.includes(location.country) && overlaps(leg.from, leg.to, signal.window))
         matches.push({ leg: "road", node: location.country, date: leg.from > signal.window.from ? leg.from : signal.window.from, label: leg.label, effect: location.effect });
       if (location.kind === "country-wide" && (leg.countries ?? [leg.country]).some(code => location.countries.includes(code)) && overlaps(leg.from ?? leg.date, leg.to ?? leg.date, signal.window))
@@ -481,6 +488,7 @@ function classify(network, shipmentId, match, { booked = true } = {}) {
   return {
     tier, evidence: evidence ? { id: evidence.id, source: evidence.source, status, detail: evidence.detail, recordedAt: evidence.recordedAt, nextAvailable: evidence.nextAvailable ?? null } : null,
     missing: match.trackingOnly ? "Tracking visibility lost: the physical shipment is not known to be affected. Ask the courier for a manual status." :
+      tier === "potential" && match.confirm ? `No confirmation yet from ${match.confirmWith ?? systemFor(match.leg)} ${match.confirm}.` :
       tier === "potential" ? `No confirmation yet from ${systemFor(match.leg)} about the ${match.leg === "air" ? "flight" : match.leg} on ${plainDay(match.date)}.` : null,
   };
 }
@@ -538,12 +546,12 @@ export function assessSignals({ signals, network, views, today }) {
           const impact = verdict.tier === "confirmed" ? patientImpact(view, route, verdict.evidence, today) : null;
           const entry = {
             shipment: view.id, site: view.site, country: destinationCode(view), leg: match.leg, node: match.node, date: match.date, label: match.label, effect: match.effect,
-            trackingOnly: Boolean(match.trackingOnly), ...verdict,
+            trackingOnly: Boolean(match.trackingOnly), ...(match.confirmWith ? { confirmWith: match.confirmWith } : {}), ...verdict,
             priority: priorityOf(verdict.tier, { date: match.date, today, siteStockDays: stock, daysWithoutTreatment: impact?.ifNothingDone?.daysWithoutTreatment ?? 0 }),
             buffer: stock !== null ? { siteStockDays: stock, runsOutOn: addDays(today, stock) } : null,
             impact, patients: view.patients ?? null,
             owner: verdict.tier === "confirmed" ? "Clinical Supply" : verdict.tier === "potential" ? "Clinical Supply Logistics" : null,
-            next: verdict.tier === "confirmed" ? "Approve a recovery plan: the agents propose one, the rules check it." : verdict.tier === "potential" ? (match.trackingOnly ? "Ask the courier for a manual status until tracking is back." : `Confirm with ${systemFor(match.leg)} before ${plainDay(addDays(match.date, -1))}.`) : "None. Monitoring continues.",
+            next: verdict.tier === "confirmed" ? "Approve a recovery plan: the agents propose one, the rules check it." : verdict.tier === "potential" ? (match.trackingOnly ? "Ask the courier for a manual status until tracking is back." : `Confirm with ${match.confirmWith ?? systemFor(match.leg)} before ${plainDay(addDays(match.date, -1))}.`) : "None. Monitoring continues.",
           };
           matches.push(entry);
           (byShipment[view.id] ??= []).push({ signal: signal.id, title: signal.title, hazard: signal.hazard, illustrative: Boolean(signal.illustrative), ...entry });
@@ -638,12 +646,19 @@ export function riskChecks(ss, network, view, overrides = {}) {
 }
 
 // ---- one call for everything ----
-export function computeClinRadar({ network, portfolio, spain, israel, views: plain, choices, connected, feeds, recorded, today, config = {}, catalogue = {}, specs = {} }) {
+export function computeClinRadar({ network, portfolio, spain, israel, views: plain, choices, connected, feeds, recorded, today, config = {}, catalogue = {}, specs = {}, enterprise = null }) {
   const views = plain.filter(Boolean).map(view => { const route = routeFor(network, view); return route ? { ...view, lane: route.lane, originFacility: route.facility } : view; });
   const scope = buildScope({ network, portfolio, spain, israel, views, choices, connected, feeds, today, config, catalogue, specs });
   const names = { ...catalogue, ...(network?.geography?.names ?? {}) };
-  const signals = scope.status === "determined" ? collectSignals({ recorded, feeds, scope, names, today, policy: scopePolicy(config) }) : [];
-  const { signals: assessed, byShipment, routes } = assessSignals({ signals, network, views, today });
+  // Enterprise risk alerts become signals like any other source; our trial sites by city let a city-level alert reach a delivery.
+  const sites = [...new Map([...(portfolio?.sites ?? []).map(site => ({ id: site.id, city: site.city, country: site.country_code })),
+    ...views.map(view => ({ id: view.siteId, city: view.site, country: destinationCode(view) }))].filter(site => site.id && site.city).map(site => [site.id, site])).values()];
+  const enterpriseSignals = (enterprise?.alerts ?? []).map(alert => enterpriseSignal(alert, { facilities: network?.facilities ?? [], sites }));
+  const signals = scope.status === "determined" ? collectSignals({ recorded, feeds, scope, names, today, policy: scopePolicy(config), enterprise: enterpriseSignals }) : [];
+  const { signals: all, byShipment, routes } = assessSignals({ signals, network, views, today });
+  // An enterprise alert that touches nothing of ours is counted in the enterprise summary, not added to the signals.
+  const assessed = all.filter(signal => !(signal.sources ?? []).every(source => source.enterprise) || touchesUs(signal, network));
+  const enterpriseView = scope.status === "determined" ? enterpriseSummary({ feed: enterprise, signals: assessed, monitored: scope.monitored?.external ?? [], facilities: network?.facilities ?? [], routes, names, hazardOf }) : null;
   const counts = { observed: 0, potential: 0, confirmed: 0, clear: 0 };
   for (const signal of assessed) counts[signal.tier]++;
   const feedStatus = feeds ? {
@@ -657,7 +672,7 @@ export function computeClinRadar({ network, portfolio, spain, israel, views: pla
   } : null;
   const atRisk = assessed.flatMap(signal => signal.matches.filter(match => match.impact?.ifNothingDone?.daysWithoutTreatment > 0));
   const patientsAtRisk = { shipments: atRisk.map(match => match.shipment), patients: atRisk.reduce((sum, match) => sum + (match.impact.patients ?? 0), 0) };
-  return { today, scope, signals: assessed, byShipment, routes, counts, names, feeds: feedStatus, checkedAt: recorded?.checked_at ?? null, patientsAtRisk, costReference: COST_OF_DELAY };
+  return { today, scope, signals: assessed, byShipment, routes, counts, names, feeds: feedStatus, checkedAt: recorded?.checked_at ?? null, patientsAtRisk, costReference: COST_OF_DELAY, enterprise: enterpriseView };
 }
 
 // ---- the watch team's view: one summary per kind of hazard ----
@@ -697,7 +712,7 @@ function findingFor(entry, signals, ss, network, regulatory) {
   const clear = signals.flatMap(signal => signal.matches.filter(match => match.tier === "clear").map(match => `${match.shipment} checked, not affected`));
   const potential = signals.flatMap(signal => signal.matches.filter(match => match.tier === "potential").map(match => (match.trackingOnly
     ? `${match.shipment}: courier tracking lost on ${dayMonth(match.date)}; ask for a manual status`
-    : `${match.shipment}'s ${lowerFirst(match.label)} on ${dayMonth(match.date)}: ${titleHead(signal)}${titleWhat(signal) ? `, ${titleWhat(signal)}` : ""}${signal.illustrative ? " (illustrative)" : ""}; Clinical Supply Logistics to confirm with ${systemFor(match.leg)}`)));
+    : `${match.shipment}'s ${lowerFirst(match.label)} on ${dayMonth(match.date)}: ${titleHead(signal)}${titleWhat(signal) ? `, ${titleWhat(signal)}` : ""}${signal.illustrative ? " (illustrative)" : ""}${signal.evidence === "SINGLE_SOURCE" ? ", single source" : ""}; Clinical Supply Logistics to confirm with ${match.confirmWith ?? systemFor(match.leg)}`)));
   sentences.push(confirmed.length ? `${head}; ${plural(confirmed.length, "confirmed disruption")} — ${[...confirmed, ...clear].join("; ")}.` : `${head}; nothing confirmed.${clear.length ? ` ${clear.join("; ")}.` : ""}`);
   if (potential.length) sentences.push(`${plural(potential.length, "potential exposure")}: ${potential.join("; ")}.`);
   const observed = signals.filter(signal => signal.tier === "observed");
@@ -723,7 +738,14 @@ function findingFor(entry, signals, ss, network, regulatory) {
     const alerts = ss.feeds?.gdacs?.nearOurFacilities ?? [];
     sentences.push(`Not monitored: ${list(entry.gaps.map(gap => `${names[gap.code] ?? gap.code} (${gap.facilities.join(", ")})`))}.${alerts.length ? ` GDACS reports ${list(alerts.map(alert => `a ${alert.alert.toLowerCase()} ${alert.typeName.toLowerCase()} alert in ${list(alert.countries.filter(code => entry.gaps.some(gap => gap.code === code)).map(code => names[code] ?? code))}, ${windowText({ from: alert.from, to: alert.to })}${alert.ended ? " (ended)" : ""}`))}.` : ""}`);
   }
+  if (entry.enterprise?.received) sentences.push(enterpriseSentence(entry.enterprise));
   return sentences.join(" ");
+}
+// "Enterprise risk system: 3 alerts, 1 touches our network (merged into SIG-…), 1 coverage gap (…)."
+function enterpriseSentence(view) {
+  const touching = view.alerts.filter(item => ["new", "merged"].includes(item.kind));
+  const gaps = view.alerts.filter(item => item.kind === "gap");
+  return `${String(view.system).replace(/ \(illustrative\)$/, "")}: ${plural(view.received, "alert")}, ${touching.length} ${touching.length === 1 ? "touches" : "touch"} our network${touching.length ? ` (${touching.map(item => item.result).join("; ")})` : ""}, ${plural(gaps.length, "coverage gap")}${gaps.length ? ` (${gaps.map(item => item.result).join("; ")})` : ""}${view.notMatched ? `; ${view.notMatched} counted, not matched` : ""}.`;
 }
 
 // One summary per kind of hazard, for the page and for the agents' run records. `regulatory` lists the regulatory changes
@@ -753,6 +775,8 @@ export function watchSummary(ss, { network, regulatory = [] } = {}) {
         ? (ss.scope.coverage?.gaps ?? []).filter(gap => gap.code && /regulatory and customs coverage is a gap/i.test(gap.text)).map(gap => ({ code: gap.code, text: gap.text }))
         : Object.entries(facilityGaps).map(([code, facilities]) => ({ code, facilities, text: `${ss.names?.[code] ?? code} hosts the ${list(facilities)} and is not monitored for external risk.` })),
     };
+    const fromEnterprise = enterpriseFor(ss.enterprise, hazard);
+    if (fromEnterprise) entry.enterprise = { system: fromEnterprise.system, received: fromEnterprise.received, matched: fromEnterprise.matched, merged: fromEnterprise.merged, notMatched: fromEnterprise.notMatched, gaps: fromEnterprise.gaps, alerts: fromEnterprise.alerts.map(item => ({ id: item.id, kind: item.kind, result: item.result })) };
     entry.finding = findingFor(entry, ordered, ss, network, items);
     return entry;
   });
