@@ -134,9 +134,11 @@ The Spain case has the same steps as the UK case. The AI panel reads the note in
 
 **Shows:** the pre-shipment check, now the second item in the menu. Every planned shipment (20, to the UK, Germany and Spain) is tested against its destination's Country Specification before it leaves the depot. The result is **Blocked** (a check fails, data is missing, or an expert decision is needed), **Confirm before dispatch**, or **Ready to ship**. Today: 11 blocked, 5 to confirm, 4 ready. The Overview's first tile, "Shipments blocked", opens this page, and every shipment row on the Overview cards opens its check.
 
+The list has a search box (shipment, site, batch or trial) and filters for result, destination and agent plan, with "Showing N of 20" as you filter. The **Agent plan** column shows where each shipment that needs action stands: no plan yet, plan to approve, plan to review, escalation, or approved. Choosing it opens the plan. **Agent plans**, at the top right, says how many plans are waiting for approval.
+
 ![Shipment check detail](screens/18b-shipment-check-detail.png)
 
-Opening a shipment shows each check with its result, the reason and where the requirement comes from. A requirement from a change still waiting for approval is marked **Pending change** in orange: before RC-UK-001 is approved, specification v12 still has the earlier labeling text, but SHP-04 already fails the amended rule. Requirements whose data isn't connected yet, such as invoices, show as **Not checked** and never block. The planner can **hold the shipment, swap the batch or proceed as planned**, with a reason recorded under their name. Proceeding with a blocked shipment is an override.
+Opening a shipment shows its **Agent plan** first, with **Open the plan** or **Plan with agents**. Then come the checks, each with its result, the reason and where the requirement comes from. A requirement from a change still waiting for approval is marked **Pending change** in orange: before RC-UK-001 is approved, specification v12 still has the earlier labeling text, but SHP-04 already fails the amended rule. Requirements whose data isn't connected yet, such as invoices, show as **Not checked** and never block. Below them, under **Or record an action yourself**, the planner can **hold the shipment, swap the batch or proceed as planned**, with a reason recorded under their name. Proceeding with a blocked shipment is an override. Once an agent plan is approved, it replaces that form until someone withdraws it.
 
 **What it finds:**
 - **Rule changes:** UK legacy labels after the cutoff, and from 1 Mar 2027 the Spanish delivery note and pharmacy notice.
@@ -150,53 +152,64 @@ Opening a shipment shows each check with its result, the reason and where the re
 
 **Real or simulated:** the checks are rules written in the page, run on the demo portfolio and the Spain scenario. Invoices, label texts and courier data aren't connected, so those requirements show as Not checked. Actions are saved in the browser.
 
-### 15. Agents · resolving blocked shipments
+### 15. Agent plans · resolving shipments with agents
 
-![Resolve with agents in the shipment panel](screens/19-agents-drawer.png)
+**Agent plans** is in the menu, after Shipment checks. It is the work queue for Clinical Supply, and every plan page opens under it. The journeys and demo scripts are in [RegChain-AI-User-Journeys.md](RegChain-AI-User-Journeys.md).
 
-**Shows:** every blocked or to-confirm shipment's panel has **Resolve with agents** after the checks. Recording an action by hand is still there below it, under **Or record an action yourself**. Once an agent plan is approved, the panel shows it in place of the manual form, with **Withdraw the approval**. Shipment checks also has **Resolve all with agents** at the top.
+![Agent plans](screens/19-agent-plans.png)
 
-![Agents page](screens/19b-agents.png)
+**Agent plans** lists every shipment that needs action, most urgent first, with:
 
-At the top, **How the agents are kept in bounds**:
+- **Status chips with counts:** To approve, No plan yet, Approved, Escalations, Re-planned, All.
+- **Filters:** search, destination, and "Prepare by" (within 7 days, within 30 days, later).
+- **Each row:** the problem, the agent plan and the next step. That is **Approve** for a plan that passes, **Acknowledge** for an escalation, or **Plan** when there is no plan yet.
 
-- read-only access to the validated systems;
-- drafts, never changes;
-- fixed rules decide whether an option passes, and again when someone approves, and kits and slots are never promised twice;
-- every step is logged.
+**Plan all with AI agents**, or **Scripted walkthrough (no AI)**, runs the agent team on every shipment and shows a progress bar. RegChain then checks the plans together, so no kits or relabelling slot is promised twice. A re-planned row says why, for example "the 16 Nov relabelling slot goes to SHP-01, which is more urgent". **What the agents did** and **How the agents are controlled** stay folded until opened.
 
-Below it are the six systems connected over MCP, with their tool counts: five read-only and one draft-only.
+![Plan page](screens/19b-plan-page.png)
 
-**What the agents are doing** fills in step by step as the run streams. The orchestrator states the goal, reads the checks and what other plans already hold, and asks a specialist. The specialist calls its system, shown as a chip with the tool and its inputs, and the system's answer appears beneath (shortened on screen, kept in full in the record). The specialist reports back, the orchestrator checks options, and finally the verifier checks every option. If someone opens another shipment while a run is in progress, that page says so instead of mixing the two.
+**The plan page** reads top to bottom:
 
-**Resolution** shows the recommendation, the root cause and each option with:
+1. **Where the shipment stands:** Checked → Agents planned → Approved in RegChain → Approved in each system.
+2. **Why it is blocked:** the failing checks only, each with its specification section.
+3. **The recommended plan:**
+   - what changes, in plain words, such as "Ship batch J-203 instead of J-202";
+   - why, and the risk;
+   - what RegChain checked;
+   - what is still to confirm before dispatch;
+   - **Approve this plan**, for Clinical Supply only.
+4. **What approval sends:** one draft per system, each with its text on request.
+5. **Other options the agents considered**, each with RegChain's verdict and the reason it fails, or **Approve instead** when it passes.
+6. **The run line:** when the agents ran, **Export the audit record**, and **Run the agents again**.
 
-- its actions;
-- why it was proposed and its risk;
-- RegChain's result: "Passes the rules · confirm before dispatch", or "Does not pass · not feasible" with the reason, for example "relabelled kits are ready on 17 Nov, after preparation starts on 14 Nov".
+![How the agents worked it out](screens/19c-plan-trail.png)
 
-Only passing options have **Approve this plan**, and only **Clinical Supply** can approve: the other roles see the buttons disabled. The server checks the option once more before it records the approval. Approving:
+**How the agents worked it out** is folded by default. Opened, it shows every step:
 
-- records the plan, the person and the run it came from;
-- marks the shipment "Agent plan approved" on Shipment checks;
-- shows each draft with "Next: approve this draft in IRT" (or ERP, the depot, the QMS, the site portal).
+- the goal;
+- each delegation;
+- each system the agents read;
+- each report;
+- RegChain's checks;
+- the drafts.
 
-Approving an option other than the recommendation drafts its changes and withdraws the others. A newer run never inherits an earlier approval: it shows "It came from an earlier run" until someone withdraws it. Nothing changes in the validated systems. **Export the run** saves the full audit record as JSON, with the approval log.
+It can show one agent at a time. "Show the systems' answers" adds the raw replies, which the audit record keeps in full.
 
-![Every shipment that needs action](screens/19c-agents-all.png)
+![After approval](screens/19d-plan-approved.png)
 
-**Resolve all with agents** runs the agent team on all 16 shipments that are blocked or need confirming:
+After approval, the plan says who approved it and when, and **What happens next** lists the drafts waiting in IRT and the depot. Nothing changes in a validated system until someone approves each draft there. **Withdraw the approval** frees the kits and slot places the plan held. A new run never inherits an earlier approval.
 
-- The shipments are ordered by preparation date, the most urgent first.
-- RegChain then checks the plans together, so no kits or relabelling slot is promised twice.
-- The board shows the totals: 14 plans that pass, 1 re-planned, 2 escalated, 28 drafts.
-- Each row has the plan, RegChain's result and an **Approve** or **Acknowledge** button.
+![Shipment panel](screens/19e-shipment-panel.png)
 
-![A re-planned shipment](screens/19d-agents-replanned.png)
+![Plan page on a phone](screens/19f-plan-phone.png)
 
-SHP-06 is the re-planned one. On its own, its agents pick the 16 Nov relabelling slot. SHP-01 is more urgent and needs 10 of that slot's 20 places; SHP-06 needs 14. RegChain moves SHP-06 to the 18 Nov slot, withdraws the first drafts (struck through, with the reason) and drafts the new plan. The shipment's own page shows the same result as the board.
+When no option passes, as for SHP-03 (the German label specification takes 15 business days and the site has 7 days of stock), the plan page says **No option passes the rules**, lists why each option fails, and offers **Acknowledge the escalation**.
 
-When no option passes, as for SHP-03 (the German label specification takes 15 business days and the site has 7 days of stock), the agents recommend **escalation** and draft a QMS escalation instead of guessing.
+**Rehearsals:**
+
+- Opening the dashboard with **?fresh** (http://127.0.0.1:4173/?fresh) clears the decisions saved in the browser and archives the approvals.
+- **?fresh=all** also moves the plans to the run history, so every shipment starts with no plan.
+- Nothing is deleted.
 
 **Real or simulated:**
 

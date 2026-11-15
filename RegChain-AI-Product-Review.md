@@ -61,7 +61,7 @@ The **Shipment checks** page tests all 20 planned shipments against their destin
 
 ## Built next: agents that resolve a blocked shipment
 
-The hackathon is about agentic AI, and finding a blocked shipment is only half the job. **Resolve with agents**, in a blocked shipment's panel, starts a team of agents:
+The hackathon is about agentic AI, and finding a blocked shipment is only half the job. **Agent plans**, in the menu, gives every shipment that needs action a team of agents:
 
 - An orchestrator (Claude Opus 5.5) delegates to supply, logistics, records and communications agents (Claude Sonnet 5.5).
 - The agents read IRT, ERP, the depot and the eTMF through six MCP servers, all read-only except a draft inbox.
@@ -69,7 +69,7 @@ The hackathon is about agentic AI, and finding a blocked shipment is only half t
 
 On SHP-04 it finds the eTMF authorisation letter that IRT is missing and a replacement batch with the updated label. On SHP-03 nothing passes, so it escalates instead of guessing. The design keeps generative AI out of the decision, in line with the draft EU GMP Annex 22: fixed rules decide pass or fail, and a named person approves. See [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
 
-**Resolve all with agents** runs the same team on every shipment that needs action, most urgent first, then checks the plans together so no kits or relabelling slot is promised twice. That is the orchestration a supply team cannot do by email: on today's data SHP-06 is moved to the 18 Nov slot because SHP-01 needs the 16 Nov one more urgently.
+**Plan all with AI agents** runs the same team on every shipment that needs action, most urgent first, then checks the plans together so no kits or relabelling slot is promised twice. That is the orchestration a supply team cannot do by email: on today's data SHP-06 is moved to the 18 Nov slot because SHP-01 needs the 16 Nov one more urgently.
 
 ## Second review, 15 Nov: logic gaps found and fixed
 
@@ -97,10 +97,10 @@ An independent review of the code and a run of the agents on every shipment foun
 
 Not changed: the UK controlled-drug and Spain consignee checks show Pass from the specification's own statements, not from shipment data.
 
-**Suggested demo order (about 5 minutes):**
+**Suggested demo order (about 5 minutes).** The full script, with clicks and talk track, is Scenario A in [RegChain-AI-User-Journeys.md](RegChain-AI-User-Journeys.md).
 1. **Shipment checks.** 11 of 20 blocked. Open SHP-04: it must be prepared today and fails the amended UK labeling rule, marked "pending change: specification v12 doesn't say this yet". Open SHP-03: Germany has no label specification for that batch, a gap that has nothing to do with any rule change.
-2. **Agents on SHP-04, live.** Resolve with agents, then **Run the AI agents**. Watch the orchestrator delegate, the agents call IRT, ERP, the depot and the eTMF, and the verifier pass the swap, pass "relabel and dispatch on 23 Nov", and fail the delay. Approve the swap as Clinical Supply; the drafts wait for approval in IRT.
-3. **Resolve all with agents.** 16 shipments, most urgent first: 14 plans, 2 escalations, 1 re-plan. Point at SHP-06: its agents chose the 16 Nov slot, but SHP-01 needs it first, so RegChain moved it to 18 Nov. Show a run recorded beforehand, as a live run of all 16 takes several minutes.
+2. **Agents on SHP-04, live.** Open its plan, then **Run the agents again → Run the AI agents**. Watch the orchestrator delegate, the agents call IRT, ERP, the depot and the eTMF, and the verifier pass the swap, pass "relabel and dispatch on 23 Nov", and fail the delay. Approve the swap as Clinical Supply; the drafts wait for approval in IRT.
+3. **Agent plans.** 16 shipments, most urgent first: 14 plans, 2 escalations, 1 re-plan. Point at SHP-06: its agents chose the 16 Nov slot, but SHP-01 needs it first, so RegChain moved it to 18 Nov. Show a run recorded beforehand, as a live run of all 16 takes several minutes.
 4. **The UK case.** Found at the first scan, 200 days after the rule applied; the look-back lists 7 legacy-label batches. Run the AI check, approve, and SHP-04 now cites specification v13. Quality can't close the case until every blocked shipment has an action.
 5. **Spain.** The same check flags the new rule 107 days early. SHP-ES-10's batch has no QP release planned and its site has no pharmacy code: the agents book the QP slot and draft the request to the site in Spanish and English.
 
