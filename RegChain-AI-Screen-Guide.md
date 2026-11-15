@@ -128,7 +128,7 @@ The Regulatory SME or the Quality owner changes the schedule; for other roles th
 **AI connections shows:**
 
 - **Agents and their models:** each agent, the Claude model it uses and the systems it reads; the verifier is fixed rules, no AI.
-- **Claude service:** whether live runs are possible (key and SDK on the server) or only the scripted walkthrough. Keys are never entered on the page: they stay in the server's `.env` file or the cloud account RegChain runs under. Changing the service or a model goes through change control.
+- **Claude service:** which service RegChain calls (Anthropic, or the company's own AWS, Google Cloud or Microsoft Azure, set with `REGCHAIN_AI_PROVIDER`; see [Which Claude service](RegChain-AI-Deployment.md#which-claude-service)), and whether live runs are possible or only the scripted walkthrough, with the one thing still missing. Keys are never entered on the page: they stay in the server's `.env` file or the cloud identity RegChain runs under. Changing the service or a model goes through change control.
 - **Company systems over MCP:** each system, what the agents may do there (read-only, or draft-only for the Draft inbox), its tools and whether RegChain reached it.
 - **Request a new connection:** anyone can ask for a new system (name, what the agents would read, MCP address if known, read-only or draft-only, business owner, why). The request changes nothing. The Quality owner approves or rejects it with a reason; the person who asked cannot approve their own request. An approved connection still has to be built and validated before any agent uses it.
 
