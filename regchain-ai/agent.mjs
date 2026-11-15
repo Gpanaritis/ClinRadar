@@ -251,8 +251,11 @@ function makeLoop({ root, api, models, systems, call, send, record }) {
     const messages = [{ role: "user", content: task }];
     for (let turn = 0; turn < (isOrchestrator ? LIMITS.orchestratorTurns : LIMITS.specialistTurns); turn++) {
       const model = agent.watch ? models.watch : isOrchestrator ? models.orchestrator : models.specialist;
-      // Watch agents scan; they do not need extended thinking.
-      const stream = api.messages.stream({ model, max_tokens: agent.watch ? 2000 : 8000, ...(agent.watch ? {} : { thinking: { type: "adaptive" } }), system, tools, messages });
+      // Watch agents scan at low effort. The current models think by default and thinking counts towards max_tokens, so
+      // every agent gets room to finish: a cut-off answer stops the whole run. The specialists answer narrow questions at
+      // medium effort; the orchestrator keeps the model's default.
+      const effort = agent.watch ? { output_config: { effort: "low" } } : isOrchestrator ? {} : { output_config: { effort: "medium" } };
+      const stream = api.messages.stream({ model, max_tokens: agent.watch ? 16000 : 32000, ...(agent.watch ? {} : { thinking: { type: "adaptive" } }), ...effort, system, tools, messages });
       const message = await stream.finalMessage();
       record.usage.input_tokens += message.usage?.input_tokens ?? 0;
       record.usage.output_tokens += message.usage?.output_tokens ?? 0;

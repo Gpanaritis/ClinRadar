@@ -200,7 +200,8 @@ Every signed-in role can read everything. Any other role that calls one of these
 
 | Command | What it does |
 |---|---|
-| `node scripts/users.mjs add <username> "<Full name>" <role>` | Creates the account and prints a generated password once |
+| `node scripts/users.mjs add <username> "<Full name>" <role> [--admin]` | Creates the account and prints a generated password once. `--admin` makes it an administrator |
+| `node scripts/users.mjs admin <username> on\|off` | Grants or removes the administrator flag and ends that person's sessions |
 | `node scripts/users.mjs list` | Lists accounts with role, active flag, creation time and last sign-in |
 | `node scripts/users.mjs password <username>` | Sets a new password, prints it once, and ends that person's sessions |
 | `node scripts/users.mjs role <username> <role>` | Changes the role and ends that person's sessions |
@@ -214,6 +215,8 @@ In Docker, put `docker compose exec regchain` in front. `npm run users -- <comma
 - Every user change is in the audit trail with the actor `RegChain administrator (<account>)`, where the account is the operating-system user that ran the command. Give each administrator their own server account, and limit shell access to them.
 - Accounts are disabled, never deleted, so their history stays readable. A role change is audited with the old and the new role.
 - People cannot change their own password yet. An administrator sets a new one.
+
+**Administrators.** An administrator is a flag on top of the account's one role, not a fifth role. It allows two things: connecting, replacing or removing the Claude API key in **Settings › AI agents & integrations**, and starting the AI runs (the agents and the AI check) whatever the role. It grants no approval, so the four-eyes rules between the roles still hold. The key is sent to the server once, checked with Anthropic (`GET /v1/models`), encrypted with AES-256-GCM and kept in the data folder as `claude-key.enc.json`. The encryption key is `REGCHAIN_SECRET_KEY` (32 bytes, base64) if set, otherwise `vault.key`, generated once in the data folder. Neither file is in Git or in the database backup, so back them up separately or connect the key again after a restore. No answer, log line or audit entry carries the key: the audit records who connected or removed it, when, and its last four characters (`ai.key_connected`, `ai.key_removed`). Only signed-in administrators can start live runs with a connected key; in local mode it is never used. A key in `.env` wins over a connected key and serves everyone who may start a run.
 
 ## Backups and restore
 

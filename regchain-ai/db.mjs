@@ -139,6 +139,11 @@ CREATE TABLE agent_approval (
 );
 `,
   },
+  {
+    id: 3,
+    name: "administrators: connect Claude and start live AI runs, on top of their one role",
+    sql: `ALTER TABLE app_user ADD COLUMN admin INTEGER NOT NULL DEFAULT 0;`,
+  },
 ];
 
 const handles = new Map();

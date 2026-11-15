@@ -82,11 +82,12 @@ The UK labeling case has a live AI check, at the top of its **Evidence & impact*
 
 If any check fails, Approve and Edit & approve are blocked for the Regulatory SME. When every check passes, the AI's draft becomes the proposal the SME reviews, as a new revision recorded in the audit trail. It never overwrites an SME's own edit or a case that is past review. The texts are never stored in the repository; the server keeps the last copy and the last result in `.regchain-cache/`, so a recorded check still shows without internet.
 
-To turn it on:
+To turn it on, either:
 
-1. Install Node.js 22.13 or later, which includes npm.
-2. Create a file named `.env` next to `serve-regchain.cjs` containing `ANTHROPIC_API_KEY=` followed by your key. Git ignores this file.
-3. Open **Start-ClinRadar.cmd**. The first time, it installs the Anthropic SDK with npm.
+- **Connect it in Settings (with sign-in).** An administrator (an account made with `--admin`, see [Users and roles](RegChain-AI-Deployment.md#users-and-roles)) signs in, opens **Settings › AI agents & integrations** and pastes the Claude API key. ClinRadar checks it with Anthropic, stores it encrypted in `.regchain-data/` (ignored by Git) and never sends it back: people see who connected it and when, administrators also its last four characters. Only administrators can start live AI runs with this key; everyone else keeps the offline demo. Use a key made for ClinRadar, with a spend limit, so it can be revoked on its own.
+- **Or put it in `.env`.** Create a file named `.env` next to `serve-regchain.cjs` containing `ANTHROPIC_API_KEY=` followed by your key. Git ignores this file. A key here serves everyone who may start a run, and wins over a connected key.
+
+Node.js 22.13 or later is needed; the first time, **Start-ClinRadar.cmd** installs the Anthropic SDK with npm.
 
 RegChain uses Claude models only. To reach them through AWS, Google Cloud or Microsoft Azure instead of Anthropic's API, set `REGCHAIN_AI_PROVIDER` as described in [Which Claude service](RegChain-AI-Deployment.md#which-claude-service).
 
