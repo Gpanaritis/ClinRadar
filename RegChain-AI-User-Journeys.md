@@ -96,7 +96,11 @@ The menu follows the day's work: **Overview · Shipments · Studies · Signals �
 2. **Why it needs action**: the failing checks, each with its specification section. For a risk on the route it also says:
    - which system confirmed it, and when;
    - what happens to the patients if nothing is done.
-3. **Route**: each leg with its date, from the depot to the site.
+3. **Route**: a map of the route, from the depot through the airports to the site.
+   - The booked route is grey, and a disrupted leg is red (or amber when only possibly affected).
+   - The approved or recommended plan's way round is dashed green, for example leaving from Amsterdam instead of Brussels.
+
+   Under the map, each leg is listed with its date.
    - A disrupted leg shows its tier and **Open the signal**.
    - Under the legs: the countries on the route, and whether each is monitored.
 4. **The recommended plan**:
@@ -145,14 +149,20 @@ flowchart TD
    - plans to approve;
    - a study status to confirm;
    - a regulatory change waiting for the SME.
-2. **Review the plans** opens **Shipments › Needs action**.
-3. **Plan all with AI agents**. Without a key, use **Scripted walkthrough (no AI)**. A progress bar shows "Planning 19 shipments · N done".
-4. Choose **Prepare by: Within 7 days**.
-5. Go down the list:
+2. **Where it happens**, the map under the list, shows the same facts in place:
+   - our sites (sized by patients) and depots;
+   - depots and factories in countries nobody monitors, outlined in amber;
+   - the confirmed disruption (pulsing red) and potential exposures (amber), and the routes they touch.
+
+   Select a marker to open its signal, or a route to open its shipment. **Europe and Middle East** and **World** switch the area.
+3. **Review the plans** opens **Shipments › Needs action**.
+4. **Plan all with AI agents**. Without a key, use **Scripted walkthrough (no AI)**. A progress bar shows "Planning 19 shipments · N done".
+5. Choose **Prepare by: Within 7 days**.
+6. Go down the list:
    - choose **Approve** for a plan;
    - choose **Acknowledge** for an escalation (SHP-03, SHP-05);
    - open the shipment for anything you want to read first.
-6. The **Approved** chip counts what is done. Each draft waits for approval in its own system.
+7. The **Approved** chip counts what is done. Each draft waits for approval in its own system.
 
 ### J1b · One study at a glance (STUDY-021)
 
