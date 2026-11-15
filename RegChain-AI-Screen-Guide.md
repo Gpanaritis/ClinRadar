@@ -203,6 +203,10 @@ After approval, the plan says who approved it and when, and **What happens next*
 
 ![Plan page on a phone](screens/19f-plan-phone.png)
 
+![Agent plans on a narrow screen](screens/19g-agent-plans-narrow.png)
+
+On a narrow screen, such as a phone or the side pane of the Claude app, every row of Agent plans and Shipment checks becomes a card. The shipment and its prepare-by date come first, then the plan, then the next step, so **Approve** or **Acknowledge** is always visible. Opened as a file instead of at http://127.0.0.1:4173, every page shows an orange notice: the agents, approvals and live checks need RegChain running.
+
 When no option passes, as for SHP-03 (the German label specification takes 15 business days and the site has 7 days of stock), the plan page says **No option passes the rules**, lists why each option fails, and offers **Acknowledge the escalation**.
 
 **Rehearsals:**

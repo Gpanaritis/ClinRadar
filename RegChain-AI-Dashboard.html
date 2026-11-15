@@ -88,6 +88,10 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 .plans-head{align-items:flex-start}.plans-filters{padding:0 15px 10px}.plan-title{display:block;font-size:13px;margin-top:4px}.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12.5px;color:var(--muted)}
 .run-line{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:15px;font-size:12px;color:var(--muted)}.run-line>span{flex:1;min-width:240px}.rerun{flex-basis:100%}.rerun>summary{cursor:pointer;color:var(--blue);font-weight:700}.rerun .actions{margin:8px 0 4px}
 .progress-card{padding:12px 15px;margin-bottom:15px}.progress-text{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px}.progress-text small{color:var(--muted)}.progress-bar{height:6px;border-radius:4px;background:#edf1f7;margin-top:8px;overflow:hidden}.progress-bar span{display:block;height:100%;background:var(--blue);transition:width .3s}
+.stack-label{display:none}.file-notice{display:flex;gap:8px;align-items:flex-start;margin:0 0 15px;padding:10px 14px;border-radius:10px;background:#fff2d9;color:#6b3d00;font-size:13px;border:1px solid #f1d39b}.file-notice svg{width:16px;height:16px;flex:none;margin-top:1px}.file-notice a{color:#6b3d00;font-weight:700}
+@media(max-width:760px){.stack-table thead{display:none}.stack-table,.stack-table tbody{display:block;width:100%}.stack-table tr{display:grid;gap:6px 12px;padding:12px 15px;border-top:1px solid var(--line)}.stack-table tr:first-child{border-top:0}.stack-table td{display:block;padding:0;border:0;min-width:0;white-space:normal}.stack-table td.hide-narrow,.stack-table td.col-num,.stack-table td.col-dispatch{display:none}.stack-table .stack-label{display:inline;color:var(--muted);font-size:11.5px}.stack-table td.col-prep{text-align:right}.stack-table td.col-prep .sub{display:block}
+.plans-table tr{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"ship prep" "plan plan" "next next"}.plans-table .col-ship{grid-area:ship}.plans-table .col-prep{grid-area:prep}.plans-table .col-plan{grid-area:plan}.plans-table .col-next{grid-area:next}.plans-table .col-next .btn{width:100%;justify-content:center}
+.ships-table tr{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"ship result" "dest prep" "plan plan"}.ships-table .col-ship{grid-area:ship}.ships-table .col-result{grid-area:result}.ships-table .col-dest{grid-area:dest}.ships-table .col-prep{grid-area:prep}.ships-table .col-plan{grid-area:plan}.ships-table .col-result .badge-stack{justify-content:flex-end}}
 @media(max-width:900px){.plan-layout,.plan-columns{grid-template-columns:minmax(0,1fr)}.journey{grid-template-columns:repeat(2,minmax(0,1fr))}.journey-step:nth-child(3){border-left:0}.journey-step:nth-child(n+3){border-top:1px solid var(--line)}}
 @media(max-width:640px){.journey{grid-template-columns:minmax(0,1fr)}.journey-step+.journey-step{border-left:0;border-top:1px solid var(--line)}.option-rows li{flex-direction:column;align-items:flex-start}.search-field input{min-width:0;width:100%}.search-field{flex:1 1 100%}.toggle-inline{margin-left:0}}
 .agent-chip{display:inline-flex;align-items:center;white-space:nowrap;border-radius:6px;padding:3px 7px;font-size:11px;font-weight:750;background:#edf1f7;color:#38506f;justify-self:start}.agent-orchestrator{background:#e8efff;color:#173f9e}.agent-supply{background:#e7f6ef;color:#196449}.agent-logistics{background:#fff2d9;color:#7a4500}.agent-records{background:#f0ecff;color:#5a4899}.agent-comms{background:#e3f5f7;color:#0f5f6a}.agent-verifier{background:#132446;color:#fff}.system-chip{display:inline-flex;border:1px solid #cddbef;border-radius:5px;padding:1px 6px;font-size:11px;font-weight:700;color:#24426d;background:#f7faff;white-space:nowrap}
@@ -1674,11 +1678,11 @@ function matchesSearch(shipment,query) {
 const dayDistance = day => {const days=daysFrom(day);return days<0?Math.abs(days)+" days late":days===0?"today":"in "+days+" days";};
 function shipmentRow(shipment) {
   const manual=shipment.action&&!["plan","escalated"].includes(shipment.action.action)?shipment.action:null;
-  return '<tr><td><button type="button" class="entity-button" data-act="shipment" data-value="'+esc(shipment.id)+'"><span>'+esc(shipment.id)+'<small class="sub">'+esc(shipment.trial+" · batch "+shipment.batch)+'</small></span></button></td>'+
-    '<td>'+esc(specCountryName(shipment.countryId))+'<span class="sub">'+esc(shipment.site)+'</span></td>'+
-    '<td class="nowrap">'+esc(displayDay(shipment.dispatch))+'</td><td class="nowrap">'+esc(displayDay(shipment.prepareBy))+'<span class="sub">'+dayDistance(shipment.prepareBy)+'</span></td>'+
-    '<td><div class="badge-stack">'+badge(...resultStyle[shipment.result])+(manual?badge(shipmentActionNames[manual.action],"purple"):"")+'</div></td>'+
-    '<td>'+(needsAction(shipment)?'<button type="button" class="plan-link" data-act="open-agents" data-value="'+esc(shipment.id)+'" aria-label="'+esc("Open the agent plan for "+shipment.id)+'">'+planBadge(shipment.id)+icon("chevron")+'</button>':'<span class="muted small-text">Not needed</span>')+'</td>'+
+  return '<tr><td class="col-ship"><button type="button" class="entity-button" data-act="shipment" data-value="'+esc(shipment.id)+'"><span>'+esc(shipment.id)+'<small class="sub">'+esc(shipment.trial+" · batch "+shipment.batch)+'</small></span></button></td>'+
+    '<td class="col-dest">'+esc(specCountryName(shipment.countryId))+'<span class="sub">'+esc(shipment.site)+'</span></td>'+
+    '<td class="nowrap col-dispatch">'+esc(displayDay(shipment.dispatch))+'</td><td class="nowrap col-prep"><span class="stack-label">Prepare by </span>'+esc(displayDay(shipment.prepareBy))+'<span class="sub">'+dayDistance(shipment.prepareBy)+'</span></td>'+
+    '<td class="col-result"><div class="badge-stack">'+badge(...resultStyle[shipment.result])+(manual?badge(shipmentActionNames[manual.action],"purple"):"")+'</div></td>'+
+    '<td class="col-plan">'+(needsAction(shipment)?'<button type="button" class="plan-link" data-act="open-agents" data-value="'+esc(shipment.id)+'" aria-label="'+esc("Open the agent plan for "+shipment.id)+'">'+planBadge(shipment.id)+icon("chevron")+'</button>':'<span class="muted small-text">Not needed</span>')+'</td>'+
     '<td class="hide-narrow muted">'+esc(attention(shipment))+'</td></tr>';
 }
 function shownShipments() {
@@ -1689,7 +1693,7 @@ function shipmentTable() {
   const shown=shownShipments();
   const total=plannedShipments().length;
   return '<p class="result-count">'+esc(shown.length===total?"Showing all "+total+" shipments":"Showing "+shown.length+" of "+total+" shipments")+'</p>'+
-    (shown.length?'<div class="table-wrap" tabindex="0"><table><caption class="sr">Planned shipments, their check results and their agent plans</caption><thead><tr><th>Shipment</th><th>Destination</th><th>Dispatch</th><th>Prepare by</th><th>Result</th><th>Agent plan</th><th class="hide-narrow">What needs attention</th></tr></thead><tbody>'+
+    (shown.length?'<div class="table-wrap" tabindex="0"><table class="stack-table ships-table"><caption class="sr">Planned shipments, their check results and their agent plans</caption><thead><tr><th>Shipment</th><th>Destination</th><th>Dispatch</th><th>Prepare by</th><th>Result</th><th>Agent plan</th><th class="hide-narrow">What needs attention</th></tr></thead><tbody>'+
       shown.map(shipmentRow).join("")+'</tbody></table></div>':'<p class="nothing">No shipments match these filters. '+trigger("Clear the filters","clear-shipment-filters","","quiet")+'</p>');
 }
 function shipmentChecks() {
@@ -2131,19 +2135,19 @@ function planRow(shipment,index) {
     status==="review"?trigger("Review","open-agents",shipment.id,"small"):
     status==="none"?trigger("Plan","open-agents",shipment.id,"small"):
     status==="running"?'<span class="muted small-text">Working…</span>':'<small class="muted">'+esc(approval?.by.split(" · ")[0]??"")+'</small>';
-  return '<tr><td class="nowrap muted">'+(index+1)+'</td>'+
-    '<td><button type="button" class="entity-button" data-act="open-agents" data-value="'+esc(shipment.id)+'"><span>'+esc(shipment.id)+'<small class="sub">'+esc(shipment.site+", "+specCountryName(shipment.countryId))+'</small></span></button></td>'+
-    '<td class="nowrap">'+esc(displayDay(shipment.prepareBy))+'<span class="sub">'+dayDistance(shipment.prepareBy)+'</span></td>'+
-    '<td class="hide-narrow"><span class="clamp">'+esc(attention(shipment))+'</span></td>'+
-    '<td>'+planBadge(shipment.id)+(plan&&status!=="none"?'<span class="plan-title">'+escd(approval?(approval.option==="escalate"?"Escalation":approval.title):plan.status==="escalate"?"No option passes the rules":plan.title)+'</span>':"")+
+  return '<tr><td class="nowrap muted col-num">'+(index+1)+'</td>'+
+    '<td class="col-ship"><button type="button" class="entity-button" data-act="open-agents" data-value="'+esc(shipment.id)+'"><span>'+esc(shipment.id)+'<small class="sub">'+esc(shipment.site+", "+specCountryName(shipment.countryId))+'</small></span></button></td>'+
+    '<td class="nowrap col-prep"><span class="stack-label">Prepare by </span>'+esc(displayDay(shipment.prepareBy))+'<span class="sub">'+dayDistance(shipment.prepareBy)+'</span></td>'+
+    '<td class="hide-narrow col-problem"><span class="clamp">'+esc(attention(shipment))+'</span></td>'+
+    '<td class="col-plan">'+planBadge(shipment.id)+(plan&&status!=="none"?'<span class="plan-title">'+escd(approval?(approval.option==="escalate"?"Escalation":approval.title):plan.status==="escalate"?"No option passes the rules":plan.title)+'</span>':"")+
       (plan?.allocation?'<small class="sub replanned">'+esc(plan.allocation)+'</small>':"")+'</td>'+
-    '<td class="nowrap">'+action+'</td></tr>';
+    '<td class="nowrap col-next">'+action+'</td></tr>';
 }
 function plansTable() {
   const shown=shownPlans();
   const total=planRows().length;
   return '<p class="result-count">'+esc(shown.length===total?"Showing all "+total+" shipments that need action":"Showing "+shown.length+" of "+total+" shipments that need action")+'</p>'+
-    (shown.length?'<div class="table-wrap" tabindex="0"><table><caption class="sr">Agent plans for every shipment that needs action, most urgent first</caption><thead><tr><th>#</th><th>Shipment</th><th>Prepare by</th><th class="hide-narrow">Problem</th><th>Agent plan</th><th>Next step</th></tr></thead><tbody>'+
+    (shown.length?'<div class="table-wrap" tabindex="0"><table class="stack-table plans-table"><caption class="sr">Agent plans for every shipment that needs action, most urgent first</caption><thead><tr><th>#</th><th>Shipment</th><th>Prepare by</th><th class="hide-narrow">Problem</th><th>Agent plan</th><th>Next step</th></tr></thead><tbody>'+
       shown.map(planRow).join("")+'</tbody></table></div>':'<p class="nothing">No shipments match these filters. '+trigger("Show all","plans-status","all","quiet")+'</p>');
 }
 function plansView() {
@@ -2239,7 +2243,9 @@ const views = {
   case:changeWorkspace,
   sources:()=>heading("Source log","Review page checks, retry status and linked evidence.")+sourceCard()+sourceReferences(),
 };
-function render() {shell();byId("view").innerHTML=views[page]();updateRun();}
+// Opened as a file, the page cannot reach the agents, approvals or live source checks: say so on every page, with the address to open.
+const fileNotice = () => location.protocol.startsWith("http")?"":'<div class="file-notice" role="note">'+icon("info")+'<span><strong>This is the page opened as a file.</strong> Agent plans, approvals and live checks work when RegChain is running: open '+'<a href="http://127.0.0.1:4173/">http://127.0.0.1:4173</a>'+' after starting Start-RegChain.cmd.</span></div>';
+function render() {shell();byId("view").innerHTML=fileNotice()+views[page]();updateRun();}
 function notify(text="") {byId("announce").textContent=text;}
 function navigate(to) {page=to;render();byId("page-title").focus({preventScroll:true});window.scrollTo(0,0);}
 function factlist(facts) {
