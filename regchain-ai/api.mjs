@@ -133,7 +133,12 @@ export function createApi({ root, config = loadConfig(), allowedOrigins = config
   }
 
   const routes = [
-    ["GET", /^\/v1\/health$/, async ({ db }) => ({ status: 200, body: { status: "ok", schema_version: schemaVersion(db), audit: verifyAudit(db), time: now() } })],
+    ["GET", /^\/v1\/health$/, async ({ db, request }) => {
+      // A broken audit chain is an incident: the check fails (503) so monitoring raises it. Details only for signed-in users.
+      const audit = verifyAudit(db);
+      const detail = config.auth === "local" || Boolean(session(db, request)?.user);
+      return { status: audit.ok ? 200 : 503, body: { status: audit.ok ? "ok" : "audit_chain_broken", schema_version: schemaVersion(db), ...(detail ? { audit } : { audit: { ok: audit.ok } }), time: now() } };
+    }],
     ["GET", /^\/v1\/openapi\.json$/, async () => ({ status: 200, body: OPENAPI })],
     ["GET", /^\/v1\/session$/, async ({ db, request }) => {
       const row = session(db, request);
@@ -307,6 +312,7 @@ export function createApi({ root, config = loadConfig(), allowedOrigins = config
       const current = session(db, request);
       const role = current?.role;
       if (!ROLES[role]) throw fail(401, "Choose a role first.");
+      if (config.auth === "password" && role !== "viewer") throw fail(403, "Clinical Supply records shipment actions.");
       const reason = String(body.reason ?? "").trim();
       if (!reason) throw fail(422, "Give a reason for the action.");
       const data = await loadData(root);
@@ -325,6 +331,7 @@ export function createApi({ root, config = loadConfig(), allowedOrigins = config
       const current = session(db, request);
       const role = current?.role;
       if (!ROLES[role]) throw fail(401, "Choose a role first.");
+      if (config.auth === "password" && role !== "viewer") throw fail(403, "Clinical Supply clears shipment actions.");
       const actor = actorLabel(model, current);
       transaction(db, () => {
         db.prepare("DELETE FROM shipment_action WHERE shipment_id = ?").run(match[1]);
@@ -340,28 +347,29 @@ export function createApi({ root, config = loadConfig(), allowedOrigins = config
     return applyAnalysis(db, model, caseKey, result, { now: now() });
   }
 
+  const HSTS = config.secureCookies ? { "Strict-Transport-Security": "max-age=31536000; includeSubDomains" } : {};
   async function handle(request, response, url) {
     const route = routes.find(([method, pattern]) => method === request.method && pattern.test(url.pathname));
     if (!route) {
       const known = routes.some(([, pattern]) => pattern.test(url.pathname));
-      return json(response, known ? 405 : 404, { error: known ? "Method not allowed." : "Not found." });
+      return json(response, known ? 405 : 404, { error: known ? "Method not allowed." : "Not found." }, HSTS);
     }
     try {
       if (request.method !== "GET") {
         const wait = writeLimit(clientAddress(request, config.trustProxy));
-        if (wait) return json(response, 429, { error: "Too many requests. Try again in a minute." }, { "Retry-After": String(wait) });
+        if (wait) return json(response, 429, { error: "Too many requests. Try again in a minute." }, { ...HSTS, "Retry-After": String(wait) });
       }
       const { db, model, today } = await context();
       if (config.auth === "password" && !PUBLIC_ROUTES.some(([method, pattern]) => method === request.method && pattern.test(url.pathname)) && !session(db, request)?.user) {
-        return json(response, 401, { error: "Sign in first." });
+        return json(response, 401, { error: "Sign in first." }, HSTS);
       }
       if (request.method === "GET" && url.pathname.startsWith("/v1/cases")) returnDueDeferrals(db, model, today, now());
       const result = await route[2]({ db, model, request, response, url, match: url.pathname.match(route[1]) });
-      json(response, result.status, result.body, result.headers);
+      json(response, result.status, result.body, { ...HSTS, ...result.headers });
     } catch (error) {
       const status = error.statusCode ?? 500;
-      if (status >= 500) (logger?.error ?? console.error)(`${request.method} ${url.pathname} failed`, { error: error.stack ?? error.message });
-      json(response, status, { error: status >= 500 ? "The server could not complete the request." : error.message });
+      if (status >= 500) (logger?.error ?? console.error)(`${request.method} ${url.pathname} failed`, { request_id: response.getHeader("X-Request-Id"), error: error.stack ?? error.message });
+      json(response, status, { error: status >= 500 ? "The server could not complete the request." : error.message }, HSTS);
     }
   }
   async function authenticate(request) {

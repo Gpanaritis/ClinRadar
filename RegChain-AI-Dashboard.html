@@ -528,7 +528,8 @@ function workflowStep(state,command,role,now) {
   return;
  }
  if(action==="verify" && role==="verifier" && task.status==="submitted" && task.evidence) {
-  if([state.decision?.actor,task.evidence.submittedBy].includes(roleName("verifier",state))) throw Error("The verifier must be a different person from the approver and the owner.");
+  const personOf=label=>String(label??"").split(" · ")[0].trim().toLowerCase();
+  if([state.decision?.actor,task.evidence.submittedBy].map(personOf).includes(personOf(roleName("verifier",state)))) throw Error("The verifier must be a different person from the approver and the owner.");
   if(!reason) throw Error("Enter the basis for verifying the evidence.");
   task.status="verified";
   appendWorkflowEvent(state,"quality_task.verified",role,now,reason);

@@ -4,6 +4,7 @@
 // account and the client address for a while. Every sign-in, failure and sign-out is in the audit trail.
 
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
+import { userInfo } from "node:os";
 import { appendAudit, newId, transaction } from "./db.mjs";
 
 export const ROLE_IDS = ["viewer", "reviewer", "owner", "verifier"];
@@ -23,6 +24,8 @@ export function verifyPassword(password, stored) {
   return actual.length === expected.length && timingSafeEqual(actual, expected);
 }
 const fail = (statusCode, message) => Object.assign(new Error(message), { statusCode });
+// User changes are made on the server with scripts/users.mjs: the audit names the operating-system account that ran it.
+const administrator = () => { try { return `RegChain administrator (${userInfo().username})`; } catch { return "RegChain administrator"; } };
 function checkPassword(password) {
   if (String(password ?? "").length < 12) throw fail(422, `The password needs ${PASSWORD_RULE}.`);
 }
@@ -40,7 +43,7 @@ export function createUser(db, { username, name, role, password }) {
   transaction(db, () => {
     db.prepare("INSERT INTO app_user (id, username, name, role, password_hash, created_at, password_changed_at) VALUES (?, ?, ?, ?, ?, ?, ?)")
       .run(id, username, String(name).trim(), role, hashPassword(password), now, now);
-    appendAudit(db, { actor: "RegChain administrator", type: "user.created", subjectType: "user", subjectId: id, detail: `${username} · ${role}` });
+    appendAudit(db, { actor: administrator(), type: "user.created", subjectType: "user", subjectId: id, detail: `${username} · ${role}` });
   });
   return { id, username, name: String(name).trim(), role };
 }
@@ -51,7 +54,7 @@ export function setPassword(db, username, password) {
   transaction(db, () => {
     db.prepare("UPDATE app_user SET password_hash = ?, password_changed_at = ? WHERE id = ?").run(hashPassword(password), new Date().toISOString(), user.id);
     db.prepare("DELETE FROM session WHERE user_id = ?").run(user.id);
-    appendAudit(db, { actor: "RegChain administrator", type: "user.password_reset", subjectType: "user", subjectId: user.id, detail: username });
+    appendAudit(db, { actor: administrator(), type: "user.password_reset", subjectType: "user", subjectId: user.id, detail: username });
   });
 }
 export function setActive(db, username, active) {
@@ -60,7 +63,17 @@ export function setActive(db, username, active) {
   transaction(db, () => {
     db.prepare("UPDATE app_user SET active = ? WHERE id = ?").run(active ? 1 : 0, user.id);
     if (!active) db.prepare("DELETE FROM session WHERE user_id = ?").run(user.id);
-    appendAudit(db, { actor: "RegChain administrator", type: active ? "user.enabled" : "user.disabled", subjectType: "user", subjectId: user.id, detail: username });
+    appendAudit(db, { actor: administrator(), type: active ? "user.enabled" : "user.disabled", subjectType: "user", subjectId: user.id, detail: username });
+  });
+}
+export function setRole(db, username, role) {
+  if (!ROLE_IDS.includes(role)) throw fail(422, "The role must be one of " + ROLE_IDS.join(", ") + ".");
+  const user = db.prepare("SELECT id, role FROM app_user WHERE username = ?").get(username);
+  if (!user) throw fail(404, "No such user.");
+  transaction(db, () => {
+    db.prepare("UPDATE app_user SET role = ? WHERE id = ?").run(role, user.id);
+    db.prepare("DELETE FROM session WHERE user_id = ?").run(user.id);
+    appendAudit(db, { actor: administrator(), type: "user.role_changed", subjectType: "user", subjectId: user.id, detail: `${username} · ${user.role} → ${role}` });
   });
 }
 export const listUsers = db => db.prepare("SELECT id, username, name, role, active, created_at, last_sign_in FROM app_user ORDER BY username").all();
@@ -71,6 +84,8 @@ function recentFailures(db, key, since) {
 export function signIn(db, config, { username, password, address }) {
   const now = new Date();
   const since = new Date(now - config.loginLockMinutes * 60000).toISOString();
+  // Attempts older than a day are no longer needed for lockout.
+  db.prepare("DELETE FROM login_attempt WHERE at < ?").run(new Date(now - 86400000).toISOString());
   const keys = [`user:${String(username ?? "").toLowerCase()}`, `address:${address}`];
   const limits = [config.loginAttempts, config.loginAttemptsPerAddress ?? config.loginAttempts * 4];
   if (keys.some((key, index) => recentFailures(db, key, since) >= limits[index])) {

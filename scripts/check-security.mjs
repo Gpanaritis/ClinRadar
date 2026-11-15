@@ -149,6 +149,9 @@ const users = (args, extra = {}) => spawnSync(process.execPath, [join(root, "scr
   assert.ok(vicPassword && vicPassword.length >= 12, "a generated password is printed once");
   assert.notEqual(users(["add", "short.pw", "Short", "viewer"], { REGCHAIN_NEW_PASSWORD: "short" }).status, 0, "the CLI refuses a short password");
   assert.match(users(["list"]).stdout, /vic\.verify/);
+  assert.equal(users(["role", "sam.supply", "reviewer"]).status, 0, "a role can change");
+  assert.equal(users(["role", "sam.supply", "viewer"]).status, 0);
+  assert.notEqual(users(["role", "sam.supply", "admin"]).status, 0, "only the four roles exist");
   console.log("ok  users command: adds people with one role each, prints a generated password once, refuses short passwords");
 }
 
@@ -187,6 +190,7 @@ try {
   }
   assert.ok(health, "the server answers /v1/health\n" + serverOutput);
   assert.deepEqual([health.json.status, health.json.audit.ok], ["ok", true]);
+  assert.deepEqual(Object.keys(health.json.audit), ["ok"], "before sign-in, health shows no audit details");
   assert.equal(health.headers["x-request-id"], "security-check-0001", "a caller's request ID is kept for tracing");
   assert.equal(health.headers["x-content-type-options"], "nosniff");
   assert.equal(health.headers["x-frame-options"], "DENY");
@@ -245,6 +249,15 @@ try {
   const entries = (await call("GET", "/v1/cases/uk/audit", { cookie: rita.cookie })).json.entries;
   assert.match(entries.filter(entry => entry.type === "case.reset").at(-1).actor, /^Rita Regulatory · /, "the audit trail names the signed-in person");
 
+  // Each route that starts work belongs to one role, and other sites cannot call any of them.
+  assert.equal((await call("POST", "/api/agent/withdraw", { cookie: rita.cookie, body: { shipment: "SHP-01" } })).status, 403, "only Clinical Supply withdraws plans");
+  assert.equal((await call("GET", "/api/agent/run?shipment=SHP-04&mode=scripted", { cookie: rita.cookie })).status, 403, "only Clinical Supply runs the agents");
+  assert.equal((await call("POST", "/api/ai/analyze?case=uk", { cookie: sam.cookie, body: {} })).status, 403, "only the Regulatory SME runs the AI check");
+  assert.equal((await call("PUT", "/v1/shipment-actions/SHP-04", { cookie: rita.cookie, body: { action: "hold", reason: "Checking the guard" } })).status, 403, "only Clinical Supply records shipment actions");
+  assert.equal((await call("POST", "/api/agent/approve", { cookie: sam.cookie, body: { shipment: "SHP-01", option: "hold" }, headers: { "Sec-Fetch-Site": "cross-site" } })).status, 403, "no agent route from another site");
+  assert.equal((await call("POST", "/api/sources/retry?id=list", { cookie: sam.cookie, headers: { Origin: "https://evil.example" } })).status, 403);
+  assert.equal((await call("GET", "/v1/health", { cookie: rita.cookie })).json.audit.entries > 0, true, "signed in, health shows the audit details");
+
   const out = await call("POST", "/v1/auth/logout", { cookie: sam.cookie, body: {} });
   assert.equal(out.status, 200);
   assert.match(String(out.headers["set-cookie"]), /Max-Age=0/);
@@ -253,7 +266,7 @@ try {
   for (let attempt = 1; attempt <= 3; attempt += 1) assert.equal((await call("POST", "/v1/auth/login", { body: { username: "olga.owner", password: "wrong-" + attempt } })).status, 401);
   assert.equal((await call("POST", "/v1/auth/login", { body: { username: "olga.owner", password: "olga.owner-password" } })).status, 429, "locked after 3 failures");
   await signInAs("vic.verify", vicPassword);
-  console.log("ok  roles and sign-out: approvals stay with Clinical Supply, the audit names the person, sign-out ends the session, lockout works");
+  console.log("ok  roles and sign-out: each route that starts work has one role, other sites are refused, the audit names the person, sign-out and lockout work");
 
   const backupDir = join(temp, "backups");
   const backup = spawnSync(process.execPath, [join(root, "scripts", "backup.mjs"), backupDir], { env, encoding: "utf8" });
@@ -275,6 +288,15 @@ try {
   assert.ok(Number(limited.headers["retry-after"]) > 0, "with a Retry-After header");
   assert.equal((await call("GET", "/v1/health")).json.audit.ok, true, "reads still work and the audit chain is intact");
   console.log("ok  write rate limit: 429 with Retry-After once a client passes its writes per minute");
+
+  // Someone with file access edits an audit entry: health fails, so monitoring raises it.
+  const live = new DatabaseSync(join(dataDir, "regchain.db"));
+  live.exec("DROP TRIGGER audit_entry_no_update");
+  live.prepare("UPDATE audit_entry SET detail = 'changed' WHERE seq = 1").run();
+  live.close();
+  const broken = await call("GET", "/v1/health");
+  assert.deepEqual([broken.status, broken.json.status], [503, "audit_chain_broken"]);
+  console.log("ok  health: 503 and audit_chain_broken once an audit entry is edited outside RegChain");
 } finally {
   server.kill();
   await Promise.race([exited, new Promise(resolve => setTimeout(resolve, 5000))]);

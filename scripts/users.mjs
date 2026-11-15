@@ -2,6 +2,7 @@
 //   node scripts/users.mjs add <username> "<Full name>" <role>     role: viewer (Clinical Supply), reviewer (Regulatory SME), owner (Quality owner), verifier (Quality verifier)
 //   node scripts/users.mjs list
 //   node scripts/users.mjs password <username>
+//   node scripts/users.mjs role <username> <role>                 ends their sessions
 //   node scripts/users.mjs disable <username> | enable <username>
 // A new password comes from REGCHAIN_NEW_PASSWORD, or is generated and printed once. Every change is in the audit trail.
 
@@ -9,14 +10,17 @@ import { randomBytes } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { closeDatabase, openDatabase } from "../regchain-ai/db.mjs";
-import { createUser, listUsers, setActive, setPassword, ROLE_IDS } from "../regchain-ai/auth.mjs";
+import { existsSync } from "node:fs";
+import { createUser, listUsers, setActive, setPassword, setRole, ROLE_IDS } from "../regchain-ai/auth.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+// The same .env as the server, so both open the same database.
+if (existsSync(join(root, ".env"))) process.loadEnvFile(join(root, ".env"));
 const [command, ...args] = process.argv.slice(2);
 const db = openDatabase(root);
 const newPassword = () => process.env.REGCHAIN_NEW_PASSWORD || randomBytes(15).toString("base64url");
 const usage = () => {
-  console.log(`Usage:\n  node scripts/users.mjs add <username> "<Full name>" <${ROLE_IDS.join("|")}>\n  node scripts/users.mjs list\n  node scripts/users.mjs password <username>\n  node scripts/users.mjs disable <username>\n  node scripts/users.mjs enable <username>`);
+  console.log(`Usage:\n  node scripts/users.mjs add <username> "<Full name>" <${ROLE_IDS.join("|")}>\n  node scripts/users.mjs list\n  node scripts/users.mjs password <username>\n  node scripts/users.mjs role <username> <role>\n  node scripts/users.mjs disable <username>\n  node scripts/users.mjs enable <username>`);
   process.exitCode = 1;
 };
 try {
@@ -32,6 +36,9 @@ try {
     setPassword(db, args[0], password);
     console.log(`Password changed for ${args[0]}; their sessions were ended.`);
     if (!process.env.REGCHAIN_NEW_PASSWORD) console.log(`New password, shown once: ${password}`);
+  } else if (command === "role" && args.length === 2) {
+    setRole(db, args[0], args[1]);
+    console.log(`${args[0]} now holds the ${args[1]} role; their sessions were ended.`);
   } else if ((command === "disable" || command === "enable") && args.length === 1) {
     setActive(db, args[0], command === "enable");
     console.log(`${args[0]} ${command}d.`);
