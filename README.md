@@ -61,6 +61,17 @@ By default RegChain serves one person on this computer, who picks a role with **
 
 `npm run check:security` starts the real server with named users and tests all of this. [RegChain-AI-Deployment.md](RegChain-AI-Deployment.md) covers settings, HTTPS, users, backups and upgrades. [RegChain-AI-Validation.md](RegChain-AI-Validation.md) outlines validation for GxP use and lists what a company still decides. [SECURITY.md](SECURITY.md) says how to report a vulnerability.
 
+## Launch page and sign-in
+
+The public launch page lives in `sites/supplyshield/` (static HTML, CSS and a small script, no external resources) and is served at **/site/**. It says what SupplyShield prevents, how it works, the Belgian strike example and how it supports validation, and it has a contact form. **Sign in** and **Open SupplyShield** go to `/`, which shows the sign-in page in password mode. There is no self sign-up: accounts are set up by an administrator.
+
+- **Start it on Windows:** open **Start-SupplyShield-Site.cmd**. It starts SupplyShield in password mode (`REGCHAIN_AUTH=password`) at http://127.0.0.1:4173 and opens http://127.0.0.1:4173/site/. Plain HTTP is fine on this computer; the session cookie gets the Secure flag only behind HTTPS (`REGCHAIN_PUBLIC_ORIGIN=https://…`). If another SupplyShield is already running on port 4173, stop it first.
+- **Demo accounts:** the launcher runs `npm run demo:accounts` first. It creates one account per role, if missing: `p.laine` (P. Laine, Clinical Supply), `a.novak` (A. Novak, Regulatory SME), `m.okafor` (M. Okafor, Quality owner) and `l.chen` (L. Chen, Quality verifier). New passwords are printed once and kept in `.regchain-data/demo-accounts.txt` (ignored by Git). `npm run demo:accounts -- --reset` gives them new passwords. `npm run users` manages any other account.
+- **Contact form:** it posts JSON to `POST /api/contact`, which is public like the page. The server accepts same-site JSON only, checks the fields (name, company, work email, message, consent), limits the size and allows `REGCHAIN_CONTACTS_PER_HOUR` (10) messages per client address per hour. Each message is one JSON line in `.regchain-data/contact-requests.jsonl` with an ID and the time; the client address is not stored and no email is sent.
+- **Sign-in page:** links back to the launch page (**About SupplyShield**) and says that there is no self sign-up.
+
+`npm run check:security` tests the launch page and the contact form before sign-in, along with everything else in password mode.
+
 ## AI step
 
 The UK labeling case has a live AI check, at the top of its **Evidence & impact** tab. The local server fetches the official texts at run time: regulation 46 as in force on 27 April 2026 and from 28 April 2026 (legislation.gov.uk), Schedule 14 paragraph 6, and the MHRA guidance section on labelling transition (GOV.UK). Claude (`claude-opus-5-5`) drafts the change for `GB/IMP_LABELING`, and RegChain then checks the draft itself:

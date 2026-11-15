@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="SupplyShield prevents clinical supply disruptions. It watches the countries where your trials are active, checks every planned shipment before dispatch, and brings Clinical Supply verified recovery options to approve.">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#ffffff">
+  <title>SupplyShield AI | Clinical supply continuity</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link href="styles.css" rel="stylesheet">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <svg class="symbols" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-brand" viewBox="0 0 16 16"><path d="M2.7 13 7.5 4l3.1 6 2.7-4m-2.1 0h2.3v2.3M2.7 13h10.6"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h14m-5-5 5 5-5 5"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M13 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10zM13 3v7h7M8 14h8m-8 3h6"/></symbol>
+    <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M17 2l3 3-3 3M4 11V9a4 4 0 0 1 4-4h12M7 22l-3-3 3-3m13-3v2a4 4 0 0 1-4 4H4"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  </svg>
+
+  <header class="site-header">
+    <div class="header-inner wrap">
+      <a class="wordmark" href="#main" aria-label="SupplyShield AI, top of page"><span class="brand-mark"><svg class="icon"><use href="#i-brand"/></svg></span><span>SupplyShield <small>AI</small></span></a>
+      <nav class="site-nav" aria-label="Sections">
+        <a href="#how">How it works</a><a href="#example">Example</a><a href="#validation">Validation</a><a href="#contact">Contact</a>
+      </nav>
+      <a class="button button-primary button-small" href="/">Sign in</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-inner wrap">
+        <div class="hero-copy">
+          <p class="eyebrow">Clinical supply continuity</p>
+          <h1 id="hero-title">Stop supply disruptions before patients miss treatment.</h1>
+          <p class="lead">SupplyShield watches the countries where your trials are active for strikes, weather, security advice and regulatory change. It checks every planned shipment before dispatch. When one will be disrupted, Clinical Supply gets recovery options that have already passed your rules.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="/">Sign in <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            <a class="button button-quiet" href="#example">See an example</a>
+          </div>
+          <p class="hero-note"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg> For Clinical Supply, Regulatory and Quality teams. Accounts are set up by your administrator.</p>
+        </div>
+
+        <aside class="signals" aria-labelledby="signals-title">
+          <div class="signals-head">
+            <div><h2 id="signals-title">Signals matched to your shipments</h2><p>16 countries with an active trial, from your CTMS: EU, UK, Israel, US, Canada, Japan, Australia</p></div>
+            <span class="tag">Illustrative</span>
+          </div>
+          <ul class="signal-list">
+            <li><span class="cc">BE</span><div><strong>National strike day, no departures from Brussels Airport</strong><small>24 Nov · cancels the flight of SHP-IL-01 to Tel Aviv</small></div><span class="tier tier-red">Confirmed disruption</span></li>
+            <li><span class="cc">IL</span><div><strong>Runway works at Ben Gurion, reduced cargo handling</strong><small>4 to 8 Jan · SHP-IL-02 flies on 5 Jan, not yet confirmed by the courier</small></div><span class="tier tier-amber">Potential exposure</span></li>
+            <li><span class="cc">BE</span><div><strong>The same strike day, checked for SHP-03</strong><small>The truck is in Germany before 24 Nov, confirmed by the carrier</small></div><span class="tier tier-green">Not affected after check</span></li>
+            <li><span class="cc">US</span><div><strong>Official travel advice updated</strong><small>No route, depot or site of yours is in the affected areas</small></div><span class="tier">Observed</span></li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="how" aria-labelledby="how-title">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">How it works</p>
+          <h2 id="how-title">From an event abroad to an approved shipment plan.</h2>
+        </div>
+        <ol class="steps">
+          <li><span class="step-no">1</span><h3>Watch</h3><p>Monitors only the countries where a trial is active, as recorded in your CTMS: strikes and transport, weather and natural hazards, security and travel advice, regulatory and customs change.</p></li>
+          <li><span class="step-no">2</span><h3>Check</h3><p>Tests each planned shipment, leg by leg and day by day, against events on its route and the destination's rules: import permits, labels, importer of record, delivery days.</p></li>
+          <li><span class="step-no">3</span><h3>Plan</h3><p>When the courier or depot confirms a disruption, AI agents propose recovery options: another departure airport, another dispatch date, stock from another depot.</p></li>
+          <li><span class="step-no">4</span><h3>Verify</h3><p>Fixed rules check every option. Does it arrive before the site runs out of stock? Is the lane qualified for the temperature range? Do the import permit terms still hold?</p></li>
+          <li><span class="step-no">5</span><h3>Approve</h3><p>Clinical Supply approves one plan. Changes reach IRT, ERP, the depot and the courier as drafts that people approve in those systems.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="example" aria-labelledby="example-title">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Example <span class="tag">Illustrative scenario</span></p>
+          <h2 id="example-title">A strike day in Belgium cancels a flight to Tel Aviv.</h2>
+        </div>
+        <dl class="facts">
+          <div><dt>Patients on treatment at the site</dt><dd>14</dd></div>
+          <div><dt>Site stock runs out</dt><dd>27 Nov</dd></div>
+          <div><dt>Delivery if nobody acts</dt><dd class="bad">29 Nov</dd></div>
+          <div><dt>Delivery with the approved plan</dt><dd class="good">26 Nov</dd></div>
+        </dl>
+        <div class="example-grid">
+          <ol class="timeline">
+            <li><h3>The signal</h3><p>The airport and the federal transport authority announce a national strike day on 24 Nov. SupplyShield merges both notices into one signal for Belgium.</p></li>
+            <li><h3>The impact</h3><p>The courier cancels the Brussels to Tel Aviv flight of shipment SHP-IL-01. Its next free flight would deliver on 29 Nov, two days after the site runs out: 14 patients would go 2 days without treatment.</p></li>
+            <li><h3>The options</h3><p>The agents propose three. Leaving from Amsterdam passes every rule, with the same delivery day. Dispatching on 25 Nov fails: the kits arrive after the stock runs out. Leaving from Luxembourg needs a monitoring decision first.</p></li>
+            <li><h3>The decision</h3><p>Clinical Supply approves the Amsterdam plan. The new courier booking and the depot instruction go out as drafts for approval in those systems.</p></li>
+          </ol>
+          <figure class="shot">
+            <button type="button" class="shot-open" id="open-shot" aria-label="Enlarge the screenshot of shipment SHP-IL-01">
+              <img src="assets/shipment-plan.png" width="1440" height="900" loading="lazy" alt="SupplyShield shipment page for SHP-IL-01: the failed external-risk check, the route from the Central EU depot through Brussels to Tel Aviv, and the recommended plan to leave from Amsterdam Schiphol, which passes the rules.">
+              <span><svg class="icon" aria-hidden="true"><use href="#i-expand"/></svg> Enlarge</span>
+            </button>
+            <figcaption>Shipment SHP-IL-01 in SupplyShield after the agents' run.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="validation" aria-labelledby="validation-title">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Validation</p>
+          <h2 id="validation-title">Designed to support your validation.</h2>
+          <p class="lead">SupplyShield gives Quality the records it needs to assess the system. It does not replace your validated systems.</p>
+        </div>
+        <div class="checks">
+          <article><span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg></span><h3>Trace the source</h3><p>Every signal and rule shows its source passage, version and date.</p></article>
+          <article><span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-repeat"/></svg></span><h3>Reproduce the checks</h3><p>Fixed rules, not the AI, decide pass or fail. The same inputs give the same result.</p></article>
+          <article><span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg></span><h3>Record who decided and why</h3><p>Role-based approval. Decisions, reasons and agent runs go into a hash-chained audit trail.</p></article>
+          <article><span class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></span><h3>Execute in validated systems</h3><p>Nothing is written straight into IRT, ERP or the QMS. Changes arrive there as drafts that people approve.</p></article>
+        </div>
+        <p class="footnote">Each company validates SupplyShield for its own intended use, for example under GAMP 5, 21 CFR Part 11 and EU Annex 11.</p>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="contact" aria-labelledby="contact-title">
+      <div class="wrap contact-grid">
+        <div class="contact-copy">
+          <p class="eyebrow">Contact</p>
+          <h2 id="contact-title">Talk to us about your supply network.</h2>
+          <p class="lead">Tell us which countries you supply and where disruptions have cost you time. We reply by email.</p>
+          <div class="signin-card">
+            <h3>Already a user?</h3>
+            <p>Sign in with the account your administrator set up for you. There is no self sign-up.</p>
+            <a class="button button-quiet" href="/">Open SupplyShield <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </div>
+
+        <form class="contact-form" id="contact-form" novalidate>
+          <div class="field">
+            <label for="cf-name">Name</label>
+            <input id="cf-name" name="name" autocomplete="name" maxlength="120" required aria-describedby="cf-name-error">
+            <p class="field-error" id="cf-name-error"></p>
+          </div>
+          <div class="field">
+            <label for="cf-company">Company</label>
+            <input id="cf-company" name="company" autocomplete="organization" maxlength="160" required aria-describedby="cf-company-error">
+            <p class="field-error" id="cf-company-error"></p>
+          </div>
+          <div class="field field-wide">
+            <label for="cf-email">Work email</label>
+            <input id="cf-email" name="email" type="email" autocomplete="email" maxlength="254" required aria-describedby="cf-email-error">
+            <p class="field-error" id="cf-email-error"></p>
+          </div>
+          <div class="field field-wide">
+            <label for="cf-message">Message</label>
+            <textarea id="cf-message" name="message" rows="5" maxlength="3000" required aria-describedby="cf-message-hint cf-message-error" placeholder="For example: 12 active studies, depots in Belgium and Singapore, sites in Israel, the US and Japan."></textarea>
+            <p class="field-hint" id="cf-message-hint"><span id="cf-count">0</span> / 3000</p>
+            <p class="field-error" id="cf-message-error"></p>
+          </div>
+          <div class="field field-wide">
+            <label class="consent"><input id="cf-consent" name="consent" type="checkbox" required aria-describedby="cf-consent-error"> <span>You may contact me about this message. We use these details only to reply.</span></label>
+            <p class="field-error" id="cf-consent-error"></p>
+          </div>
+          <div class="form-foot field-wide">
+            <button class="button button-primary" type="submit" id="cf-submit">Send message <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+            <p class="form-status" id="cf-status" role="status" aria-live="polite"></p>
+          </div>
+          <noscript><p class="field-wide">Sending this form needs JavaScript.</p></noscript>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <span class="wordmark wordmark-small"><span class="brand-mark"><svg class="icon"><use href="#i-brand"/></svg></span><span>SupplyShield <small>AI</small></span></span>
+      <span class="footer-note">Prototype. Trials, shipments and events on this page are illustrative.</span>
+      <a class="footer-link" href="/">Sign in</a>
+    </div>
+  </footer>
+
+  <dialog id="shot-dialog" aria-labelledby="shot-title">
+    <div class="dialog-head"><h2 id="shot-title">Shipment SHP-IL-01 in SupplyShield</h2><form method="dialog"><button class="dialog-close" aria-label="Close"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></form></div>
+    <img src="assets/shipment-plan.png" width="1440" height="900" loading="lazy" alt="Full-size screenshot of the SHP-IL-01 shipment page with the recommended plan to leave from Amsterdam Schiphol.">
+  </dialog>
+</body>
+</html>
