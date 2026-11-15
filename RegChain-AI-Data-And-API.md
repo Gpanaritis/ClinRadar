@@ -75,12 +75,12 @@ The server also enforces the AI gate:
 
 ## Rules every write follows
 
-- **Role from the session.** `POST /v1/session` sets the role, which is kept in an HttpOnly, SameSite=Strict cookie. The second pull request replaces this role switch with real sign-in.
+- **Role from the session.** In the one-person mode, `POST /v1/session` sets the role, kept in an HttpOnly, SameSite=Strict cookie. With named users (`REGCHAIN_AUTH=password`) the role comes from the signed-in account instead: see Commercial hardening below.
 - **Same site only.** Writes need JSON, and requests from other sites are refused.
 - **Version preconditions.** A command names the proposal revision it was made against. A stale revision returns 409.
 - **Idempotency.** With an `Idempotency-Key`, an exact retry returns the first response. A different request under the same key returns 409. `POST /v1/proposals/{id}/decisions` requires the key.
 - **Status codes:**
-  - 401: no role;
+  - 401: no role chosen, or not signed in when people sign in;
   - 403: wrong role or another site;
   - 409: a conflict or a blocked closure;
   - 422: invalid input, or a rule refuses the step.

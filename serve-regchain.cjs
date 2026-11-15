@@ -7,9 +7,20 @@ const { join } = require("node:path");
 const { pathToFileURL } = require("node:url");
 const { spawn } = require("node:child_process");
 
+// A local .env file (ignored by git) can hold the Anthropic API key and REGCHAIN_* settings. It is read first, so the
+// settings below see it; variables already set in the environment win.
+const envFile = join(__dirname, ".env");
+if (existsSync(envFile)) {
+  try {
+    process.loadEnvFile(envFile);
+  } catch (error) {
+    console.error("Could not read .env (" + error.message + ").");
+  }
+}
+
 // Settings, security headers and logs (regchain-ai/config.mjs, security.mjs). Defaults serve one person on this computer.
 const { loadConfig } = require("./regchain-ai/config.mjs");
-const { securityHeaders, withNonce, newNonce, requestId, clientAddress, createLogger } = require("./regchain-ai/security.mjs");
+const { securityHeaders, withNonce, newNonce, requestId, clientAddress, createLogger, createRateLimiter } = require("./regchain-ai/security.mjs");
 let config;
 try {
   config = loadConfig();
@@ -22,6 +33,14 @@ const port = config.port;
 const origin = config.publicOrigin ?? "http://" + (host === "0.0.0.0" ? "127.0.0.1" : host) + ":" + port;
 const allowedOrigins = config.origins;
 const logger = createLogger({ format: config.logFormat, level: config.logLevel });
+const apiWriteLimit = createRateLimiter(config.writesPerMinute);
+// With named users, the routes that start work belong to one role each, as in the user journeys.
+const API_ROLES = {
+  "/api/agent/run": ["viewer", "Clinical Supply runs the agents."],
+  "/api/agent/portfolio-run": ["viewer", "Clinical Supply runs the agents."],
+  "/api/agent/withdraw": ["viewer", "Clinical Supply withdraws supply plans."],
+  "/api/ai/analyze": ["reviewer", "The Regulatory SME runs the AI check."],
+};
 const identity = "regchain-dashboard";
 const dashboardHtml = readFileSync(join(__dirname, "RegChain-AI-Dashboard.html"), "utf8");
 // Data the page gets as JSON inside data script tags: the trial portfolio for the UK case
@@ -93,15 +112,6 @@ function caseFrom(url) {
   return Object.hasOwn(CASES, id) ? id : null;
 }
 
-// An Anthropic API key can live in a local .env file, which git ignores.
-const envFile = join(__dirname, ".env");
-if (existsSync(envFile)) {
-  try {
-    process.loadEnvFile(envFile);
-  } catch (error) {
-    console.error("Could not read .env (" + error.message + ").");
-  }
-}
 
 let analysisRunning = false;
 
@@ -157,7 +167,7 @@ async function streamAgentRun(request, response) {
   const params = new URL(request.url, origin).searchParams;
   const shipment = params.get("shipment") || "";
   const mode = params.get("mode") === "live" ? "live" : "scripted";
-  response.writeHead(200, { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-store", Connection: "keep-alive", "X-RegChain-Local": identity });
+  response.writeHead(200, { ...securityHeaders({ secure: config.secureCookies }), "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-store", Connection: "keep-alive", "X-RegChain-Local": identity });
   const fail = message => {
     response.write("event: failure\ndata: " + JSON.stringify({ error: message }) + "\n\n");
     response.end();
@@ -196,7 +206,7 @@ async function streamPortfolioRun(request, response) {
     return;
   }
   const mode = new URL(request.url, origin).searchParams.get("mode") === "live" ? "live" : "scripted";
-  response.writeHead(200, { "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-store", Connection: "keep-alive", "X-RegChain-Local": identity });
+  response.writeHead(200, { ...securityHeaders({ secure: config.secureCookies }), "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-store", Connection: "keep-alive", "X-RegChain-Local": identity });
   const fail = message => {
     response.write("event: failure\ndata: " + JSON.stringify({ error: message }) + "\n\n");
     response.end();
@@ -289,6 +299,27 @@ let apiPromise = null;
 const api = () => (apiPromise ??= loadModule("api.mjs").then(module => module.createApi({ root: __dirname, config, allowedOrigins, logger, analyze: caseId => runAnalysis(caseId) })));
 
 async function handleApi(request, response, path) {
+  const starts = request.method !== "GET" || path === "/api/agent/run" || path === "/api/agent/portfolio-run";
+  if (starts) {
+    const site = request.headers["sec-fetch-site"];
+    if ((request.headers.origin && !allowedOrigins.includes(request.headers.origin)) || (site && !["same-origin", "none"].includes(site))) {
+      sendJson(response, 403, { error: "Requests from other sites are refused." });
+      return;
+    }
+    const wait = apiWriteLimit(clientAddress(request, config.trustProxy));
+    if (wait) {
+      response.writeHead(429, { ...securityHeaders({ secure: config.secureCookies }), "Content-Type": "application/json; charset=utf-8", "Retry-After": String(wait) });
+      response.end(JSON.stringify({ error: "Too many requests. Try again in a minute." }));
+      return;
+    }
+    if (config.auth === "password" && API_ROLES[path]) {
+      const { session } = await (await api()).actorFor(request);
+      if (session?.role !== API_ROLES[path][0]) {
+        sendJson(response, 403, { error: API_ROLES[path][1] });
+        return;
+      }
+    }
+  }
   const caseId = caseFrom(request.url);
   if (!caseId) {
     sendJson(response, 400, { error: "Unknown case." });

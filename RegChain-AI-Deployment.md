@@ -1,0 +1,262 @@
+# RegChain AI · Deployment
+
+*15 November 2026. How to run RegChain for a team: the two modes, every setting, Docker, a reverse proxy, users and roles, backups, upgrades, health and logs, and what goes to the AI provider. Every setting, route and command here is taken from the code in this repository.*
+
+## Two modes
+
+| | Local (`REGCHAIN_AUTH=local`, the default) | Password (`REGCHAIN_AUTH=password`) |
+|---|---|---|
+| For | One person on their own computer: evaluation, demos, rehearsals | A team on a shared server |
+| Who acts | Whoever uses the computer picks a role in the **Acting as** menu | Named users sign in. The role comes from their account |
+| Names in the audit trail | The demo case's named person for the chosen role | The signed-in person and their role |
+| Network | `127.0.0.1` or `localhost` only. RegChain refuses to start on any other address | Any address, behind an HTTPS reverse proxy |
+| Sessions | Do not expire | End after an idle time and a maximum length |
+| Rehearsal reset (`?fresh`) | Allowed | Refused with 403 |
+
+Records made in local mode do not name a real person. Use password mode for anything you intend to keep.
+
+In local mode, `node serve-regchain.cjs` starts RegChain at `http://127.0.0.1:4173/`. On Windows, `npm start` or **Start-RegChain.cmd** also opens the browser.
+
+In password mode:
+
+- The dashboard and its data are served only after sign-in. Before that, `/` shows the sign-in page.
+- Every `/api` route and every `/v1` route needs a signed-in user, except `GET /v1/health`, `GET /v1/session`, `POST /v1/auth/login` and `GET /v1/openapi.json`. Other requests get 401.
+- `POST /v1/session`, the role switch, answers 403. A person cannot change role.
+
+## Settings
+
+All settings are environment variables. An unset variable uses the default.
+
+| Variable | Default | What it does |
+|---|---|---|
+| `REGCHAIN_AUTH` | `local` | `password` turns on named users. Any other value means local mode |
+| `REGCHAIN_HOST` | `127.0.0.1` | Address to listen on. The Docker image sets `0.0.0.0` |
+| `REGCHAIN_PORT` | `4173` | Port to listen on |
+| `REGCHAIN_PUBLIC_ORIGIN` | none | The address people open, for example `https://regchain.your-company.example`. Its host is accepted in the `Host` header and as a same-site `Origin`. An `https://` address turns on the `Secure` cookie flag and HSTS |
+| `REGCHAIN_TRUST_PROXY` | off | Takes the client address from the first entry of `X-Forwarded-For` |
+| `REGCHAIN_SESSION_IDLE_MINUTES` | `480` | Password mode: a session ends after this long without a request |
+| `REGCHAIN_SESSION_MAX_HOURS` | `12` | Password mode: a session ends after this long, however active. Also the cookie's `Max-Age` |
+| `REGCHAIN_LOGIN_ATTEMPTS` | `5` | Failed sign-ins for one username within the lock window before it is locked |
+| `REGCHAIN_LOGIN_ATTEMPTS_PER_ADDRESS` | `20` | Failed sign-ins from one client address, across usernames, before it is locked |
+| `REGCHAIN_LOGIN_LOCK_MINUTES` | `15` | The window in which failures are counted, so a lock lasts at most this long |
+| `REGCHAIN_WRITES_PER_MINUTE` | `120` | Per client address per minute: write requests to `/v1`, and separately requests to `/api` that start work. Over the limit: 429 with `Retry-After` |
+| `REGCHAIN_LOG_FORMAT` | `json` | `text` gives lines for reading in a terminal |
+| `REGCHAIN_LOG_LEVEL` | `info` | `debug`, `info`, `warn` or `error` |
+| `REGCHAIN_DATA_DIR` | `.regchain-data` in the RegChain folder | Folder of the database. The Docker image sets `/data` |
+| `REGCHAIN_DB` | `REGCHAIN_DATA_DIR/regchain.db` | The database file itself |
+| `REGCHAIN_CACHE_DIR` | `.regchain-cache` in the RegChain folder | Official text copies, AI results and agent runs. The Docker image sets `/data/cache` |
+| `REGCHAIN_TENANT` | `default` | The `tenant_id` written on outbox events |
+| `REGCHAIN_ALLOW_LOCAL_AUTH_ON_NETWORK` | off | Lets local mode listen on a network address. Anyone who reaches it can act as any role. Not for a team |
+| `REGCHAIN_NEW_PASSWORD` | none | Read by `scripts/users.mjs` only: the password to set instead of a generated one |
+| `ANTHROPIC_API_KEY` | none | Turns on the live AI check and live agent runs. `ANTHROPIC_AUTH_TOKEN` is also accepted |
+
+Switches accept `1`, `true`, `yes` or `on`. A number that is empty or not a number falls back to its default.
+
+**Where to set them.** In the environment of the process (in `docker-compose.yml` or your process manager), or in a `.env` file next to `serve-regchain.cjs`. The server, `scripts/users.mjs` and `scripts/backup.mjs` all read that file before anything else, so they use the same settings and open the same database. A variable already set in the environment wins over the file. Make `.env` readable only by the account that runs RegChain, because it can hold the API key.
+
+## Run with Docker Compose
+
+The image (`Dockerfile`):
+
+- starts from `node:24-bookworm-slim` and installs only the production dependencies with `npm ci --omit=dev`;
+- runs as the unprivileged `node` user;
+- sets `REGCHAIN_AUTH=password`, `REGCHAIN_HOST=0.0.0.0`, `REGCHAIN_PORT=4173`, `REGCHAIN_DATA_DIR=/data` and `REGCHAIN_CACHE_DIR=/data/cache`;
+- keeps all data in the `/data` volume;
+- has a health check that calls `/v1/health` every 30 seconds on the configured port and passes only on HTTP 200, which needs an intact audit chain.
+
+`docker-compose.yml` runs one instance. It publishes port 4173 on `127.0.0.1` only, keeps `/data` in the named volume `regchain-data`, restarts unless stopped, and passes `ANTHROPIC_API_KEY` from your shell or from a `.env` file next to `docker-compose.yml`. `.dockerignore` keeps `.env`, the local database and the cache out of the image.
+
+1. In `docker-compose.yml`, uncomment `REGCHAIN_PUBLIC_ORIGIN` and `REGCHAIN_TRUST_PROXY` and set the address (see the next section).
+2. For the live AI check and live agent runs, put `ANTHROPIC_API_KEY=` and your key in `.env` next to `docker-compose.yml`. Without a key, recorded results and scripted agent runs still work.
+3. Build and start:
+   ```sh
+   docker compose build
+   docker compose up -d
+   ```
+4. Create one account per person (see [Users and roles](#users-and-roles)). Each command prints a generated password once:
+   ```sh
+   docker compose exec regchain node scripts/users.mjs add sam.supply "Sam Supply" viewer
+   docker compose exec regchain node scripts/users.mjs add rita.reg "Rita Regulatory" reviewer
+   docker compose exec regchain node scripts/users.mjs add olga.owner "Olga Owner" owner
+   docker compose exec regchain node scripts/users.mjs add vic.verify "Vic Verifier" verifier
+   ```
+5. Check it answers: `curl -s http://127.0.0.1:4173/v1/health`.
+
+On first start, RegChain creates the database, runs the migrations, creates the cases and replays both fixture sets with the recorded extraction. A new volume has an empty cache, so this first replay fetches the UK official texts once from legislation.gov.uk and GOV.UK. It makes no AI call. Allow outbound HTTPS to `www.legislation.gov.uk` and `www.gov.uk`, and to `api.anthropic.com` if you use the live AI check or live agents.
+
+## HTTPS reverse proxy
+
+RegChain serves plain HTTP. Put an HTTPS reverse proxy in front of it. A Caddy example, on the same server as the Compose stack:
+
+```caddyfile
+regchain.your-company.example {
+    reverse_proxy 127.0.0.1:4173
+}
+```
+
+Caddy obtains and renews the certificate and passes the original `Host` header. Then set, in `docker-compose.yml`:
+
+```yaml
+    environment:
+      REGCHAIN_PUBLIC_ORIGIN: "https://regchain.your-company.example"
+      REGCHAIN_TRUST_PROXY: "1"
+```
+
+What these two settings change:
+
+- **Host check.** RegChain answers only when the `Host` header is `127.0.0.1:<port>`, `localhost:<port>` or the host of `REGCHAIN_PUBLIC_ORIGIN`. Anything else gets 400. A proxy must pass the public host through (in nginx: `proxy_set_header Host $host;`).
+- **Same-site checks.** Writes that carry an `Origin` other than these addresses get 403.
+- **HTTPS.** With an `https://` public origin, the session cookie gets the `Secure` flag and pages send `Strict-Transport-Security`.
+- **Client address.** With `REGCHAIN_TRUST_PROXY`, RegChain uses the first address in `X-Forwarded-For` for the lockout per address, the write rate limit, the request logs and the audit of sign-ins. Turn it on only when RegChain can be reached through the proxy alone and the proxy writes that header itself. Caddy replaces the header by default; in nginx use `proxy_set_header X-Forwarded-For $remote_addr;`. Without it, every user appears to come from the proxy, so all of them share one lockout counter per address and one write limit.
+
+## Run without Docker
+
+1. Install Node.js 22.13 or later (`package.json` requires it; the image and CI use Node 24).
+2. Copy the repository to the server, for example to `/opt/regchain`, and install the production dependencies:
+   ```sh
+   cd /opt/regchain && npm ci --omit=dev
+   ```
+3. Create a `regchain` user and a data folder it owns, for example `/var/lib/regchain`.
+4. Put the settings in an environment file, for example `/etc/regchain/regchain.env`, readable only by the `regchain` user because it holds the API key:
+   ```sh
+   REGCHAIN_AUTH=password
+   REGCHAIN_HOST=127.0.0.1
+   REGCHAIN_PORT=4173
+   REGCHAIN_PUBLIC_ORIGIN=https://regchain.your-company.example
+   REGCHAIN_TRUST_PROXY=1
+   REGCHAIN_DATA_DIR=/var/lib/regchain
+   REGCHAIN_CACHE_DIR=/var/lib/regchain/cache
+   ANTHROPIC_API_KEY=your-key
+   ```
+   Keep `REGCHAIN_HOST=127.0.0.1` when the proxy runs on the same server.
+5. Start it with `node serve-regchain.cjs` under a process manager that restarts it. (`npm start` adds `--open`, which only opens a browser in local mode on Windows.) A systemd example:
+   ```ini
+   [Unit]
+   Description=RegChain AI
+   After=network.target
+
+   [Service]
+   User=regchain
+   WorkingDirectory=/opt/regchain
+   EnvironmentFile=/etc/regchain/regchain.env
+   ExecStart=/usr/bin/node serve-regchain.cjs
+   Restart=on-failure
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+6. Run the users and backup scripts as the same user, from the same folder, with the same settings. Otherwise they open a different database:
+   ```sh
+   sudo -u regchain sh -c 'set -a; . /etc/regchain/regchain.env; cd /opt/regchain && node scripts/users.mjs list'
+   ```
+
+## Users and roles
+
+Each person has one account, and each account has exactly one role.
+
+| Role id | Role | What the server lets only this role do |
+|---|---|---|
+| `viewer` | Clinical Supply | Run the agents. Approve or withdraw an agent plan. Record or clear a manual shipment action |
+| `reviewer` | Regulatory SME | Run the AI check. Approve, edit and approve, reject, investigate, defer or resume a regulatory change. Record a decision on a change without a case. Start a case again |
+| `owner` | Quality owner | Acknowledge the Quality task and submit the evidence |
+| `verifier` | Quality verifier | Return or verify the evidence and close the case. Start a case again |
+
+Every signed-in role can read everything. Any other role that calls one of these routes gets 403 with the name of the role that may.
+
+**Why one role per person.** Segregation of duties: the Regulatory SME who approves a change, the Quality owner who implements it and the Quality verifier who closes it must be different people. RegChain enforces this through accounts, because an account cannot switch role, and it refuses verification when the verifier's name matches the approver's or the owner's. It cannot tell whether one person holds two accounts under different names, so never give one person a second account with another role.
+
+| Command | What it does |
+|---|---|
+| `node scripts/users.mjs add <username> "<Full name>" <role>` | Creates the account and prints a generated password once |
+| `node scripts/users.mjs list` | Lists accounts with role, active flag, creation time and last sign-in |
+| `node scripts/users.mjs password <username>` | Sets a new password, prints it once, and ends that person's sessions |
+| `node scripts/users.mjs role <username> <role>` | Changes the role and ends that person's sessions |
+| `node scripts/users.mjs disable <username>` | Blocks sign-in and ends that person's sessions |
+| `node scripts/users.mjs enable <username>` | Allows sign-in again |
+
+In Docker, put `docker compose exec regchain` in front. `npm run users -- <command>` does the same as `node scripts/users.mjs`.
+
+- Usernames have 3 to 40 letters, digits, dots, dashes or underscores, and are unique regardless of case. The full name is what the audit trail shows.
+- Passwords need at least 12 characters. To set a chosen password instead of a generated one, run the command with `REGCHAIN_NEW_PASSWORD` set. Hand passwords over through a private channel.
+- Every user change is in the audit trail with the actor `RegChain administrator (<account>)`, where the account is the operating-system user that ran the command. Give each administrator their own server account, and limit shell access to them.
+- Accounts are disabled, never deleted, so their history stays readable. A role change is audited with the old and the new role.
+- People cannot change their own password yet. An administrator sets a new one.
+
+## Backups and restore
+
+`npm run backup` (`node scripts/backup.mjs [target folder]`, default: a `backups` folder inside the data folder, `/data/backups` in Docker) works while RegChain runs:
+
+1. It writes a consistent copy of the database with SQLite `VACUUM INTO`, as `regchain-<timestamp>.db`.
+2. It opens the copy read-only and recomputes its audit chain. If the chain is broken, it stops with exit code 1: keep the original and investigate.
+3. It copies the cache folder as `cache-<timestamp>`.
+
+In Docker, the default folder is inside the volume. Copy the backups off the server afterwards:
+
+```sh
+docker compose exec regchain node scripts/backup.mjs
+docker compose cp regchain:/data/backups ./regchain-backups
+```
+
+Run it daily, for example from cron (use `docker compose exec -T` there), and keep copies off the server. The script never deletes old backups, so set a retention period and remove old copies by that rule. Practise a restore before you rely on it.
+
+To restore:
+
+1. Stop RegChain.
+2. Copy the chosen `regchain-<timestamp>.db` to the database path: `REGCHAIN_DB`, or `REGCHAIN_DATA_DIR/regchain.db` (`/data/regchain.db` in Docker). Delete `regchain.db-wal` and `regchain.db-shm` next to it if they exist: they belong to the replaced database.
+3. Replace the contents of `REGCHAIN_CACHE_DIR` with the matching `cache-<timestamp>` folder.
+4. Start RegChain and open `/v1/health`. It must answer 200 with `"status": "ok"`.
+
+In Docker, steps 2 and 3 run in a one-off container on the same volume. This restores a backup that is still in `/data/backups`; for a copy kept elsewhere, mount its folder with `-v` and copy from there:
+
+```sh
+docker compose stop regchain
+docker compose run --rm regchain sh -c 'cp /data/backups/regchain-<timestamp>.db /data/regchain.db && rm -f /data/regchain.db-wal /data/regchain.db-shm && rm -rf /data/cache && cp -r /data/backups/cache-<timestamp> /data/cache'
+docker compose start regchain
+```
+
+## Upgrades and migrations
+
+1. Back up first.
+2. Keep the current image so you can go back, for example `docker tag <project>-regchain regchain:previous` (`docker compose images` shows the name).
+3. Get the new code and start it: `docker compose build && docker compose up -d`, or `npm ci --omit=dev` and restart the service.
+4. Migrations run on start. Each numbered migration runs once, in order, inside a transaction, and is recorded in the `schema_migration` table. A migration that has shipped is never edited: changes come as new migrations.
+5. Open `/v1/health`: it must answer 200, with `schema_version` 2 in this version.
+
+There are no down migrations. To roll back, stop RegChain, start the previous image or code, and restore the backup from step 1.
+
+Earlier versions kept agent plan approvals in `agent-approvals.json` in the cache folder. The first time the new version reads approvals, it imports them into the database, each with an `approval.imported` audit entry, and renames the file to `agent-approvals.imported-<number>.json` so it is kept but never read again.
+
+## Health and logs
+
+`GET /v1/health` needs no sign-in. It recomputes the whole audit hash chain and answers, for example:
+
+```json
+{ "status": "ok", "schema_version": 2, "audit": { "ok": true }, "time": "2026-11-15T09:00:00.000Z" }
+```
+
+- A broken chain is an incident: the route answers **503** with `"status": "audit_chain_broken"`, so any monitor that checks the HTTP status raises it. The Docker health check does.
+- Before sign-in, in password mode, `audit` shows only `ok`. Signed in, or in local mode, it also shows the number of entries, the latest hash and, when broken, `brokenAt`.
+- The check reads every audit entry, so it gets slower as the trail grows.
+
+- Each request is logged as one line, JSON by default, on standard output: `time`, `level`, `message`, `request_id`, `method`, `path`, `status`, `ms` and `address`. Calls to `/v1/health` are not logged.
+- Warnings and errors go to standard error. A server error on `/v1` is logged with its method, path, request ID and stack trace, and the caller gets a generic message.
+- Some messages are plain text, not JSON: start-up lines and failures of AI checks and agent runs.
+- `REGCHAIN_LOG_FORMAT=text` gives readable lines. `REGCHAIN_LOG_LEVEL=warn` leaves out the request lines.
+- Every response carries `X-Request-Id`. A caller's own `X-Request-Id` of 8 to 80 letters, digits, dots, dashes or underscores is kept; otherwise RegChain creates one. Search the logs for it to trace a request.
+- In Docker: `docker compose logs -f regchain`.
+
+## AI and the data it receives
+
+RegChain calls Anthropic's API only for the live AI check and live agent runs, and only when `ANTHROPIC_API_KEY` (or `ANTHROPIC_AUTH_TOKEN`) is set. Recorded results and scripted agent runs make no AI call.
+
+What each call sends:
+
+- **UK AI check:** the official public texts fetched at run time (regulation 46 before and after 28 April 2026, Schedule 14 paragraph 6, and the MHRA guidance section) and the task, which names the company requirement key being drafted, `GB/IMP_LABELING`.
+- **Spain AI check:** the fictional Spanish note and the current Spain Country Specification. In this repository the specification is fictional too.
+- **Live agent runs:** the shipment data the agents read through the MCP servers. In this repository that data is fictional (`demo-data/supply-operations.json`).
+
+Do not put real company specifications or records into AI requests until the company has a data processing agreement and retention terms with the AI provider.
+
+The API key stays on the server: the page only learns whether a key is set. The six MCP server processes start with a minimal environment plus the data and cache folder settings, never the API key.
+
+AI results and agent runs stay as files in the cache folder (`REGCHAIN_CACHE_DIR`): the last AI check per case (`analysis-latest.json`, `analysis-es-latest.json`), the latest run per shipment (`agent-run-<shipment>.json`), the last portfolio run (`agent-portfolio-run.json`), every saved version of each shipment run under `agent-runs/`, and the cached official texts. Approvals and case decisions are in the database. `npm run backup` copies the cache together with the database.

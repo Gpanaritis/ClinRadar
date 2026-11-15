@@ -48,7 +48,7 @@ If any check fails, Approve and Edit & approve are blocked for the Regulatory SM
 
 To turn it on:
 
-1. Install Node.js 20.12 or later, which includes npm.
+1. Install Node.js 22.13 or later, which includes npm.
 2. Create a file named `.env` next to `serve-regchain.cjs` containing `ANTHROPIC_API_KEY=` followed by your key. Git ignores this file.
 3. Open **Start-RegChain.cmd**. The first time, it installs the Anthropic SDK with npm.
 
