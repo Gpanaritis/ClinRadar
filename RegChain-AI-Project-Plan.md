@@ -96,22 +96,24 @@ Also agree:
 - [ ] What the pipeline returns when a check fails: no approvable proposal, with the reason shown.
 - [ ] How the dashboard learns the user's role (a demo session per role is enough).
 
-### Step 3 · Database and pipeline (Giannis · spec hours 0 to 21)
+### Step 3 · Database and pipeline (spec hours 0 to 21)
 
-- [ ] SQLite schema for sources, evidence, cases, proposals, requirement versions, portfolio, decisions, events and actions (spec section 8).
-- [ ] Seed and reset command for the fictional portfolio.
-- [ ] Source fetching, normalisation, fingerprints and diff. `regchain-ai/sources.mjs` already does this for the four UK sources and can be ported.
-- [ ] AI extraction with a typed schema and the evidence gate. The quote, date and status checks in `regchain-ai/analyze.mjs` can be ported as they are.
-- [ ] The UK batch rule, using the finished-IMP QP date, and the impact report with shipment preparation dates.
-- [ ] Event log and outbox for the mock Quality task.
-- [ ] A recorded extraction saved for offline demos, labelled as recorded.
+Built in Node on 15 Nov 2026, so the product stays one codebase. The `/v1` contract follows the specification. See [RegChain-AI-Data-And-API.md](RegChain-AI-Data-And-API.md).
+
+- [x] SQLite schema for sources, evidence, cases, proposals, requirement versions, portfolio, decisions, events and actions (spec section 8).
+- [x] Seed on first start, and a rehearsal reset per case.
+- [x] Source fetching, normalisation, fingerprints and diff, with every version stored once per hash.
+- [x] AI extraction with the evidence gate, recorded on the case and adopted only when every check passes.
+- [x] The UK batch rule on the finished-IMP QP date, and the impact report with shipment preparation dates. It matches the answer key.
+- [x] Event log and outbox, with delivery to a mock Quality system.
+- [x] A recorded extraction used for offline runs.
 
 ### Step 4 · Dashboard and review flow (spec hours 21 to 32)
 
 - [ ] Replace the sample data in the page with calls to the API: overview counts, change list, case page, batch and shipment tables, source log.
-- [ ] Send the SME decision to `POST /v1/proposals/{id}/decisions` and show the publication receipt and the new version.
+- [x] Send the SME decision to the server (`/v1/cases/{id}/commands`; `POST /v1/proposals/{id}/decisions` is there for other callers).
 - [ ] Show version history, the event timeline and the impact export from the API.
-- [ ] Send the Quality owner's acknowledgement to the API. The case stays open after acknowledgement.
+- [x] Send the Quality owner's acknowledgement to the API. The case stays open after acknowledgement.
 - [ ] Show the pipeline's AI draft and check results in the existing AI panel, then remove the dashboard's own AI call.
 - [ ] Clear states for "pipeline failed", "recorded result" and "no internet".
 - [ ] Keep the approval block when any check fails.
@@ -119,7 +121,7 @@ Also agree:
 ### Step 5 · Tests (from spec section 10)
 
 - [ ] Batch results match the agreed status list for A-101 to F-106. B-102 must use the 5 May QP date, not the 20 April manufacture date.
-- [ ] The pipeline's results for the whole demo portfolio match `demo-data/uk-labelling-expected-impact.json` (7 trials needing action, 6 UK shipments needing action, earliest deadline 14 November 2026).
+- [x] The pipeline's results for the whole demo portfolio match `demo-data/uk-labelling-expected-impact.json` (7 trials needing action, 6 UK shipments needing action, earliest deadline 14 November 2026).
 - [ ] Minimum acceptance set for the demo:
   - AT-01 · replaying the official pair creates one material case, and replaying again returns the same case.
   - AT-05 and AT-06 · A-101 to F-106 get their expected results, with missing inputs named.

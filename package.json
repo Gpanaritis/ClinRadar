@@ -7,7 +7,9 @@
     "check:ai": "node scripts/check-ai-step.mjs",
     "embed:data": "node scripts/embed-data.mjs",
     "check:data": "node scripts/embed-data.mjs --check",
-    "check:agent": "node scripts/check-agent.mjs"
+    "check:agent": "node scripts/check-agent.mjs",
+    "check:server": "node scripts/check-server.mjs",
+    "check": "node scripts/embed-data.mjs --check && node scripts/check-ai-step.mjs && node scripts/check-agent.mjs && node scripts/check-server.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.8.0",

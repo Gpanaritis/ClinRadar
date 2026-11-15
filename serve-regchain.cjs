@@ -259,6 +259,10 @@ async function runAnalysis(caseId) {
   return result;
 }
 
+// The /v1 API (regchain-ai/api.mjs): the database, the regulation pipeline and the case workflow on the server.
+let apiPromise = null;
+const api = () => (apiPromise ??= loadModule("api.mjs").then(module => module.createApi({ root: __dirname, allowedOrigins, analyze: caseId => runAnalysis(caseId) })));
+
 async function handleApi(request, response, path) {
   const caseId = caseFrom(request.url);
   if (!caseId) {
@@ -391,7 +395,9 @@ async function handleApi(request, response, path) {
     }
     analysisRunning = true;
     try {
-      sendJson(response, 200, await runAnalysis(caseId));
+      const result = await runAnalysis(caseId);
+      const workflow = await (await api()).recordAnalysisResult(caseId, result).catch(error => { console.error("Recording the AI check failed: " + error.message); return null; });
+      sendJson(response, 200, { ...result, workflow });
     } catch (error) {
       const status = error.status === 401 ? 401 : error.status ? 502 : 500;
       const message = error.status === 401
@@ -414,6 +420,13 @@ const server = createServer((request, response) => {
     return;
   }
   const path = request.url.split("?")[0];
+  if (path.startsWith("/v1/")) {
+    api().then(instance => instance.handle(request, response, new URL(request.url, origin))).catch(error => {
+      console.error(error);
+      if (!response.headersSent) sendJson(response, 500, { error: "Unexpected server error." });
+    });
+    return;
+  }
   if (path.startsWith("/api/")) {
     handleApi(request, response, path).catch(error => {
       console.error(error);
@@ -467,4 +480,5 @@ server.listen(port, host, () => {
   console.log("RegChain AI is running at " + origin + "\nPress Ctrl+C to stop.");
   openBrowser();
   agentSystems().catch(error => console.error("The agent systems did not start: " + error.message));
+  api().then(instance => instance.context()).catch(error => console.error("The database did not start: " + error.message));
 });
