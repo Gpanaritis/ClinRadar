@@ -318,7 +318,9 @@ export function createApi({ root, config = loadConfig(), allowedOrigins = config
       if (!ss) throw fail(404, "SupplyShield's supply network data is not installed.");
       const tier = url.searchParams.get("tier");
       if (tier && !["observed", "potential", "confirmed", "clear"].includes(tier)) throw fail(400, "tier is observed, potential, confirmed or clear.");
-      return { status: 200, body: { checked_at: ss.checkedAt, counts: ss.counts, feeds: ss.feeds, signals: tier ? ss.signals.filter(signal => signal.tier === tier) : ss.signals } };
+      const hazard = url.searchParams.get("hazard");
+      if (hazard && !["weather", "transport", "security", "regulatory"].includes(hazard)) throw fail(400, "hazard is weather, transport, security or regulatory.");
+      return { status: 200, body: { checked_at: ss.checkedAt, counts: ss.counts, feeds: ss.feeds, signals: ss.signals.filter(signal => (!tier || signal.tier === tier) && (!hazard || signal.hazard === hazard)) } };
     }],
     ["GET", /^\/v1\/signals\/([^/]+)$/, async ({ match }) => {
       const signal = (await loadData(root)).supplyshield?.signals.find(item => item.id === decodeURIComponent(match[1]));

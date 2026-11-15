@@ -36,6 +36,35 @@ const INACTIVE = ["COMPLETED", "TERMINATED", "WITHDRAWN", "CANCELLED", "ARCHIVED
 // Which monitored category each kind of signal belongs to (config: monitored_categories).
 const CATEGORY_OF = { strike: "transport", airport: "transport", road: "transport", "official-advice": "geopolitical", "natural-hazard": "natural_disasters",
   weather: "weather", tracking: "cyber_outage", supplier: "supplier", outage: "cyber_outage" };
+// The watch team: four agents, each sweeping every monitored country for one kind of hazard. Every signal carries the
+// kind it belongs to (`hazard`), so each agent reads only its own.
+export const HAZARDS = {
+  weather: { agent: "weather", name: "Weather & natural hazards", kind: "external",
+    covers: "GDACS alerts (floods, cyclones, earthquakes, wildfires, volcanic ash) and official weather warnings on our lanes and facilities",
+    feeds: ["GDACS global disaster alerts"] },
+  transport: { agent: "transport", name: "Strikes & transport", kind: "external",
+    covers: "Labour action, airport, port and road notices, carrier and depot operations, courier tracking outages",
+    feeds: ["Airport, port and transport-authority notices", "Courier and depot systems"] },
+  security: { agent: "security", name: "Security & travel advice", kind: "external",
+    covers: "UK FCDO travel advice, conflict, unrest and border closures",
+    feeds: ["UK FCDO travel advice"] },
+  regulatory: { agent: "regulatory", name: "Regulatory & customs", kind: "regulatory",
+    covers: "Regulatory sources and changes, import permits and approvals",
+    feeds: ["Country Specifications", "UK legislation and MHRA guidance", "EU rules (CTR 536/2014, EudraLex Vol. 10, TARIC)", "Import approvals in the eTMF"] },
+};
+const HAZARD_OF_CATEGORY = { "natural-hazard": "weather", weather: "weather", strike: "transport", airport: "transport", port: "transport", road: "transport",
+  tracking: "transport", outage: "transport", supplier: "transport", "official-advice": "security", security: "security", conflict: "security", unrest: "security",
+  border: "security", regulatory: "regulatory", customs: "regulatory", permit: "regulatory" };
+// The kind of hazard a signal belongs to, from its category, or else its source.
+export function hazardOf(signal) {
+  if (signal.type === "regulatory") return "regulatory";
+  if (HAZARD_OF_CATEGORY[signal.category]) return HAZARD_OF_CATEGORY[signal.category];
+  const source = `${signal.authority ?? ""} ${signal.source ?? ""}`;
+  if (/GDACS|weather|meteorolog/i.test(source)) return "weather";
+  if (/FCDO|foreign|travel advice/i.test(source)) return "security";
+  if (/regulat|ministry of health|customs|MHRA|AEMPS/i.test(source)) return "regulatory";
+  return "transport";
+}
 const HORIZON_DAYS = 130;
 const DAY = 86400000;
 const DISRUPTED = ["cancelled", "closed", "held", "suspended", "reduced"];
@@ -376,7 +405,7 @@ function feedSignals(feeds, monitored, names, today) {
     const touched = event.countries.filter(code => monitored.includes(code));
     if (!touched.length) continue;
     signals.push({
-      id: event.id, type: "external", category: "natural-hazard", hazard: event.type, live: true, illustrative: false, evidence: "OFFICIAL_CONFIRMED",
+      id: event.id, type: "external", category: "natural-hazard", hazardType: event.type, live: true, illustrative: false, evidence: "OFFICIAL_CONFIRMED",
       title: `${event.typeName}, ${event.alert.toLowerCase()} alert: ${event.name}`, country: touched[0], countries: touched,
       authority: "Global Disaster Alert and Coordination System", source: GDACS_ATTRIBUTION, url: event.url, publishedAt: event.modifiedAt, detectedAt: feeds.fetchedAt,
       window: { from: event.from, to: event.to }, summary: `${event.typeName} alert for ${list(touched.map(code => names[code] ?? code))}${event.countries.length > touched.length ? ` and ${event.countries.length - touched.length} other countries` : ""}.`,
@@ -404,11 +433,11 @@ function mergeDuplicates(signals) {
 export function collectSignals({ recorded, feeds, scope, names, today, policy = scopePolicy() }) {
   const monitored = scope.monitored?.external ?? [];
   const allowed = signal => {
-    const category = signal.category === "natural-hazard" && signal.hazard === "DR" ? "weather" : CATEGORY_OF[signal.category] ?? signal.category;
+    const category = signal.category === "natural-hazard" && signal.hazardType === "DR" ? "weather" : CATEGORY_OF[signal.category] ?? signal.category;
     return policy.categories[category] !== false;
   };
   const own = (recorded?.signals ?? []).filter(signal => monitored.includes(signal.country)).map(signal => ({ ...signal, live: false }));
-  return mergeDuplicates([...own, ...feedSignals(feeds, monitored, names, today)]).filter(allowed);
+  return mergeDuplicates([...own, ...feedSignals(feeds, monitored, names, today)]).filter(allowed).map(signal => ({ ...signal, hazard: hazardOf(signal) }));
 }
 
 // What a signal touches on one route, leg by leg.
@@ -517,7 +546,7 @@ export function assessSignals({ signals, network, views, today }) {
             next: verdict.tier === "confirmed" ? "Approve a recovery plan: the agents propose one, the rules check it." : verdict.tier === "potential" ? (match.trackingOnly ? "Ask the courier for a manual status until tracking is back." : `Confirm with ${systemFor(match.leg)} before ${plainDay(addDays(match.date, -1))}.`) : "None. Monitoring continues.",
           };
           matches.push(entry);
-          (byShipment[view.id] ??= []).push({ signal: signal.id, title: signal.title, illustrative: Boolean(signal.illustrative), ...entry });
+          (byShipment[view.id] ??= []).push({ signal: signal.id, title: signal.title, hazard: signal.hazard, illustrative: Boolean(signal.illustrative), ...entry });
         }
       }
       // A facility on the signal's list with no collection that day: say what its own system reports.
@@ -526,6 +555,8 @@ export function assessSignals({ signals, network, views, today }) {
         const status = (network?.operational_status ?? []).find(item => item.facility === location.id && inWindow(item.date, signal.window));
         const facility = (network?.facilities ?? []).find(item => item.id === location.id);
         if (status && !matches.some(item => item.leg === "collection" && item.node === location.id)) notes.push(`${facility?.name ?? location.id}: ${status.detail} (${status.source}).`);
+        else if (!status && facility && !matches.some(item => item.leg === "collection" && item.node === location.id))
+          notes.push(`The ${lowerFirst(facility.name)} (${facility.city}) is in the area: no collection is planned there on those days, and its own system reports no exception.`);
       }
       for (const location of signal.locations ?? []) if (["area", "slow-onset"].includes(location.kind)) notes.push(location.effect);
       if ((signal.locations ?? []).some(location => location.kind === "provider") && !matches.length) notes.push("Tracking visibility only: no planned shipment of this courier is moving then, and no physical shipment is affected.");
@@ -570,18 +601,38 @@ export function riskChecks(ss, network, view, overrides = {}) {
     else checks.push({ section: "risk", requirement: "Exposure checked with the carrier or depot", result: "Pass", signal: signal.id,
       detail: `${signal.title}${tag}: ${evidence.detail} (${evidence.source}).` });
   }
+  const monitored = ss.scope.monitored?.external ?? [];
   let coverageGap = false;
+  let fresh = [];
   if (changed) {
-    const fresh = route.countries.filter(code => !(original?.countries ?? []).includes(code));
-    const unmonitored = fresh.filter(code => !(ss.scope.monitored?.external ?? []).includes(code));
-    coverageGap = unmonitored.length > 0;
+    fresh = route.countries.filter(code => !(original?.countries ?? []).includes(code) && !monitored.includes(code));
+    coverageGap = fresh.length > 0;
     if (coverageGap) checks.push({ section: "risk", requirement: "Every country on a new route is monitored for external risk", result: "Decision",
-      detail: `The new route passes through ${list(unmonitored.map(code => ss.names?.[code] ?? code))}, which SupplyShield does not monitor for external risk, so it cannot assess it. Turn external-risk monitoring on in Monitoring scope, or choose another route.` });
+      detail: `The new route passes through ${list(fresh.map(code => ss.names?.[code] ?? code))}, which SupplyShield does not monitor for external risk, so it cannot assess it. Turn external-risk monitoring on in Monitoring scope, or choose another route.` });
+  }
+  // No false assurance: a booked leg in a country nobody monitors for external risk is unknown, not clear.
+  const blind = route.countries.filter(code => !monitored.includes(code) && !fresh.includes(code));
+  if (blind.length) {
+    const roles = code => {
+      const found = [];
+      for (const leg of route.legs) {
+        if (leg.kind === "collection" && leg.country === code) found.push("depot");
+        if (leg.kind === "air" && network.airports?.[leg.departure]?.country === code) found.push("departure");
+        if (leg.kind === "air" && leg.hub && network.airports?.[leg.hub]?.country === code) found.push("transfer hub");
+        if (leg.kind === "air" && network.airports?.[leg.arrival]?.country === code) found.push("arrival");
+        if (leg.kind === "customs" && leg.country === code) found.push("import clearance");
+        if (leg.kind === "delivery" && leg.country === code) found.push("delivery");
+        if (leg.kind === "road" && leg.countries.includes(code)) found.push("road");
+      }
+      const unique = [...new Set(found)];
+      return unique.length > 1 ? unique.filter(role => role !== "road") : unique;
+    };
+    checks.push({ section: "risk", requirement: "External risk is monitored on every country of the route", result: "Confirm", unmonitored: blind,
+      detail: `External risk is not monitored on this route: ${list(blind.map(code => `${ss.names?.[code] ?? code} (${list(roles(code))})`))}. SupplyShield cannot see strikes, weather or security events there, so it does not call the route clear. Turn it on in Monitoring scope or confirm with the ${lowerFirst(route.carrier)}.` });
   }
   if (!findings.length && !route.problems.length && !coverageGap) {
-    const unmonitored = route.countries.filter(code => !(ss.scope.monitored?.external ?? []).includes(code));
     checks.push({ section: "risk", requirement: "No disruption on the route", result: "Pass",
-      detail: `No monitored event touches ${route.nodes.join(" → ")} between ${plainDay(route.dispatch)} and ${plainDay(route.delivery)}.${unmonitored.length ? ` Not monitored: ${list(unmonitored.map(code => ss.names?.[code] ?? code))}.` : ""}` });
+      detail: `No monitored event touches ${route.nodes.join(" → ")} between ${plainDay(route.dispatch)} and ${plainDay(route.delivery)}.${blind.length ? ` Not monitored: ${list(blind.map(code => ss.names?.[code] ?? code))}.` : ""}` });
   }
   return checks;
 }
@@ -598,9 +649,111 @@ export function computeSupplyShield({ network, portfolio, spain, israel, views: 
   const feedStatus = feeds ? {
     fetchedAt: feeds.fetchedAt, live: Boolean(feeds.live), attribution: feeds.attribution ?? { fcdo: FCDO_ATTRIBUTION, gdacs: GDACS_ATTRIBUTION },
     fcdo: Object.fromEntries(Object.entries(feeds.fcdo ?? {}).filter(([code]) => (scope.monitored?.external ?? []).includes(code)).map(([code, item]) => [code, { ok: item.ok, updatedAt: item.updatedAt ?? null, url: item.url, error: item.error ?? null }])),
-    gdacs: { ok: Boolean(feeds.gdacs?.ok), events: feeds.gdacs?.events?.length ?? 0, outside: (feeds.gdacs?.events ?? []).filter(event => !event.countries.some(code => (scope.monitored?.external ?? []).includes(code))).length, url: feeds.gdacs?.url ?? null },
+    gdacs: { ok: Boolean(feeds.gdacs?.ok), events: feeds.gdacs?.events?.length ?? 0, outside: (feeds.gdacs?.events ?? []).filter(event => !event.countries.some(code => (scope.monitored?.external ?? []).includes(code))).length, url: feeds.gdacs?.url ?? null,
+      // Alerts outside the monitored countries that hit a country hosting one of our facilities: context for a recommendation, not a signal.
+      nearOurFacilities: (feeds.gdacs?.events ?? []).filter(event => !event.countries.some(code => (scope.monitored?.external ?? []).includes(code)))
+        .map(event => ({ event, facilities: (network?.facilities ?? []).filter(item => event.countries.includes(item.country)) })).filter(item => item.facilities.length)
+        .map(({ event, facilities }) => ({ id: event.id, typeName: event.typeName, alert: event.alert, name: event.name, countries: event.countries, from: event.from, to: event.to, ended: event.to < today, facilities: facilities.map(item => item.id), url: event.url ?? null })) },
   } : null;
   const atRisk = assessed.flatMap(signal => signal.matches.filter(match => match.impact?.ifNothingDone?.daysWithoutTreatment > 0));
   const patientsAtRisk = { shipments: atRisk.map(match => match.shipment), patients: atRisk.reduce((sum, match) => sum + (match.impact.patients ?? 0), 0) };
   return { today, scope, signals: assessed, byShipment, routes, counts, names, feeds: feedStatus, checkedAt: recorded?.checked_at ?? null, patientsAtRisk, costReference: COST_OF_DELAY };
+}
+
+// ---- the watch team's view: one summary per kind of hazard ----
+const dayMonth = day => new Date(day + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+const windowText = window => {
+  if (!window) return "";
+  if (window.from === window.to) return dayMonth(window.from);
+  const [from, to] = [dayMonth(window.from), dayMonth(window.to)];
+  return from.split(" ")[1] === to.split(" ")[1] ? `${from.split(" ")[0]}–${to}` : `${from}–${to}`;
+};
+const titleHead = signal => String(signal.title).split(":")[0].replace(/,\s*\d[^,]*$/, "");
+const titleWhat = signal => (String(signal.title).split(":")[1] ?? "").split(",")[0].trim();
+// Most relevant first: the exposure state, then whether it touches us, then whether it still needs mapping by a person.
+const relevance = (signal, network) => (touchesUs(signal, network) ? 2 : (signal.locations ?? []).some(location => location.kind === "area") ? 1 : 0);
+const sourceWord = source => (/courier/i.test(source) ? "courier" : /depot/i.test(source) ? "depot" : /tracking|logistics partner/i.test(source) ? "carrier" : source);
+const plural = (count, word, many = `${word}s`) => `${count} ${count === 1 ? word : many}`;
+// Whether a signal touches something of ours: a planned shipment's leg, or one of our facilities.
+const touchesUs = (signal, network) => signal.matches.length > 0 || (signal.locations ?? []).some(location => location.kind === "facility" && (network?.facilities ?? []).some(item => item.id === location.id));
+
+// The business finding a watch agent reports: what is confirmed, what is only potential and who must confirm it, what
+// was checked and found clear, and what touches nothing of ours. Facts from the assessment only, no probabilities.
+function findingFor(entry, signals, ss, network, regulatory) {
+  const names = ss.names ?? {};
+  const head = `${entry.name}: ${plural(entry.events, "event")} in ${entry.countries} monitored countries`;
+  if (entry.hazard === "regulatory") {
+    const changes = regulatory.filter(item => item.kind === "change");
+    const permits = regulatory.filter(item => item.kind === "permit");
+    const affected = [...new Set(changes.flatMap(item => item.touching))];
+    const parts = [`${entry.name}: ${plural(changes.length, "rule change")} and ${plural(permits.length, "import approval")} in ${entry.countries} monitored countries`];
+    if (affected.length) parts.push(`the changes affect ${plural(affected.length, "planned shipment")} — ${changes.filter(item => item.touching.length).map(item => `${item.short} (${item.touching.length})`).join(", ")}`);
+    const permitText = permits.map(item => (item.touching.length ? `${item.id} does not yet cover ${item.shipment}` : `${item.id} covers ${item.shipment}`));
+    const gaps = entry.gaps.map(gap => gap.code).filter(Boolean);
+    return `${parts.join("; ")}.${permitText.length ? ` Import approvals: ${permitText.join("; ")}.` : ""}${gaps.length ? ` Coverage gap: no Country Specification or regulator source for ${list(gaps.map(code => names[code] ?? code))} (Regulatory SME to register one).` : ""}`;
+  }
+  const sentences = [];
+  const confirmed = signals.flatMap(signal => signal.matches.filter(match => match.tier === "confirmed").map(match => `${match.shipment}'s ${lowerFirst(match.label)} on ${dayMonth(match.date)} ${match.evidence.status} (${sourceWord(match.evidence.source)})`));
+  const clear = signals.flatMap(signal => signal.matches.filter(match => match.tier === "clear").map(match => `${match.shipment} checked, not affected`));
+  const potential = signals.flatMap(signal => signal.matches.filter(match => match.tier === "potential").map(match => (match.trackingOnly
+    ? `${match.shipment}: courier tracking lost on ${dayMonth(match.date)}; ask for a manual status`
+    : `${match.shipment}'s ${lowerFirst(match.label)} on ${dayMonth(match.date)}: ${titleHead(signal)}${titleWhat(signal) ? `, ${titleWhat(signal)}` : ""}${signal.illustrative ? " (illustrative)" : ""}; Clinical Supply Logistics to confirm with ${systemFor(match.leg)}`)));
+  sentences.push(confirmed.length ? `${head}; ${plural(confirmed.length, "confirmed disruption")} — ${[...confirmed, ...clear].join("; ")}.` : `${head}; nothing confirmed.${clear.length ? ` ${clear.join("; ")}.` : ""}`);
+  if (potential.length) sentences.push(`${plural(potential.length, "potential exposure")}: ${potential.join("; ")}.`);
+  const observed = signals.filter(signal => signal.tier === "observed");
+  const nearFacility = observed.filter(signal => touchesUs(signal, network)).map(signal => {
+    const facility = (network?.facilities ?? []).find(item => (signal.locations ?? []).some(location => location.kind === "facility" && location.id === item.id));
+    return `${facility ? `the ${lowerFirst(facility.name)} (${facility.city})` : names[signal.country] ?? signal.country} is in the area of the ${lowerFirst(titleHead(signal))}${signal.illustrative ? " (illustrative)" : ""}, ${windowText(signal.window)}: no collection is planned there, so no shipment is exposed`;
+  });
+  const kindOf = signal => (signal.locations ?? []).map(location => location.kind);
+  const areas = observed.filter(signal => kindOf(signal).includes("area"))
+    .map(signal => `${names[signal.country] ?? signal.country}: the advice covers parts of the country; missing: the advised areas mapped against our sites and routes (Clinical Supply Logistics)`);
+  const slow = observed.filter(signal => kindOf(signal).includes("slow-onset"));
+  const tracking = observed.filter(signal => kindOf(signal).includes("provider"));
+  const routine = observed.filter(signal => !kindOf(signal).length);
+  const rest = observed.filter(signal => !touchesUs(signal, network) && !["area", "slow-onset", "provider"].some(kind => kindOf(signal).includes(kind)) && kindOf(signal).length);
+  const observedParts = [...nearFacility, ...areas,
+    ...(slow.length ? [`${plural(slow.length, "slow-onset alert")} (${[...new Set(slow.map(signal => (signal.title.match(/^(\w+)/)?.[1] ?? "").toLowerCase()))].join(", ")}): no direct effect on transport`] : []),
+    ...(tracking.length ? [`${plural(tracking.length, "courier tracking delay")}: visibility only, no shipment of ours moving then`] : []),
+    ...(rest.length > 2 ? [`${plural(rest.length, "other event")} with no shipment, collection or route of ours there on those days`]
+      : rest.map(signal => `${titleHead(signal)}, ${windowText(signal.window)}: no shipment, collection or route of ours there on those days`)),
+    ...(routine.length ? [`${plural(routine.length, "routine update")} with no restriction`] : [])];
+  if (observedParts.length) sentences.push(`Observed only: ${observedParts.join("; ")}.`);
+  if (entry.hazard === "weather" && entry.gaps.length) {
+    const alerts = ss.feeds?.gdacs?.nearOurFacilities ?? [];
+    sentences.push(`Not monitored: ${list(entry.gaps.map(gap => `${names[gap.code] ?? gap.code} (${gap.facilities.join(", ")})`))}.${alerts.length ? ` GDACS reports ${list(alerts.map(alert => `a ${alert.alert.toLowerCase()} ${alert.typeName.toLowerCase()} alert in ${list(alert.countries.filter(code => entry.gaps.some(gap => gap.code === code)).map(code => names[code] ?? code))}, ${windowText({ from: alert.from, to: alert.to })}${alert.ended ? " (ended)" : ""}`))}.` : ""}`);
+  }
+  return sentences.join(" ");
+}
+
+// One summary per kind of hazard, for the page and for the agents' run records. `regulatory` lists the regulatory changes
+// and import approvals with the planned shipments each one holds (rules.mjs builds it from the shipment checks).
+export function watchSummary(ss, { network, regulatory = [] } = {}) {
+  if (!ss || ss.scope?.status !== "determined") return Object.values(HAZARDS).map(item => ({ agent: item.agent, name: item.name, hazard: item.agent, sources: [], countries: 0, regions: [], events: 0, touching: 0, confirmed: 0, potential: 0, top: [], gaps: [], finding: `${item.name}: nothing is monitored until the active-trial portfolio is connected.` }));
+  const regions = network?.geography?.regions ?? {};
+  const facilityGaps = (network?.facilities ?? []).filter(item => !ss.scope.monitored.external.includes(item.country)).reduce((map, item) => {
+    (map[item.country] ??= []).push(lowerFirst(item.name).replace(/, (Singapore|Switzerland|India|Belgium|Netherlands)$/, "")); return map; }, {});
+  return Object.entries(HAZARDS).map(([hazard, spec]) => {
+    const countries = ss.scope.monitored[spec.kind] ?? [];
+    const signals = hazard === "regulatory" ? [] : ss.signals.filter(signal => signal.hazard === hazard);
+    const ordered = [...signals].sort((a, b) => TIER_ORDER[b.tier] - TIER_ORDER[a.tier] || relevance(b, network) - relevance(a, network));
+    const items = hazard === "regulatory" ? regulatory : [];
+    const authorities = [...new Set(signals.flatMap(signal => (signal.sources ?? [{ authority: signal.authority }]).map(source => source.authority)).filter(Boolean))];
+    const entry = {
+      agent: spec.agent, name: spec.name, hazard, covers: spec.covers,
+      sources: [...spec.feeds, ...authorities.filter(name => !/Global Disaster Alert|Foreign, Commonwealth/.test(name))],
+      countries: countries.length, regions: [...new Set(countries.map(code => regions[code] ?? "Other"))].sort(),
+      events: hazard === "regulatory" ? items.length : signals.length,
+      // A rule change touches us when it affects a planned shipment; an import approval always belongs to one of ours.
+      touching: hazard === "regulatory" ? items.filter(item => item.touching.length || item.kind === "permit").length : signals.filter(signal => touchesUs(signal, network)).length,
+      confirmed: signals.filter(signal => signal.tier === "confirmed").length,
+      potential: signals.filter(signal => signal.tier === "potential").length,
+      top: hazard === "regulatory" ? [...items].sort((a, b) => b.touching.length - a.touching.length).map(item => item.id).slice(0, 5) : ordered.map(signal => signal.id).slice(0, 5),
+      gaps: hazard === "regulatory"
+        ? (ss.scope.coverage?.gaps ?? []).filter(gap => gap.code && /regulatory and customs coverage is a gap/i.test(gap.text)).map(gap => ({ code: gap.code, text: gap.text }))
+        : Object.entries(facilityGaps).map(([code, facilities]) => ({ code, facilities, text: `${ss.names?.[code] ?? code} hosts the ${list(facilities)} and is not monitored for external risk.` })),
+    };
+    entry.finding = findingFor(entry, ordered, ss, network, items);
+    return entry;
+  });
 }

@@ -8,7 +8,8 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadData, checkShipment, allShipmentChecks, verifyOptionSafe, shipmentView, sectionNames } from "./rules.mjs";
+import { loadData, checkShipment, allShipmentChecks, verifyOptionSafe, shipmentView, sectionNames, watchBriefs } from "./rules.mjs";
+import { HAZARDS } from "./supplyshield.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 export const SYSTEMS = {
@@ -86,12 +87,31 @@ export function registerTools(server, system, data) {
         if (geography.land?.[code] === undefined) return json({ country: code, name: names[code] ?? code, status: "BORDER_RELATION_UNKNOWN", source: geography.source ?? null });
         return json({ country: code, name: names[code] ?? code, land: geography.land[code].map(item => ({ code: item, name: names[item] ?? item })), sea: (geography.sea?.[code] ?? []).map(item => ({ code: item, name: names[item] ?? item })), source: geography.source });
       });
-    server.registerTool("get_risk_signals", { title: "External signals", description: "Returns the external events SupplyShield detected in monitored countries and how each one touches our shipments: confirmed disruption (an authorised system confirmed the impact), potential exposure (touches the route on the day, not confirmed; names the missing evidence), not affected after check, or observed. Give a shipment_id for that shipment's matches and route.", inputSchema: { shipment_id: z.string().optional() }, annotations: READ },
-      async ({ shipment_id }) => {
+    const regionOf = code => data.network?.geography?.regions?.[code] ?? "Other";
+    server.registerTool("get_risk_signals", { title: "External signals", description: "Returns the external events SupplyShield detected in monitored countries and how each one touches our shipments: confirmed disruption (an authorised system confirmed the impact), potential exposure (touches the route on the day, not confirmed; names the missing evidence), not affected after check, or observed. Give a shipment_id for that shipment's matches and route. Optional filters: hazard (weather, transport, security or regulatory) and region (for example Europe, Middle East, North America, Asia, Oceania).",
+      inputSchema: { shipment_id: z.string().optional(), hazard: z.enum(Object.keys(HAZARDS)).optional().describe("Only this kind of hazard."), region: z.string().optional().describe("Only events in countries of this region.") }, annotations: READ },
+      async ({ shipment_id, hazard, region }) => {
         if (!ss) return json({ status: "unavailable" });
-        if (shipment_id) return json({ shipment: shipment_id, route: ss.routes[shipment_id] ?? null, matches: ss.byShipment[shipment_id] ?? [] });
-        return json(ss.signals.map(signal => ({ id: signal.id, title: signal.title, tier: signal.tierName, country: signal.country, window: signal.window, illustrative: Boolean(signal.illustrative), live: Boolean(signal.live), counts: signal.counts,
+        const inRegion = code => !region || regionOf(code).toLowerCase() === String(region).toLowerCase();
+        if (shipment_id) return json({ shipment: shipment_id, route: ss.routes[shipment_id] ?? null, matches: (ss.byShipment[shipment_id] ?? []).filter(match => (!hazard || match.hazard === hazard) && inRegion(ss.signals.find(item => item.id === match.signal)?.country)) });
+        return json(ss.signals.filter(signal => (!hazard || signal.hazard === hazard) && inRegion(signal.country)).map(signal => ({ id: signal.id, title: signal.title, hazard: signal.hazard, tier: signal.tierName, priority: signal.priority,
+          country: signal.country, region: regionOf(signal.country), window: signal.window, evidence: signal.evidenceName, sources: (signal.sources ?? []).map(source => source.authority),
+          illustrative: Boolean(signal.illustrative), live: Boolean(signal.live), counts: signal.counts,
           matches: signal.matches.map(match => `${match.shipment} · ${match.label} on ${match.date} · ${match.tier}`), notes: signal.notes })));
+      });
+    server.registerTool("get_watch_brief", { title: "Watch brief", description: "For one kind of hazard (weather, transport, security or regulatory): the sources watched, every monitored country with its region, how many events were found and how many touch our shipments, routes or facilities, the most relevant event ids, and the coverage gaps. For regulatory: the rule changes and import approvals with the planned shipments each affects.",
+      inputSchema: { hazard: z.enum(Object.keys(HAZARDS)) }, annotations: READ },
+      async ({ hazard }) => {
+        if (!ss || ss.scope.status !== "determined") return json({ hazard, status: ss?.scope.status ?? "unavailable", message: ss?.scope.message ?? "SupplyShield is not available." });
+        const { watch, regulatory } = watchBriefs(data);
+        const entry = watch.find(item => item.hazard === hazard);
+        const codes = ss.scope.monitored[HAZARDS[hazard].kind] ?? [];
+        return json({ hazard, agent: entry.agent, name: entry.name, covers: entry.covers, sources: entry.sources,
+          monitored_countries: codes.map(code => ({ code, name: ss.names[code] ?? code, region: regionOf(code) })), regions: entry.regions,
+          events: entry.events, touching_our_network: entry.touching, confirmed: entry.confirmed, potential: entry.potential, most_relevant: entry.top,
+          coverage_gaps: entry.gaps.map(gap => gap.text),
+          ...(hazard === "weather" ? { alerts_outside_scope_near_our_facilities: ss.feeds?.gdacs?.nearOurFacilities ?? [] } : {}),
+          ...(hazard === "regulatory" ? { items: regulatory.map(({ short: _short, ...item }) => item) } : {}) });
       });
   }
   if (system === "ctms") {

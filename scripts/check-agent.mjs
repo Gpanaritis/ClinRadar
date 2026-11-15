@@ -78,6 +78,38 @@ const writers = described.flatMap(system => system.tools.filter(tool => !tool.re
 assert.deepEqual(writers, ["drafts.create_draft"]);
 console.log(`ok  MCP: ${described.map(system => `${system.name} (${system.tools.length})`).join(", ")}; only drafts.create_draft writes, and only drafts`);
 
+// 4b. The watch team: four agents on the watch model, each with read-only tools that exist on the SupplyShield server.
+{
+  const { AGENTS, WATCH_AGENTS, WATCH_MODEL } = await import("../regchain-ai/agent.mjs");
+  assert.deepEqual(WATCH_AGENTS, ["weather", "transport", "security", "regulatory"]);
+  assert.equal(WATCH_MODEL, "claude-haiku-5-5");
+  assert.deepEqual(WATCH_AGENTS.map(id => AGENTS[id].name), ["Weather & natural hazards", "Strikes & transport", "Security & travel advice", "Regulatory & customs"]);
+  const specsTools = described.find(system => system.id === "specs").tools;
+  for (const id of WATCH_AGENTS) {
+    assert.equal(AGENTS[id].model, "claude-haiku-5-5");
+    assert.ok(AGENTS[id].tools.includes("specs__get_watch_brief") && AGENTS[id].tools.every(name => name.startsWith("specs__") && specsTools.some(tool => tool.name === name.split("__")[1] && tool.readOnly)), `${id}: read-only SupplyShield tools only`);
+    assert.match(AGENTS[id].system, /Never treat a single unverified source as confirmed/);
+    assert.match(AGENTS[id].system, /No probabilities/);
+  }
+  assert.equal(AGENTS.orchestrator.model, "claude-opus-5-5");
+  assert.equal(AGENTS.logistics.model, "claude-sonnet-5-5");
+  const read = async (tool, args) => JSON.parse((await systems.specs.client.callTool({ name: tool, arguments: args })).content[0].text);
+  const weather = await read("get_risk_signals", { hazard: "weather" });
+  assert.ok(weather.length >= 3 && weather.every(item => item.hazard === "weather"), "the hazard filter returns only that kind");
+  assert.ok(weather.some(item => item.id === "SIG-US-WINTER-1116" && item.region === "North America"), "a non-European natural hazard near our US depot");
+  const europe = await read("get_risk_signals", { region: "Europe" });
+  assert.ok(europe.length && europe.every(item => item.region === "Europe"));
+  assert.equal((await read("get_risk_signals", {})).length, data.supplyshield.signals.length, "without filters, every signal as before");
+  assert.deepEqual((await read("get_risk_signals", { shipment_id: "SHP-IL-01", hazard: "transport" })).matches.map(item => item.signal), ["SIG-BE-STRIKE-1124"]);
+  assert.deepEqual((await read("get_risk_signals", { shipment_id: "SHP-IL-01", hazard: "weather" })).matches, []);
+  const brief = await read("get_watch_brief", { hazard: "transport" });
+  assert.equal(brief.monitored_countries.length, data.supplyshield.scope.monitored.external.length);
+  assert.equal(brief.most_relevant[0], "SIG-BE-STRIKE-1124");
+  const regulatoryBrief = await read("get_watch_brief", { hazard: "regulatory" });
+  assert.ok(regulatoryBrief.items.some(item => item.id === "RC-IL-001" && item.touching.includes("SHP-IL-02")), "the regulatory watch sees which shipments each change affects");
+  console.log(`ok  watch team: ${WATCH_AGENTS.length} agents on ${WATCH_MODEL} with read-only tools; get_risk_signals filters by hazard and region; get_watch_brief gives sources, countries and gaps`);
+}
+
 // 5. Scripted runs on each kind of shipment.
 const expectations = { "SHP-04": "swap-J-203", "SHP-01": "relabel-2026-11-16", "SHP-ES-09": "fix-data", "SHP-03": "escalate", "SHP-07": "proceed-confirm", "SHP-ES-05": "proceed-confirm", "SHP-IL-03": "swap-Q-815", "SHP-IL-01": "reroute-AMS" };
 const saved = {};
@@ -92,6 +124,20 @@ for (const [shipment, recommended] of Object.entries(expectations)) {
   saved[shipment] = run;
   console.log(`ok  scripted ${shipment}: ${run.events.length} steps, ${run.events.filter(e => e.type === "tool_call").length} MCP calls, ${run.drafts.length} draft${run.drafts.length === 1 ? "" : "s"}, recommends ${recommended}`);
 }
+// SHP-IL-01: the master agent asks the transport watch agent to confirm the strike before logistics looks for alternatives.
+{
+  const events = saved["SHP-IL-01"].events;
+  const delegations = events.filter(event => event.type === "delegate");
+  assert.equal(delegations[0].to, "transport", "the watch agent for the hazard is consulted first");
+  assert.ok(events.indexOf(delegations[0]) < events.findIndex(event => event.type === "delegate" && event.to === "logistics"));
+  assert.ok(events.some(event => event.agent === "transport" && event.type === "tool_call" && event.system === "SupplyShield" && event.input.hazard === "transport"));
+  const confirmation = events.find(event => event.agent === "transport" && event.type === "report").text;
+  assert.match(confirmation, /^Confirmed disruption, one day \(2026-11-24\)/);
+  assert.match(confirmation, /two or more trusted sources/);
+  assert.match(confirmation, /courier booking system confirmed SHP-IL-01's flight BRU → TLV on 2026-11-24 cancelled/);
+  assert.match(confirmation, /SHP-03.*not affected/);
+  console.log("ok  SHP-IL-01: the transport watch agent confirms the strike (one day, two trusted sources, courier-confirmed cancellation, SHP-03 not affected) before logistics finds the Amsterdam reroute");
+}
 await closeSystems(systems);
 
 // 6. The portfolio: every shipment that needs action, most urgent first, with nothing promised twice.
@@ -99,7 +145,25 @@ const portfolio = await resolvePortfolio({ root, mode: "scripted", onShipment: r
 const { record: board, runs } = portfolio;
 assert.equal(board.error, undefined, board.error);
 assert.deepEqual({ shipments: board.summary.shipments, plans: board.summary.plans, escalated: board.summary.escalated, reallocated: board.summary.reallocated }, { shipments: 19, plans: 17, escalated: 2, reallocated: 2 });
-assert.deepEqual(board.board.map(row => row.shipment).slice(0, 4), ["SHP-04", "SHP-IL-01", "SHP-01", "SHP-03"], "most urgent first: SHP-IL-01 must be prepared by 16 Nov");
+assert.deepEqual(board.board.map(row => row.shipment).slice(0, 4), ["SHP-IL-01", "SHP-04", "SHP-01", "SHP-03"], "patients first (SHP-IL-01 runs out on 27 Nov), then by preparation date");
+// Before triage, the master agent sends the four watch agents across the monitored countries.
+{
+  const events = board.events;
+  const triageAt = events.findIndex(event => event.type === "triage");
+  const before = events.slice(0, triageAt);
+  assert.deepEqual(before.filter(event => event.type === "delegate").map(event => event.to), ["weather", "transport", "security", "regulatory"]);
+  assert.deepEqual(before.filter(event => event.type === "report").map(event => event.agent), ["weather", "transport", "security", "regulatory"]);
+  assert.ok(["weather", "transport", "security", "regulatory"].every(id => before.some(event => event.agent === id && event.type === "tool_call" && event.system === "SupplyShield")));
+  assert.ok(!events.slice(triageAt).some(event => event.type === "delegate" && !event.nested && ["weather", "transport", "security", "regulatory"].includes(event.to)), "the sweep comes before triage");
+  assert.match(before.find(event => event.agent === "transport" && event.type === "report").text, /^Strikes & transport: 4 events in 17 monitored countries; 1 confirmed disruption — SHP-IL-01's flight BRU → TLV on 24 Nov cancelled \(courier\); SHP-03 checked, not affected\./);
+  assert.match(before.find(event => event.agent === "weather" && event.type === "report").text, /US depot \(Allentown, Pennsylvania\).*winter storm watch/);
+  assert.match(events[triageAt].text, /^Patients first: SHP-IL-01 runs out on 27 Nov \(14 patients\)/);
+  assert.deepEqual(events[triageAt].patientsFirst, ["SHP-IL-01"]);
+  assert.deepEqual(board.watch.map(item => [item.agent, item.name, item.hazard]), [["weather", "Weather & natural hazards", "weather"], ["transport", "Strikes & transport", "transport"], ["security", "Security & travel advice", "security"], ["regulatory", "Regulatory & customs", "regulatory"]]);
+  assert.ok(board.watch.every(item => item.finding && Array.isArray(item.top) && item.countries > 0 && item.regions.length));
+  assert.equal(board.watch.find(item => item.agent === "transport").top[0], "SIG-BE-STRIKE-1124");
+  console.log("ok  portfolio watch sweep: weather, transport, security and regulatory report before triage; triage puts SHP-IL-01's patients first; the run record keeps the four findings");
+}
 assert.equal(board.board.find(row => row.shipment === "SHP-IL-01").recommended, "reroute-AMS", "the strike's flight is replaced, not the shipment");
 const moved = board.board.find(row => row.changed);
 assert.equal(moved.shipment, "SHP-06");
@@ -187,6 +251,35 @@ assert.equal(live.drafts.length, 2);
 assert.ok(live.drafts.find(draft => draft.option_id === "B").withdrawn && !live.drafts.find(draft => draft.option_id === "A").withdrawn, "drafts of a failing option are withdrawn");
 console.log(`ok  live loop (stand-in AI): ${live.events.length} steps, delegation to the supply agent, MCP calls, verification, and a draft for a failing option withdrawn`);
 
+// 8b. The live watch sweep with a stand-in AI: each watch agent runs on the watch model, and its reads stay pinned to its
+// own kind of hazard even when it asks for another.
+{
+  const { runWatchSweep } = await import("../regchain-ai/agent.mjs");
+  const seen = [];
+  const turns = {};
+  const client = { messages: { stream(params) {
+    const id = ["Weather & natural hazards", "Strikes & transport", "Security & travel advice", "Regulatory & customs"].find(name => params.system.includes(`"${name}" watch agent`));
+    seen.push({ id, model: params.model, thinking: "thinking" in params, tools: params.tools.map(tool => tool.name) });
+    const step = (turns[id] = (turns[id] ?? 0) + 1);
+    const message = step === 1
+      ? { stop_reason: "tool_use", content: [{ type: "tool_use", id: `w${seen.length}`, name: "specs__get_watch_brief", input: { hazard: "security" } }], usage: { input_tokens: 5, output_tokens: 2 } }
+      : { stop_reason: "end_turn", content: [{ type: "text", text: `${id}: checked.` }], usage: { input_tokens: 5, output_tokens: 2 } };
+    return { finalMessage: async () => message };
+  } } };
+  const sweepSystems = await connectSystems(root, ["specs"]);
+  const record = { events: [], usage: { input_tokens: 0, output_tokens: 0 } };
+  const sweepData = await loadData(root);
+  const send = event => { record.events.push(event); return event; };
+  const findings = await runWatchSweep({ root, data: sweepData, mode: "live", client, systems: sweepSystems, send, record });
+  await closeSystems(sweepSystems);
+  assert.deepEqual(findings.map(item => item.finding), ["Weather & natural hazards: checked.", "Strikes & transport: checked.", "Security & travel advice: checked.", "Regulatory & customs: checked."]);
+  assert.ok(seen.every(item => item.model === "claude-haiku-5-5" && !item.thinking), "the watch model, without extended thinking");
+  assert.deepEqual(record.events.filter(event => event.type === "tool_call").map(event => event.input.hazard), ["weather", "transport", "security", "regulatory"], "each watch agent reads only its own hazard");
+  assert.ok(!seen.some(item => item.tools.includes("delegate_to_agent") || item.tools.includes("drafts__create_draft")), "watch agents cannot delegate or draft");
+  assert.ok(findings.every(item => item.model === "claude-haiku-5-5"));
+  console.log("ok  live watch sweep (stand-in AI): four watch agents on claude-haiku-5-5, reads pinned to their own hazard, no delegation or drafts");
+}
+
 // 9. Which Claude service: one setting, Claude models only, and one clear sentence for whatever is missing.
 {
   const { claudeSettings, setupMessage, createClaude, credentialsRefused, PROVIDERS } = await import("../regchain-ai/claude.mjs");
@@ -194,11 +287,13 @@ console.log(`ok  live loop (stand-in AI): ${live.events.length} steps, delegatio
   const plain = claudeSettings({ ANTHROPIC_API_KEY: "test" });
   assert.equal(plain.provider, "anthropic");
   assert.ok(plain.configured && plain.serverFallbacks);
-  assert.deepEqual(plain.models, { orchestrator: "claude-opus-5-5", specialist: "claude-sonnet-5-5", aiCheck: "claude-opus-5-5" });
+  assert.deepEqual(plain.models, { orchestrator: "claude-opus-5-5", specialist: "claude-sonnet-5-5", watch: "claude-haiku-5-5", aiCheck: "claude-opus-5-5" });
+  assert.equal(claudeSettings({ ANTHROPIC_API_KEY: "test", REGCHAIN_MODEL_WATCH: "my-claude-haiku-deployment" }).models.watch, "my-claude-haiku-deployment", "REGCHAIN_MODEL_WATCH overrides the watch model");
+  assert.match(claudeSettings({ ANTHROPIC_API_KEY: "test", REGCHAIN_MODEL_WATCH: "gpt-5-mini" }).problems[0], /Claude models only: REGCHAIN_MODEL_WATCH/);
   assert.equal(setupMessage(claudeSettings({}), true), "Add ANTHROPIC_API_KEY to the .env file next to serve-regchain.cjs, then restart RegChain.");
   const bedrock = claudeSettings({ REGCHAIN_AI_PROVIDER: "bedrock", AWS_REGION: "eu-central-1" });
   assert.ok(bedrock.configured && !bedrock.serverFallbacks);
-  assert.deepEqual(bedrock.models, { orchestrator: "anthropic.claude-opus-5-5", specialist: "anthropic.claude-sonnet-5-5", aiCheck: "anthropic.claude-opus-5-5" });
+  assert.deepEqual(bedrock.models, { orchestrator: "anthropic.claude-opus-5-5", specialist: "anthropic.claude-sonnet-5-5", watch: "anthropic.claude-haiku-5-5", aiCheck: "anthropic.claude-opus-5-5" });
   assert.match(setupMessage(bedrock, false), /npm install @anthropic-ai\/bedrock-sdk/);
   assert.deepEqual(claudeSettings({ REGCHAIN_AI_PROVIDER: "aws", AWS_REGION: "eu-west-1" }).missing, ["ANTHROPIC_AWS_WORKSPACE_ID"]);
   assert.ok(claudeSettings({ REGCHAIN_AI_PROVIDER: "google-cloud", ANTHROPIC_GOOGLE_CLOUD_WORKSPACE_ID: "wrkspc_test" }).configured);

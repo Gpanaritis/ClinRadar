@@ -97,6 +97,18 @@ assert.equal(signal("SIG-FR-ROAD-1202").tier, "observed", "no shipment of ours i
 assert.ok(ss.signals.filter(item => item.category === "natural-hazard").every(item => item.tier === "observed"), "the recorded GDACS alerts touch nothing of ours");
 assert.ok(ss.signals.every(item => ss.scope.monitored.external.includes(item.country)), "signals come only from monitored countries");
 assert.equal(ss.feeds.live, false, "without a live check, the recorded copy of the feeds is used and says so");
+// Every signal belongs to one kind of hazard, for the watch team.
+assert.ok(ss.signals.every(item => ["weather", "transport", "security", "regulatory"].includes(item.hazard)), "every signal has a hazard");
+assert.equal(strike.hazard, "transport");
+assert.equal(tracking.hazard, "transport");
+assert.equal(works.hazard, "transport");
+assert.ok(ss.signals.filter(item => item.category === "natural-hazard").every(item => item.hazard === "weather" && item.hazardType), "GDACS alerts are weather, and keep their GDACS type");
+assert.ok(ss.signals.filter(item => item.category === "official-advice").every(item => item.hazard === "security"), "UK FCDO advice is security");
+const storm = signal("SIG-US-WINTER-1116");
+assert.ok(storm.illustrative && storm.hazard === "weather" && storm.country === "US", "a non-European natural hazard, clearly illustrative");
+assert.equal(storm.tier, "observed", "the US depot has no collection planned on those days");
+assert.ok(storm.notes.some(note => /US depot \(Allentown, Pennsylvania\) is in the area: no collection is planned/.test(note)));
+assert.deepEqual(ss.byShipment["SHP-IL-01"].map(item => item.hazard), ["transport"], "each shipment match says which kind of hazard it is");
 console.log(`ok  signals: ${ss.counts.confirmed} confirmed disruption, ${ss.counts.potential} potential exposure, ${ss.counts.observed} observed; the strike cancels SHP-IL-01's flight (courier), SHP-03 is not affected after check, the runway works wait for the courier's confirmation`);
 
 // 4. The route check and the option verifier.
@@ -116,6 +128,28 @@ assert.equal(verdict([{ type: "advance_dispatch", new_dispatch_date: "2026-11-20
 assert.equal(verdict([{ type: "reroute", via: "CDG" }]).feasible, false, "no qualified departure from Paris");
 assert.equal(verifyOption(data, "SHP-03", [{ type: "reroute", via: "AMS" }]).feasible, false, "a road shipment has no departure airport");
 assert.equal(verifyOption(data, "SHP-IL-02", [{ type: "advance_dispatch", new_dispatch_date: "2026-12-28" }]).after, "Ready", "an earlier dispatch also avoids the runway works");
+// The watch team's summary for the page: one entry per kind of hazard, in the default workspace (Belgium monitored).
+{
+  const payload = supplyShieldPayload(data);
+  assert.deepEqual(payload.watch.map(item => [item.agent, item.name, item.hazard]), [["weather", "Weather & natural hazards", "weather"], ["transport", "Strikes & transport", "transport"], ["security", "Security & travel advice", "security"], ["regulatory", "Regulatory & customs", "regulatory"]]);
+  for (const item of payload.watch) {
+    assert.ok(Array.isArray(item.sources) && item.sources.length && Number.isInteger(item.countries) && item.countries > 0 && item.regions.length && Number.isInteger(item.events) && Number.isInteger(item.touching) && Array.isArray(item.top) && item.finding, item.agent);
+    if (item.hazard !== "regulatory") assert.ok(item.top.every(id => payload.signals.some(entry => entry.id === id && entry.hazard === item.hazard)), `${item.agent}: top lists its own signals`);
+    else assert.ok(item.top.every(id => payload.regulatoryItems.some(entry => entry.id === id)), "regulatory: top lists regulatory items");
+    assert.ok(!/%|probab/i.test(item.finding), "no probabilities");
+  }
+  const watch = Object.fromEntries(payload.watch.map(item => [item.hazard, item]));
+  assert.deepEqual([watch.transport.events, watch.transport.touching, watch.transport.confirmed, watch.transport.potential, watch.transport.top[0]], [4, 2, 1, 1, "SIG-BE-STRIKE-1124"]);
+  assert.equal(watch.weather.top[0], "SIG-US-WINTER-1116", "the storm at the US depot comes first for the weather agent");
+  assert.ok(watch.weather.touching >= 1 && watch.weather.regions.includes("North America"));
+  assert.ok(watch.weather.gaps.some(gap => gap.code === "SG") && /India, 1–3 Nov \(ended\)/.test(watch.weather.finding), "the APAC depot is not monitored; the GDACS cyclone in India is context, not a signal");
+  assert.equal(watch.security.top[0], "FCDO-IL-2026-10-27", "advice for parts of Israel needs mapping against our sites");
+  assert.equal(watch.regulatory.countries, ss.scope.monitored.regulatory.length);
+  assert.deepEqual(payload.regulatoryItems.find(item => item.id === "RC-IL-001").touching, ["SHP-IL-02", "SHP-IL-03"]);
+  assert.equal(payload.regulatoryItems.find(item => item.id === "MOH-IMP-26-4410").result, "Pass");
+  assert.ok(payload.regulatoryItems.every(item => item.hazard === "regulatory"));
+  console.log(`ok  watch summary: ${payload.watch.map(item => `${item.name} ${item.events} events, ${item.touching} touching us`).join("; ")}`);
+}
 console.log("ok  verifier: Amsterdam passes with the same delivery day, Luxembourg needs a monitoring decision, 25 Nov arrives after the Tel Aviv stock runs out, 24 Nov fails at the depot, 20 Nov is too late to prepare, no departure from Paris, no airport for road shipments");
 
 // 5. Monitoring decisions: the right role, a reason, the audit trail; nothing switches on by itself.
@@ -133,11 +167,25 @@ assert.equal(verifyOption(data, "SHP-IL-01", [{ type: "reroute", via: "LUX" }]).
 setMonitoring(root, data.network, { country: "BE", kind: "external", enabled: false, reason: "Rehearsal: what if no one had turned Belgium on" }, { ...clinicalSupply, allowed, names });
 data = await loadData(root);
 assert.equal(data.supplyshield.signals.some(item => item.id === "SIG-BE-STRIKE-1124"), false, "Belgium is not monitored: its events are not assessed");
-assert.equal(checkShipment(data, "SHP-IL-01").result, "Ready");
-assert.match(checkShipment(data, "SHP-IL-01").checks.find(item => item.section === "risk").detail, /Not monitored: Belgium/, "the route says plainly what is not monitored");
+// No false assurance: the strike is no longer seen, but the route is not called clear either.
+const blind = checkShipment(data, "SHP-IL-01");
+assert.equal(blind.result, "Confirm", "a booked leg in an unmonitored country is a confirmation, never Ready");
+const blindCheck = blind.checks.find(item => item.section === "risk" && item.requirement === "External risk is monitored on every country of the route");
+assert.equal(blindCheck.result, "Confirm");
+assert.match(blindCheck.detail, /^External risk is not monitored on this route: Belgium \(depot and departure\)\..*Turn it on in Monitoring scope or confirm with the EMEA specialty courier\.$/);
+assert.deepEqual(blindCheck.unmonitored, ["BE"]);
+assert.ok(!blind.checks.some(item => item.result === "Pass" && /No disruption/.test(item.requirement) && !/Not monitored: Belgium/.test(item.detail)), "any pass on the route names what is not monitored");
+assert.match(checkShipment(data, "SHP-03").checks.find(item => item.unmonitored).detail, /Belgium \(depot\)/, "a road shipment from the Belgian depot");
+assert.equal(checkShipment(data, "SHP-04").checks.some(item => item.unmonitored), false, "only countries on the booked route count: a UK shipment is untouched");
+assert.ok(allShipmentChecks(data).every(item => item.result !== "Ready" || !(data.supplyshield.routes[item.id]?.countries ?? []).includes("BE")), "no shipment through Belgium is Ready while Belgium is unmonitored");
 const audit = openDatabase(root).prepare("SELECT actor, role, type, detail FROM audit_entry WHERE type = 'scope.monitoring_changed' ORDER BY seq").all();
 assert.deepEqual(audit.map(row => [row.actor, row.role]), [[clinicalSupply.by, "viewer"], [clinicalSupply.by, "viewer"]]);
 assert.match(audit[0].detail, /Luxembourg · External risk monitoring on · Alternative departure/);
+setMonitoring(root, data.network, { country: "BE", kind: "external", enabled: true, reason: "Rehearsal over: our central EU depot is in Belgium" }, { ...clinicalSupply, allowed, names });
+data = await loadData(root);
+const seen = checkShipment(data, "SHP-IL-01");
+assert.equal(seen.result, "Blocked", "Belgium monitored again: the strike is seen again");
+assert.ok(seen.checks.some(item => item.section === "risk" && item.result === "Fail" && /cancelled/.test(item.detail)) && !seen.checks.some(item => item.unmonitored), "back to the strike Fail, and no unmonitored-route check");
 // Reviewing recommendations: dismiss with a reason, restore; never a country that is being monitored.
 assert.throws(() => reviewRecommendation(root, data.network, { country: "MA", decision: "dismiss", reason: "" }, { ...clinicalSupply, allowed, names }), /Say why/);
 assert.throws(() => reviewRecommendation(root, data.network, { country: "LU", decision: "dismiss", reason: "No longer needed" }, { ...clinicalSupply, allowed, names }), /Turn its monitoring off/);
@@ -150,6 +198,7 @@ data = await loadData(root);
 assert.equal(data.supplyshield.scope.recommendations.find(item => item.code === "MA").review.state, "open");
 assert.equal(verifyAudit(openDatabase(root)).ok, true, "the hash chain holds");
 console.log("ok  monitoring decisions: Clinical Supply owns external risk, the Regulatory SME regulatory and customs, a reason is required, active-trial countries cannot be switched, recommendations can be dismissed and restored, every change is in the hash-chained audit trail");
+console.log("ok  no false assurance: with Belgium unmonitored, SHP-IL-01 is Confirm (\"External risk is not monitored on this route: Belgium (depot and departure)\"), never Ready; Belgium on again brings back the strike Fail");
 
 // 6. No portfolio, no scope: nothing is monitored and nothing is assumed.
 setPortfolioConnection(root, data.network, false, clinicalSupply);

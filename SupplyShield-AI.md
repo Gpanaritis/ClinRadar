@@ -31,7 +31,7 @@ The full report, with sources, is [SupplyShield-AI-Research.md](SupplyShield-AI-
 | 6 | No list of "hostile" countries; geopolitical exposure only on current authoritative evidence | No country list judges hostility. Official advice counts only as evidence on a country that already has a supply link or a border, and it always carries its source and date (UK FCDO, Open Government Licence). | `regchain-ai/supplyshield.mjs` |
 | 7 | Match events to shipments, facilities, routes, deadlines and constraints | Every shipment has a route with the day of each leg: collection, road, flight, import clearance, delivery. An event matches by place (airport, facility, road country) and by day. The checks also apply depot working days, Israeli delivery days, preparation dates and import approval terms (port of entry, kits, consignee, validity). | Shipments, Signals |
 | 8 | Separate an observed event, a potential exposure and a confirmed disruption | Four tiers, defined below, for every match and every signal. | Signals, Shipments |
-| 9 | Investigate missing evidence with authorised tools; never invent | A match is confirmed only by a record from the courier or the depot, with its time. Without one, the match stays a potential exposure, and the screen names what is missing and who must confirm it. The agents read the courier and depot systems over MCP, and their instructions forbid guessing a status. | Signal page, plan page |
+| 9 | Investigate missing evidence with authorised tools; never invent | A match is confirmed only by a record from the courier or the depot, with its time. Without one, the match stays a potential exposure, and the screen names what is missing and who must confirm it. The agents read the courier and depot systems over MCP, and their instructions forbid guessing a status. A route through a country nobody monitors is never called clear: it needs a confirmation. | Signal page, plan page |
 | 10 | Propose feasible mitigations and assign owners | The agents propose options, for example leave from Amsterdam instead of Brussels, or dispatch on 25 Nov. Fixed rules check each one. Each draft names its system and owner. | Plan page |
 | 11 | Human approval before changing the country intelligence, regulated systems or shipment instructions | Country Specification edits go through the Regulatory SME's decision. Plans need Clinical Supply's approval. Every system change is a draft that someone approves in IRT, ERP, the depot, the courier, the QMS or the site portal. | Plan page, change cases |
 | 12 | Keep evidence, timestamps, history and audit | Monitoring decisions, the CTMS connection, every check of the feeds, every approval and every agent run are in the hash-chained audit trail and the run history. | Settings, audit export |
@@ -111,6 +111,25 @@ A regulatory change that waits for the Regulatory SME **holds** the shipments it
 | **Not affected after check** | It touched one of ours, and the carrier or depot confirmed normal operation. Example: SHP-03's truck is in Germany before the Belgian strike day. |
 
 A confirmed disruption blocks the shipment and a potential exposure adds a confirmation; both are shown on the shipment's checks. A new route through a country SupplyShield does not monitor needs a person's decision first.
+
+**No false assurance on unmonitored routes.** A booked route whose legs pass through a country that is not monitored for external risk is never shown as Ready for external risk. It gets a Confirm check, for example "External risk is not monitored on this route: Belgium (depot and departure). … Turn it on in Monitoring scope or confirm with the EMEA specialty courier." Only countries on the route legs count (collection, road, departure, hub, arrival, import clearance, delivery). In the prepared workspace Belgium is on, so no planned shipment crosses an unmonitored country and the counts stay at 14 blocked, 5 to confirm and 6 ready. Turn Belgium off and every shipment leaving the central EU depot becomes Confirm instead of Ready; SHP-IL-01 loses the strike Fail, because the strike is no longer seen, and gets this Confirm instead.
+
+## The watch team
+
+Four agents sweep every monitored country, one kind of hazard each. Every signal carries a `hazard` field, set by fixed rules from its category and source.
+
+| Agent id | Name | Watches | Sources in the prototype |
+|---|---|---|---|
+| `weather` | Weather & natural hazards | GDACS alerts (floods, cyclones, earthquakes, wildfires, volcanic ash), weather warnings on lanes and facilities | GDACS (live or recorded), recorded weather warnings |
+| `transport` | Strikes & transport | Labour action, airport, port and road notices, carrier and depot operations, tracking outages | Airport and transport-authority notices, courier and depot systems |
+| `security` | Security & travel advice | UK FCDO travel advice, conflict, unrest, border closures | UK FCDO (live or recorded) |
+| `regulatory` | Regulatory & customs | Rule changes waiting for the Regulatory SME, import permits and approvals | Country Specifications, UK legislation and MHRA guidance, EU rules, eTMF import approvals |
+
+They run on Claude Haiku 5.5 (`REGCHAIN_MODEL_WATCH`): sweeping every country is cheap, high-volume scanning. The orchestrator stays on Claude Opus 5.5 and the specialists on Claude Sonnet 5.5. In **Plan all**, the orchestrator dispatches the four before triage, and triage uses what they found: patients first (SHP-IL-01 runs out on 27 Nov), then by preparation date. In a single-shipment run with a route risk, the orchestrator asks the matching watch agent to confirm the event, its evidence level and its duration before the logistics agent looks for alternatives.
+
+To keep the story global, the recorded events include an illustrative US National Weather Service winter storm watch over the US depot in Allentown, Pennsylvania, on 16–17 Nov 2026. No collection is planned there on those days, so it is an observed event that touches a facility of ours. The weather agent also names what is not watched (the APAC depot in Singapore, the manufacturer in Switzerland, the supplier in India) and the red GDACS tropical cyclone alert in India from 1 to 3 Nov, which is context for a recommendation, not a signal.
+
+The page gets `watch` (one summary per agent: `agent`, `name`, `hazard`, `sources`, `countries`, `regions`, `events`, `touching`, `confirmed`, `potential`, `top`, `gaps`, `finding`) and `regulatoryItems` in the SupplyShield payload. The portfolio run record keeps the same four summaries, each with the agent's own finding.
 
 ## The demonstration, in five minutes
 

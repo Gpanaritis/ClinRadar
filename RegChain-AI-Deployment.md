@@ -51,7 +51,7 @@ All settings are environment variables. An unset variable uses the default.
 | `REGCHAIN_NEW_PASSWORD` | none | Read by `scripts/users.mjs` only: the password to set instead of a generated one |
 | `REGCHAIN_AI_PROVIDER` | `anthropic` | Which Claude service RegChain calls: `anthropic`, `aws`, `bedrock`, `google-cloud`, `vertex` or `foundry`. See [Which Claude service](#which-claude-service) |
 | `ANTHROPIC_API_KEY` | none | With `anthropic`: turns on the live AI check and live agent runs. `ANTHROPIC_AUTH_TOKEN` is also accepted |
-| `REGCHAIN_MODEL_ORCHESTRATOR`, `REGCHAIN_MODEL_SPECIALIST`, `REGCHAIN_MODEL_AI_CHECK` | the service's names for Claude Opus 5.5, Claude Sonnet 5.5 and Claude Opus 5.5 | The model for the master agent, the specialist agents and the AI check. Claude models only |
+| `REGCHAIN_MODEL_ORCHESTRATOR`, `REGCHAIN_MODEL_SPECIALIST`, `REGCHAIN_MODEL_WATCH`, `REGCHAIN_MODEL_AI_CHECK` | the service's names for Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5 and Claude Opus 5.5 | The model for the master agent, the specialist agents, the watch team and the AI check. Claude models only |
 
 Switches accept `1`, `true`, `yes` or `on`. A number that is empty or not a number falls back to its default.
 
@@ -78,7 +78,7 @@ RegChain uses Claude models only. `REGCHAIN_AI_PROVIDER` chooses how it reaches 
 
 **Installing the package.** In a folder install, run `npm install` with the package name in the RegChain folder. With Docker, build with it: `docker compose build --build-arg REGCHAIN_AI_PACKAGES=@anthropic-ai/bedrock-sdk` (several packages go in quotes, separated by spaces), and add the service's settings to `docker-compose.yml`. The cloud packages are not in `package.json`, so an install that uses Anthropic's API carries no cloud libraries.
 
-**Model names.** `REGCHAIN_MODEL_ORCHESTRATOR`, `REGCHAIN_MODEL_SPECIALIST` and `REGCHAIN_MODEL_AI_CHECK` replace the names in the table, for example for a Foundry deployment with its own name. Only Claude models are accepted: a name without "claude" turns live AI off with a message.
+**Model names.** `REGCHAIN_MODEL_ORCHESTRATOR`, `REGCHAIN_MODEL_SPECIALIST`, `REGCHAIN_MODEL_WATCH` and `REGCHAIN_MODEL_AI_CHECK` replace the names in the table, for example for a Foundry deployment with its own name. Only Claude models are accepted: a name without "claude" turns live AI off with a message.
 
 **One difference between services.** On the services Anthropic runs (`anthropic`, `aws`, `google-cloud`), the AI check asks for Anthropic's server-side fallback, so another Claude model can answer if the chosen one declines. Bedrock, Vertex AI and Foundry do not offer it: there a refusal ends the check with a message, and the expert runs it again or decides without it. Everything else RegChain uses (streaming, tool use, adaptive thinking, structured outputs) works on all six.
 
