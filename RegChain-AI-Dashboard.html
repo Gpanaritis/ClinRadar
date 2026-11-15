@@ -601,7 +601,9 @@ let sourceFilter = "all";
 let sourceSearch = "";
 let currentCountry = "uk";
 // One workflow per governed case; `workflow` is the one for the case on screen.
-const workflows = Object.fromEntries(Object.keys(governedCases).map(id=>[id,readWorkflow(id)]));
+// Served by RegChain, the server is the system of record and the page loads its state from /v1; opened as a file, browser storage is used.
+const serverMode = () => location.protocol.startsWith("http");
+const workflows = Object.fromEntries(Object.keys(governedCases).map(id=>[id,serverMode()?initialWorkflow(id):readWorkflow(id)]));
 let workflow = workflows.uk;
 const isGoverned = id => Object.hasOwn(governedCases,id);
 const activeCase = () => governedCases[currentChange]??ukCase;
@@ -636,7 +638,7 @@ for(const [id,check] of Object.entries(storedJson(sourceChecksKey))) {
 const retryCount = () => sources.filter(source=>source.status==="Retry needed").length;
 // Decisions on changes that have no governed case: not relevant, open a case, or keep assessing.
 const changeDecisionsKey = "regchain-change-decisions-v1";
-let changeDecisions = storedJson(changeDecisionsKey);
+let changeDecisions = location.protocol.startsWith("http")?{}:storedJson(changeDecisionsKey);
 const changeResolved = id => !isGoverned(id) && changeDecisions[id]?.decision==="not-relevant";
 // A case stays open until its follow-up is verified; a rejected edit still leaves the rule unresolved.
 const caseOpen = id => workflows[id].stage!=="closed";
@@ -1349,6 +1351,7 @@ async function aiRequest(path,options={}) {
 }
 const aiBlocked = () => Boolean(aiState.result && !aiState.result.verification.verified);
 function applyAiDraft(caseId=isGoverned(currentChange)?currentChange:"uk") {
+  if(serverMode()) return false;
   const state=aiStates[caseId];
   const result=state.result;
   if(!result) return false;
@@ -1405,7 +1408,8 @@ async function runAi() {
     state.error=error.message;
   }
   state.phase="idle";
-  const adopted=!state.error&&applyAiDraft(caseId);
+  if(!state.error&&state.result?.workflow) setWorkflow(state.result.workflow);
+  const adopted=!state.error&&(serverMode()?state.result?.workflow?.aiRunAt===state.result?.at&&state.result?.workflow?.draftSource==="ai":applyAiDraft(caseId));
   if(adopted) render();
   else refreshAi();
   notify(state.error?"AI check failed.":!state.result.verification.verified?"AI check complete. Some checks failed, so SME approval is blocked.":
@@ -1540,7 +1544,8 @@ function operationalImpact() {
 // Results: Pass, Confirm (check before dispatch), and three that block dispatch: Fail, Missing data, Expert decision.
 // "Not checked" marks a requirement whose data is not connected yet; it never blocks.
 const shipmentActionsKey = "regchain-shipment-actions-v1";
-let shipmentActions = storedJson(shipmentActionsKey);
+let shipmentActions = location.protocol.startsWith("http")?{}:storedJson(shipmentActionsKey);
+let manualShipmentActions = {};
 let shipmentFilter = "all";
 let shipmentCountry = "all";
 const checkStyle = {Pass:["Pass","green"],Confirm:["Confirm","amber"],Fail:["Fail","red"],Missing:["Missing data","red"],Decision:["Expert decision","red"],"Not checked":["Not checked",""]};
@@ -1812,14 +1817,7 @@ async function loadAgentData() {
     agentApprovalLog=reply.log??[];
     agentPlans=plans??{};
   } catch {return;}
-  let changed=false;
-  const next={...shipmentActions};
-  for(const [id,approval] of Object.entries(agentApprovals)) {
-    const action=approval.option==="escalate"?"escalated":"plan";
-    if(next[id]?.action!==action||next[id]?.at!==approval.at) {next[id]={action,reason:(approval.option==="escalate"?"Escalated: no option passes RegChain's rules.":"Agent plan approved: "+approval.title),by:approval.by,at:approval.at};changed=true;}
-  }
-  for(const [id,action] of Object.entries(next)) if(["plan","escalated"].includes(action.action)&&!agentApprovals[id]) {delete next[id];changed=true;}
-  if(changed) {shipmentActions=next;storeJson(shipmentActionsKey,shipmentActions);}
+  composeShipmentActions();
   if(["agent","plans","shipments","overview"].includes(page)) render();
 }
 async function loadAgentStatus() {
@@ -2357,7 +2355,7 @@ function checkDue() {
   scheduleState=readScheduleOrCurrent();
   for(const caseId of Object.keys(governedCases)) {
     const latest=readWorkflow(caseId,workflows[caseId]);
-    if(latest.stage==="deferred" && latest.decision?.reviewOn<=libraryToday) {
+    if(!serverMode() && latest.stage==="deferred" && latest.decision?.reviewOn<=libraryToday) {
       latest.revision++;
       latest.stage="review";
       latest.decision=null;
@@ -2421,6 +2419,11 @@ const actions={
     '<p>Clear locally recorded decisions, publication and Quality follow-up for this case.</p><div>'+trigger("Reset case","confirm-reset-workflow","","primary","retry")+'</div>'),
   "confirm-reset-workflow":()=>{
     const caseId=isGoverned(currentChange)?currentChange:"uk";
+    if(serverMode()) {
+      apiWrite("POST","/v1/cases/"+caseId+"/reset",{}).then(reply=>{setWorkflow(reply.workflow);reviewDecision="approve";openCase(caseId,"proposal");notify((caseId==="es"?"Spain":"UK")+" case reset. The audit trail keeps the earlier run.");})
+        .catch(error=>notify("The case was not reset: "+error.message));
+      return;
+    }
     const fresh=initialWorkflow(caseId);
     setWorkflow(fresh);
     saveWorkflow(fresh);
@@ -2443,7 +2446,7 @@ const actions={
   "agent-withdraw":async id=>{await withdrawAgentPlan(id);if(byId("drawer").open) shipmentDetail(id);},
   "agent-export":exportAgentRun,
   "portfolio-export":exportPortfolioRun,
-  "clear-shipment-action":id=>{const next={...shipmentActions};delete next[id];shipmentActions=next;storeJson(shipmentActionsKey,shipmentActions);if(page==="shipments"||page==="overview") render();shipmentDetail(id);notify("Action cleared.");},
+  "clear-shipment-action":id=>{if(serverMode()) {apiWrite("DELETE","/v1/shipment-actions/"+encodeURIComponent(id)).then(()=>{const next={...manualShipmentActions};delete next[id];manualShipmentActions=next;composeShipmentActions();if(page==="shipments"||page==="overview") render();shipmentDetail(id);notify("Action cleared.");}).catch(error=>notify("The action was not cleared: "+error.message));return;}const next={...shipmentActions};delete next[id];shipmentActions=next;storeJson(shipmentActionsKey,shipmentActions);if(page==="shipments"||page==="overview") render();shipmentDetail(id);notify("Action cleared.");},
   "retry-source":retrySource,
   "study-detail":studyDetail,
   "study-view":tab=>{studyView=tab;updateStudies();byId("study-card").querySelector('[data-value="'+tab+'"]').focus();notify(tab==="registry"?"Showing public registry candidates.":"Showing the portfolio assessment.");}
@@ -2472,9 +2475,10 @@ document.addEventListener("change",event=>{
   if(event.target.id==="plans-country"||event.target.id==="plans-window"){if(event.target.id==="plans-country") plansCountry=event.target.value; else plansWindow=event.target.value;byId("plans-results").innerHTML=plansTable();return;}
   if(event.target.id==="trail-raw"){trailRaw=event.target.checked;byId("agent-timeline").innerHTML=trailList(agentState.running?agentState.events:(agentState.record?.events??[]));return;}
   if(event.target.id==="workflow-role") {
-    workflowRole=event.target.value;
-    render();
-    byId("workflow-role").focus();
+    const role=event.target.value;
+    const done=()=>{workflowRole=role;render();byId("workflow-role")?.focus();};
+    if(serverMode()) apiWrite("POST","/v1/session",{role}).then(done).catch(error=>notify("The role was not changed: "+error.message));
+    else done();
   }
   if(event.target.id==="record-as-of") byId("record-as-of-result").textContent=asOfText(event.target.value);
   if(event.target.id==="review-decision") {
@@ -2527,6 +2531,20 @@ document.addEventListener("submit",event=>{
       if(gate==="none" && !fields.get("override")) {byId("workflow-error").textContent="Run the AI check first, or tick the override and give your reason.";return;}
       command.override=gate==="none";
     }
+    if(serverMode()) {
+      const caseId=isGoverned(currentChange)?currentChange:"uk";
+      const submit=event.submitter;
+      submit.disabled=true;
+      apiWrite("POST","/v1/cases/"+caseId+"/commands",{...command,override:Boolean(command.override)},crypto.randomUUID()).then(reply=>{
+        setWorkflow(reply.workflow);
+        if(["approve","edit"].includes(command.action)) workflowTab="follow-up";
+        if(command.action==="resume") reviewDecision="approve";
+        render();
+        byId("page-title").focus({preventScroll:true});
+        notify("Case updated.");
+      }).catch(error=>{submit.disabled=false;if(byId("workflow-error")) byId("workflow-error").textContent=error.message;});
+      return;
+    }
     const next=structuredClone(readWorkflow(currentChange,workflow));
     try {workflowStep(next,command,workflowRole,new Date().toISOString());}
     catch(error){byId("workflow-error").textContent=error.message;return;}
@@ -2545,6 +2563,16 @@ document.addEventListener("submit",event=>{
     const reason=String(fields.get("reason")??"").trim();
     if(!reason) {byId("shipment-action-error").textContent="Give a reason for the action.";return;}
     const id=event.target.dataset.shipment;
+    if(serverMode()) {
+      apiWrite("PUT","/v1/shipment-actions/"+encodeURIComponent(id),{action:fields.get("action"),reason}).then(reply=>{
+        manualShipmentActions={...manualShipmentActions,[id]:{action:reply.action,reason:reply.reason,by:reply.by,at:reply.at}};
+        composeShipmentActions();
+        if(page==="shipments"||page==="overview") render();
+        shipmentDetail(id);
+        notify("Action recorded for "+id+".");
+      }).catch(error=>{const box=byId("shipment-action-error");if(box) box.textContent=error.message;});
+      return;
+    }
     shipmentActions={...shipmentActions,[id]:{action:fields.get("action"),reason,by:roleName(workflowRole,workflow),at:new Date().toISOString()}};
     const saved=storeJson(shipmentActionsKey,shipmentActions);
     if(page==="shipments"||page==="overview") render();
@@ -2558,6 +2586,15 @@ document.addEventListener("submit",event=>{
     const reason=String(fields.get("reason")??"").trim();
     if(!reason) {byId("change-decision-error").textContent="Give a reason for the decision.";return;}
     const id=event.target.dataset.change;
+    if(serverMode()) {
+      apiWrite("PUT","/v1/change-decisions/"+encodeURIComponent(id),{decision:fields.get("decision"),reason}).then(reply=>{
+        changeDecisions={...changeDecisions,[id]:{decision:reply.decision,reason:reply.reason,by:reply.by,at:reply.at}};
+        render();
+        byId("page-title").focus({preventScroll:true});
+        notify("Decision recorded.");
+      }).catch(error=>{const box=byId("change-decision-error");if(box) box.textContent=error.message;});
+      return;
+    }
     changeDecisions={...changeDecisions,[id]:{decision:fields.get("decision"),reason,by:roleName("reviewer",workflow),at:new Date().toISOString()}};
     const saved=storeJson(changeDecisionsKey,changeDecisions);
     render();
@@ -2591,8 +2628,34 @@ window.addEventListener("storage",event=>{
   setWorkflow(readWorkflow(caseId));
   if(!byId("drawer").open) render();
 });
+// ---------- The server's state: session role, cases, shipment actions and change decisions ----------
+async function apiWrite(method,path,body,key) {
+  return aiRequest(path,{method,headers:{"Content-Type":"application/json",...(key?{"Idempotency-Key":key}:{})},body:body===undefined?undefined:JSON.stringify(body)});
+}
+// The recorded action of each shipment: what someone recorded by hand, or an approved agent plan.
+function composeShipmentActions() {
+  if(!serverMode()) return;
+  const next={...manualShipmentActions};
+  for(const [id,approval] of Object.entries(agentApprovals)) next[id]={action:approval.option==="escalate"?"escalated":"plan",reason:approval.option==="escalate"?"Escalated: no option passes RegChain's rules.":"Agent plan approved: "+approval.title,by:approval.by,at:approval.at};
+  shipmentActions=next;
+}
+async function loadServerState() {
+  if(!serverMode()) return;
+  try {
+    const [session,cases,actions,decisions]=await Promise.all([aiRequest("/v1/session"),aiRequest("/v1/cases"),aiRequest("/v1/shipment-actions"),aiRequest("/v1/change-decisions")]);
+    if(session.role) workflowRole=session.role;
+    else await apiWrite("POST","/v1/session",{role:workflowRole});
+    for(const item of cases.cases) setWorkflow(item.workflow);
+    manualShipmentActions=actions.actions??{};
+    changeDecisions=decisions.decisions??{};
+    composeShipmentActions();
+    render();
+  } catch(error) {
+    notify("RegChain's server did not answer: "+error.message);
+  }
+}
 render();
-loadAi();
+loadServerState().then(loadAi);
 checkDue();
 window.setInterval(checkDue,15000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden) checkDue();});
