@@ -6,6 +6,7 @@
     "start": "node serve-regchain.cjs --open",
     "serve": "node serve-regchain.cjs",
     "users": "node scripts/users.mjs",
+    "demo:accounts": "node scripts/demo-accounts.mjs",
     "backup": "node scripts/backup.mjs",
     "record:feeds": "node scripts/record-feeds.mjs",
     "check:ai": "node scripts/check-ai-step.mjs",

@@ -136,7 +136,7 @@ const port = await new Promise(resolve => {
   const probe = createServer().listen(0, "127.0.0.1", () => { const { port: free } = probe.address(); probe.close(() => resolve(free)); });
 });
 const env = { ...process.env, REGCHAIN_AUTH: "password", REGCHAIN_HOST: "127.0.0.1", REGCHAIN_PORT: String(port), REGCHAIN_DATA_DIR: dataDir, REGCHAIN_CACHE_DIR: cacheDir,
-  REGCHAIN_LOGIN_ATTEMPTS: "3", REGCHAIN_LOGIN_ATTEMPTS_PER_ADDRESS: "12", REGCHAIN_WRITES_PER_MINUTE: "60", REGCHAIN_LOG_LEVEL: "warn", ANTHROPIC_API_KEY: "" };
+  REGCHAIN_LOGIN_ATTEMPTS: "3", REGCHAIN_LOGIN_ATTEMPTS_PER_ADDRESS: "12", REGCHAIN_WRITES_PER_MINUTE: "60", REGCHAIN_CONTACTS_PER_HOUR: "8", REGCHAIN_LOG_LEVEL: "warn", ANTHROPIC_API_KEY: "" };
 const users = (args, extra = {}) => spawnSync(process.execPath, [join(root, "scripts", "users.mjs"), ...args], { env: { ...env, ...extra }, encoding: "utf8" });
 {
   for (const [username, name, role] of [["sam.supply", "Sam Supply", "viewer"], ["rita.reg", "Rita Regulatory", "reviewer"], ["olga.owner", "Olga Owner", "owner"]]) {
@@ -153,6 +153,33 @@ const users = (args, extra = {}) => spawnSync(process.execPath, [join(root, "scr
   assert.equal(users(["role", "sam.supply", "viewer"]).status, 0);
   assert.notEqual(users(["role", "sam.supply", "admin"]).status, 0, "only the four roles exist");
   console.log("ok  users command: adds people with one role each, prints a generated password once, refuses short passwords");
+}
+{
+  // The demo accounts, in a data folder of their own (the server below counts exactly four users).
+  const demoDir = join(temp, "demo-accounts");
+  const demo = args => spawnSync(process.execPath, [join(root, "scripts", "demo-accounts.mjs"), ...args], { env: { ...env, REGCHAIN_DATA_DIR: demoDir }, encoding: "utf8" });
+  const first = demo([]);
+  assert.equal(first.status, 0, first.stderr);
+  const printed = Object.fromEntries([...first.stdout.matchAll(/^\s+(\S+)\s+([a-z2-9]{4}-[a-z2-9]{4}-[a-z2-9]{4}-[a-z2-9]{4})\s/gm)].map(match => [match[1], match[2]]));
+  assert.deepEqual(Object.keys(printed).sort(), ["a.novak", "l.chen", "m.okafor", "p.laine"], "four accounts, each with a printed password");
+  const file = await readFile(join(demoDir, "demo-accounts.txt"), "utf8");
+  for (const [username, password] of Object.entries(printed)) assert.ok(file.includes(username + "\t" + password + "\t"), username + " is in demo-accounts.txt");
+  const demoDb = new DatabaseSync(join(demoDir, "regchain.db"), { readOnly: true });
+  const roles = Object.fromEntries(demoDb.prepare("SELECT username, role FROM app_user").all().map(row => [row.username, row.role]));
+  demoDb.close();
+  assert.deepEqual(roles, { "a.novak": "reviewer", "l.chen": "verifier", "m.okafor": "owner", "p.laine": "viewer" }, "one role each");
+  const again = demo([]);
+  assert.equal(again.status, 0, again.stderr);
+  assert.match(again.stdout, /already exist/);
+  assert.equal(await readFile(join(demoDir, "demo-accounts.txt"), "utf8"), file, "a second run changes nothing");
+  const reset = demo(["--reset"]);
+  assert.equal(reset.status, 0, reset.stderr);
+  assert.notEqual(reset.stdout.match(/p\.laine\s+(\S+)/)?.[1], printed["p.laine"], "--reset gives new passwords");
+  const { sessionId } = signIn(openDatabase(root, { path: join(demoDir, "regchain.db") }), loadConfig({ REGCHAIN_AUTH: "password" }),
+    { username: "p.laine", password: reset.stdout.match(/p\.laine\s+(\S+)/)[1], address: "10.0.0.7" });
+  assert.ok(sessionId, "the new password signs in");
+  closeDatabase(root, { path: join(demoDir, "regchain.db") });
+  console.log("ok  demo accounts: P. Laine, A. Novak, M. Okafor and L. Chen with one role each, readable passwords printed once and kept in the data folder, idempotent, --reset");
 }
 
 const server = spawn(process.execPath, [join(root, "serve-regchain.cjs")], { cwd: root, env, stdio: ["ignore", "pipe", "pipe"] });
@@ -196,17 +223,82 @@ try {
   assert.equal(health.headers["x-frame-options"], "DENY");
   assert.equal((await call("GET", "/v1/health", { headers: { Host: "evil.example" } })).status, 400, "an unknown Host header is refused");
 
-  // Before signing in: the sign-in page only, no data, no API.
+  // Before signing in: the sign-in page and the public launch page only, no data, no API except the contact form.
   const front = await call("GET", "/");
   assert.equal(front.status, 200);
   assert.match(front.text, /id="signin"/);
+  assert.match(front.text, /<a href="\/site\/">About SupplyShield<\/a>/, "the sign-in page links to the launch page");
+  assert.match(front.text, /There is no self sign-up/);
   assert.ok(!front.text.includes("portfolio-data"), "the dashboard and its data are not sent before sign-in");
   const frontNonce = front.headers["content-security-policy"].match(/'nonce-([^']+)'/)[1];
   assert.ok(front.text.includes(`nonce="${frontNonce}"`));
   assert.match((await call("GET", "/RegChain-AI-Dashboard.html")).text, /id="signin"/);
-  for (const [method, path] of [["GET", "/v1/cases"], ["GET", "/v1/audit/verify"], ["GET", "/v1/shipment-actions"], ["GET", "/api/agent/approvals"], ["GET", "/api/agent/plans"]]) {
-    assert.equal((await call(method, path)).status, 401, `${method} ${path} needs sign-in`);
+  for (const [method, path] of [["GET", "/v1/cases"], ["GET", "/v1/audit/verify"], ["GET", "/v1/shipment-actions"], ["GET", "/api/agent/approvals"], ["GET", "/api/agent/plans"],
+    ["GET", "/api/supplyshield"], ["POST", "/api/supplyshield/monitoring"], ["GET", "/api/settings"], ["POST", "/api/settings"], ["GET", "/api/agent/status"], ["GET", "/api/ai/status"],
+    ["GET", "/api/agent/run?shipment=SHP-IL-01&mode=scripted"], ["POST", "/api/agent/approve"], ["GET", "/api/contact/../agent/plans"], ["POST", "/api/contacts"]]) {
+    assert.equal((await call(method, path, method === "POST" ? { body: {} } : {})).status, 401, `${method} ${path} needs sign-in`);
   }
+
+  // The launch page: public, its own files only, a fresh script nonce and the usual security headers.
+  const site = await call("GET", "/site/");
+  assert.equal(site.status, 200, "the launch page is public in password mode");
+  assert.match(site.headers["content-type"], /^text\/html/);
+  assert.match(site.text, /SupplyShield/);
+  assert.match(site.text, /id="contact-form"/);
+  assert.ok(!site.text.includes("portfolio-data"), "the launch page carries no dashboard data");
+  const siteNonce = site.headers["content-security-policy"].match(/script-src 'nonce-([^']+)'/)?.[1];
+  assert.ok(siteNonce && siteNonce !== frontNonce, "the launch page gets its own nonce");
+  assert.equal((site.text.match(/<script\b/g) ?? []).length, (site.text.match(new RegExp(`<script nonce="${siteNonce.replace(/[+/=]/g, "\\$&")}"`, "g")) ?? []).length, "every script of the launch page carries the nonce");
+  assert.match(site.headers["content-security-policy"], /default-src 'none'.*frame-ancestors 'none'/);
+  for (const [header, value] of [["x-frame-options", "DENY"], ["x-content-type-options", "nosniff"], ["referrer-policy", "no-referrer"], ["cross-origin-opener-policy", "same-origin"], ["cache-control", "no-store"]]) {
+    assert.equal(site.headers[header], value, `launch page ${header}`);
+  }
+  assert.ok(!/<(script|link|img)\b[^>]*\b(src|href)="(https?:)?\/\//i.test(site.text), "no external scripts, styles, fonts or images");
+  const bare = await call("GET", "/site");
+  assert.deepEqual([bare.status, bare.headers.location], [301, "/site/"], "/site goes to /site/");
+  for (const [path, type] of [["/site/styles.css", /^text\/css/], ["/site/app.js", /^text\/javascript/], ["/site/assets/favicon.svg", /^image\/svg\+xml/], ["/site/assets/shipment-plan.png", /^image\/png/]]) {
+    const file = await call("GET", path);
+    assert.equal(file.status, 200, path);
+    assert.match(file.headers["content-type"], type, path);
+    assert.match(file.headers["cache-control"], /max-age=\d+/, path);
+    assert.equal(file.headers["x-content-type-options"], "nosniff", path);
+  }
+  assert.ok(Number((await call("HEAD", "/site/assets/shipment-plan.png")).headers["content-length"]) < 400 * 1024, "the screenshot stays under 400 KB");
+  for (const path of ["/site/../serve-regchain.cjs", "/site/%2e%2e/serve-regchain.cjs", "/site/..%2fpackage.json", "/site/..%5cpackage.json", "/site/assets/../../SECURITY.md",
+    "/site/%2e%2e%2f%2e%2e%2fpackage.json", "/site/.env", "/site/%00", "/site/missing.html", "/site/assets", "/site/assets/", "/site/%E0%A4%A"]) {
+    const refused = await call("GET", path);
+    assert.equal(refused.status, 404, `${path} is refused`);
+    assert.ok(!refused.text.includes("REGCHAIN") && !refused.text.includes("\"name\""), `${path} shows nothing outside the site`);
+  }
+  assert.equal((await call("POST", "/site/", { body: {} })).status, 405);
+
+  // The contact form: public, same-site JSON, validated, size- and rate-limited, one JSON line per request.
+  const message = { name: "Dana Levi", company: "Example Pharma", email: "dana.levi@example.com", message: "We supply 12 studies in Israel, the EU and Japan.", consent: true };
+  assert.equal((await call("GET", "/api/contact")).status, 405);
+  assert.equal((await call("POST", "/api/contact", { body: message, headers: { Origin: "https://evil.example" } })).status, 403, "no contact posts from other sites");
+  assert.equal((await call("POST", "/api/contact", { body: message, headers: { "Sec-Fetch-Site": "cross-site" } })).status, 403);
+  const sent = await call("POST", "/api/contact", { body: message, headers: { Origin: `http://127.0.0.1:${port}`, "Sec-Fetch-Site": "same-origin" } });
+  assert.equal(sent.status, 201, sent.text);
+  assert.match(sent.json.id, /^CR-\d{8}-[0-9A-F]{6}$/);
+  const stored = (await readFile(join(dataDir, "contact-requests.jsonl"), "utf8")).trim().split("\n").map(line => JSON.parse(line));
+  assert.equal(stored.length, 1);
+  assert.deepEqual(Object.keys(stored[0]).sort(), ["company", "consent", "email", "id", "message", "name", "receivedAt"], "id, time and fields only: no client address");
+  assert.deepEqual([stored[0].id, stored[0].email, stored[0].consent], [sent.json.id, message.email, true]);
+  const noConsent = await call("POST", "/api/contact", { body: { ...message, consent: false } });
+  assert.deepEqual([noConsent.status, Object.keys(noConsent.json.fields)], [400, ["consent"]], "consent is required");
+  assert.equal((await call("POST", "/api/contact", { body: { ...message, consent: "true" } })).status, 400, "consent must be true, not a string");
+  const badEmail = await call("POST", "/api/contact", { body: { ...message, email: "dana at example" } });
+  assert.deepEqual([badEmail.status, Object.keys(badEmail.json.fields)], [400, ["email"]], "the email must look like one");
+  const missing = await call("POST", "/api/contact", { body: { consent: true, name: "  ", company: "x".repeat(200) } });
+  assert.deepEqual([missing.status, Object.keys(missing.json.fields).sort()], [400, ["company", "email", "message", "name"]], "required fields and maximum lengths");
+  assert.equal((await call("POST", "/api/contact", { body: "name=Dana", headers: { "Content-Type": "text/plain" } })).status, 415, "JSON only");
+  assert.equal((await call("POST", "/api/contact", { body: { ...message, message: "x".repeat(20000) } })).status, 413, "size limit");
+  assert.equal((await call("POST", "/api/contact", { body: "{not json" })).status, 400);
+  assert.equal((await readFile(join(dataDir, "contact-requests.jsonl"), "utf8")).trim().split("\n").length, 1, "refused requests are not stored");
+  const limitedContact = await call("POST", "/api/contact", { body: message });
+  assert.equal(limitedContact.status, 429, "the 9th contact request in an hour from one address is refused");
+  assert.ok(Number(limitedContact.headers["retry-after"]) > 0);
+  assert.equal((await call("GET", "/site/")).status, 200, "the page itself is not rate-limited");
   assert.equal((await call("POST", "/api/ai/analyze", { body: {} })).status, 401, "the AI check needs sign-in");
   assert.equal((await call("GET", "/v1/openapi.json")).status, 200);
   assert.deepEqual([(await call("GET", "/v1/session")).json.mode, (await call("GET", "/v1/session")).json.user], ["password", null]);
@@ -219,7 +311,8 @@ try {
   assert.equal(malformed.status, 422);
   assert.match(malformed.json.error, /Invalid request: username/);
   assert.equal((await call("POST", "/v1/auth/login", { body: { username: "sam.supply", password: "not-the-password" } })).status, 401);
-  console.log("ok  before sign-in: only the sign-in page, no data, every API and agent route answers 401, sign-in is same-site JSON");
+  console.log("ok  before sign-in: the sign-in page (with a link to the launch page) and the launch page only, no data, every API and agent route answers 401, sign-in is same-site JSON");
+  console.log("ok  launch page and contact form: public, own files only (no traversal), nonce and headers; contact posts are same-site JSON, validated, size- and rate-limited, stored without the client address");
 
   const sam = await signInAs("sam.supply", "sam.supply-password");
   const setCookie = String(sam.response.headers["set-cookie"]);

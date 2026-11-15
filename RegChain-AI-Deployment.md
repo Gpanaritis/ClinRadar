@@ -19,8 +19,8 @@ In local mode, `node serve-regchain.cjs` starts RegChain at `http://127.0.0.1:41
 
 In password mode:
 
-- The dashboard and its data are served only after sign-in. Before that, `/` shows the sign-in page.
-- Every `/api` route and every `/v1` route needs a signed-in user, except `GET /v1/health`, `GET /v1/session`, `POST /v1/auth/login` and `GET /v1/openapi.json`. Other requests get 401.
+- The dashboard and its data are served only after sign-in. Before that, `/` shows the sign-in page. The public launch page at `/site/` (`sites/supplyshield/`) is served before and after sign-in.
+- Every `/api` route and every `/v1` route needs a signed-in user, except `GET /v1/health`, `GET /v1/session`, `POST /v1/auth/login`, `GET /v1/openapi.json` and the launch page's contact form, `POST /api/contact` (same-site JSON, validated, at most `REGCHAIN_CONTACTS_PER_HOUR` per client address, stored as one line in `<data dir>/contact-requests.jsonl` without the client address). Other requests get 401.
 - `POST /v1/session`, the role switch, answers 403. A person cannot change role.
 
 ## Settings
@@ -40,6 +40,7 @@ All settings are environment variables. An unset variable uses the default.
 | `REGCHAIN_LOGIN_ATTEMPTS_PER_ADDRESS` | `20` | Failed sign-ins from one client address, across usernames, before it is locked |
 | `REGCHAIN_LOGIN_LOCK_MINUTES` | `15` | The window in which failures are counted, so a lock lasts at most this long |
 | `REGCHAIN_WRITES_PER_MINUTE` | `120` | Per client address per minute: write requests to `/v1`, and separately requests to `/api` that start work. Over the limit: 429 with `Retry-After` |
+| `REGCHAIN_CONTACTS_PER_HOUR` | `10` | Per client address per hour: messages sent through the public contact form (`POST /api/contact`). Over the limit: 429 with `Retry-After` |
 | `REGCHAIN_LOG_FORMAT` | `json` | `text` gives lines for reading in a terminal |
 | `REGCHAIN_LOG_LEVEL` | `info` | `debug`, `info`, `warn` or `error` |
 | `REGCHAIN_DATA_DIR` | `.regchain-data` in the RegChain folder | Folder of the database. The Docker image sets `/data` |

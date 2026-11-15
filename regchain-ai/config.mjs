@@ -28,6 +28,8 @@ export function loadConfig(env = process.env) {
     loginAttemptsPerAddress: number(env.REGCHAIN_LOGIN_ATTEMPTS_PER_ADDRESS, 20),
     loginLockMinutes: number(env.REGCHAIN_LOGIN_LOCK_MINUTES, 15),
     writesPerMinute: number(env.REGCHAIN_WRITES_PER_MINUTE, 120),
+    // Messages per hour that one client address may send through the public contact form on the launch page.
+    contactsPerHour: number(env.REGCHAIN_CONTACTS_PER_HOUR, 10),
     logFormat: env.REGCHAIN_LOG_FORMAT === "text" ? "text" : "json",
     logLevel: env.REGCHAIN_LOG_LEVEL || "info",
   };
