@@ -1794,13 +1794,27 @@ function aiServiceCard() {
   const [tone,title,text]=!server?["off","Not reachable from this file","Open ClinRadar at http://127.0.0.1:4173 to see the connection."]:
     !status?["off","Checking","Asking the ClinRadar server."]:
     ready?["ready","Ready for live runs","The agents and the regulation check call Claude."]:
-    ["partial","Offline demo only",typeof status.setup==="string"&&status.setup?humanDates(status.setup):!status.sdk?"The Claude package for this service is not installed: run npm install in the ClinRadar folder, then restart ClinRadar.":"The service is not set up yet: add its settings to the .env file next to serve-regchain.cjs, then restart ClinRadar."];
+    ["partial","Offline demo only",status.canConnect&&!status.connection?.set?"Paste a Claude API key below to run the AI live.":typeof status.setup==="string"&&status.setup?humanDates(status.setup):!status.sdk?"The Claude package for this service is not installed: run npm install in the ClinRadar folder, then restart ClinRadar.":"The service is not set up yet: add its settings to the .env file next to serve-regchain.cjs, then restart ClinRadar."];
   const known=server&&status;
   return '<section class="card"><div class="card-head"><div><h2>Claude service</h2><p>The AI the agents and the regulation check use</p></div></div><div class="settings-body">'+
     '<div class="service-state '+tone+'"><span class="light" aria-hidden="true"></span><span><strong>'+esc(title)+'</strong><small>'+esc(text)+'</small></span></div>'+
-    factlist([["Service",service],["Settings and credentials",!known?"—":status.keySet?"Set on the server":"Missing"],["Claude package",!known?"—":status.sdk?"Installed":"Not installed"],["Without Claude","The offline demo runs the same steps through the same systems, with prepared decisions"]])+
-    '<p class="key-note">'+icon("review")+'<span><strong>Keys are never entered on this page.</strong> ClinRadar reaches Claude through Anthropic or the company\'s own cloud (AWS, Google Cloud or Microsoft Azure), chosen on the server with REGCHAIN_AI_PROVIDER. Keys stay in the server\'s .env file or the cloud identity ClinRadar runs under, so no key reaches a browser, a log or the audit trail. Changing the service or a model is a change to a validated system and goes through change control (RegChain-AI-Deployment.md, "Which Claude service").</span></p>'+
+    factlist([["Service",service],["Settings and credentials",!known?"—":status.envKey?"Set on the server":status.connection?.set?"Connected by an administrator":"Missing"],["Claude package",!known?"—":status.sdk?"Installed":"Not installed"],["Without Claude","The offline demo runs the same steps through the same systems, with prepared decisions"]])+
+    claudeKeyBlock(status)+
   '</div></section>';
+}
+// An administrator connects the Claude API key here. The key goes to the server once, is checked with Anthropic and
+// stored encrypted; the page only ever gets back who connected it, when, and (for administrators) its last four characters.
+function claudeKeyBlock(status) {
+  const conn=status?.connection;
+  const connected=conn?.set?'<div class="service-state ready key-connected"><span class="light" aria-hidden="true"></span><span><strong>'+esc("Claude key connected"+(conn.last4?" · ending …"+conn.last4:""))+'</strong><small>'+
+    esc("By "+conn.by+", "+scheduleDate(Date.parse(conn.at))+(conn.checked?" · accepted by Anthropic":" · not checked with Anthropic yet")+(status.envKey?" · the key in the server's .env file is used instead":" · only administrators can run the AI live with it"))+'</small></span></div>':"";
+  const form=status?.canConnect?'<form id="claude-key-form" class="request-form" autocomplete="off" novalidate><label class="field">'+(conn?.set?"Replace the Claude API key":"Claude API key (Anthropic)")+
+    '<input name="key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…" maxlength="320" aria-describedby="claude-key-note"></label>'+
+    '<p class="form-feedback" id="claude-key-error" role="alert"></p><div class="actions"><button type="submit" class="btn primary">'+icon("plug")+(conn?.set?"Replace the key":"Connect Claude")+'</button>'+
+    (conn?.set?'<button type="button" class="btn" data-act="claude-key-remove">Remove the key</button>':"")+'</div></form>':"";
+  const note=status?.canConnect?'<p class="key-note" id="claude-key-note">'+icon("review")+'<span><strong>Only administrators see this form.</strong> The key is checked with Anthropic, stored encrypted on the ClinRadar server and never sent back to a browser, a log or the audit trail: everyone sees who connected it and when. Only administrators can start live AI runs with it; everyone else keeps the offline demo. Use a key made for ClinRadar, with a spend limit, so you can revoke it without touching anything else.</span></p>':
+    '<p class="key-note">'+icon("review")+'<span><strong>Keys never reach a browser.</strong> '+(status?.authMode==="local"?"To connect a key here, start ClinRadar with sign-in (Start-ClinRadar-Site.cmd) and sign in as an administrator. ":"An administrator connects the Claude API key on this page. ")+'The server can also read it from its .env file or the cloud identity ClinRadar runs under (AWS, Google Cloud or Microsoft Azure, chosen with REGCHAIN_AI_PROVIDER). Changing the service or a model is a change to a validated system and goes through change control (RegChain-AI-Deployment.md, "Which Claude service").</span></p>';
+  return connected+form+note;
 }
 function agentsCard() {
   const ids=["orchestrator",...teamWatch,"supply","logistics","records","communications","verifier"];
@@ -4245,6 +4259,7 @@ const actions={
   },
   replay:()=>replay(),
   "settings-tab":id=>{settingsTab=id;render();byId("settings-tab-"+id)?.focus();},
+  "claude-key-remove":()=>{agentPost("/api/ai/key/remove",{}).then(reply=>{agentState.status={...agentState.status,...reply};render();notify("The Claude key is removed. Live AI runs are off until a key is connected again.");}).catch(error=>notify(error.message));},
   "open-settings":tab=>{settingsTab=tab||"monitoring";navigate("settings");},
   "connection-approve":id=>decideConnection(id,"approved",""),
   "ai-run":()=>runAi(),
@@ -4697,6 +4712,23 @@ document.addEventListener("submit",event=>{
     render();
     byId("page-title").focus({preventScroll:true});
     notify(saved?"Decision recorded.":"Decision recorded for this tab. Browser storage is unavailable.");
+    return;
+  }
+  if(event.target.id==="claude-key-form") {
+    event.preventDefault();
+    const input=event.target.elements.key;
+    const key=String(input.value??"").trim();
+    const box=byId("claude-key-error");
+    if(!/^sk-ant-/.test(key)) {box.textContent="Paste an Anthropic API key: it starts with sk-ant-.";return;}
+    input.value="";
+    box.textContent="Checking the key with Anthropic…";
+    const button=event.target.querySelector("button[type=submit]");
+    button.disabled=true;
+    agentPost("/api/ai/key",{key}).then(reply=>{
+      agentState.status={...agentState.status,...reply};
+      render();
+      notify(reply.keySet?"Claude is connected. Live AI runs are on for administrators.":"The key is saved. "+(reply.setup||""));
+    }).catch(error=>{const target=byId("claude-key-error");if(target) target.textContent=error.message;button.disabled=false;});
     return;
   }
   if(event.target.id==="connection-request-form") {

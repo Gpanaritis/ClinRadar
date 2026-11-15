@@ -127,8 +127,9 @@ async function googleAuth(settings, load) {
 
 // A client for the configured service. The Google clients start looking for credentials as soon as they are built and
 // do not handle a failure, which would stop the whole server; so RegChain finds the credentials first and hands them over.
-export async function createClaude({ load = name => import(name) } = {}) {
-  const settings = claudeSettings();
+// `apiKey`: a key an administrator connected in Settings (regchain-ai/vault.mjs), for the Claude API (Anthropic) only.
+export async function createClaude({ load = name => import(name), apiKey = null } = {}) {
+  const settings = claudeSettings(apiKey ? { ...process.env, ANTHROPIC_API_KEY: apiKey } : process.env);
   const missing = settings.problems[0] ?? (settings.missing.length ? setupMessage(settings, true) : null);
   if (missing) throw new Error(missing);
   const provider = PROVIDERS[settings.provider];
@@ -138,6 +139,7 @@ export async function createClaude({ load = name => import(name) } = {}) {
   } catch {
     throw new Error(setupMessage(settings, false));
   }
+  if (apiKey && settings.provider === "anthropic") return new mod.default({ apiKey });
   if (provider.google) {
     const GoogleAuth = await googleAuth(settings, load);
     let authClient;
