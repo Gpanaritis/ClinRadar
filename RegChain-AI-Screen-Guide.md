@@ -108,13 +108,34 @@ Opening the UK regulatory section shows the **suggested edit** as a redline: the
 
 **Real or simulated:** all six rows are fixed sample results. They are not the four sources the AI check actually fetches.
 
-### 12. Monitoring schedule
+### 12. Settings
 
-![Monitoring schedule](screens/15-monitoring-schedule.png)
+**Settings**, last in the menu, has two tabs. Served by RegChain, the server keeps the settings and records every change in the audit trail, with who made it and when. **Acting as** at the top switches the role, as on the other pages.
 
-**Shows:** how often checks run and the last and next run.
+![Settings: monitoring schedule](screens/15-settings-monitoring.png)
 
-**Real or simulated:** it replays the sample in the open browser tab only. Nothing is fetched on a schedule.
+**Monitoring schedule shows:**
+
+- whether checks run automatically, how often (every day, weekdays, once a week or every few days) and at what time, in Athens time;
+- what happens after a check when a blocked shipment has no plan yet: show it to Clinical Supply, or have the agents prepare plans (read-only and drafts only; Clinical Supply still approves each plan);
+- the next three checks, the last run and the source coverage;
+- the changes to the schedule, from the audit trail.
+
+The Regulatory SME or the Quality owner changes the schedule; for other roles the form is read-only. The times stay right across the change to and from summer time. The Overview's run bar shows the schedule and opens this tab.
+
+![Settings: AI connections](screens/15b-settings-ai-connections.png)
+
+**AI connections shows:**
+
+- **Agents and their models:** each agent, the Claude model it uses and the systems it reads; the verifier is fixed rules, no AI.
+- **Claude service:** whether live runs are possible (key and SDK on the server) or only the scripted walkthrough. Keys are never entered on the page: they stay in the server's `.env` file or the cloud account RegChain runs under. Changing the service or a model goes through change control.
+- **Company systems over MCP:** each system, what the agents may do there (read-only, or draft-only for the Draft inbox), its tools and whether RegChain reached it.
+- **Request a new connection:** anyone can ask for a new system (name, what the agents would read, MCP address if known, read-only or draft-only, business owner, why). The request changes nothing. The Quality owner approves or rejects it with a reason; the person who asked cannot approve their own request. An approved connection still has to be built and validated before any agent uses it.
+
+**Real or simulated:**
+
+- **Real:** the settings are stored on the server, checked there (roles, valid values, four eyes) and kept in the hash-chained audit trail; the schedule drives the checks in the page and, when set, starts the agents.
+- **Simulated:** a check replays the recorded source results in the open browser tab; nothing is fetched on a schedule, and the page has to be open. An approved connection request is a record only: no MCP server is created from it.
 
 ### 13. Spain case · early warning (fictional)
 
@@ -222,6 +243,14 @@ When no option passes, as for SHP-03 (the German label specification takes 15 bu
 - **Run modes:** **Run the AI agents** needs the API key and has not been run yet. **Scripted walkthrough (no AI)** runs the same steps with coded decisions and is what these screens show.
 
 See [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
+
+### 16. Agents in action
+
+![Agents in action](screens/20-agents-in-action.png)
+
+**Shows:** the master agent handing tasks to the specialists, the systems they read over MCP and the RegChain verifier testing each option, replayed step by step at 1× to 8×, with every step listed on the right.
+
+Each card has a fixed layout: name, model, three counts and the last step in at most two lines. The strip at the top shows the current step in at most two lines. So the board does not move while a run plays, however long a step's text is. Hover or focus the (i) next to a model for what that agent does.
 
 ## Part 2 · What is missing
 

@@ -108,28 +108,51 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 .tip-btn::before{content:"i"}.tip:hover .tip-pop,.tip-btn:focus+.tip-pop{display:block}
 .team-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 14px;margin-bottom:12px}.team-source{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#445b7c;min-width:0}.team-source select{max-width:360px;min-width:0;padding:7px 9px;border:1px solid #d5e2f1;border-radius:8px;background:white;color:var(--ink)}
 .team-buttons{display:flex;gap:6px}.team-buttons .btn{min-height:34px}.team-speed{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.team-speed .speed{border:0;background:white;padding:6px 9px;font-weight:700;font-size:12px;color:#506681}.team-speed .speed+.speed{border-left:1px solid var(--line)}.team-speed .speed.on{background:var(--pale);color:var(--deep)}
-.team-progress{flex:1 1 180px;min-width:160px}.team-progress-text{font-size:11.5px;color:var(--muted);margin-bottom:4px}.team-track{height:5px;background:#e8eef7;border-radius:4px;overflow:hidden}.team-track span{display:block;height:100%;background:var(--blue);width:0;transition:width .2s}
-.team-grid{display:grid;grid-template-columns:minmax(0,2.1fr) minmax(290px,.9fr);gap:14px;align-items:start}.team-stage{display:flex;flex-direction:column}
-.team-now{display:flex;gap:10px;align-items:flex-start;padding:10px 15px;border-bottom:1px solid var(--line);background:#f8fbff;min-height:66px}.team-now p{font-size:12.5px;color:#3d5373;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.team-now-head{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px}.team-arrow svg{width:15px;height:15px;color:var(--blue)}
+.team-progress{flex:1 1 180px;min-width:160px}.team-progress-text{font-size:11.5px;line-height:16px;color:var(--muted);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#team-play{min-width:96px}.team-track{height:5px;background:#e8eef7;border-radius:4px;overflow:hidden}.team-track span{display:block;height:100%;background:var(--blue);width:0;transition:width .2s}
+.team-grid{display:grid;grid-template-columns:minmax(0,2.1fr) minmax(290px,.9fr);gap:14px;align-items:start}.team-stage{display:flex;flex-direction:column;overflow:visible}.team-stage>.team-now{border-radius:10px 10px 0 0}
+@media (min-width:761px){.team-row .team-node:nth-child(-n+2) .tip-pop{left:-10px;transform:none}.team-row .team-node:nth-child(n+4) .tip-pop{left:auto;right:-10px;transform:none}}
+.team-now{display:flex;gap:10px;align-items:flex-start;padding:10px 15px;border-bottom:1px solid var(--line);background:#f8fbff;height:80px;box-sizing:border-box;overflow:hidden}.team-now>div{min-width:0;flex:1}.team-now p{font-size:12.5px;line-height:1.45;color:#3d5373;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.team-now-head{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;white-space:nowrap;overflow:hidden;font-size:13px;line-height:20px;min-width:0}.team-now-head strong{overflow:hidden;text-overflow:ellipsis}.team-now-head .system-chip{flex:none}.team-arrow{flex:none;display:inline-flex}.team-arrow svg{width:15px;height:15px;color:var(--blue)}
 .team-board{position:relative;padding:14px 15px 12px;display:grid;gap:18px}.team-edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}.team-edges .edge{fill:none;stroke:#d3dff0;stroke-width:1.5}.team-edges .edge.live{stroke:var(--blue);stroke-width:2.5;stroke-dasharray:6 5}.team-edges .edge-dot{fill:var(--blue);stroke:white;stroke-width:2}
-.team-node{position:relative;z-index:1;background:white;border:1px solid var(--line);border-radius:11px;padding:10px 11px;min-width:0;transition:box-shadow .2s,border-color .2s,transform .2s}.team-node.active{border-color:var(--blue);box-shadow:0 0 0 3px #3b72ef33;transform:translateY(-1px)}.team-node.active .agent-dot{box-shadow:0 0 0 3px #1fa46355}.team-node.target{border-color:#7ea3ea;box-shadow:0 0 0 3px #7ea3ea26}
-.team-master{max-width:560px;width:100%;justify-self:center;background:linear-gradient(180deg,#f4f8ff,#fff)}.team-node-head{display:flex;align-items:center;gap:8px}.team-node-title{display:flex;flex-wrap:wrap;align-items:center;column-gap:2px;min-width:0;flex:1}.team-node-title small{flex-basis:100%;color:var(--muted);font-size:11px}
-.team-light{width:9px;height:9px;border-radius:50%;background:#d9e2ee;flex:none}.team-node.active .team-light{background:#1fa463;box-shadow:0 0 0 4px #1fa46326}
-.team-job{font-size:11.5px;color:var(--muted);margin:5px 0 6px}.team-stats{display:flex;gap:9px;flex-wrap:wrap;font-size:11.5px;color:#4b6080}.team-stats strong{color:var(--ink)}.team-last{font-size:11.5px;color:#34496a;margin-top:6px;border-top:1px dashed #e3eaf4;padding-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.9em}.team-master .team-last{-webkit-line-clamp:1;min-height:1.5em}
-.team-split{margin-top:8px}.split-bar{display:flex;height:8px;border-radius:5px;overflow:hidden;background:#eef2f8;margin-bottom:5px;gap:2px}.split-bar span{display:block}.team-split small{font-size:11px;color:var(--muted)}
-.split-legend{display:flex;gap:10px;flex-wrap:wrap}.split-legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px}.split-supply{background:#2f9e6e}.split-logistics{background:#e0a020}.split-records{background:#7a63c9}.split-communications{background:#1f97a6}
+.team-node{position:relative;z-index:1;background:white;border:1px solid var(--line);border-radius:12px;padding:10px 11px;min-width:0;display:flex;flex-direction:column;gap:7px;transition:box-shadow .2s,border-color .2s,transform .2s}.team-sub{display:flex;align-items:center;gap:4px;min-width:0}.team-sub .tip{margin-left:0;flex:none}.team-node.active{border-color:var(--blue);box-shadow:0 0 0 3px #3b72ef33;transform:translateY(-1px)}.team-node.active .agent-dot{box-shadow:0 0 0 3px #1fa46355}.team-node.target{border-color:#7ea3ea;box-shadow:0 0 0 3px #7ea3ea26}
+.team-master{max-width:560px;width:100%;justify-self:center;background:linear-gradient(180deg,#f4f8ff,#fff)}.team-node-head{display:flex;align-items:center;gap:8px;min-width:0}
+.team-name{display:flex;align-items:center;gap:6px;min-width:0;flex:1}.team-sub{margin-top:-2px}.team-name strong{font-size:14px;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.team-master .team-name strong{font-size:15px}
+.team-model{min-width:0;flex:0 1 auto;font-size:10.5px;line-height:16px;font-weight:650;color:#4b6080;background:#f1f5fa;border:1px solid #e3eaf4;border-radius:5px;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.team-rules .team-model{background:#132446;border-color:#132446;color:#fff}
+.team-light{width:8px;height:8px;border-radius:50%;background:#d9e2ee;flex:none}.team-node.active .team-light{background:#1fa463;box-shadow:0 0 0 4px #1fa46326}.team-node.target .team-light{background:#7ea3ea;box-shadow:0 0 0 4px #7ea3ea26}
+.team-stats{display:flex;gap:4px;min-width:0}.team-stat{flex:1 1 0;min-width:0;background:#f6f8fc;border-radius:7px;padding:4px 1px;text-align:center}.team-stat strong{display:block;font-size:15px;line-height:19px;color:var(--ink);font-variant-numeric:tabular-nums}.team-stat span{display:block;font-size:10px;line-height:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.team-last{font-size:11.5px;line-height:1.45;color:#34496a;margin:0;border-top:1px dashed #e3eaf4;padding-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;height:2.9em;box-sizing:content-box}.team-master .team-last{-webkit-line-clamp:1;height:1.45em}.team-last.idle{color:#8a9bb3}
+.team-split{height:31px;overflow:hidden}.split-bar{display:flex;height:8px;border-radius:5px;overflow:hidden;background:#eef2f8;margin-bottom:6px;gap:2px}.split-bar span{display:block}.team-split small{display:block;font-size:11px;line-height:17px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.team-split small.split-legend{display:flex;gap:10px;flex-wrap:nowrap}.split-legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px}.split-supply{background:#2f9e6e}.split-logistics{background:#e0a020}.split-records{background:#7a63c9}.split-communications{background:#1f97a6}
 .system-dot{background:#eef2f8;color:#4b6080}.system-dot svg{width:13px;height:13px}
-.team-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}.team-row.systems{grid-template-columns:repeat(6,minmax(0,1fr))}.team-row .team-node{padding:9px 10px}.team-node-title strong{white-space:nowrap}.team-stats{margin-top:6px}
+.team-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}.team-row.systems{grid-template-columns:repeat(6,minmax(0,1fr))}.team-row .team-node{padding:9px 10px}
 .team-systems-head{display:flex;align-items:center;font-size:11.5px;color:#4b6080;margin-bottom:-14px;text-transform:uppercase;letter-spacing:.03em}
-.team-system{position:relative;z-index:1;background:#fbfcfe;border:1px solid var(--line);border-radius:9px;padding:7px 9px;display:grid;gap:1px;min-width:0;font-size:12px;transition:box-shadow .2s,border-color .2s}.team-system small{color:var(--muted);font-size:10.5px;line-height:1.3}.team-system em{font-style:normal;font-size:10px;color:#6b7f9c}.team-system .team-count{font-weight:700;font-size:11px;color:var(--deep);min-height:1em}.team-system.active,.team-system.target{border-color:var(--blue);box-shadow:0 0 0 3px #3b72ef2b;background:#fff}
-.team-summary{border-top:1px solid var(--line);padding:10px 15px}.team-facts{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:#4b6080}.team-facts strong{color:var(--ink);font-size:14px}.team-result{font-size:12.5px;color:#3d5373;margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.team-system{position:relative;z-index:1;background:#fbfcfe;border:1px solid var(--line);border-radius:9px;padding:7px 9px;display:grid;gap:1px;min-width:0;font-size:12px;transition:box-shadow .2s,border-color .2s}.team-system strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.team-system .team-count.none{color:#8a9bb3;font-weight:600}.team-system small{color:var(--muted);font-size:10.5px;line-height:1.3}.team-system em{font-style:normal;font-size:10px;color:#6b7f9c}.team-system .team-count{font-weight:700;font-size:11px;color:var(--deep);min-height:1em}.team-system.active,.team-system.target{border-color:var(--blue);box-shadow:0 0 0 3px #3b72ef2b;background:#fff}
+.team-summary{border-top:1px solid var(--line);padding:10px 15px;display:grid;gap:6px}.team-facts{display:grid;grid-template-columns:repeat(4,auto);justify-content:start;column-gap:16px;font-size:12px;line-height:20px;color:#4b6080;white-space:nowrap}.team-facts strong{color:var(--ink);font-size:14px;font-variant-numeric:tabular-nums}
+.team-outcome{display:flex;align-items:center;gap:12px}.team-result{flex:1;min-width:0;font-size:12.5px;line-height:1.45;color:#3d5373;margin:0;height:2.9em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.team-outcome .btn{flex:none}.team-outcome .btn.waiting{visibility:hidden}
 .team-feed-card{display:flex;flex-direction:column;height:min(640px,calc(100vh - 200px));min-height:420px}.team-filters{display:flex;gap:6px;flex-wrap:wrap;padding:0 15px 10px}.team-filters .chip{border:1px solid var(--line);background:white;border-radius:20px;padding:5px 10px;font-size:11.5px;font-weight:650;color:#4b6080}.team-filters .chip.on{background:var(--ink);border-color:var(--ink);color:white}
 .team-feed{list-style:none;margin:0;padding:0 15px 12px;overflow:auto;flex:1;min-height:0;border-top:1px solid var(--line)}.team-line{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid #eef2f7;font-size:12px}.team-line.result{opacity:.82}.team-line p{color:#4b6080;margin-top:2px;overflow-wrap:anywhere}.team-line-head{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
 .agent-dot{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;font-size:11px;font-weight:800;flex:none}
 .team-live{margin:0 0 10px}.team-empty{padding:18px}.team-empty h2{margin:6px 0}.team-empty p{color:var(--muted);margin-bottom:12px}.team-rerun{margin-top:12px}
 @media (max-width:1100px){.team-grid{grid-template-columns:1fr}.team-feed-card{max-height:460px;min-height:0}}
 @media (max-width:760px){.team-row{grid-template-columns:repeat(2,minmax(0,1fr))}.team-row.systems{grid-template-columns:repeat(2,minmax(0,1fr))}.team-row .team-node:last-child{grid-column:1/-1}.team-source{flex-basis:100%}.team-source select{flex:1;max-width:none}.tip-pop{position:fixed;left:16px;right:16px;bottom:16px;top:auto;transform:none;max-width:none;width:auto}}
+@media (max-width:640px){.team-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.team-outcome{flex-wrap:wrap}.team-result{flex-basis:100%}}
 @media (prefers-reduced-motion:reduce){.team-node,.team-track span{transition:none}}
+.settings-tabs{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--line);margin:0 0 14px}.settings-role .field select{min-width:220px}.settings-tab{display:inline-flex;align-items:center;gap:7px;border:0;background:none;padding:10px 12px;font-weight:700;font-size:13px;color:#536683;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;cursor:pointer}.settings-tab svg{width:15px;height:15px}.settings-tab[aria-selected="true"]{color:var(--deep);border-bottom-color:var(--blue)}.settings-tab:hover{color:var(--deep)}
+.settings-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;align-items:start}.settings-stack{display:grid;gap:14px;min-width:0}.settings-body{padding:0 15px 15px;display:grid;gap:14px}
+.switch{display:flex;align-items:center;gap:10px;font-weight:700;font-size:13px;cursor:pointer}.switch input{appearance:none;width:36px;height:20px;border-radius:20px;background:#cdd8e8;position:relative;margin:0;flex:none;cursor:pointer;transition:background .15s}.switch input::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px #13244640;transition:transform .15s}.switch input:checked{background:var(--blue)}.switch input:checked::after{transform:translateX(16px)}.switch input:focus-visible{outline:2px solid #3b72ef;outline-offset:2px}.switch input:disabled{opacity:.5;cursor:default}
+.settings-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.settings-fields .field input{width:100%;box-sizing:border-box}.settings-fields[aria-disabled="true"]{opacity:.55}
+.settings-choice{border:0;padding:0;margin:0;display:grid;gap:8px;min-width:0}.settings-choice legend{font-size:11px;font-weight:700;color:#445b7c;margin-bottom:6px;padding:0}
+.choice{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:9px;padding:10px 12px;cursor:pointer;background:#fff}.choice:has(input:checked){border-color:#9db8f2;background:#f5f9ff;box-shadow:inset 3px 0 var(--blue)}.choice input{margin:3px 0 0;accent-color:var(--blue);flex:none}.choice strong{display:block;font-size:13px}.choice small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.next-runs{list-style:none;margin:0;padding:0;display:grid;gap:6px}.next-runs li{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:7px 10px;border:1px solid #e9eff8;border-radius:8px;background:#fbfcfe}.next-runs li:first-child{border-color:#b8cdf0;background:#f5f9ff;font-weight:650}.next-runs svg{width:14px;height:14px;color:var(--blue);flex:none}
+.check-steps{margin:0;padding-left:20px;display:grid;gap:6px;font-size:12.5px;color:#34496a}
+.settings-log{list-style:none;margin:0;padding:0}.settings-log li{display:grid;gap:2px;padding:8px 0;border-bottom:1px solid #eef2f7;font-size:12px}.settings-log li:last-child{border-bottom:0}.settings-log small{color:var(--muted)}
+.service-state{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;border:1px solid #f5d9a6;background:#fff8ea}.service-state.ready{background:#f3faf6;border-color:#cfe9db}.service-state.off{background:#f6f8fc;border-color:var(--line)}.service-state .light{width:11px;height:11px;border-radius:50%;background:#e0a020;box-shadow:0 0 0 4px #e0a02026;flex:none}.service-state.ready .light{background:#1fa463;box-shadow:0 0 0 4px #1fa46326}.service-state.off .light{background:#a9b6c8;box-shadow:none}.service-state strong{display:block;font-size:14px}.service-state small{display:block;font-size:12px;color:var(--muted)}
+.key-note{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#45638b;background:#f8fbff;border:1px solid #e3eaf4;border-radius:8px;padding:9px 11px;margin:0}.key-note svg{width:15px;height:15px;flex:none;margin-top:1px}
+.conn-table td{vertical-align:top}.conn-table td small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}.tool-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}.tool-list code{font-size:10.5px;background:#f1f5fa;border-radius:4px;padding:1px 5px;color:#38506f}
+.access{display:inline-flex;align-items:center;font-size:11px;font-weight:700;border-radius:6px;padding:2px 7px;background:#eef3fb;color:#2c4f86;white-space:nowrap}.access.draft{background:#fff2d9;color:#7a4500}.access.rules{background:#132446;color:#fff}
+.request-form{display:grid;gap:12px;padding:0 15px 15px}.request-form .field input,.request-form .field textarea{width:100%;box-sizing:border-box;min-height:34px;padding:6px 9px;border:1px solid #d5e2f1;border-radius:7px;font:500 13px/1.4 Inter,"Segoe UI",sans-serif;color:var(--ink);background:#fff}.request-form textarea{min-height:64px;resize:vertical}.request-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.name-cell{display:flex;gap:9px;align-items:flex-start;min-width:0}.name-cell small{display:block}.badge-link{border:0;background:none;padding:0;cursor:pointer;border-radius:20px}.badge-link:hover .badge{box-shadow:0 0 0 2px #b8cdf0}.badge-link:focus-visible{outline:2px solid #3b72ef;outline-offset:2px}
+.decide{display:flex;gap:6px;flex-wrap:wrap;align-items:flex-start;margin-top:6px}.decide form{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.decide input{min-height:28px;padding:4px 8px;border:1px solid #d5e2f1;border-radius:7px;font-size:12px;min-width:0}
+@media(max-width:900px){.settings-grid{grid-template-columns:minmax(0,1fr)}}@media(max-width:640px){.request-grid{grid-template-columns:minmax(0,1fr)}}
 .first-run{padding:20px}.first-run h2{margin:6px 0 4px}.first-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:26px;align-items:start}
 .first-list{margin:12px 0 16px;padding-left:20px;display:grid;gap:7px;color:#34496a}.first-live{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:#45638b;margin:0 0 14px}
 .first-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.first-fact{border:1px solid var(--line);border-radius:10px;padding:12px;background:#f8fbff}.first-fact strong{display:block;font-size:26px;line-height:1.1;color:var(--ink)}.first-fact span{font-size:12px;color:var(--muted)}
@@ -655,6 +678,8 @@ const icons = {
   external:'<path d="M9 3h4v4m0-4L7 9m0-5H3v9h9V9"/>',
   countries:'<path d="M3 14V2.5m0 1c2-1.5 3.3-.5 5 0 1.8.5 3 .7 5-1v7c-2 1.7-3.2 1.5-5 1-1.7-.5-3-1.5-5 0"/>',
   schedule:'<rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/><path d="M5.5 2.5v3m5-3v3M2.5 7h11M6 10.5h3.5"/>',
+  settings:'<path d="M2.5 4.5h6m3 0h2M2.5 11.5h2m3 0h6"/><circle cx="10" cy="4.5" r="1.6"/><circle cx="6" cy="11.5" r="1.6"/>',
+  plug:'<path d="M6 2.5v3m4-3v3M4.5 5.5h7v2.5a3.5 3.5 0 0 1-7 0zM8 11.5v2"/>',
   review:'<path d="M5 2.5h6l2 2v9H3v-11h2zm.5 6 1.6 1.6 3.5-3.5"/>',
   team:'<circle cx="8" cy="3.6" r="1.9"/><circle cx="3.4" cy="12.2" r="1.7"/><circle cx="8" cy="12.2" r="1.7"/><circle cx="12.6" cy="12.2" r="1.7"/><path d="M8 5.5v4.9M6.6 5 4.3 10.6M9.4 5l2.3 5.6"/>',
   play:'<path d="M5 3.5v9l7-4.5z"/>',
@@ -664,7 +689,7 @@ const icons = {
   plans:'<circle cx="4" cy="4" r="1.7"/><circle cx="12" cy="4" r="1.7"/><circle cx="8" cy="12.2" r="1.7"/><path d="M5.7 4h4.6M4.8 5.5l2.4 5M11.2 5.5l-2.4 5"/>',
   shipments:'<path d="M2.5 5 8 2.5 13.5 5v6L8 13.5 2.5 11zM2.5 5 8 7.5 13.5 5M8 7.5v6"/>'
 };
-const navItems = {overview:"Overview",shipments:"Shipment checks",plans:"Agent plans",team:"Agents in action",countries:"Country specifications",sources:"Source log",schedule:"Monitoring schedule"};
+const navItems = {overview:"Overview",shipments:"Shipment checks",plans:"Agent plans",team:"Agents in action",countries:"Country specifications",sources:"Source log",settings:"Settings"};
 const byId = id => document.getElementById(id);
 const esc = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const icon = name => '<svg viewBox="0 0 16 16" aria-hidden="true">'+icons[name]+'</svg>';
@@ -700,7 +725,7 @@ if (changes.some(change=>change.scope==="EU")) expandedRegions.add("Europe");
 const scheduleKey = "regchain-dashboard-schedule-v1";
 const dayMs = 24 * 60 * 60 * 1000;
 const athens = new Intl.DateTimeFormat("en-GB",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23",timeZone:"Europe/Athens"});
-let scheduleState = readSchedule();
+let scheduleState = null; // read below, once the monitoring defaults exist
 let replaying = false;
 let drawerOrigin = null;
 const selectedChange = () => changes.find(change=>change.id===currentChange);
@@ -743,13 +768,32 @@ function openFor(change) {
   return days>0?"open "+days+" days":"";
 }
 
+// The monitoring settings (Settings › Monitoring schedule). Served by RegChain, the server keeps them with every change in
+// the audit trail; this browser keeps the run state (last run, next run, run count). Same defaults as regchain-ai/settings.mjs.
+const monitoringDefaults = {enabled:true,frequency:"weekdays",every:7,weekday:1,time:"06:00",onBlocked:"notify"};
+const monitoringKeys = Object.keys(monitoringDefaults);
+const weekdayNames = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+function validMonitoring(value) {
+  return Boolean(value) && typeof value.enabled==="boolean" && ["daily","weekdays","weekly","interval"].includes(value.frequency) &&
+    Number.isInteger(value.every) && value.every>=1 && value.every<=365 && Number.isInteger(value.weekday) && value.weekday>=1 && value.weekday<=7 &&
+    /^([01]\d|2[0-3]):[0-5]\d$/.test(value.time) && ["notify","plan"].includes(value.onBlocked);
+}
+const monitoringOf = state => Object.fromEntries(monitoringKeys.map(key=>[key,state[key]]));
+const sameMonitoring = (a,b) => monitoringKeys.every(key=>a[key]===b[key]);
 function readSchedule() {
-  const fallback={enabled:false,days:1,nextAt:null,lastAt:null,lastReason:null,runCount:1};
+  const fallback={...monitoringDefaults,nextAt:null,lastAt:null,lastReason:null,runCount:1};
+  fallback.nextAt=nextCheckAt(fallback);
   try {
     const saved=JSON.parse(localStorage.getItem(scheduleKey));
-    if (saved && typeof saved.enabled==="boolean" && Number.isInteger(saved.days) && saved.days>=1 && saved.days<=365 &&
-      Number.isInteger(saved.runCount) && saved.runCount>=1 &&
-      (!saved.enabled || Number.isFinite(saved.nextAt))) return {...fallback,...saved};
+    if (!saved || !Number.isInteger(saved.runCount) || saved.runCount<1) return fallback;
+    // Saved before the schedule had a time and days of the week: "every N days" keeps its meaning.
+    const older=!("frequency" in saved)&&Number.isInteger(saved.days)&&saved.days>=1&&saved.days<=365;
+    const settings=older?{...monitoringDefaults,enabled:saved.enabled===true,frequency:saved.days===1?"daily":"interval",every:saved.days}:
+      validMonitoring({...monitoringDefaults,...saved})?monitoringOf({...monitoringDefaults,...saved}):monitoringDefaults;
+    const state={...fallback,...settings,lastAt:saved.lastAt??null,lastReason:saved.lastReason??null,runCount:saved.runCount,nextAt:Number.isFinite(saved.nextAt)?saved.nextAt:null};
+    if(!state.enabled) state.nextAt=null;
+    else if(!state.nextAt) state.nextAt=nextCheckAt(state);
+    return state;
   } catch {}
   return fallback;
 }
@@ -758,16 +802,56 @@ function storeSchedule() {
   catch {return false;}
   return true;
 }
-function cadence(days) {return days===1?"Every day":"Every "+days+" days";}
+// Times are Athens time, whatever the computer's own time zone, and stay right across the change to and from summer time.
+function athensParts(ms) {return Object.fromEntries(athens.formatToParts(new Date(ms)).map(part=>[part.type,part.value]));}
+function athensDayOf(ms) {const parts=athensParts(ms);return parts.year+"-"+parts.month+"-"+parts.day;}
+function athensSlot(day,time) {
+  const [year,month,date]=day.split("-").map(Number);
+  const [hour,minute]=time.split(":").map(Number);
+  const wall=Date.UTC(year,month-1,date,hour,minute);
+  const offset=at=>{const parts=athensParts(at);return Date.UTC(Number(parts.year),Number(parts.month)-1,Number(parts.day),Number(parts.hour),Number(parts.minute))-Math.floor(at/60000)*60000;};
+  return wall-offset(wall-offset(wall));
+}
+const shiftDay = (day,count) => new Date(Date.parse(day+"T12:00:00Z")+count*dayMs).toISOString().slice(0,10);
+const weekdayOf = day => (new Date(day+"T12:00:00Z").getUTCDay()+6)%7+1;
+// The next planned check after `after`. "Every N days" counts from the previous planned check when there is one.
+function nextCheckAt(settings,after=Date.now(),anchor=null) {
+  if(!settings.enabled) return null;
+  if(settings.frequency==="interval"&&Number.isFinite(anchor)) {
+    let day=athensDayOf(anchor),at;
+    do {day=shiftDay(day,settings.every);at=athensSlot(day,settings.time);} while(at<=after);
+    return at;
+  }
+  const today=athensDayOf(after);
+  for(let index=0;index<=8;index++) {
+    const day=shiftDay(today,index);
+    const at=athensSlot(day,settings.time);
+    const weekday=weekdayOf(day);
+    if(at<=after||(settings.frequency==="weekdays"&&weekday>5)||(settings.frequency==="weekly"&&weekday!==settings.weekday)) continue;
+    return at;
+  }
+  return null;
+}
+function upcomingChecks(settings,count=3) {
+  const runs=[];
+  let at=settings.enabled?(scheduleState.nextAt&&sameMonitoring(settings,scheduleState)?scheduleState.nextAt:nextCheckAt(settings)):null;
+  while(at&&runs.length<count) {runs.push(at);at=nextCheckAt(settings,at,settings.frequency==="interval"?at:null);}
+  return runs;
+}
+function cadence(settings=scheduleState) {
+  if(!settings.enabled) return "Schedule paused";
+  const when={daily:"Every day",weekdays:"Weekdays",weekly:"Every "+weekdayNames[settings.weekday-1],interval:settings.every===1?"Every day":"Every "+settings.every+" days"}[settings.frequency];
+  return when+" at "+settings.time;
+}
+scheduleState = readSchedule();
 function scheduleDate(value) {
   if(!value) return "—";
   const parts=Object.fromEntries(athens.formatToParts(new Date(value)).map(part=>[part.type,part.value]));
   return Number(parts.day)+" "+monthNames[Number(parts.month)-1]+" "+parts.year+", "+parts.hour+":"+parts.minute+" Athens time";
 }
 function runStatus() {
-  const next=scheduleState.enabled?scheduleDate(scheduleState.nextAt):"Paused";
   const last=scheduleState.lastAt?scheduleDate(scheduleState.lastAt)+" · "+(scheduleState.lastReason==="scheduled"?"Scheduled run":"Manual run"):replayDate;
-  return factlist([["Next run",next],["Last run",last],["Source coverage",sources.length+" source checks · "+retryCount()+" retry needed"]]);
+  return factlist([["Last run",last],["Runs so far",String(scheduleState.runCount)],["Source coverage",sources.length+" source checks · "+retryCount()+" retry needed"]]);
 }
 
 function shell() {
@@ -892,7 +976,7 @@ function changeScopes() {
 function overview() {
   if(firstRun!=="done") return firstRunView();
   return heading("Regulatory monitor","Open a change to see its evidence, impact and next action.",'<button id="replay" class="btn primary" type="button" data-act="replay">'+icon("retry")+'Run checks</button>')+
-    '<div class="runbar"><div class="runbar-left">'+icon("clock")+'<strong>Check run '+String(scheduleState.runCount).padStart(2,"0")+'</strong><span class="separator">·</span><span>'+ (scheduleState.lastAt?"Last run "+scheduleDate(scheduleState.lastAt):replayDate) +'</span></div><div class="actions">'+emptyControl()+badge("Completed with 1 retry needed","amber")+badge(scheduleState.enabled?cadence(scheduleState.days):"Schedule paused",scheduleState.enabled?"blue":"")+'</div></div>'+
+    '<div class="runbar"><div class="runbar-left">'+icon("clock")+'<strong>Check run '+String(scheduleState.runCount).padStart(2,"0")+'</strong><span class="separator">·</span><span>'+ (scheduleState.lastAt?"Last run "+scheduleDate(scheduleState.lastAt):replayDate) +'</span></div><div class="actions">'+emptyControl()+badge("Completed with 1 retry needed","amber")+'<button type="button" class="badge-link" data-act="open-settings" data-value="monitoring" aria-label="Monitoring schedule: '+esc(cadence())+'. Open the settings">'+badge(cadence(),scheduleState.enabled?"blue":"")+'</button>'+'</div></div>'+
     '<div class="tiles" aria-label="Check summary">'+
       (()=>{const all=plannedShipments();const blocked=all.filter(item=>item.result==="Blocked");return tile("Shipments blocked",blocked.length,"Of "+all.length+" planned · "+(blocked[0]?"first: "+blocked[0].id+", prepare by "+displayDay(blocked[0].prepareBy):"none blocked"),"shipments","shipments");})()+
       tile("Open changes",openChanges().length,changeScopes(),"changes")+
@@ -1320,14 +1404,193 @@ function sectionTrials(id) {
     '<ul class="case-list" style="width:100%">'+items+'</ul>'+
     '<div class="actions">'+trigger("Back to the section","spec-section",id,"","arrow")+(caseId&&caseOpen(caseId)?trigger("Open the "+(caseId==="uk"?"UK":"Spain")+" case","open-case",caseId,"primary","arrow"):"")+'</div>');
 }
-function monitoringSchedule() {
-  return heading("Monitoring schedule","Set the interval for automatic checks."+tip("Each check reads the official sources, compares them with the stored versions and re-checks every planned shipment. A change is flagged the day it is found.","About the schedule"))+
-    '<div class="layout">'+
-    '<section class="card"><div class="card-head"><div><h2>Automatic checks</h2><p>Settings</p></div>'+badge(scheduleState.enabled?cadence(scheduleState.days):"Paused",scheduleState.enabled?"blue":"")+'</div><div class="settings">'+
-    '<form id="schedule-form"><label class="toggle"><input type="checkbox" name="enabled"'+(scheduleState.enabled?" checked":"")+'> Run checks automatically</label><label class="field">Repeat every (days)<input type="number" name="days" min="1" max="365" step="1" value="'+scheduleState.days+'" required></label><div class="actions"><button type="submit" class="btn primary">Save schedule</button></div></form>'+
-    '<div class="inline-note">'+icon("info")+'<span>Runs while RegChain is open. A missed run runs once on the next visit.</span></div></div></section>'+
-    '<section class="card"><div class="card-head"><div><h2>Run status</h2><p>Schedule times are shown in Athens time.</p></div></div><div class="settings">'+
-    '<div id="run-status">'+runStatus()+'</div></div></section></div>';
+// ---------- Settings: the monitoring schedule and the AI connections ----------
+// Served by RegChain, the server keeps the settings and records every change in the audit trail (regchain-ai/settings.mjs).
+// Opened as a file, the schedule is kept in this browser and the connections cannot be reached.
+let settingsTab = "monitoring";
+let settingsState = {loaded:false,loading:false,error:"",changed:null,connections:[],log:[],roles:{monitoring:["reviewer","owner"],decide:["owner"]}};
+const canChangeMonitoring = () => !serverMode()||settingsState.roles.monitoring.includes(workflowRole);
+const canDecideConnections = () => serverMode()&&settingsState.roles.decide.includes(workflowRole);
+async function loadSettings() {
+  if(!serverMode()||settingsState.loading) return;
+  settingsState={...settingsState,loading:true};
+  try {applySettings(await aiRequest("/api/settings"));}
+  catch(error) {settingsState={...settingsState,loading:false,error:error.message};}
+  if(page==="settings"||page==="overview") render();
+}
+function applySettings(reply,saved=false) {
+  settingsState={loaded:true,loading:false,error:"",changed:reply.changed??null,connections:reply.connections??[],log:reply.log??[],roles:reply.roles??settingsState.roles};
+  adoptMonitoring(reply.monitoring,saved);
+}
+// The server's schedule replaces this browser's. The next check is planned again when the schedule changed.
+function adoptMonitoring(monitoring,replan=false) {
+  if(!validMonitoring(monitoring)) return;
+  scheduleState=readScheduleOrCurrent();
+  const keep=!replan&&sameMonitoring(monitoring,scheduleState)&&(!monitoring.enabled||Number.isFinite(scheduleState.nextAt));
+  scheduleState={...scheduleState,...monitoringOf(monitoring),nextAt:keep?scheduleState.nextAt:nextCheckAt(monitoring)};
+  storeSchedule();
+}
+const checkDate = at => weekdayNames[weekdayOf(athensDayOf(at))-1].slice(0,3)+" "+scheduleDate(at).replace(" Athens time","");
+function choice(name,value,checked,title,text) {
+  return '<label class="choice"><input type="radio" name="'+name+'" value="'+esc(value)+'"'+(checked?" checked":"")+'><span><strong>'+esc(title)+'</strong><small>'+esc(text)+'</small></span></label>';
+}
+function settingsView() {
+  if(serverMode()&&!settingsState.loaded&&!settingsState.loading&&!settingsState.error) queueMicrotask(loadSettings);
+  const tabs=[["monitoring","Monitoring schedule","schedule"],["ai","AI connections","plug"]];
+  return heading("Settings","When RegChain checks the official sources, and what the AI agents connect to."+tip("Served by RegChain, settings are kept on the server and every change is recorded in the audit trail with who made it and when. Keys and passwords are never entered here.","About the settings"),
+    serverMode()?'<div class="actions settings-role">'+caseRoleSelect()+'</div>':"")+
+    '<div class="settings-tabs" role="tablist" aria-label="Settings">'+tabs.map(([id,label,symbol])=>'<button type="button" role="tab" id="settings-tab-'+id+'" class="settings-tab" aria-selected="'+(settingsTab===id)+'" aria-controls="settings-panel" data-act="settings-tab" data-value="'+id+'">'+icon(symbol)+esc(label)+'</button>').join("")+'</div>'+
+    (settingsState.error?'<p class="form-feedback" role="alert">'+esc("The settings could not be loaded: "+settingsState.error)+'</p>':"")+
+    '<div id="settings-panel" role="tabpanel" aria-labelledby="settings-tab-'+settingsTab+'">'+(settingsTab==="ai"?aiConnectionsPanel():monitoringPanel())+'</div>';
+}
+function monitoringPanel() {
+  const state=scheduleState;
+  const allowed=canChangeMonitoring();
+  const off=allowed?"":" disabled";
+  const form='<section class="card"><div class="card-head"><div><h2>Automatic checks</h2><p>'+esc(cadence())+(state.enabled?", Athens time":"")+'</p></div>'+badge(state.enabled?"On":"Paused",state.enabled?"green":"")+'</div>'+
+    '<form id="schedule-form" class="settings-body" novalidate>'+
+      '<label class="switch"><input type="checkbox" name="enabled" role="switch"'+(state.enabled?" checked":"")+off+'><span>Run checks automatically</span></label>'+
+      '<div class="settings-fields">'+
+        '<label class="field">How often<select name="frequency"'+off+'>'+options([["daily","Every day"],["weekdays","Weekdays, Monday to Friday"],["weekly","Once a week"],["interval","Every few days"]],state.frequency)+'</select></label>'+
+        '<label class="field" data-when="weekly"'+(state.frequency==="weekly"?"":" hidden")+'>Day<select name="weekday"'+off+'>'+options(weekdayNames.map((name,index)=>[String(index+1),name]),String(state.weekday))+'</select></label>'+
+        '<label class="field" data-when="interval"'+(state.frequency==="interval"?"":" hidden")+'>Every (days)<input type="number" name="every" min="1" max="365" step="1" value="'+state.every+'"'+off+'></label>'+
+        '<label class="field">Time, Athens<input type="time" name="time" value="'+esc(state.time)+'" required'+off+'></label>'+
+      '</div>'+
+      '<fieldset class="settings-choice"'+off+'><legend>After each check, when a blocked shipment has no plan yet</legend>'+
+        choice("onBlocked","notify",state.onBlocked==="notify","Show it to Clinical Supply","It appears on the Overview and in Shipment checks, and Clinical Supply starts the agents.")+
+        choice("onBlocked","plan",state.onBlocked==="plan","Have the agents prepare plans","The agents read the systems and write drafts only. Nothing is sent or changed until Clinical Supply approves a plan.")+
+      '</fieldset>'+
+      '<p class="form-feedback" id="schedule-error" role="alert"></p>'+
+      '<div class="actions"><button type="submit" class="btn primary"'+off+'>Save schedule</button><button type="button" class="btn" data-act="replay"'+(replaying?" disabled":"")+'>'+icon("retry")+'Run checks now</button></div>'+
+      (allowed?"":'<p class="setup-line">'+icon("info")+'The Regulatory SME or the Quality owner changes the schedule.'+(signedInUser?"":" Choose one under Acting as.")+'</p>')+
+    '</form></section>';
+  const upcoming=upcomingChecks(state);
+  const next='<section class="card"><div class="card-head"><div><h2>Next checks</h2><p>Athens time</p></div></div><div class="settings-body">'+
+    (upcoming.length?'<ol class="next-runs">'+upcoming.map(at=>'<li>'+icon("clock")+esc(checkDate(at))+'</li>').join("")+'</ol>':'<p class="muted">Automatic checks are paused. Run checks from here or from the Overview whenever you need them.</p>')+
+    '<div id="run-status">'+runStatus()+'</div>'+
+    '<p class="key-note">'+icon("info")+'<span>Checks run while RegChain is open in a browser. A check that was missed runs once on the next visit.</span></p></div></section>';
+  const steps='<section class="card"><div class="card-head"><div><h2>What each check does</h2></div></div><div class="settings-body"><ol class="check-steps">'+
+    '<li>Reads the '+sources.length+' official sources RegChain watches and compares them with the stored versions.</li>'+
+    '<li>Links each difference to the Country Specification it affects.</li>'+
+    '<li>Checks the '+plannedShipments().length+' planned shipments against the current specification of their destination.</li>'+
+    '<li>'+(state.onBlocked==="plan"?"Starts the agents on blocked shipments that have no plan yet. Clinical Supply approves each plan.":"Shows blocked shipments to Clinical Supply, who start the agents.")+'</li></ol></div></section>';
+  return '<div class="settings-grid"><div class="settings-stack">'+form+steps+'</div><div class="settings-stack">'+next+settingsLog("monitoring")+'</div></div>';
+}
+// The latest changes from the audit trail.
+function settingsLog(kind) {
+  if(!serverMode()) return "";
+  const entries=settingsState.log.filter(entry=>kind==="monitoring"?entry.event==="settings.monitoring_changed":entry.event.startsWith("connection."));
+  return '<section class="card"><div class="card-head"><div><h2>Changes</h2><p>From the audit trail</p></div></div><div class="settings-body">'+
+    (entries.length?'<ul class="settings-log">'+entries.slice(0,6).map(entry=>'<li><span>'+esc(entry.detail)+'</span><small>'+esc(entry.by+" · "+checkDate(Date.parse(entry.at)))+'</small></li>').join("")+'</ul>':
+      '<p class="muted">'+(kind==="monitoring"?"No change yet. The schedule is RegChain's default.":"No connection requests yet.")+'</p>')+'</div></section>';
+}
+// What each agent works with: the systems behind its tools (regchain-ai/agent.mjs).
+const teamUses = {orchestrator:["RegChain","Draft inbox"],supply:["IRT","ERP"],logistics:["IRT","ERP","Depot"],records:["eTMF","IRT"],communications:["RegChain"],verifier:["RegChain rules"]};
+function modelName(id) {
+  const match=/claude-(opus|sonnet|haiku|fable)-(\d+)-(\d+)/i.exec(String(id??""));
+  return match?match[1][0].toUpperCase()+match[1].slice(1).toLowerCase()+" "+match[2]+"."+match[3]:String(id??"");
+}
+function agentModel(id) {
+  if(id==="verifier") return "Fixed rules · no AI";
+  const models=agentState.status?.models;
+  const chosen=id==="orchestrator"?models?.orchestrator:models?.specialists;
+  return chosen?modelName(chosen):teamModels[id].replace("Claude ","");
+}
+function aiServiceCard() {
+  const status=agentState.status;
+  const server=serverMode();
+  const ready=server&&status?.keySet&&status?.sdk;
+  const service=typeof status?.service==="string"?status.service:typeof status?.models?.service==="string"?status.models.service:"Claude API (Anthropic)";
+  const [tone,title,text]=!server?["off","Not reachable from this file","Open RegChain at http://127.0.0.1:4173 to see the connection."]:
+    !status?["off","Checking","Asking the RegChain server."]:
+    ready?["ready","Ready for live runs","The agents and the regulation check call Claude."]:
+    ["partial","Scripted walkthrough only",typeof status.message==="string"&&status.message?status.message:!status.sdk?"The Anthropic SDK is not installed: run npm install in the RegChain folder, then restart RegChain.":"No key on the server yet: add it to the .env file next to serve-regchain.cjs, then restart RegChain."];
+  const known=server&&status;
+  return '<section class="card"><div class="card-head"><div><h2>Claude service</h2><p>The AI the agents and the regulation check use</p></div></div><div class="settings-body">'+
+    '<div class="service-state '+tone+'"><span class="light" aria-hidden="true"></span><span><strong>'+esc(title)+'</strong><small>'+esc(text)+'</small></span></div>'+
+    factlist([["Service",service],["Credentials",!known?"—":status.keySet?"Set on the server":"Not set"],["Anthropic SDK",!known?"—":status.sdk?"Installed":"Not installed"],["Without AI","The scripted walkthrough runs the same steps with recorded answers"]])+
+    '<p class="key-note">'+icon("review")+'<span><strong>Keys are never entered on this page.</strong> They stay in the server\'s .env file or the cloud account RegChain runs under, so no key reaches a browser, a log or the audit trail. Changing the service or a model is a change to a validated system and goes through change control.</span></p>'+
+  '</div></section>';
+}
+function agentsCard() {
+  const ids=["orchestrator","supply","logistics","records","communications","verifier"];
+  const check=aiState?.status?.model?modelName(aiState.status.model):"Opus 5.5";
+  const rows=ids.map(id=>{
+    const profile=agentProfiles[id];
+    const rules=id==="verifier";
+    return '<tr><td><span class="name-cell"><span class="agent-dot '+profile.tone+'" aria-hidden="true">'+teamInitials[id]+'</span><span><strong>'+esc(id==="orchestrator"?"Master agent":profile.name)+'</strong><small>'+esc(profile.job)+'</small></span></span></td>'+
+      '<td><span class="access'+(rules?" rules":"")+'">'+esc(agentModel(id))+'</span></td><td>'+esc(teamUses[id].join(", "))+'</td></tr>';
+  }).join("")+'<tr><td><span class="name-cell"><span class="agent-dot agent-orchestrator" aria-hidden="true">AI</span><span><strong>Regulation check</strong><small>Reads the old and new legal text and drafts the change; RegChain verifies every quote</small></span></span></td><td><span class="access">'+esc(check)+'</span></td><td>Official sources</td></tr>';
+  return '<section class="card"><div class="card-head"><div><h2>Agents and their models</h2><p>Who does what, and which systems each one reads</p></div></div>'+
+    '<div class="table-wrap" tabindex="0"><table class="stack-table conn-table"><caption class="sr">Agents, their models and the systems they use</caption><thead><tr><th>Agent</th><th>Model</th><th>Works with</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>';
+}
+function systemsCard() {
+  const status=agentState.status;
+  const reached=new Map((status?.systems??[]).map(system=>[system.name,system]));
+  const access=value=>'<span class="access'+(value==="draft-only"?" draft":"")+'">'+(value==="draft-only"?"Draft-only":"Read-only")+'</span>';
+  const rows=teamSystems.map(([name,job])=>{
+    const system=reached.get(name);
+    return '<tr><td><strong>'+esc(name)+'</strong><small>'+esc(job)+'</small>'+(system?'<span class="tool-list" aria-label="Tools">'+system.tools.map(tool=>'<code>'+esc(tool.name)+'</code>').join("")+'</span>':"")+'</td>'+
+      '<td>'+access(name==="Draft inbox"?"draft-only":"read-only")+'</td><td>MCP server run by RegChain<small>stdio</small></td>'+
+      '<td>'+(system?badge("Connected","green"):serverMode()&&!status?badge("Checking"):badge("Not reached"))+'</td></tr>';
+  });
+  const requests=settingsState.connections.map(request=>{
+    const [label,tone]={requested:["Requested","amber"],approved:["Approved · to build and validate","blue"],rejected:["Rejected","red"]}[request.status];
+    const decide=request.status==="requested"&&canDecideConnections()?'<div class="decide"><button type="button" class="btn small primary" data-act="connection-approve" data-value="'+esc(request.id)+'">Approve</button>'+
+      '<form class="connection-reject" data-id="'+esc(request.id)+'"><input name="note" aria-label="Why the request is rejected" placeholder="Why rejected" maxlength="400" required><button type="submit" class="btn small">Reject</button></form></div>':"";
+    return '<tr><td><strong>'+esc(request.name)+'</strong><small>'+esc(request.holds)+'</small><small>'+esc("Owner "+request.owner+" · asked by "+request.requestedBy+", "+displayDay(request.requestedAt.slice(0,10)))+'</small>'+
+      (request.reason?'<small>'+esc("Why: "+request.reason)+'</small>':"")+(request.note?'<small>'+esc("Reason for the decision: "+request.note)+'</small>':"")+'</td>'+
+      '<td>'+access(request.access)+'</td><td>'+esc(request.address||"Address to agree")+'</td><td>'+badge(label,tone)+decide+'</td></tr>';
+  });
+  return '<section class="card space"><div class="card-head"><div><h2>Company systems over MCP</h2><p>Each system is reached through its own MCP server. No agent can change a validated system: the only thing an agent creates is a draft that a person approves.</p></div></div>'+
+    '<div class="table-wrap" tabindex="0"><table class="stack-table conn-table"><caption class="sr">Company systems the agents connect to, and requested connections</caption><thead><tr><th>System</th><th>Agents may</th><th>Connection</th><th>Status</th></tr></thead><tbody>'+rows.join("")+requests.join("")+'</tbody></table></div>'+
+    (connectionDecisionError?'<p class="form-feedback settings-body" role="alert">'+esc(connectionDecisionError)+'</p>':"")+
+    (canDecideConnections()&&settingsState.connections.some(request=>request.status==="requested")?'<div class="inline-note">'+icon("info")+'<span>As Quality owner you approve or reject requests. The person who asked cannot approve their own request.</span></div>':"")+'</section>';
+}
+function connectionRequestCard() {
+  if(!serverMode()) return "";
+  return '<details class="card fold" id="connection-request"'+(openPanels.has("connection-request")?" open":"")+'><summary><span class="fold-title">'+icon("plug")+'<strong>Request a new connection</strong></span><small class="muted">Used only after approval, build and validation</small></summary>'+
+    '<form id="connection-request-form" class="request-form" novalidate>'+
+      '<div class="request-grid"><label class="field">System<input name="name" required maxlength="60" placeholder="For example: Courier tracking"></label>'+
+      '<label class="field">Business owner<input name="owner" required maxlength="80" placeholder="Name or team"></label></div>'+
+      '<label class="field">What the agents would read there<input name="holds" required maxlength="200" placeholder="For example: delivery status and temperature records"></label>'+
+      '<label class="field">MCP server address, if known<input name="address" maxlength="200" placeholder="https://"></label>'+
+      '<fieldset class="settings-choice"><legend>The agents may</legend>'+
+        choice("access","read-only",true,"Read only","Look things up. The default for validated systems.")+
+        choice("access","draft-only",false,"Write drafts only","Create drafts that a person approves in the system itself.")+
+      '</fieldset>'+
+      '<label class="field">Why it is needed<textarea name="reason" maxlength="400"></textarea></label>'+
+      '<p class="key-note">'+icon("info")+'<span>A request changes nothing yet. The Quality owner approves it; a developer then builds the MCP server, and it is validated before any agent uses it.</span></p>'+
+      '<p class="form-feedback" id="connection-error" role="alert"></p>'+
+      '<div class="actions"><button type="submit" class="btn primary">Send the request</button></div>'+
+    '</form></details>';
+}
+let agentStatusAsked = false;
+function aiConnectionsPanel() {
+  if(serverMode()&&!agentState.status&&!agentStatusAsked) {agentStatusAsked=true;queueMicrotask(loadAgentStatus);}
+  return '<div class="settings-grid"><div class="settings-stack">'+agentsCard()+'</div><div class="settings-stack">'+aiServiceCard()+'</div></div>'+
+    systemsCard()+'<div class="settings-grid space"><div class="settings-stack">'+connectionRequestCard()+'</div><div class="settings-stack">'+settingsLog("connections")+'</div></div>';
+}
+let connectionDecisionError = "";
+async function decideConnection(id,decision,note) {
+  try {
+    applySettings(await agentPost("/api/settings",{section:"connection-decision",id,decision,note}));
+    connectionDecisionError="";
+    render();
+    byId("settings-tab-ai")?.focus();
+    notify(decision==="approved"?"Connection request approved.":"Connection request rejected.");
+  } catch(error) {
+    connectionDecisionError="The decision was not recorded: "+error.message;
+    render();
+    notify(connectionDecisionError);
+  }
+}
+// After a check: when the schedule says so, the agents prepare plans for blocked shipments that have none yet.
+function afterCheck() {
+  if(scheduleState.onBlocked!=="plan"||!agentServer()||agentState.running||portfolioState.running) return;
+  if(!plannedShipments().some(item=>item.result==="Blocked"&&!agentPlans[item.id])) return;
+  const status=agentState.status;
+  startPortfolioRun(status?.keySet&&status?.sdk?"live":"scripted");
 }
 function sourceTable(data) {
   if (!data.length) return '<p class="nothing">No pages match these filters.</p>';
@@ -2137,7 +2400,7 @@ async function loadAgentData() {
 async function loadAgentStatus() {
   if(!agentServer()) return;
   try {agentState.status=await aiRequest("/api/agent/status");} catch(error) {agentState.error=agentState.error||"The agent systems did not answer: "+error.message;}
-  if(["agent","plans"].includes(page)) render();
+  if(["agent","plans"].includes(page)||page==="settings"&&settingsTab==="ai") render();
 }
 async function loadAgentRun(id) {
   if(!agentServer()) return;
@@ -2638,8 +2901,10 @@ function teamCard(id) {
   const master=id==="orchestrator";
   const tips={orchestrator:"The master agent reads the shipment checks, splits the work into tasks for the specialists, builds two or three options and has RegChain test each one. It never changes a validated system.",
     verifier:"Not an AI. Fixed rules in RegChain decide whether each option passes the destination's specification and whether stock or relabelling slots are already promised to another shipment."};
-  return '<div class="team-node'+(master?" team-master":"")+'" data-node="'+id+'"><div class="team-node-head"><span class="agent-dot '+profile.tone+'">'+teamInitials[id]+'</span><span class="team-node-title"><strong>'+(master?"Master agent":esc(teamShort[id]))+'</strong>'+
-    tip(tips[id]??profile.job+".","About the "+(master?"master agent":profile.name))+'<small>'+esc(teamModels[id].replace("Claude ",""))+(master?" · orchestrator":"")+'</small></span></div>'+
+  // Every part of a card has a fixed height, so the board does not move while the run is replayed.
+  return '<div class="team-node'+(master?" team-master":"")+(id==="verifier"?" team-rules":"")+'" data-node="'+id+'">'+
+    '<div class="team-node-head"><span class="agent-dot '+profile.tone+'">'+teamInitials[id]+'</span><span class="team-name"><strong>'+(master?"Master agent":esc(teamShort[id]))+'</strong><span class="team-light" aria-hidden="true"></span></span></div>'+
+    '<div class="team-sub"><span class="team-model" title="'+esc(agentModel(id))+'">'+esc(id==="verifier"?"Rules · no AI":agentModel(id)+(master?" · orchestrator":""))+'</span>'+tip(tips[id]??profile.job+".","About the "+(master?"master agent":profile.name))+'</div>'+
     '<div class="team-stats" data-stats="'+id+'"></div><p class="team-last" data-last="'+id+'"></p>'+(master?'<div class="team-split" data-split></div>':"")+'</div>';
 }
 function teamView() {
@@ -2693,20 +2958,25 @@ function teamPaint(full) {
     const handedOut=Object.values(tally.agents).reduce((sum,agent)=>sum+agent.tasks,0);
     const parts=id==="orchestrator"?[...(teamSource==="portfolio"?[[item.teams,"shipment","shipments"]]:[]),[handedOut,"task out","tasks out"],[tally.agents.verifier.checks,"option tested","options tested"],[tally.systems["Draft inbox"],"draft","drafts"]]:
       id==="verifier"?[[item.checks,"option tested","options tested"]]:[[item.tasks,"task","tasks"],[item.calls,"read","reads"],[item.reports,"report","reports"]];
-    if(stats) stats.innerHTML=parts.map(([count,one,many])=>'<span><strong>'+count+'</strong> '+(count===1?one:many)+'</span>').join("");
+    if(stats) stats.innerHTML=parts.map(([count,one,many])=>'<span class="team-stat"><strong>'+count+'</strong><span>'+(count===1?one:many)+'</span></span>').join("");
     const last=board.querySelector('[data-last="'+id+'"]');
-    if(last) last.textContent=item.last?humanDates(clip(teamSentence(item.last).filter(Boolean).join(": "),150)):"Waiting for work";
+    if(last) {
+      const sentence=item.last?humanDates(clip(teamSentence(item.last).filter(Boolean).join(": "),150)):"Waiting for work";
+      last.textContent=sentence;
+      last.title=sentence;
+      last.classList.toggle("idle",!item.last);
+    }
   }
   const split=board.querySelector("[data-split]");
   if(split) {
     const handed=teamSpecialists.filter(id=>id!=="verifier").map(id=>[id,tally.agents[id].tasks]).filter(([,count])=>count);
     const total=handed.reduce((sum,[,count])=>sum+count,0);
     split.innerHTML=total?'<div class="split-bar" role="img" aria-label="'+esc("Tasks handed out: "+handed.map(([id,count])=>agentProfiles[id].name+" "+count).join(", "))+'">'+handed.map(([id,count])=>'<span class="split-'+id+'" style="flex:'+count+'" title="'+esc(agentProfiles[id].name+": "+count)+'"></span>').join("")+'</div>'+
-      '<small class="split-legend">'+handed.map(([id,count])=>'<span><i class="split-'+id+'"></i>'+esc(teamShort[id])+" "+count+'</span>').join("")+'</small>':"<small>No tasks handed out yet</small>";
+      '<small class="split-legend">'+handed.map(([id,count])=>'<span><i class="split-'+id+'"></i>'+esc(teamShort[id])+" "+count+'</span>').join("")+'</small>':'<div class="split-bar" aria-hidden="true"></div><small>No tasks handed out yet</small>';
   }
   for(const [name,count] of Object.entries(tally.systems)) {
     const cell=board.querySelector('[data-system="'+name+'"]');
-    if(cell) cell.textContent=count?plural(count,name==="Draft inbox"?"draft":"read"):"";
+    if(cell) {cell.textContent=count?plural(count,name==="Draft inbox"?"draft":"read"):"Not used yet";cell.classList.toggle("none",!count);}
   }
   const now=byId("team-now");
   if(now) {
@@ -2753,9 +3023,11 @@ function teamSummary(tally) {
   let result="";
   if(finished&&record?.summary) result=record.summary.plans+" plans pass the rules, "+record.summary.escalated+" escalated, "+record.summary.reallocated+" re-planned so nothing is promised twice.";
   else if(finished&&record?.resolution) result=record.resolution.summary;
+  // The button is always there and shows when the run has finished, so the summary keeps its height.
+  const open=teamSource==="portfolio"?["Review the plans","nav","plans"]:["Open the plan","open-agents",teamSource];
   return '<div class="team-facts">'+facts.map(([count,one,many])=>'<span><strong>'+count+'</strong> '+(count===1?one:many)+'</span>').join("")+'</div>'+
-    '<p class="team-result">'+(result?'<strong>'+escd(result)+'</strong> ':'')+'Nothing changed in any validated system: each draft waits for a person.'+
-    (finished?' '+trigger(teamSource==="portfolio"?"Review the plans":"Open the plan",teamSource==="portfolio"?"nav":"open-agents",teamSource==="portfolio"?"plans":teamSource,"quiet","arrow"):"")+'</p>';
+    '<div class="team-outcome"><p class="team-result">'+(result?'<strong>'+escd(result)+'</strong> ':'')+'Nothing changed in any validated system: each draft waits for a person.</p>'+
+    '<button type="button" class="btn quiet'+(finished?"":" waiting")+'" data-act="'+open[1]+'" data-value="'+esc(open[2])+'"'+(finished?"":' tabindex="-1" aria-hidden="true"')+'>'+icon("arrow")+esc(open[0])+'</button></div>';
 }
 // The line for the current step, drawn between the two cards it connects, with a dot travelling along it.
 function teamEdges(route) {
@@ -2864,7 +3136,7 @@ async function startFreshFromUrl() {
   location.replace(location.pathname);
   return true;
 }
-startFreshFromUrl().then(started=>{if(!started) loadAgentData();});
+startFreshFromUrl().then(started=>{if(!started) {loadAgentData();loadSettings();}});
 const views = {
   team:teamView,
   agent:agentView,
@@ -2872,7 +3144,7 @@ const views = {
   shipments:shipmentChecks,
   overview,
   countries:countryLibrary,
-  schedule:monitoringSchedule,
+  settings:settingsView,
   case:changeWorkspace,
   sources:()=>heading("Source log","Review page checks, retry status and linked evidence."+tip("Every official page RegChain watches. New or Changed: a difference was found and linked to a change. Retry needed: the page did not answer, so coverage has a gap until it is read again.","About the source log"))+sourceCard()+sourceReferences(),
 };
@@ -2898,7 +3170,7 @@ function collapseLongTables(root) {
 let collapsing = false;
 const tableWatcher = new MutationObserver(()=>{if(collapsing) return;collapsing=true;try {collapseLongTables(byId("view"));} finally {tableWatcher.takeRecords();collapsing=false;}});
 tableWatcher.observe(byId("view"),{childList:true,subtree:true});
-function render() {shell();byId("view").innerHTML=fileNotice()+(firstRun!=="done"&&page!=="overview"?emptyPage():views[page]());updateRun();if(page==="team"&&firstRun==="done") teamPaint(true);}
+function render() {shell();byId("view").innerHTML=fileNotice()+(firstRun!=="done"&&page!=="overview"&&page!=="settings"?emptyPage():views[page]());updateRun();if(page==="team"&&firstRun==="done") teamPaint(true);}
 function notify(text="") {byId("announce").textContent=text;}
 function navigate(to) {if(to!=="team") teamPause();page=to;render();byId("page-title").focus({preventScroll:true});window.scrollTo(0,0);}
 function factlist(facts) {
@@ -2990,13 +3262,10 @@ function replay(reason="manual") {
     scheduleState.runCount++;
     scheduleState.lastAt=now;
     scheduleState.lastReason=reason;
-    if (reason==="scheduled") {
-      const interval=scheduleState.days*dayMs;
-      scheduleState.nextAt+= (Math.floor((now-scheduleState.nextAt)/interval)+1)*interval;
-    }
+    if (reason==="scheduled") scheduleState.nextAt=nextCheckAt(scheduleState,now,scheduleState.frequency==="interval"?scheduleState.nextAt:null);
     storeSchedule();
     replaying=false;
-    if (page==="overview" || page==="schedule") {
+    if (page==="overview" || page==="settings") {
       const focused=byId("replay")===document.activeElement;
       if (!byId("schedule-form")?.contains(document.activeElement) || focused) {
         render();
@@ -3007,6 +3276,7 @@ function replay(reason="manual") {
       }
     }
     notify("Checks complete. "+changes.length+" changes reviewed. "+(retryCount()===0?"No source check needs a":retryCount()===1?"One source check needs":retryCount()+" source checks need")+" retry.");
+    afterCheck();
   },350);
 }
 function readScheduleOrCurrent() {
@@ -3060,6 +3330,9 @@ const actions={
     if(target==="shipments"){shipmentFilter="all";shipmentCountry="all";navigate("shipments");return;}
   },
   replay:()=>replay(),
+  "settings-tab":id=>{settingsTab=id;render();byId("settings-tab-"+id)?.focus();},
+  "open-settings":tab=>{settingsTab=tab||"monitoring";navigate("settings");},
+  "connection-approve":id=>decideConnection(id,"approved",""),
   "ai-run":()=>runAi(),
   "pick-country":id=>{
     currentCountry=id;
@@ -3126,7 +3399,7 @@ const actions={
   "study-view":tab=>{studyView=tab;updateStudies();byId("study-card").querySelector('[data-value="'+tab+'"]').focus();notify(tab==="registry"?"Showing public registry candidates.":"Showing the portfolio assessment.");}
 };
 document.addEventListener("toggle",event=>{
-  if(["agent-trail","agent-controls","agent-rerun","plans-activity","plans-controls"].includes(event.target.id)) {if(event.target.open) openPanels.add(event.target.id); else openPanels.delete(event.target.id);}
+  if(["agent-trail","agent-controls","agent-rerun","plans-activity","plans-controls","connection-request"].includes(event.target.id)) {if(event.target.open) openPanels.add(event.target.id); else openPanels.delete(event.target.id);}
 },true);
 document.addEventListener("click",event=>{
   const target=event.target.closest("[data-act]");
@@ -3145,6 +3418,7 @@ document.addEventListener("input",event=>{
   }
 });
 document.addEventListener("change",event=>{
+  if(event.target.name==="frequency"&&event.target.form?.id==="schedule-form"){for(const field of event.target.form.querySelectorAll("[data-when]")) field.hidden=field.dataset.when!==event.target.value;return;}
   if(event.target.id==="team-source"){teamPause();teamSource=event.target.value;teamData={...teamData,key:null};teamIndex=0;teamShown=0;render();return;}
   if(event.target.id==="shipment-plan"){shipmentPlanFilter=event.target.value;byId("shipment-results").innerHTML=shipmentTable();return;}
   if(event.target.id==="plans-country"||event.target.id==="plans-window"){if(event.target.id==="plans-country") plansCountry=event.target.value; else plansWindow=event.target.value;byId("plans-results").innerHTML=plansTable();return;}
@@ -3277,20 +3551,52 @@ document.addEventListener("submit",event=>{
     notify(saved?"Decision recorded.":"Decision recorded for this tab. Browser storage is unavailable.");
     return;
   }
+  if(event.target.id==="connection-request-form") {
+    event.preventDefault();
+    const fields=new FormData(event.target);
+    const request=Object.fromEntries(["name","holds","address","access","owner","reason"].map(name=>[name,String(fields.get(name)??"").trim()]));
+    const box=byId("connection-error");
+    const missing=!request.name?"Name the system.":!request.owner?"Name the business owner of the system.":!request.holds?"Say what the agents would read there.":"";
+    if(missing) {box.textContent=missing;return;}
+    agentPost("/api/settings",{section:"connection-request",request}).then(reply=>{
+      applySettings(reply);
+      openPanels.delete("connection-request");
+      render();
+      byId("settings-tab-ai")?.focus();
+      notify("Connection request recorded for "+request.name+". The Quality owner approves it.");
+    }).catch(error=>{const target=byId("connection-error");if(target) target.textContent=error.message;});
+    return;
+  }
+  if(event.target.classList.contains("connection-reject")) {
+    event.preventDefault();
+    const note=String(new FormData(event.target).get("note")??"").trim();
+    if(note.length<3) {event.target.querySelector("input").focus();notify("Say why the request is rejected.");return;}
+    decideConnection(event.target.dataset.id,"rejected",note);
+    return;
+  }
   if(event.target.id!=="schedule-form") return;
   event.preventDefault();
+  const fields=event.target.elements;
+  const monitoring={enabled:fields.enabled.checked,frequency:fields.frequency.value,weekday:Number(fields.weekday.value),every:Number(fields.every.value),time:fields.time.value,onBlocked:fields.onBlocked.value};
+  const problem=byId("schedule-error");
+  if(!validMonitoring(monitoring)) {
+    problem.textContent=!/^([01]\d|2[0-3]):[0-5]\d$/.test(monitoring.time)?"Give the time as hours and minutes.":"Repeat every 1 to 365 days.";
+    return;
+  }
+  const saved=stored=>{
+    render();
+    byId("schedule-form")?.querySelector('button[type="submit"]')?.focus();
+    notify(!stored?"Schedule applies to this tab. Browser storage is unavailable.":scheduleState.enabled?"Schedule saved. Next check "+checkDate(scheduleState.nextAt)+".":"Schedule saved. Automatic checks are paused.");
+    checkDue();
+  };
+  if(serverMode()) {
+    agentPost("/api/settings",{section:"monitoring",monitoring}).then(reply=>{applySettings(reply,true);saved(true);})
+      .catch(error=>{const target=byId("schedule-error");if(target) target.textContent=error.message;});
+    return;
+  }
   scheduleState=readScheduleOrCurrent();
-  const {enabled,days}=event.target.elements;
-  const interval=Number(days.value);
-  if(!Number.isInteger(interval)||interval<1||interval>365) return;
-  const keepNext=scheduleState.enabled && scheduleState.days===interval;
-  scheduleState={...scheduleState,enabled:enabled.checked,days:interval,
-    nextAt:enabled.checked?(keepNext?scheduleState.nextAt:Date.now()+interval*dayMs):null};
-  const saved=storeSchedule();
-  render();
-  byId("schedule-form").querySelector('button[type="submit"]').focus();
-  notify(saved?"Schedule saved.": "Schedule applies to this tab. Browser storage is unavailable.");
-  checkDue();
+  scheduleState={...scheduleState,...monitoring,nextAt:nextCheckAt(monitoring)};
+  saved(storeSchedule());
 });
 byId("drawer").addEventListener("close",()=>{if(drawerOrigin?.isConnected) drawerOrigin.focus();drawerOrigin=null;});
 window.addEventListener("storage",event=>{

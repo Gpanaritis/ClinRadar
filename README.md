@@ -62,6 +62,8 @@ Open **http://127.0.0.1:4173/?empty** to start from an empty workspace (one-pers
 
 **Agents in action**, in the menu, shows the team at work: the master agent ranks the shipments and hands tasks to the Supply, Logistics, Records and Communications agents; they read IRT, ERP, the depot and the eTMF over MCP; the RegChain verifier (fixed rules, no AI) tests every option. Replay any run step by step at 1× to 8×, filter the steps by agent, or pick one shipment. A live run streams in as it happens.
 
+**Settings**, in the menu, holds the **Monitoring schedule** (how often and when the sources are checked, and whether the agents then prepare plans for blocked shipments) and the **AI connections** (the Claude service, each agent's model, the company systems over MCP, and requests for new connections that the Quality owner approves). Every change is kept in the audit trail; keys never pass through the page. See the [screen guide](RegChain-AI-Screen-Guide.md), section 12.
+
 The Israel scenario ([RegChain-AI-Israel-Scenario.md](RegChain-AI-Israel-Scenario.md), illustrative) shows a booklet label that can no longer serve two countries: from 3 Jan 2027 Israel refuses the label shared with Greece and Cyprus, so the stock splits and the agents choose between Israel-only kits, relabelling and an earlier import.
 
 ## Agents

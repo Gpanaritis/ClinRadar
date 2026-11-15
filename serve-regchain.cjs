@@ -415,6 +415,31 @@ async function handleApi(request, response, path) {
     }
     return;
   }
+  // Settings: the monitoring schedule and the connections the agents may use (regchain-ai/settings.mjs).
+  if (path === "/api/settings" && request.method === "GET") {
+    const { readSettings, SETTINGS_ROLES } = await loadModule("settings.mjs");
+    const { session } = await (await api()).actorFor(request);
+    sendJson(response, 200, { ...readSettings(__dirname), roles: SETTINGS_ROLES, role: session?.role ?? null });
+    return;
+  }
+  if (path === "/api/settings" && request.method === "POST") {
+    try {
+      const body = await readJson(request);
+      const settings = await loadModule("settings.mjs");
+      const { session, label } = await (await api()).actorFor(request);
+      if (!session?.role) throw Object.assign(new Error("Choose a role first."), { statusCode: 401 });
+      const who = { by: label, role: session.role };
+      let result;
+      if (body.section === "monitoring") result = settings.saveMonitoring(__dirname, body.monitoring, who);
+      else if (body.section === "connection-request") result = settings.requestConnection(__dirname, body.request, who);
+      else if (body.section === "connection-decision") result = settings.decideConnection(__dirname, { id: body.id, decision: body.decision, note: body.note }, who);
+      else throw Object.assign(new Error("Unknown setting."), { statusCode: 400 });
+      sendJson(response, 200, { ...result, roles: settings.SETTINGS_ROLES, role: session.role });
+    } catch (error) {
+      sendJson(response, error.statusCode || 500, { error: error.message || "The setting could not be saved." });
+    }
+    return;
+  }
   if (path === "/api/sources/retry" && request.method === "POST") {
     if (request.headers.origin && !allowedOrigins.includes(request.headers.origin)) {
       sendJson(response, 403, { error: "Requests from other sites are refused." });

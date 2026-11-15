@@ -156,6 +156,42 @@ await writeFile(join(cache, "analysis-latest.json"), JSON.stringify(passing));
 await rm(join(temp, "data"), { recursive: true, force: true });
 await sourceFile("reg46-after", "46. Labelling of investigational medicinal products under Part 7 as amended.");
 
+// ---------- 3b. Settings: the monitoring schedule and connection requests, kept in the audit trail ----------
+{
+  const settings = await import("../regchain-ai/settings.mjs");
+  const refused = (work, status, text) => assert.throws(work, error => error.statusCode === status && (!text || error.message.includes(text)));
+  const sme = { by: "A. Novak · Regulatory SME", role: "reviewer" };
+  const supply = { by: "P. Laine · Clinical Supply", role: "viewer" };
+  const quality = { by: "M. Okafor · Quality owner", role: "owner" };
+  assert.deepEqual(settings.readSettings(root).monitoring, settings.MONITORING_DEFAULTS, "the defaults until someone changes the schedule");
+  refused(() => settings.saveMonitoring(root, { frequency: "weekly" }, supply), 403);
+  refused(() => settings.saveMonitoring(root, { time: "25:00" }, sme), 422, "HH:MM");
+  refused(() => settings.saveMonitoring(root, { frequency: "hourly" }, sme), 422);
+  const saved = settings.saveMonitoring(root, { frequency: "weekly", weekday: 3, time: "07:30", onBlocked: "plan" }, sme);
+  assert.equal(saved.monitoring.weekday, 3);
+  assert.equal(saved.changed.by, sme.by);
+  assert.equal(settings.saveMonitoring(root, saved.monitoring, quality).log.length, 1, "saving the same schedule again records nothing");
+  refused(() => settings.requestConnection(root, { name: "Courier", holds: "Delivery status", access: "write", owner: "Logistics" }, supply), 422, "read-only or draft-only");
+  refused(() => settings.requestConnection(root, { name: "Courier", holds: "Delivery status", access: "read-only", owner: "Logistics", address: "http://plain" }, supply), 422, "https://");
+  const asked = settings.requestConnection(root, { name: "Courier tracking", holds: "Delivery status", access: "read-only", owner: "Logistics" }, supply);
+  const courier = asked.connections[0];
+  assert.equal(courier.status, "requested");
+  refused(() => settings.requestConnection(root, { name: "courier TRACKING", holds: "Again", access: "read-only", owner: "Logistics" }, sme), 409);
+  refused(() => settings.decideConnection(root, { id: courier.id, decision: "approved" }, sme), 403, "Quality owner");
+  refused(() => settings.decideConnection(root, { id: courier.id, decision: "rejected", note: "" }, quality), 422, "why");
+  assert.equal(settings.decideConnection(root, { id: courier.id, decision: "approved" }, quality).connections[0].status, "approved");
+  refused(() => settings.decideConnection(root, { id: courier.id, decision: "rejected", note: "Changed my mind" }, quality), 409, "already approved");
+  const own = settings.requestConnection(root, { name: "Temperature loggers", holds: "Excursion reports", access: "draft-only", owner: "Quality" }, quality).connections[1];
+  refused(() => settings.decideConnection(root, { id: own.id, decision: "approved" }, quality), 409, "cannot also approve");
+  assert.equal(settings.decideConnection(root, { id: own.id, decision: "rejected", note: "Not needed after all" }, quality).connections[1].status, "rejected", "turning down one's own request withdraws it");
+  const db = openDatabase(root);
+  assert.equal(verifyAudit(db).ok, true);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_entry WHERE type LIKE 'settings.%' OR type LIKE 'connection.%'").get().n, 5);
+  console.log("ok  settings: schedule defaults, roles and validation; connection requests read-only or draft-only, four eyes on approval, all in the audit chain");
+  closeDatabase(root);
+}
+await rm(join(temp, "data"), { recursive: true, force: true });
+
 // ---------- 4. The /v1 API ----------
 const api = createApi({ root, allowedOrigins: ["http://127.0.0.1:0"] });
 const server = createServer((request, response) => api.handle(request, response, new URL(request.url, "http://127.0.0.1")));

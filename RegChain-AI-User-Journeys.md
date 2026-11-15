@@ -36,10 +36,12 @@ flowchart LR
   CASE --> T3[Country specification]
   CASE --> T4[Quality follow-up]
   CS[Country specifications] --> SEC[Section detail]
-  MS[Monitoring schedule]
+  SET[Settings] --> MS[Monitoring schedule]
+  SET --> AIC[AI connections]
+  OV -->|Schedule in the run bar| MS
 ```
 
-The menu has: **Overview · Shipment checks · Agent plans · Agents in action · Country specifications · Source log · Monitoring schedule**. A plan page always opens under **Agent plans**, and its breadcrumb leads back there.
+The menu has: **Overview · Shipment checks · Agent plans · Agents in action · Country specifications · Source log · Settings**. A plan page always opens under **Agent plans**, and its breadcrumb leads back there.
 
 ### What each screen is for
 
@@ -52,6 +54,8 @@ The menu has: **Overview · Shipment checks · Agent plans · Agents in action �
 | **Change case** | Is this rule change real, and how does the specification change? | Run AI check, then Approve & publish |
 | **Country specifications** | What does each country require today, and what is changing? | Open a section |
 | **Source log** | Did every official source get checked? | Retry this check |
+| **Settings › Monitoring schedule** | When are the sources checked, and do the agents start on their own after a check? | Save the schedule; Run checks now |
+| **Settings › AI connections** | Which Claude models and company systems do the agents use, and is the AI ready? | Request a new connection; the Quality owner approves or rejects it |
 
 ### Filters
 
@@ -200,6 +204,13 @@ flowchart TD
 2. **Open the Israel change**: the evidence, the assessment and the **Label pool after the change**.
 3. **Agents in action → Run → SHP-IL-03**: the master agent sends Logistics to find a Thursday delivery (Friday is not an Israeli working day), Records to check the import approval, Communications to draft a Hebrew and English note, and Supply to find Israel-only stock. The verifier tests three ways out.
 4. **Agent plans**: SHP-IL-02 takes the Israel-only kits, so SHP-IL-03 is re-planned to relabelling.
+
+### J14 · Setting the schedule and the connections
+
+1. **Settings → Monitoring schedule**, acting as the **Regulatory SME** (A. Novak): weekdays at 06:30, and **Have the agents prepare plans**. **Save schedule**. The next three checks appear, and the change is in the audit trail.
+2. After the next check, blocked shipments without a plan go to the agent team on their own. Clinical Supply finds the plans under **Agent plans** and still approves each one.
+3. **Settings → AI connections**, acting as **Clinical Supply** (P. Laine): **Request a new connection**, for example courier tracking, read-only, with its business owner and why it is needed.
+4. Acting as the **Quality owner** (M. Okafor): **Approve**, or **Reject** with a reason. An approved connection is built and validated before any agent uses it; until then the agents keep to the six systems listed.
 
 ### J10 · A source check failed
 
