@@ -68,6 +68,11 @@ if (form) {
       setStatus('error', 'Check the highlighted fields.');
       return;
     }
+    // A standalone copy (static hosting) has no ClinRadar server to receive the message.
+    if (document.documentElement.dataset.regchainMode === 'static') {
+      setStatus('error', 'Messages cannot be sent from this preview. Please contact us by email instead.');
+      return;
+    }
     submit.disabled = true;
     setStatus('pending', 'Sending…');
     try {

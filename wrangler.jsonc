@@ -1,0 +1,13 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "trialready-landing",
+  "compatibility_date": "2026-11-15",
+  "workers_dev": true,
+  "build": {
+    "command": "npm run build:landing"
+  },
+  "assets": {
+    "directory": "./dist/landing",
+    "not_found_handling": "none"
+  }
+}

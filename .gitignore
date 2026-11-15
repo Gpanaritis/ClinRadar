@@ -3,3 +3,5 @@ node_modules/
 .regchain-cache/
 .regchain-data/
 backups/
+dist/
+.wrangler/
