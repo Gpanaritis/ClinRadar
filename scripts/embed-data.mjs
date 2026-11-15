@@ -14,6 +14,7 @@ export const DATA_FILES = [
   { id: "portfolio-data", file: "demo-data/uk-labelling-portfolio.json" },
   { id: "spain-data", file: "demo-data/spain-scenario.json" },
   { id: "specifications-data", file: "demo-data/country-specifications.json" },
+  { id: "israel-data", file: "demo-data/israel-scenario.json" },
 ];
 
 const tagPattern = id => new RegExp(`<script id="${id}" type="application/json">([\\s\\S]*?)</script>`);

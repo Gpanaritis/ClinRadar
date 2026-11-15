@@ -24,10 +24,29 @@ const data = await loadData(root);
 
 // 1. The same results as the dashboard's Shipment checks page.
 const by = result => allShipmentChecks(data).filter(item => item.result === result).map(item => item.id).sort();
-assert.deepEqual(by("Blocked"), ["SHP-01", "SHP-02", "SHP-03", "SHP-04", "SHP-05", "SHP-06", "SHP-08", "SHP-10", "SHP-ES-08", "SHP-ES-09", "SHP-ES-10"]);
+assert.deepEqual(by("Blocked"), ["SHP-01", "SHP-02", "SHP-03", "SHP-04", "SHP-05", "SHP-06", "SHP-08", "SHP-10", "SHP-ES-08", "SHP-ES-09", "SHP-ES-10", "SHP-IL-02", "SHP-IL-03"]);
 assert.deepEqual(by("Confirm"), ["SHP-07", "SHP-09", "SHP-ES-05", "SHP-ES-06", "SHP-ES-07"]);
-assert.deepEqual(by("Ready"), ["SHP-ES-01", "SHP-ES-02", "SHP-ES-03", "SHP-ES-04"]);
-console.log("ok  rules: 11 blocked, 5 to confirm, 4 ready, as on the Shipment checks page");
+assert.deepEqual(by("Ready"), ["SHP-CY-01", "SHP-ES-01", "SHP-ES-02", "SHP-ES-03", "SHP-ES-04", "SHP-GR-01", "SHP-IL-01"]);
+console.log("ok  rules: 13 blocked, 5 to confirm, 7 ready, as on the Shipment checks page");
+
+// 1b. Israel: one booklet label can no longer serve two countries.
+{
+  const { checkShipment } = await import("../regchain-ai/rules.mjs");
+  const il02 = checkShipment(data, "SHP-IL-02");
+  assert.match(il02.checks.find(item => item.section === "regulatory" && /Israel-only/.test(item.requirement)).detail, /shared with GR and CY/);
+  assert.equal(checkShipment(data, "SHP-IL-01").result, "Ready", "kits imported before the date may keep the shared booklet");
+  assert.equal(checkShipment(data, "SHP-GR-01").result, "Ready", "Greece keeps the booklet");
+  assert.equal(checkShipment(data, "SHP-IL-03").checks.find(item => /Israeli working day/.test(item.requirement)).result, "Fail", "a Friday delivery fails in Israel");
+  assert.equal(checkShipment(data, "SHP-CY-01").checks.find(item => /working day/.test(item.requirement) && item.section === "logistics" && /Delivered/.test(item.requirement)).result, "Pass", "a Monday delivery passes in Cyprus");
+  assert.equal(verifyOption(data, "SHP-IL-02", [{ type: "swap_batch", batch_id: "Q-815" }]).passes, true, "Israel-only stock");
+  assert.equal(verifyOption(data, "SHP-IL-02", [{ type: "relabel", relabel_date: "2026-12-08" }]).passes, true, "relabelled for Israel");
+  assert.equal(verifyOption(data, "SHP-IL-02", [{ type: "advance_dispatch", new_dispatch_date: "2026-12-28" }]).passes, true, "imported before the date");
+  assert.equal(verifyOption(data, "SHP-IL-02", [{ type: "advance_dispatch", new_dispatch_date: "2026-11-16" }]).feasible, false, "preparation would already have passed");
+  assert.equal(verifyOption(data, "SHP-IL-03", [{ type: "swap_batch", batch_id: "Q-815" }]).passes, false, "still delivered on a Friday");
+  assert.equal(verifyOption(data, "SHP-IL-03", [{ type: "swap_batch", batch_id: "Q-815" }, { type: "advance_dispatch", new_dispatch_date: "2027-01-11" }]).passes, true);
+  assert.equal(verifyOption(data, "SHP-GR-01", [{ type: "relabel", relabel_date: "2026-12-08" }]).feasible, false, "relabelling is for UK and Israeli labels");
+  console.log("ok  Israel: the shared booklet is refused from 3 Jan 2027, Greece and Cyprus keep it, Israeli sites receive Sunday to Thursday, three ways out verify");
+}
 
 // 2. The verifier is strict: partial, infeasible and too-late options fail.
 assert.equal(verifyOption(data, "SHP-04", [{ type: "swap_batch", batch_id: "J-203" }]).passes, false, "the route is still missing");
@@ -57,7 +76,7 @@ assert.deepEqual(writers, ["drafts.create_draft"]);
 console.log(`ok  MCP: ${described.map(system => `${system.name} (${system.tools.length})`).join(", ")}; only drafts.create_draft writes, and only drafts`);
 
 // 5. Scripted runs on each kind of shipment.
-const expectations = { "SHP-04": "swap-J-203", "SHP-01": "relabel-2026-11-16", "SHP-ES-09": "fix-data", "SHP-03": "escalate", "SHP-07": "proceed-confirm", "SHP-ES-05": "proceed-confirm" };
+const expectations = { "SHP-04": "swap-J-203", "SHP-01": "relabel-2026-11-16", "SHP-ES-09": "fix-data", "SHP-03": "escalate", "SHP-07": "proceed-confirm", "SHP-ES-05": "proceed-confirm", "SHP-IL-03": "swap-Q-815" };
 const saved = {};
 for (const [shipment, recommended] of Object.entries(expectations)) {
   const run = await resolveShipment({ root, shipmentId: shipment, mode: "scripted", systems });
@@ -76,12 +95,16 @@ await closeSystems(systems);
 const portfolio = await resolvePortfolio({ root, mode: "scripted", onShipment: run => writeFile(join(testCache, `agent-run-${run.shipment}.json`), JSON.stringify(run)) });
 const { record: board, runs } = portfolio;
 assert.equal(board.error, undefined, board.error);
-assert.deepEqual({ shipments: board.summary.shipments, plans: board.summary.plans, escalated: board.summary.escalated, reallocated: board.summary.reallocated }, { shipments: 16, plans: 14, escalated: 2, reallocated: 1 });
+assert.deepEqual({ shipments: board.summary.shipments, plans: board.summary.plans, escalated: board.summary.escalated, reallocated: board.summary.reallocated }, { shipments: 18, plans: 16, escalated: 2, reallocated: 2 });
 assert.deepEqual(board.board.map(row => row.shipment).slice(0, 3), ["SHP-04", "SHP-01", "SHP-03"], "most urgent first");
 const moved = board.board.find(row => row.changed);
 assert.equal(moved.shipment, "SHP-06");
 assert.match(moved.note, /2026-11-16 slot.*SHP-01/);
 assert.ok(runs["SHP-06"].drafts.some(draft => draft.withdrawn) && runs["SHP-06"].drafts.some(draft => !draft.withdrawn && draft.option_id === moved.recommended), "first-choice drafts withdrawn, new ones drafted");
+// Israel-only stock covers one Israeli shipment: the more urgent one gets it, the other is relabelled.
+const il03 = board.board.find(row => row.shipment === "SHP-IL-03");
+assert.equal(board.board.find(row => row.shipment === "SHP-IL-02").recommended, "swap-Q-815");
+assert.ok(il03.changed && /^relabel-/.test(il03.recommended) && /Q-815.*SHP-IL-02/.test(il03.note), il03.note);
 // Nothing over-promised: add up every chosen plan.
 const pool = { ...data, reservations: [] };
 for (const row of board.board.filter(item => item.status === "plan")) {
@@ -90,7 +113,7 @@ for (const row of board.board.filter(item => item.status === "plan")) {
   assert.ok(check.passes, `${row.shipment}'s plan still passes with the plans before it counted`);
   pool.reservations.push(...check.reservations);
 }
-console.log(`ok  portfolio: ${board.summary.shipments} shipments, ${board.summary.plans} plans, ${board.summary.escalated} escalated, SHP-06 moved off the 16 Nov slot that SHP-01 needs; nothing promised twice`);
+console.log(`ok  portfolio: ${board.summary.shipments} shipments, ${board.summary.plans} plans, ${board.summary.escalated} escalated, SHP-06 moved off the 16 Nov slot that SHP-01 needs, SHP-IL-03 relabelled because SHP-IL-02 takes the Israel-only kits; nothing promised twice`);
 
 // 7. Approvals are re-checked on the server.
 await approvePlan(root, { shipment: "SHP-01", option: "relabel-2026-11-16", by: "P. Laine · Clinical Supply", runAt: runs["SHP-01"].at });

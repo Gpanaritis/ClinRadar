@@ -21,7 +21,7 @@ export const SYSTEMS = {
 };
 const READ = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
 const json = value => ({ content: [{ type: "text", text: JSON.stringify(value, null, 1) }] });
-const ACTION_TYPES = ["swap_batch", "relabel", "delay", "record_authorisation_route", "book_qp_release", "obtain_pharmacy_code", "create_label_specification", "proceed"];
+const ACTION_TYPES = ["swap_batch", "relabel", "delay", "advance_dispatch", "record_authorisation_route", "book_qp_release", "obtain_pharmacy_code", "create_label_specification", "proceed"];
 
 export function registerTools(server, system, data) {
   const { portfolio, spain, specs, ops } = data;
@@ -32,6 +32,11 @@ export function registerTools(server, system, data) {
       const studyCountry = portfolio.study_countries.find(item => item.id === batch.study_country_id);
       return { batch: batch.id, product: batch.product_id, trial: batch.study_id, country: studyCountry.country_code, qp_certified: batch.finished_imp_qp_certification_date,
         label: label ? { spec: label.id, version: label.version, jurisdiction: label.jurisdiction, legacy: label.legacy_reference } : null };
+    }
+    const il = data.israel?.trial.batches.find(item => item.id === id);
+    if (il) {
+      const label = data.israel.trial.labels.find(item => item.id === il.label);
+      return { batch: il.id, product: data.israel.trial.product, trial: data.israel.trial.id, qp_release: il.qp, expiry: il.expiry, label: { spec: label.id, type: label.type, countries: label.countries, languages: label.languages } };
     }
     const xz = spain.trial.batches.find(item => item.id === id);
     return xz ? { batch: xz.id, product: "XZ-417", trial: spain.trial.id, qp_release: xz.qp, label: { spec: spain.trial.labelSpec.id, languages: spain.trial.labelSpec.languages } } : null;
@@ -44,13 +49,14 @@ export function registerTools(server, system, data) {
       async () => json(data.reservations ?? []));
     server.registerTool("get_shipment_checks", { title: "Shipment checks", description: "Checks one planned shipment against its destination's Country Specification and returns every check with its result.", inputSchema: { shipment_id: z.string() }, annotations: READ },
       async ({ shipment_id }) => json({ shipment: shipmentView(data, shipment_id), ...checkShipment(data, shipment_id) }));
-    server.registerTool("get_country_specification", { title: "Country Specification", description: "Returns a country's specification (country id uk, de, fr, es or us), or one section of it.", inputSchema: { country: z.string(), section: z.string().optional() }, annotations: READ },
+    server.registerTool("get_country_specification", { title: "Country Specification", description: "Returns a country's specification (country id uk, de, fr, es, us, il, gr or cy), or one section of it.", inputSchema: { country: z.string(), section: z.string().optional() }, annotations: READ },
       async ({ country, section }) => {
         const spec = specs[country];
         if (!spec) return json({ error: `No specification for ${country}.` });
         const sections = section ? { [section]: spec.sections[section] } : spec.sections;
         const pending = { uk: { id: "RC-UK-001", text: "The amended Part 7 labelling rules apply from 2026-04-28. RegChain's shipment checks already apply them." },
-          es: { id: data.spain.case.id, text: `From ${data.spain.case.effective}: ${data.spain.case.policy} RegChain's shipment checks already apply it.` } }[country];
+          es: { id: data.spain.case.id, text: `From ${data.spain.case.effective}: ${data.spain.case.policy} RegChain's shipment checks already apply it.` },
+          ...(data.israel ? { il: { id: "RC-IL-001", text: `From ${data.israel.case.effective}: ${data.israel.case.summary} RegChain's shipment checks already apply it.` } } : {}) }[country];
         return json({ country, version: spec.version, published: spec.published, next_scheduled_update: spec.next, sections: Object.fromEntries(Object.entries(sections).filter(([, value]) => value).map(([id, value]) => [id, { name: sectionNames[id], owner: value.owner, items: value.items,
           ...(value.case && pending ? { pending_change: `${pending.id} is waiting for approval and changes this section. ${pending.text}` } : {}) }])) });
       });
@@ -72,10 +78,10 @@ export function registerTools(server, system, data) {
   }
   if (system === "erp") {
     server.registerTool("get_batches", { title: "Batches", description: "Returns the batches of a product with QP certification dates and label specifications.", inputSchema: { product_id: z.string() }, annotations: READ },
-      async ({ product_id }) => json([...portfolio.batches.map(item => item.id), ...spain.trial.batches.map(item => item.id)].map(batchInfo).filter(item => item?.product === product_id)));
+      async ({ product_id }) => json([...portfolio.batches.map(item => item.id), ...spain.trial.batches.map(item => item.id), ...(data.israel?.trial.batches.map(item => item.id) ?? [])].map(batchInfo).filter(item => item?.product === product_id)));
     server.registerTool("get_batch", { title: "Batch", description: "Returns one batch with its QP date and label specification.", inputSchema: { batch_id: z.string() }, annotations: READ },
       async ({ batch_id }) => json(batchInfo(batch_id) ?? { error: "Unknown batch." }));
-    server.registerTool("get_label_approval", { title: "Label approval", description: "Returns the approval status of a product's label text for a country (UK, DE).", inputSchema: { product_id: z.string(), country: z.string() }, annotations: READ },
+    server.registerTool("get_label_approval", { title: "Label approval", description: "Returns the approval status of a product's label text for a country (UK, DE, IL).", inputSchema: { product_id: z.string(), country: z.string() }, annotations: READ },
       async ({ product_id, country }) => json(ops.labelApprovals[country]?.[product_id] ?? { status: "no record" }));
     server.registerTool("get_qp_plan", { title: "QP release plan", description: "Returns the QP release plan for a batch: status and earliest release date.", inputSchema: { batch_id: z.string() }, annotations: READ },
       async ({ batch_id }) => json(ops.qpPlan[batch_id] ?? { status: "no plan on record" }));
@@ -89,6 +95,8 @@ export function registerTools(server, system, data) {
   if (system === "etmf") {
     server.registerTool("get_trial_authorisation", { title: "Trial authorisation", description: "Returns the authorisation record for a trial in a country (GB, ES, ...), with the document and its eTMF reference, and what IRT records.", inputSchema: { trial_id: z.string(), country: z.string() }, annotations: READ },
       async ({ trial_id, country }) => json(ops.trialAuthorisations[`${trial_id}|${country}`] ?? { status: "no record in the eTMF" }));
+    server.registerTool("get_import_approval", { title: "Import approval", description: "Returns the import approval on record for a shipment (for example the Israeli Ministry of Health approval): status, number or request date.", inputSchema: { shipment_id: z.string() }, annotations: READ },
+      async ({ shipment_id }) => json(ops.importApprovals?.[shipment_id] ?? { status: "no import approval on record" }));
     server.registerTool("get_site_contact", { title: "Site contact", description: "Returns the contact and channel for a trial site.", inputSchema: { site_id: z.string() }, annotations: READ },
       async ({ site_id }) => json(ops.siteContacts[site_id] ?? { status: "no contact on record" }));
   }

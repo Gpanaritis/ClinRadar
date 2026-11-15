@@ -41,13 +41,33 @@ export async function readApprovals(root) {
     at: row.approved_at, runAt: row.run_at, mode: row.mode, drafts: JSON.parse(row.drafts) }]));
 }
 
+// The Israel scenario's stock, relabelling slots, label approval, courier, site stock, import approvals and contacts join
+// the operational data, as if the IRT, ERP, depot and eTMF held them.
+function mergeIsraelOperations(ops, israel) {
+  const { trial, operations } = israel;
+  const depot = trial.depot;
+  ops.depotStock[depot] = { ...(ops.depotStock[depot] ?? {}), ...operations.depotStock };
+  const relabel = ops.relabel[depot] ?? { slots: [], turnaroundBusinessDays: operations.relabel.turnaroundBusinessDays };
+  ops.relabel[depot] = { ...relabel, slots: [...relabel.slots, ...operations.relabel.slots].sort((a, b) => a.date.localeCompare(b.date)) };
+  ops.labelApprovals.IL = { ...(ops.labelApprovals.IL ?? {}), [trial.product]: { status: "approved", version: "1", label: operations.relabel.label } };
+  ops.couriers["EMEA specialty courier"] = { from: depot, to: trial.countries, standardTransitBusinessDays: operations.transitBusinessDays, expressTransitBusinessDays: 2, weekend: false,
+    note: "Delivers to Israeli sites Sunday to Thursday, and to Greece and Cyprus Monday to Friday." };
+  Object.assign(ops.siteStockDays, operations.siteStockDays);
+  for (const shipment of trial.shipments) ops.shipmentKits[shipment.id] = shipment.kits;
+  ops.importApprovals = { ...(ops.importApprovals ?? {}), ...operations.importApprovals };
+  Object.assign(ops.siteContacts, operations.contacts);
+  ops.trialAuthorisations[`${trial.id}|IL`] ??= { route: "moh_approved", document: "Ministry of Health clinical trial approval, 4 Feb 2026", reference: "TMF-021-IL-0042", irtRecord: "approved" };
+}
+
 export async function loadData(root) {
   const read = async name => JSON.parse(await readFile(join(root, "demo-data", name), "utf8"));
-  const [portfolio, spain, specifications, ops, approvals] = await Promise.all([
-    read("uk-labelling-portfolio.json"), read("spain-scenario.json"), read("country-specifications.json"), read("supply-operations.json"), readApprovals(root),
+  const optional = name => read(name).catch(error => { if (error.code === "ENOENT") return null; throw error; });
+  const [portfolio, spain, specifications, ops, israel, approvals] = await Promise.all([
+    read("uk-labelling-portfolio.json"), read("spain-scenario.json"), read("country-specifications.json"), read("supply-operations.json"), optional("israel-scenario.json"), readApprovals(root),
   ]);
-  const specs = { ...specifications.countries, es: spain.specification };
-  const data = { portfolio, spain, specs, ops, today: portfolio.assessment_as_of.slice(0, 10), ukEffective: "2026-04-28", approvals };
+  const specs = { ...specifications.countries, es: spain.specification, ...(israel?.specifications ?? {}) };
+  if (israel) mergeIsraelOperations(ops, israel);
+  const data = { portfolio, spain, israel, specs, ops, today: portfolio.assessment_as_of.slice(0, 10), ukEffective: "2026-04-28", approvals };
   data.reservations = Object.entries(approvals).flatMap(([shipment, approval]) => planReservations(data, shipment, approval.actions ?? []));
   return data;
 }
@@ -62,6 +82,9 @@ const countryOf = code => (code === "GB" ? "uk" : code.toLowerCase());
 export const addDays = (day, days) => new Date(Date.parse(day) + days * DAY).toISOString().slice(0, 10);
 const daysBetween = (from, to) => Math.round((Date.parse(to) - Date.parse(from)) / DAY);
 export const isWeekend = day => [0, 6].includes(new Date(day + "T00:00:00Z").getUTCDay());
+// Israeli sites receive Sunday to Thursday: Friday and Saturday are the weekend.
+export const isIsraeliWeekend = day => [5, 6].includes(new Date(day + "T00:00:00Z").getUTCDay());
+const shortDay = day => new Date(day + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 const isDate = value => /^\d{4}-\d{2}-\d{2}$/.test(String(value)) && !Number.isNaN(Date.parse(value + "T00:00:00Z"));
 export function businessDaysBefore(day, count) {
   const date = new Date(day + "T00:00:00Z");
@@ -124,13 +147,69 @@ export function shipmentView(data, shipmentId) {
     };
   }
   const item = spain.trial.shipments.find(entry => entry.id === shipmentId);
-  if (!item) return null;
+  if (!item) return israelView(data, shipmentId);
   const site = spain.trial.sites.find(entry => entry.id === item.site);
   return {
     id: item.id, source: "spain", countryId: "es", siteId: site.id, site: site.city, hospital: site.hospital, dispatch: item.dispatch, delivery: item.delivery,
     leadDays: spain.trial.standardLeadBusinessDays, leadType: "business", batch: item.batch, kits: ops.shipmentKits[item.id] ?? item.kits, carrier: item.carrier,
     depot: "Central EU depot, Belgium", trial: spain.trial.id, patients: null, siteStockDays: null, pharmacyCode: site.pharmacyCode, kind: item.kind,
   };
+}
+
+function israelView(data, shipmentId) {
+  const israel = data.israel;
+  const item = israel?.trial.shipments.find(entry => entry.id === shipmentId);
+  if (!item) return null;
+  const site = israel.trial.sites.find(entry => entry.id === item.site);
+  return {
+    id: item.id, source: "israel", countryId: site.country.toLowerCase(), siteId: site.id, site: site.city, hospital: site.hospital, dispatch: item.dispatch, delivery: item.delivery,
+    leadDays: israel.trial.standardLeadBusinessDays, leadType: "business", batch: item.batch, kits: data.ops.shipmentKits[item.id] ?? item.kits, carrier: item.carrier,
+    depot: israel.trial.depot, trial: israel.trial.id, patients: site.patients, siteStockDays: data.ops.siteStockDays[site.id] ?? null, transitBusinessDays: israel.operations.transitBusinessDays,
+  };
+}
+
+// The Israel scenario: one booklet label used to serve Israel, Greece and Cyprus. From the rule's effective date Israel
+// refuses any label shared with another country, so the pooled stock splits: the booklet stays with Greece and Cyprus.
+const LABEL_LANGUAGE = { IL: ["he", "Hebrew"], GR: ["el", "Greek"], CY: ["el", "Greek"] };
+function israelChecks(data, view, overrides, dispatch, prep) {
+  const { israel, specs, ops } = data;
+  const rule = israel.case;
+  const code = view.countryId.toUpperCase();
+  const batch = israel.trial.batches.find(entry => entry.id === (overrides.batchId ?? view.batch));
+  const labelId = overrides.relabelled ? ops.labelApprovals.IL?.[israel.trial.product]?.label : batch?.label;
+  const label = israel.trial.labels.find(entry => entry.id === labelId);
+  const delivery = overrides.dispatch ? businessDaysAfter(overrides.dispatch, view.transitBusinessDays) : view.delivery;
+  const [language, languageName] = LABEL_LANGUAGE[code];
+  const checks = [];
+  checks.push({ section: "regulatory", requirement: `The label includes ${languageName}`, result: label?.languages.includes(language) ? "Pass" : "Fail",
+    detail: label ? `${label.type} label ${label.id} covers ${label.languages.join(", ").toUpperCase()}.` : `Batch ${batch?.id} has no label on record.` });
+  if (code === "IL") {
+    const others = (label?.countries ?? []).filter(country => country !== "IL");
+    const refused = others.length > 0 && delivery >= rule.effective;
+    checks.push({ section: "regulatory", requirement: `From ${shortDay(rule.effective)}: an Israel-only label with the Ministry of Health trial approval number`, result: refused ? "Fail" : "Pass",
+      detail: !others.length ? `${label?.id} is an Israel-only label.` : refused
+        ? `${label.id} is shared with ${others.join(" and ")}. Kits imported on ${delivery} are refused: relabel them for Israel, use Israel-only stock, or import before ${shortDay(rule.effective)}.`
+        : `Shared label ${label.id} is still accepted: the kits are imported on ${delivery}, before ${shortDay(rule.effective)}.` });
+    const approval = ops.importApprovals?.[view.id];
+    checks.push({ section: "import", requirement: "A Ministry of Health import approval for this shipment", result: approval?.status === "approved" ? "Pass" : approval?.status === "requested" ? "Confirm" : "Missing",
+      detail: approval?.status === "approved" ? `Import approval ${approval.number} is on record.` : approval?.status === "requested"
+        ? `Requested on ${approval.requested}; usually granted in ${approval.typicalBusinessDays} business days. Confirm it before dispatch.` : "No import approval is on record." });
+  } else {
+    const covered = (label?.countries ?? []).includes(code);
+    checks.push({ section: "regulatory", requirement: `The label covers ${code === "GR" ? "Greece" : "Cyprus"}`, result: covered ? "Pass" : "Fail",
+      detail: covered ? `${label.id} covers ${label.countries.join(", ")}; a multi-country booklet that includes Greek is accepted.` : `${label?.id} is for ${(label?.countries ?? []).join(", ")} only.` });
+  }
+  checks.push({ section: "import", requirement: "The batch's QP release documentation travels with the shipment", result: batch?.qp && batch.qp <= dispatch ? "Pass" : "Missing",
+    detail: batch?.qp ? `Batch ${batch.id} was QP released on ${batch.qp}.` : `Batch ${batch?.id} has no QP release on record.` });
+  checks.push(prep);
+  checks.push({ section: "logistics", requirement: "Dispatched on a depot working day", result: isWeekend(dispatch) ? "Fail" : "Pass", detail: isWeekend(dispatch) ? `Dispatch on ${dispatch}, a weekend day.` : `Dispatch on ${dispatch}.` });
+  const offDay = code === "IL" ? isIsraeliWeekend(delivery) : isWeekend(delivery);
+  checks.push({ section: "logistics", requirement: code === "IL" ? "Delivered on an Israeli working day (Sunday to Thursday)" : "Delivered on a working day", result: offDay ? "Fail" : "Pass",
+    detail: offDay ? `Delivery on ${delivery}, ${code === "IL" ? "a Friday or Saturday, when Israeli sites do not receive" : "a weekend day"}.` : `Delivery on ${delivery}.` });
+  const approved = (specs[view.countryId]?.sections.carriers?.items ?? []).some(entry => entry.startsWith(view.carrier));
+  checks.push({ section: "carriers", requirement: "Carrier on the approved list", result: approved ? "Pass" : "Fail", detail: `${view.carrier}${approved ? " is approved." : " is not approved."}` });
+  if (code === "IL") checks.push({ section: "ior", requirement: "Importer of record: the sponsor's local representative; consignee: the site pharmacy", result: "Pass", detail: `Consignee: ${view.hospital}.` });
+  return checks;
 }
 
 // The day the depot must start preparing a shipment for a given dispatch date.
@@ -177,6 +256,8 @@ export function checkShipment(data, shipmentId, overrides = {}) {
       checks.push(prep);
       for (const section of ["import", "carriers", "invoice"]) checks.push({ section, requirement: sectionNames[section], result: "Not checked", detail: `The ${code} specification has no ${sectionNames[section].toLowerCase()} section yet.` });
     }
+  } else if (view.source === "israel") {
+    checks.push(...israelChecks(data, view, overrides, dispatch, prep));
   } else {
     const rule = spain.case;
     const trial = spain.trial;
@@ -224,7 +305,7 @@ export function verifyOptionSafe(data, shipmentId, actions) {
 }
 
 export function allShipmentChecks(data) {
-  const ids = [...data.portfolio.shipments.map(item => item.id), ...data.spain.trial.shipments.map(item => item.id)];
+  const ids = [...data.portfolio.shipments.map(item => item.id), ...data.spain.trial.shipments.map(item => item.id), ...(data.israel?.trial.shipments.map(item => item.id) ?? [])];
   return ids.map(id => checkShipment(data, id));
 }
 
@@ -238,12 +319,14 @@ export function verifyOption(data, shipmentId, actions) {
   let feasible = true;
   const fail = text => { feasible = false; notes.push("Not feasible: " + text); };
   // A new dispatch date first, so every other action is judged against it.
-  const ordered = [...(actions ?? [])].sort((a, b) => (b.type === "delay") - (a.type === "delay"));
+  const moves = action => ["delay", "advance_dispatch"].includes(action.type);
+  const ordered = [...(actions ?? [])].sort((a, b) => moves(b) - moves(a));
   for (const action of ordered) {
     switch (action.type) {
       case "swap_batch": {
-        const current = view.source === "portfolio" ? portfolio.batches.find(item => item.id === view.batch) : spain.trial.batches.find(item => item.id === view.batch);
-        const next = view.source === "portfolio" ? portfolio.batches.find(item => item.id === action.batch_id) : spain.trial.batches.find(item => item.id === action.batch_id);
+        const batches = view.source === "portfolio" ? portfolio.batches : view.source === "israel" ? data.israel.trial.batches : spain.trial.batches;
+        const current = batches.find(item => item.id === view.batch);
+        const next = batches.find(item => item.id === action.batch_id);
         if (!next) { fail(`batch ${action.batch_id} does not exist.`); break; }
         if (view.source === "portfolio" && next.product_id !== current.product_id) { fail(`batch ${action.batch_id} is a different product.`); break; }
         const stock = ops.depotStock[view.depot]?.[action.batch_id] ?? 0;
@@ -256,10 +339,11 @@ export function verifyOption(data, shipmentId, actions) {
       }
       case "relabel": {
         if (!isDate(action.relabel_date)) { fail(`"${action.relabel_date}" is not a date (YYYY-MM-DD).`); break; }
-        const product = portfolio.batches.find(item => item.id === (overrides.batchId ?? view.batch))?.product_id;
-        const approval = ops.labelApprovals.UK?.[product];
-        if (view.countryId !== "uk") { fail("relabelling is only modelled for UK labels."); break; }
-        if (approval?.status !== "approved") fail(`the updated UK label for ${product} is ${approval?.status ?? "not on record"}${approval?.expected ? ", expected " + approval.expected : ""}.`);
+        const product = view.source === "israel" ? data.israel.trial.product : portfolio.batches.find(item => item.id === (overrides.batchId ?? view.batch))?.product_id;
+        const market = { uk: "UK", il: "IL" }[view.countryId];
+        if (!market) { fail("relabelling is only modelled for UK and Israeli labels."); break; }
+        const approval = ops.labelApprovals[market]?.[product];
+        if (approval?.status !== "approved") fail(`the ${market === "UK" ? "updated UK" : "Israel-only"} label for ${product} is ${approval?.status ?? "not on record"}${approval?.expected ? ", expected " + approval.expected : ""}.`);
         const slot = ops.relabel[view.depot]?.slots.find(item => item.date === action.relabel_date);
         if (!slot) fail(`there is no relabelling slot on ${action.relabel_date}.`);
         else if (slot.date < data.today) fail(`the ${slot.date} slot is in the past.`);
@@ -284,6 +368,16 @@ export function verifyOption(data, shipmentId, actions) {
         if (isWeekend(action.new_dispatch_date)) fail(`${action.new_dispatch_date} is a weekend day.`);
         if (view.siteStockDays !== null && delay >= view.siteStockDays) fail(`the site has ${view.siteStockDays} days of stock; a ${delay}-day delay runs it out.`);
         else if (view.siteStockDays !== null) notes.push(`The site has ${view.siteStockDays} days of stock; the delay is ${delay} days.`);
+        overrides.dispatch = action.new_dispatch_date;
+        break;
+      }
+      case "advance_dispatch": {
+        if (!isDate(action.new_dispatch_date)) { fail(`"${action.new_dispatch_date}" is not a date (YYYY-MM-DD).`); break; }
+        if (action.new_dispatch_date >= view.dispatch) { fail("the new dispatch date is not earlier than planned."); break; }
+        if (isWeekend(action.new_dispatch_date)) fail(`${action.new_dispatch_date} is a weekend day.`);
+        const prepareBy = prepareByFor(view, action.new_dispatch_date);
+        if (prepareBy < data.today) fail(`preparation would have to start on ${prepareBy}, which has passed.`);
+        else { const early = daysBetween(action.new_dispatch_date, view.dispatch); notes.push(`Preparation starts on ${prepareBy}; the site receives the kits ${early} day${early === 1 ? "" : "s"} earlier than planned.`); }
         overrides.dispatch = action.new_dispatch_date;
         break;
       }

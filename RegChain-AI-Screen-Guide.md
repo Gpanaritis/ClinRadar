@@ -132,7 +132,7 @@ The Spain case has the same steps as the UK case. The AI panel reads the note in
 
 ![Shipment checks](screens/18-shipment-checks.png)
 
-**Shows:** the pre-shipment check, now the second item in the menu. Every planned shipment (20, to the UK, Germany and Spain) is tested against its destination's Country Specification before it leaves the depot. The result is **Blocked** (a check fails, data is missing, or an expert decision is needed), **Confirm before dispatch**, or **Ready to ship**. Today: 11 blocked, 5 to confirm, 4 ready. The Overview's first tile, "Shipments blocked", opens this page, and every shipment row on the Overview cards opens its check.
+**Shows:** the pre-shipment check, now the second item in the menu. Every planned shipment (25, to the UK, Germany, Spain, Israel, Greece and Cyprus) is tested against its destination's Country Specification before it leaves the depot. The result is **Blocked** (a check fails, data is missing, or an expert decision is needed), **Confirm before dispatch**, or **Ready to ship**. Today: 11 blocked, 5 to confirm, 4 ready. The Overview's first tile, "Shipments blocked", opens this page, and every shipment row on the Overview cards opens its check.
 
 The list has a search box (shipment, site, batch or trial) and filters for result, destination and agent plan, with "Showing N of 20" as you filter. The **Agent plan** column shows where each shipment that needs action stands: no plan yet, plan to approve, plan to review, escalation, or approved. Choosing it opens the plan. **Agent plans**, at the top right, says how many plans are waiting for approval.
 

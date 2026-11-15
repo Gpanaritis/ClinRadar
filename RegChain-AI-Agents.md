@@ -4,7 +4,7 @@
 
 ## What it does
 
-The Shipment checks page finds the problem: 11 of 20 planned shipments are blocked and 5 need a confirmation. The agent layer works on the next question, **what do we do about it?**
+The Shipment checks page finds the problem: 13 of 25 planned shipments are blocked and 5 need a confirmation. The agent layer works on the next question, **what do we do about it?**
 
 Fixing a blocked shipment today means asking several teams. Supply checks for another batch, the depot looks for a relabelling slot, Regulatory finds the authorisation letter in the eTMF, and someone writes to the site. Each answer sits in a different validated system. When several shipments are blocked at once, the same kits or the same relabelling slot can easily be promised twice.
 
@@ -41,7 +41,13 @@ Every step appears live on screen, and every run can be exported as an audit rec
 | SHP-07 (UK) | Nothing blocks it; the post-cutoff label needs confirming against the approved specification | The ERP shows the updated label is approved. | Proceed, with a pre-dispatch confirmation draft for the depot. |
 | SHP-03 (Germany) | No German label specification for the batch | The specification takes 15 business days and the site has 7 days of stock. | Nothing passes, so the agents escalate to Quality instead of guessing. |
 
-In the portfolio run on today's data, 16 shipments get 14 plans that pass, 2 escalations (SHP-03, SHP-05) and 1 re-plan (SHP-06), with 28 drafts for people to approve. Nothing changes in any validated system.
+In the portfolio run on today's data, 18 shipments get 16 plans that pass, 2 escalations (SHP-03, SHP-05) and 2 re-plans (SHP-06, and SHP-IL-03 because SHP-IL-02 takes the Israel-only kits), with 31 drafts for people to approve. Nothing changes in any validated system.
+
+## Watching the team: Agents in action
+
+The **Agents in action** page shows who does what. The master agent (the orchestrator, Claude Opus 5.5) sits on top and hands tasks to four specialists (Claude Sonnet 5.5). Under them are the six systems they reach over MCP, and next to them the RegChain verifier, which is fixed code, not AI. Each step draws a line from the one who acts to the one it reaches: a task handed out, a system read, an answer, a report back, an option tested, a draft put in the inbox. The master agent's card shows how the work was split between the specialists.
+
+The page replays the last run, with each shipment's own run placed where the master agent handed it out, or follows a run live. It replays at 1× to 8×, steps one at a time, filters the steps by agent, and opens a single shipment's run. After the first check it replays the scripted run automatically, because a scripted run finishes in seconds.
 
 ## How it is built
 
@@ -106,14 +112,14 @@ Clinical supply runs on validated systems: IRT, ERP, the depot's warehouse syste
   - Every journey and demo script: [RegChain-AI-User-Journeys.md](RegChain-AI-User-Journeys.md).
 - **Live agents:** add `ANTHROPIC_API_KEY` to `.env` next to `serve-regchain.cjs` and restart RegChain. **Run the AI agents** is enabled once the key is set.
   - A run for one shipment takes a minute or two and uses Claude Opus 5.5 for the orchestrator and Claude Sonnet 5.5 for the specialists.
-  - A live portfolio run of 16 shipments takes several minutes and costs more. Run it once before the demo; the page loads the last run.
+  - A live portfolio run of 18 shipments takes several minutes and costs more. Run it once before the demo; the page loads the last run.
 - **Tests:** `npm run check:agent` makes no API call and uses a temporary cache, so approvals on the computer never change the results. It checks:
-  - the rules match the page (11 blocked, 5 to confirm, 4 ready);
+  - the rules match the page (13 blocked, 5 to confirm, 7 ready), and the Israel rules: the shared booklet refused from 3 Jan 2027, Israeli working days, three ways out;
   - the verifier rejects partial, impossible, too-late and malformed options;
   - commitments: kits and slots held by another plan are not offered again;
   - all six MCP servers start, and only the draft inbox can write;
   - six scripted runs end as expected (swap, relabel with a Monday dispatch, fix the data, escalate, proceed with a confirmation);
-  - the portfolio run: 16 shipments, most urgent first, SHP-06 re-planned, nothing promised twice;
+  - the portfolio run: 18 shipments, most urgent first, SHP-06 and SHP-IL-03 re-planned, nothing promised twice;
   - approvals: re-checked on the server, refused when stale or failing, withdrawals free their holds, and every step is logged;
   - the live loop end to end with a stand-in for Claude, including a withdrawn draft for an option that fails.
 
