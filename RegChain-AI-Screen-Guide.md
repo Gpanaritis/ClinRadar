@@ -110,7 +110,7 @@ Opening the UK regulatory section shows the **suggested edit** as a redline: the
 
 ### 12. Settings
 
-**Settings**, last in the menu, has two tabs. Served by RegChain, the server keeps the settings and records every change in the audit trail, with who made it and when. **Acting as** at the top switches the role, as on the other pages.
+**Settings**, last in the menu, has four tabs: Monitoring schedule, Alerts, AI connections and Sources. Served by RegChain, the server keeps the settings and records every change in the audit trail, with who made it and when. **Acting as** at the top switches the role, as on the other pages.
 
 ![Settings: monitoring schedule](screens/15-settings-monitoring.png)
 
@@ -118,10 +118,19 @@ Opening the UK regulatory section shows the **suggested edit** as a redline: the
 
 - whether checks run automatically, how often (every day, weekdays, once a week or every few days) and at what time, in Athens time;
 - what happens after a check when a blocked shipment has no plan yet: show it to Clinical Supply, or have the agents prepare plans (read-only and drafts only; Clinical Supply still approves each plan);
-- the next three checks, the last run and the source coverage;
+- the next three checks; served by RegChain, the last full check (scheduled or manual, and by whom), when the feeds were last polled and the regulatory sources last read, and the last problem if a run failed;
+- what each check does, including the alerts to Clinical Supply and where they go;
 - the changes to the schedule, from the audit trail.
 
-The Regulatory SME or the Quality owner changes the schedule; for other roles the form is read-only. The times stay right across the change to and from summer time. The Overview's run bar shows the schedule and opens this tab.
+The Regulatory SME or the Quality owner changes the schedule; for other roles the form is read-only. The times stay right across the change to and from summer time. The Overview's run bar shows the schedule and opens this tab. Served by RegChain, the server runs the checks, also when nobody has the page open; between checks it polls the feeds every 30 minutes and reads the regulatory sources every 24 hours. The page asks the server every minute and shows a check that ran without it. Opened as a file, the page runs them itself while it is open.
+
+**Alerts shows:**
+
+- **Where alerts go:** email (the recipients and the mail server) and the chat webhook (Teams, Slack or JSON, and its host), each On, Needs attention (with what is missing) or Not set up. The settings live on the server; the SMTP password and the webhook address never reach the page. **Send a test alert** (Clinical Supply or the Quality owner) sends a test to every channel that is on.
+- **What raises an alert:** a confirmed disruption (CRITICAL when patients would go without treatment or the site has 7 days of stock or less), a potential exposure, a rule change that holds planned shipments, and an import approval that no longer covers a shipment. Each once; a match that becomes confirmed is a new alert.
+- **Latest alerts:** each alert with its heading, when it was raised, whether it is illustrative, what happened to each delivery (sent, will be tried again, not delivered, with the server's reason) and a link to its signal.
+
+The Overview has one line for the alerts: how many, the latest, failed deliveries and where they go. An alert's link (`/?signal=…`) opens its signal.
 
 ![Settings: AI connections](screens/15b-settings-ai-connections.png)
 
@@ -134,8 +143,8 @@ The Regulatory SME or the Quality owner changes the schedule; for other roles th
 
 **Real or simulated:**
 
-- **Real:** the settings are stored on the server, checked there (roles, valid values, four eyes) and kept in the hash-chained audit trail; the schedule drives the checks in the page and, when set, starts the agents.
-- **Simulated:** a check replays the recorded source results in the open browser tab; nothing is fetched on a schedule, and the page has to be open. An approved connection request is a record only: no MCP server is created from it.
+- **Real:** the settings are stored on the server, checked there (roles, valid values, four eyes) and kept in the hash-chained audit trail. Served by RegChain, the server runs the schedule itself: it reads the official regulatory sources and the live feeds, matches them, sends the alerts by email and webhook and, when set, starts the agents.
+- **Simulated:** opened as a file, a check replays the recorded source results in the open tab. An approved connection request is a record only: no MCP server is created from it. The shipments, sites and the events that touch them in the demo are fictional or illustrative, so the alerts they raise are too, and say so.
 
 ### 13. Spain case · early warning (fictional)
 

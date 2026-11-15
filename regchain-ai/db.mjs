@@ -139,6 +139,24 @@ CREATE TABLE agent_approval (
 );
 `,
   },
+  {
+    id: 3,
+    name: "alerts to Clinical Supply and their deliveries",
+    sql: `
+CREATE TABLE alert (
+  id TEXT PRIMARY KEY, alert_key TEXT NOT NULL, kind TEXT NOT NULL, source_id TEXT NOT NULL, shipment_id TEXT, tier TEXT NOT NULL,
+  priority TEXT NOT NULL, heading TEXT NOT NULL, title TEXT NOT NULL, lines TEXT NOT NULL, link TEXT, illustrative INTEGER NOT NULL DEFAULT 0,
+  check_id TEXT NOT NULL, raised_at TEXT NOT NULL, archived_at TEXT
+);
+CREATE UNIQUE INDEX alert_open_key ON alert (alert_key) WHERE archived_at IS NULL;
+CREATE INDEX alert_raised ON alert (raised_at);
+CREATE TABLE alert_delivery (
+  id TEXT PRIMARY KEY, check_id TEXT NOT NULL, channel TEXT NOT NULL, target TEXT NOT NULL, alert_ids TEXT NOT NULL,
+  status TEXT NOT NULL, attempts INTEGER NOT NULL DEFAULT 0, last_error TEXT, created_at TEXT NOT NULL, delivered_at TEXT
+);
+CREATE INDEX alert_delivery_status ON alert_delivery (status, created_at);
+`,
+  },
 ];
 
 const handles = new Map();

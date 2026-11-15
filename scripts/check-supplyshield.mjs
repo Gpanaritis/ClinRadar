@@ -85,7 +85,8 @@ assert.deepEqual(il01Match.buffer, { siteStockDays: 13, runsOutOn: "2026-11-27" 
 assert.deepEqual(il01Match.impact.ifNothingDone, { rebookedFlight: "2026-11-25", delivery: "2026-11-29", daysWithoutTreatment: 2 }, "the courier's next free flight delivers on Sunday 29 Nov, two days after the stock runs out");
 assert.equal(il01Match.impact.patients, 14);
 assert.deepEqual(ss.patientsAtRisk, { shipments: ["SHP-IL-01"], patients: 14 });
-assert.equal(ss.costReference.perDay, 55716, "the cost of a trial day, with its source");
+assert.equal(ss.costReference.perDay, 40000, "the cost of a trial day as the pitch quotes it (Phase II and III), with its source");
+assert.equal(ss.costReference.byPhase["Phase III"], 55716, "and the figure for each phase");
 const tracking = signal("SIG-COURIER-TRACKING-1114");
 assert.equal(tracking.tier, "observed");
 assert.ok(tracking.notes.some(note => /no physical shipment is affected/.test(note)), "a tracking outage is not a lost shipment");

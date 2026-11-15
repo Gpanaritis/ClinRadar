@@ -35,7 +35,9 @@ flowchart LR
 | `regchain-ai/impact.mjs` | The Clinical Supply impact rules, the same as the dashboard's: the UK labelling rule on the finished-IMP QP date, and the Spain shipping-document rule. Each finding names its rule version (`uk_imp_labeling@1`, `es_shipping_documents@1`). |
 | `regchain-ai/cases.mjs` | The governed cases and their workflow: decisions, publication, the Quality task and closure. Each step stores the new state, proposal revision, decision, published requirement and specification versions, the downstream action, audit entries and outbox events in one transaction. |
 | `regchain-ai/pipeline.mjs` | Replays a fixture set end to end, live or with the recorded extraction. |
-| `regchain-ai/api.mjs` | The `/v1` routes, sessions, the same-site guard, idempotency and outbox delivery. |
+| `regchain-ai/api.mjs` | The `/v1` routes, sessions, the same-site guard, idempotency and outbox delivery; reading the official regulatory sources again and running the pipeline only when one changed. |
+| `regchain-ai/check.mjs`, `scheduler.mjs` | One check (regulatory sources, feeds, matching, alerts) and the server's schedule that runs it, with feed polls between checks. |
+| `regchain-ai/alerts.mjs`, `notify.mjs` | Alerts to Clinical Supply, their deliveries and retries; email over SMTP and the Teams, Slack or JSON webhook. |
 | `regchain-ai/openapi.mjs` | The OpenAPI 3.1 description, served at `/v1/openapi.json`. |
 
 ## The pipeline
@@ -127,6 +129,7 @@ The database is `.regchain-data/regchain.db`. Git ignores it, and `REGCHAIN_DATA
 - `shipment_action`, `change_decision`
 - `session`, `idempotency_key`, `replay_run`
 - `audit_entry`, `outbox_event`
+- `alert`, `alert_delivery` (migration 3): each alert to Clinical Supply once, with its evidence lines, and each delivery by email or webhook with its attempts and last error. A rehearsal archives open alerts (`archived_at`); nothing is deleted.
 
 Migrations are numbered and run once. A shipped migration is never edited; a new one is added instead.
 

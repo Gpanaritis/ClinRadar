@@ -42,6 +42,14 @@ All settings are environment variables. An unset variable uses the default.
 | `REGCHAIN_WRITES_PER_MINUTE` | `120` | Per client address per minute: write requests to `/v1`, and separately requests to `/api` that start work. Over the limit: 429 with `Retry-After` |
 | `REGCHAIN_CONTACTS_PER_HOUR` | `10` | Per client address per hour: messages sent through the public contact form (`POST /api/contact`). Over the limit: 429 with `Retry-After` |
 | `REGCHAIN_ENTERPRISE_TOKEN` | none | Password mode: the bearer token the enterprise risk system sends to `POST /api/enterprise-alerts`. While it is unset the webhook answers 503. In local mode only this computer may post alerts. Use a long random value and keep it in the secret store |
+| `REGCHAIN_SCHEDULER` | on | `off` stops the server's own checks: no scheduled check, no feed poll, no regulatory poll. Checks then run only from the page. For tests and for a copy that must never reach the internet. See [Alerts and the schedule](#alerts-and-the-schedule) |
+| `REGCHAIN_ALERT_EMAIL_TO` | none | Who receives the alerts by email: Clinical Supply's addresses, separated by commas |
+| `REGCHAIN_SMTP_HOST`, `REGCHAIN_SMTP_PORT` | none, `587` (`465` with `tls`) | The company's mail server |
+| `REGCHAIN_SMTP_SECURITY` | `starttls` | `starttls` (required, not optional), `tls` (encrypted from the start, usually port 465), or `none`, which only works with a relay on this computer (`127.0.0.1`) |
+| `REGCHAIN_SMTP_USER`, `REGCHAIN_SMTP_PASSWORD` | none | The sign-in, if the mail server asks for one (PLAIN or LOGIN). Never sent without encryption. Keep the password in the secret store |
+| `REGCHAIN_SMTP_FROM` | none | The sender address, for example `clinradar@your-company.example` |
+| `REGCHAIN_ALERT_WEBHOOK_URL` | none | A chat webhook that receives the alerts. `https://` only (or `http://127.0.0.1` for a test) |
+| `REGCHAIN_ALERT_WEBHOOK_FORMAT` | `json` | `teams` (an Adaptive Card for a Teams workflow, "When a Teams webhook request is received"), `slack` (an incoming webhook) or `json` (the alerts as data, for any other system) |
 | `REGCHAIN_LOG_FORMAT` | `json` | `text` gives lines for reading in a terminal |
 | `REGCHAIN_LOG_LEVEL` | `info` | `debug`, `info`, `warn` or `error` |
 | `REGCHAIN_DATA_DIR` | `.regchain-data` in the RegChain folder | Folder of the database. The Docker image sets `/data` |
@@ -253,7 +261,7 @@ docker compose start regchain
 2. Keep the current image so you can go back, for example `docker tag <project>-regchain regchain:previous` (`docker compose images` shows the name).
 3. Get the new code and start it: `docker compose build && docker compose up -d`, or `npm ci --omit=dev` and restart the service.
 4. Migrations run on start. Each numbered migration runs once, in order, inside a transaction, and is recorded in the `schema_migration` table. A migration that has shipped is never edited: changes come as new migrations.
-5. Open `/v1/health`: it must answer 200, with `schema_version` 2 in this version.
+5. Open `/v1/health`: it must answer 200, with `schema_version` 3 in this version (migration 3 adds the alerts and their deliveries).
 
 There are no down migrations. To roll back, stop RegChain, start the previous image or code, and restore the backup from step 1.
 
@@ -264,7 +272,7 @@ Earlier versions kept agent plan approvals in `agent-approvals.json` in the cach
 `GET /v1/health` needs no sign-in. It recomputes the whole audit hash chain and answers, for example:
 
 ```json
-{ "status": "ok", "schema_version": 2, "audit": { "ok": true }, "time": "2026-11-15T09:00:00.000Z" }
+{ "status": "ok", "schema_version": 3, "audit": { "ok": true }, "time": "2026-11-15T09:00:00.000Z" }
 ```
 
 - A broken chain is an incident: the route answers **503** with `"status": "audit_chain_broken"`, so any monitor that checks the HTTP status raises it. The Docker health check does.
@@ -277,6 +285,20 @@ Earlier versions kept agent plan approvals in `agent-approvals.json` in the cach
 - `REGCHAIN_LOG_FORMAT=text` gives readable lines. `REGCHAIN_LOG_LEVEL=warn` leaves out the request lines.
 - Every response carries `X-Request-Id`. A caller's own `X-Request-Id` of 8 to 80 letters, digits, dots, dashes or underscores is kept; otherwise RegChain creates one. Search the logs for it to trace a request.
 - In Docker: `docker compose logs -f regchain`.
+
+## Alerts and the schedule
+
+**The server runs the checks.** Nobody has to keep the page open. On the monitoring schedule (Settings › Monitoring schedule, Athens time) the server runs the full check: it reads the official regulatory sources again, reads the live feeds (UK FCDO travel advice and GDACS) for every country monitored for external risk, matches every signal to the shipments and raises the alerts. Between full checks it polls the feeds every `weather_poll_minutes` (30) and reads the regulatory sources again every `regulatory_poll_hours` (24), both from `config/supplyshield.yaml`; a poll that finds something new raises its alerts at once. A check missed while the server was down runs once when it starts again. Pausing the schedule pauses all of it. When Settings say "Have the agents prepare plans", the agents plan every blocked shipment without a plan after a scheduled check: live with Claude when it is set up, otherwise the scripted walkthrough. Their plans are drafts, and Clinical Supply approves them. Each run is one `supplyshield.checked` audit entry with what it read and found; the regulatory read is a `regulatory_sources.checked` entry. A source that does not answer keeps its last good copy, and the entry says so. `GET /api/scheduler` gives the last and next runs. The start-up lines say when the next check is due.
+
+**Alerts go to Clinical Supply.** After every check and poll, ClinRadar raises an alert for each new item that touches our shipments: a confirmed disruption, a potential exposure, a rule change that holds planned shipments, or an import approval that no longer covers a shipment. An item is raised once. The same match at a higher tier, potential and then confirmed, is a new alert. Each alert carries its evidence: the event, the shipment and the leg, the record that confirmed it (or what is missing and who must confirm it), the patients behind it, the sources with their times, the next step and a link that opens the signal. Patients appear only as a count: ClinRadar holds no patient-level data. All the alerts of one run go out together, as one email and one webhook message, most urgent first. A confirmed disruption is CRITICAL when patients would go without treatment or the site has 7 days of stock or less.
+
+- **Email:** set `REGCHAIN_ALERT_EMAIL_TO`, `REGCHAIN_SMTP_HOST`, `REGCHAIN_SMTP_FROM` and, if the mail server asks for a sign-in, `REGCHAIN_SMTP_USER` and `REGCHAIN_SMTP_PASSWORD`. RegChain speaks SMTP itself, with no extra package: STARTTLS on 587 by default, or TLS on 465. It refuses to send a password without encryption.
+- **Chat:** set `REGCHAIN_ALERT_WEBHOOK_URL` and `REGCHAIN_ALERT_WEBHOOK_FORMAT`. For Microsoft Teams, create a workflow from the template "Post to a channel when a webhook request is received" and use its address with `teams`. For Slack, create an incoming webhook and use `slack`.
+- **No channel set up:** alerts are still raised, audited and shown in ClinRadar (Overview, and Settings › Alerts); the start-up lines say that none is sent.
+- **Delivery:** a message that could not be delivered is tried again at the next check or poll, up to five times, then marked failed. Every alert (`alert.raised`), every delivery (`alert.delivered`) and every failure (`alert.delivery_failed`) is in the audit trail. Settings › Alerts shows each channel, what it still needs, the latest alerts and what happened to each delivery, and **Send a test alert** (Clinical Supply or the Quality owner).
+- **Rehearsals:** `?fresh` and `?empty` archive the open alerts (they stay in the database and the trail), so the next check of the rehearsal raises them again.
+
+The SMTP password and the webhook address stay on the server. The page learns only the recipients, the mail server's name and the webhook's host.
 
 ## AI and the data it receives
 

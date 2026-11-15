@@ -137,6 +137,8 @@ const port = await new Promise(resolve => {
 });
 const env = { ...process.env, REGCHAIN_AUTH: "password", REGCHAIN_HOST: "127.0.0.1", REGCHAIN_PORT: String(port), REGCHAIN_DATA_DIR: dataDir, REGCHAIN_CACHE_DIR: cacheDir,
   REGCHAIN_LOGIN_ATTEMPTS: "3", REGCHAIN_LOGIN_ATTEMPTS_PER_ADDRESS: "12", REGCHAIN_WRITES_PER_MINUTE: "60", REGCHAIN_CONTACTS_PER_HOUR: "8", REGCHAIN_LOG_LEVEL: "warn", ANTHROPIC_API_KEY: "",
+  // No network in this check: the server schedule stays off, and no alert channel from a local .env applies.
+  REGCHAIN_SCHEDULER: "off", REGCHAIN_ALERT_EMAIL_TO: "", REGCHAIN_SMTP_HOST: "", REGCHAIN_ALERT_WEBHOOK_URL: "",
   REGCHAIN_ENTERPRISE_TOKEN: "enterprise-test-token-4f1c9a7e2b" };
 const ENTERPRISE_TOKEN = env.REGCHAIN_ENTERPRISE_TOKEN;
 const users = (args, extra = {}) => spawnSync(process.execPath, [join(root, "scripts", "users.mjs"), ...args], { env: { ...env, ...extra }, encoding: "utf8" });
@@ -236,7 +238,7 @@ try {
   assert.ok(front.text.includes(`nonce="${frontNonce}"`));
   assert.match((await call("GET", "/RegChain-AI-Dashboard.html")).text, /id="signin"/);
   for (const [method, path] of [["GET", "/v1/cases"], ["GET", "/v1/audit/verify"], ["GET", "/v1/shipment-actions"], ["GET", "/api/agent/approvals"], ["GET", "/api/agent/plans"],
-    ["GET", "/api/supplyshield"], ["POST", "/api/supplyshield/monitoring"], ["GET", "/api/settings"], ["POST", "/api/settings"], ["GET", "/api/agent/status"], ["GET", "/api/ai/status"],
+    ["GET", "/api/supplyshield"], ["POST", "/api/supplyshield/monitoring"], ["GET", "/api/settings"], ["POST", "/api/settings"], ["GET", "/api/agent/status"], ["GET", "/api/ai/status"], ["GET", "/api/scheduler"], ["POST", "/api/alerts/test"],
     ["GET", "/api/agent/run?shipment=SHP-IL-01&mode=scripted"], ["POST", "/api/agent/approve"], ["GET", "/api/contact/../agent/plans"], ["POST", "/api/contacts"]]) {
     assert.equal((await call(method, path, method === "POST" ? { body: {} } : {})).status, 401, `${method} ${path} needs sign-in`);
   }
@@ -373,6 +375,23 @@ try {
   }
 
   const rita = await signInAs("rita.reg", "rita.reg-password");
+  {
+    // The server schedule and the alerts, as the page sees them, with the schedule off and no channel set up.
+    const scheduleStatus = await call("GET", "/api/scheduler", { cookie: sam.cookie });
+    assert.equal(scheduleStatus.status, 200);
+    assert.deepEqual(scheduleStatus.json, { on: false, reason: "off" }, "REGCHAIN_SCHEDULER=off: no check runs by itself");
+    assert.match(serverOutput, /Scheduled checks are off \(REGCHAIN_SCHEDULER=off\)/);
+    assert.match(serverOutput, /Alerts to Clinical Supply: shown in ClinRadar only/);
+    const state = await call("GET", "/api/supplyshield", { cookie: sam.cookie });
+    assert.equal(state.json.alerts.channels.any, false);
+    assert.equal(state.json.scheduler.on, false);
+    assert.equal((await call("POST", "/api/alerts/test", { cookie: rita.cookie, body: {} })).status, 403, "the Regulatory SME does not send test alerts");
+    const noChannel = await call("POST", "/api/alerts/test", { cookie: sam.cookie, body: {} });
+    assert.equal(noChannel.status, 409);
+    assert.match(noChannel.json.error, /No alert channel is set up yet/);
+    assert.equal((await call("POST", "/api/alerts/test", { cookie: sam.cookie, body: {}, headers: { Origin: "https://evil.example" } })).status, 403, "never from another site");
+    console.log("ok  schedule and alerts: off by setting, said at start; the page sees no channel; a test alert only by Clinical Supply or the Quality owner, never from another site");
+  }
   assert.equal((await call("POST", "/api/agent/approve", { cookie: rita.cookie, body: { shipment: "SHP-1", option: "hold" } })).status, 403, "only Clinical Supply approves supply plans");
   assert.equal((await call("POST", "/v1/cases/uk/reset", { cookie: rita.cookie, body: {} })).status, 200);
   const entries = (await call("GET", "/v1/cases/uk/audit", { cookie: rita.cookie })).json.entries;

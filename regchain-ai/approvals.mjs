@@ -10,6 +10,7 @@ import { loadData, readApprovals, verifyOptionSafe as verifyOption } from "./rul
 import { draftApprovedOption } from "./agent.mjs";
 import { appendAudit, openDatabase, transaction } from "./db.mjs";
 import { emptyScope } from "./monitoring.mjs";
+import { archiveAlerts } from "./alerts.mjs";
 
 const refuse = (statusCode, message) => Object.assign(new Error(message), { statusCode });
 const runFile = (root, shipment) => join(cacheDir(root), `agent-run-${shipment}.json`);
@@ -119,11 +120,14 @@ export async function startFresh(root, { plans = false, empty = false, by = null
     await mkdir(join(dir, "agent-runs", `archived-${stamp}`), { recursive: true });
     for (const name of names) { await rename(join(dir, name), join(dir, "agent-runs", `archived-${stamp}`, name)); moved++; }
   }
-  // The audit entry keeps every archived approval in full, so nothing is lost.
+  // The audit entry keeps every archived approval in full, so nothing is lost. Open alerts are archived too, so the next
+  // check of the rehearsal raises them again; they stay in the database and the trail.
   transaction(db, () => {
     db.prepare("DELETE FROM agent_approval").run();
+    const alerts = archiveAlerts(db);
     appendAudit(db, { actor: by ?? "RegChain", type: plans ? "approvals_and_plans.archived" : "approvals.archived", subjectType: "rehearsal", subjectId: stamp,
-      detail: `${archived.length} approvals archived${plans ? ", " + moved + " runs moved to the history" : ""}`, data: { runsArchived: moved, approvals: archived } });
+      detail: `${archived.length} approvals archived${plans ? ", " + moved + " runs moved to the history" : ""}${alerts.archived ? ", " + alerts.archived + " alerts archived" : ""}`,
+      data: { runsArchived: moved, approvals: archived, alertsArchived: alerts.archived, deliveriesCancelled: alerts.cancelled } });
   });
   return { archived: true, plans, runsArchived: moved, approvalsArchived: archived.length };
 }
