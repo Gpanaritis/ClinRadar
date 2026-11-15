@@ -1,0 +1,16 @@
+# One RegChain instance with its data in a named volume. Only this computer reaches port 4173: put an HTTPS reverse
+# proxy (for example Caddy or nginx) in front, and set REGCHAIN_PUBLIC_ORIGIN to the address people open.
+services:
+  regchain:
+    build: .
+    ports:
+      - "127.0.0.1:4173:4173"
+    environment:
+      # REGCHAIN_PUBLIC_ORIGIN: "https://regchain.your-company.example"
+      # REGCHAIN_TRUST_PROXY: "1"
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    volumes:
+      - regchain-data:/data
+    restart: unless-stopped
+volumes:
+  regchain-data: {}

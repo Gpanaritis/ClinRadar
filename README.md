@@ -25,6 +25,17 @@ A regulation pipeline snapshots the official sources, detects meaningful changes
 
 `npm run check:server` tests the database, the workflow against the page's own code, the acceptance answer key, the pipeline and the API, without network or AI calls. `npm run check` runs every check. Details: [RegChain-AI-Data-And-API.md](RegChain-AI-Data-And-API.md).
 
+## Running it for a team
+
+By default RegChain serves one person on this computer, who picks a role with **Acting as**. For a team, set `REGCHAIN_AUTH=password`: named users sign in, each person holds one role, and the server checks that role on every request. Each sign-in, failure and sign-out is in the audit trail. The page, its data and every API route need a signed-in user.
+
+- **Sign-in:** scrypt password hashes, lockout after repeated failures, sessions that end when idle and after 12 hours, and an HttpOnly, SameSite=Strict cookie.
+- **Every response:** a Content Security Policy with a fresh script nonce per page, no framing, request IDs, JSON logs and a write rate limit.
+- **Every request body:** checked against a schema before anything runs.
+- **Operations:** a Docker image and Compose file, a CI workflow that runs every check, `npm run users` to manage people and `npm run backup` for a checked copy of the database.
+
+`npm run check:security` starts the real server with named users and tests all of this. [RegChain-AI-Deployment.md](RegChain-AI-Deployment.md) covers settings, HTTPS, users, backups and upgrades. [RegChain-AI-Validation.md](RegChain-AI-Validation.md) outlines validation for GxP use and lists what a company still decides. [SECURITY.md](SECURITY.md) says how to report a vulnerability.
+
 ## AI step
 
 The UK labeling case has a live AI check, at the top of its **Evidence & impact** tab. The local server fetches the official texts at run time: regulation 46 as in force on 27 April 2026 and from 28 April 2026 (legislation.gov.uk), Schedule 14 paragraph 6, and the MHRA guidance section on labelling transition (GOV.UK). Claude (`claude-opus-5-5`) drafts the change for `GB/IMP_LABELING`, and RegChain then checks the draft itself:
@@ -51,13 +62,15 @@ To turn it on:
 - They propose two or three options and check each one against RegChain's rules.
 - They draft the changes for people to approve.
 
-Only options that pass the fixed rules can be approved, only by Clinical Supply, and the server checks each one again before recording it. Each draft still needs approval in its own validated system. Every step, approval and withdrawal is logged, and every version of every run is kept in `.regchain-cache/`.
+Only options that pass the fixed rules can be approved, only by Clinical Supply, and the server checks each one again before recording it. Each draft still needs approval in its own validated system. Approvals and withdrawals are stored in the database with the audit trail, and every version of every run is kept in `.regchain-cache/`.
 
 **Plan all with AI agents**, on Agent plans, runs the agents on every shipment that needs action, most urgent first. RegChain then checks the plans together so no kits or relabelling slot is promised twice: today SHP-06 moves to the 18 Nov slot because SHP-01 needs the 16 Nov one more urgently.
 
-**Run the AI agents** needs the same `.env` key as the AI step. **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers without calling Claude. To rehearse from a clean start, open **http://127.0.0.1:4173/?fresh** (clears decisions, keeps plans) or **?fresh=all** (also clears plans). Nothing is deleted: approvals and runs are archived in `.regchain-cache/`. `npm run check:agent` tests the rules, the six MCP servers, scripted runs, the portfolio allocation, server-side approvals and the live loop with a stand-in for Claude, without calling the API. The systems behind the MCP servers are fictional data in `demo-data/supply-operations.json`. Design and compliance notes: [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
+**Run the AI agents** needs the same `.env` key as the AI step. **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers without calling Claude. To rehearse from a clean start, open **http://127.0.0.1:4173/?fresh** (clears decisions, keeps plans) or **?fresh=all** (also clears plans). Nothing is deleted: cleared approvals are kept in full in the audit trail, and runs are archived in `.regchain-cache/`. Starting fresh works only in the one-person mode. `npm run check:agent` tests the rules, the six MCP servers, scripted runs, the portfolio allocation, server-side approvals and the live loop with a stand-in for Claude, without calling the API. The systems behind the MCP servers are fictional data in `demo-data/supply-operations.json`. Design and compliance notes: [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
 
 - [Database, pipeline and API: the server side, how it works and how it is tested](RegChain-AI-Data-And-API.md)
+- [Deployment: settings, Docker, HTTPS, users, backups and upgrades](RegChain-AI-Deployment.md)
+- [Validation outline: intended use, GAMP 5, Part 11 and Annex 11, and what a company still decides](RegChain-AI-Validation.md)
 - [User journeys and demo scenarios: every path, who takes it, and the clicks for each demo](RegChain-AI-User-Journeys.md)
 - [Agents: how they resolve blocked shipments within validated systems](RegChain-AI-Agents.md)
 - [Product review, 15 Nov 2026: is the problem real, what was fixed, what is open](RegChain-AI-Product-Review.md)

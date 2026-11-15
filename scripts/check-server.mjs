@@ -38,6 +38,23 @@ const { loadData } = await import("../regchain-ai/rules.mjs");
   console.log("ok  database: migrations run, audit entries cannot be changed or deleted, and a tampered entry breaks the hash chain");
 }
 
+// ---------- 1b. Approvals from before the database are imported once ----------
+{
+  const { readdir } = await import("node:fs/promises");
+  const { readApprovals } = await import("../regchain-ai/rules.mjs");
+  const legacy = { "SHP-LEGACY-1": { option: "escalate", title: "Escalation", actions: [], by: "Former Approver · Clinical Supply", at: "2026-11-10T09:00:00.000Z", runAt: "2026-11-10T08:00:00.000Z", mode: "scripted", drafts: [] } };
+  await writeFile(join(process.env.REGCHAIN_CACHE_DIR, "agent-approvals.json"), JSON.stringify(legacy));
+  const approvals = await readApprovals(root);
+  assert.deepEqual([approvals["SHP-LEGACY-1"]?.by, approvals["SHP-LEGACY-1"]?.at], ["Former Approver · Clinical Supply", "2026-11-10T09:00:00.000Z"]);
+  const files = await readdir(process.env.REGCHAIN_CACHE_DIR);
+  assert.ok(!files.includes("agent-approvals.json") && files.some(name => /^agent-approvals\.imported-\d+\.json$/.test(name)), "the old file is renamed, not deleted");
+  await readApprovals(root);
+  const db = openDatabase(root);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_entry WHERE type = 'approval.imported'").get().n, 1, "imported once, with an audit entry");
+  db.prepare("DELETE FROM agent_approval WHERE shipment_id = 'SHP-LEGACY-1'").run();
+  console.log("ok  upgrade: approvals kept in agent-approvals.json by earlier versions are imported once, audited, and the file is kept under a new name");
+}
+
 // ---------- 2. The workflow matches the dashboard's own code ----------
 const html = await readFile(join(root, "RegChain-AI-Dashboard.html"), "utf8");
 const grab = open => { const start = html.indexOf(open) + open.length; return html.slice(start, html.indexOf("</script>", start)); };

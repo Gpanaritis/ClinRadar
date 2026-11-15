@@ -85,7 +85,7 @@ export async function connectSystems(root, only = Object.keys(SYSTEM_NAMES)) {
   for (const system of only) {
     const client = new Client({ name: "regchain-orchestrator", version: "0.1.0" });
     // Each server gets only what it needs from the environment: never the API key.
-    const env = { ...getDefaultEnvironment(), ...(process.env.REGCHAIN_CACHE_DIR ? { REGCHAIN_CACHE_DIR: process.env.REGCHAIN_CACHE_DIR } : {}) };
+    const env = { ...getDefaultEnvironment(), ...Object.fromEntries(["REGCHAIN_CACHE_DIR", "REGCHAIN_DATA_DIR", "REGCHAIN_DB"].filter(name => process.env[name]).map(name => [name, process.env[name]])) };
     await client.connect(new StdioClientTransport({ command: process.execPath, args: [join(root, "regchain-ai", "mcp-servers.mjs"), system], cwd: root, env, stderr: "ignore" }));
     const { tools } = await client.listTools();
     systems[system] = { client, tools };

@@ -1,0 +1,10 @@
+.git
+.github
+node_modules
+.env
+.regchain-cache
+.regchain-data
+backups
+screens
+conversational-epro
+*.png

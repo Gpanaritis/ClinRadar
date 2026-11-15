@@ -15,6 +15,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const realCache = process.env.REGCHAIN_CACHE_DIR || join(root, ".regchain-cache");
 const testCache = await mkdtemp(join(tmpdir(), "regchain-agent-check-"));
 process.env.REGCHAIN_CACHE_DIR = testCache;
+process.env.REGCHAIN_DATA_DIR = join(testCache, "data");
 
 const { loadData, allShipmentChecks, verifyOption } = await import("../regchain-ai/rules.mjs");
 const { connectSystems, closeSystems, describeSystems, resolveShipment, resolvePortfolio } = await import("../regchain-ai/agent.mjs");
@@ -153,6 +154,7 @@ assert.equal(live.drafts.length, 2);
 assert.ok(live.drafts.find(draft => draft.option_id === "B").withdrawn && !live.drafts.find(draft => draft.option_id === "A").withdrawn, "drafts of a failing option are withdrawn");
 console.log(`ok  live loop (stand-in AI): ${live.events.length} steps, delegation to the supply agent, MCP calls, verification, and a draft for a failing option withdrawn`);
 
+(await import("../regchain-ai/db.mjs")).closeDatabase(root);
 await rm(testCache, { recursive: true, force: true });
 if (process.argv.includes("--save")) {
   await mkdir(realCache, { recursive: true });
