@@ -415,11 +415,33 @@ With **Continue without it**, Belgium stays off. The strike is not matched to SH
 - Each monitoring decision is kept in the hash-chained audit trail with the person's name, the time and the reason: turning a country on or off, dismissing or restoring a suggestion. Monitoring scope shows the decision next to the country.
 - Every version of every run is kept on the computer in `.regchain-cache/agent-runs/`.
 
+### J19 · From the launch page to sign-in
+
+1. **http://127.0.0.1:4173/site/** is the public launch page. It covers:
+   - what SupplyShield prevents;
+   - how it works (watch, check, plan, verify, approve);
+   - the Belgian strike example;
+   - validation;
+   - a contact form.
+2. **Sign in** opens the app's sign-in page. There is no self sign-up: an administrator creates the accounts. For the demo, `npm run demo:accounts` creates four accounts, one role each:
+   - P. Laine (Clinical Supply);
+   - A. Novak (Regulatory SME);
+   - M. Okafor (Quality owner);
+   - L. Chen (Quality verifier).
+
+   Their passwords are in `.regchain-data/demo-accounts.txt`.
+3. Signed in, the role is fixed by the account, so there is no **Acting as** menu. To show another role, sign out and sign in as that person.
+4. A message sent from the contact form is stored on the server in `contact-requests.jsonl` with a reference such as `CR-20261115-ABC123`. No email is sent.
+
 ## Demo scenarios
 
 ### Before any demo (2 minutes)
 
-1. Open **Start-RegChain.cmd** and keep its window open. Always use the address **http://127.0.0.1:4173**, never the HTML file itself. Opened as a file, the page shows an orange notice, and the agents, approvals, monitoring decisions and live checks don't work.
+1. Choose the launcher, and keep its window open:
+   - **Start-RegChain.cmd** for the scenarios below: one computer, with **Acting as** to switch roles;
+   - **Start-SupplyShield-Site.cmd** to start from the launch page with sign-in (J19).
+
+   Only one of them can run at a time on port 4173. Always use the address **http://127.0.0.1:4173**, never the HTML file itself. Opened as a file, the page shows an orange notice, and the agents, approvals, monitoring decisions and live checks don't work.
 2. Open **http://127.0.0.1:4173/?empty** for Scenario A: an empty workspace, with the CTMS disconnected, plans and approvals archived and the cases started again. The address goes back to normal by itself.
    - For the other scenarios, open **?fresh** (clears decisions, keeps the plans) or **?fresh=all** (no plans at all).
 3. Check **Acting as**: P. Laine · Clinical Supply.
