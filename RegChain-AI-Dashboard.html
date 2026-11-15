@@ -101,6 +101,50 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 .warning-text{color:#9f2c42}.case-list li.withdrawn>strong,.case-list li.withdrawn>small:last-child{text-decoration:line-through;opacity:.6}.case-list li.withdrawn>small:first-of-type{color:#9f2c42}.shipment-chip{margin-right:2px}.sub.replanned{color:#8a5300;font-weight:650;white-space:normal}.btn.small{min-height:28px;padding:4px 10px;font-size:12px}
 .option-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;margin:8px 0 16px}.option-card{border:1px solid var(--line);border-radius:10px;padding:12px 13px;background:white;min-width:0}.option-card.recommended{border-color:#9db8f2;box-shadow:inset 3px 0 var(--blue)}.option-card h3{font-size:13.5px;margin:0}.case-pad .option-card p{font-size:13px;margin:6px 0}.action-list{margin:8px 0 4px;padding-left:18px;font-size:13px;color:var(--ink)}.option-card small{display:block;font-size:11.5px}
 @media(max-width:1100px){.guardrail-list{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:640px){.guardrail-list{grid-template-columns:minmax(0,1fr)}.agent-step{grid-template-columns:minmax(0,1fr);gap:4px}.agent-step-tool_result .agent-chip{display:none}}
+.impact-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}.impact-tab{border:1px solid var(--line);background:white;color:#3e5677;border-radius:20px;padding:7px 13px;font-weight:650;font-size:12.5px}
+.impact-tab[aria-selected="true"]{background:var(--blue);border-color:var(--blue);color:white}.impact-tab:hover{border-color:#b8cdf0}
+.tip{position:relative;display:inline-flex;vertical-align:middle;margin-left:5px}.tip-btn{width:17px;height:17px;border-radius:50%;border:1px solid #b9cbe6;background:#f3f7fd;color:#2c4f86;font:italic 700 10.5px/1 Georgia,serif;padding:0;display:inline-grid;place-items:center;cursor:help}
+.tip-pop{display:none;position:absolute;z-index:40;left:50%;top:calc(100% + 7px);transform:translateX(-50%);width:max-content;max-width:min(280px,80vw);background:#132446;color:#fff;font:500 12px/1.45 Inter,"Segoe UI",sans-serif;padding:9px 11px;border-radius:8px;box-shadow:0 8px 22px #13244640;text-align:left;white-space:normal;letter-spacing:0;text-transform:none}
+.tip-btn::before{content:"i"}.tip:hover .tip-pop,.tip-btn:focus+.tip-pop{display:block}
+.team-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 14px;margin-bottom:12px}.team-source{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#445b7c;min-width:0}.team-source select{max-width:360px;min-width:0;padding:7px 9px;border:1px solid #d5e2f1;border-radius:8px;background:white;color:var(--ink)}
+.team-buttons{display:flex;gap:6px}.team-buttons .btn{min-height:34px}.team-speed{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.team-speed .speed{border:0;background:white;padding:6px 9px;font-weight:700;font-size:12px;color:#506681}.team-speed .speed+.speed{border-left:1px solid var(--line)}.team-speed .speed.on{background:var(--pale);color:var(--deep)}
+.team-progress{flex:1 1 180px;min-width:160px}.team-progress-text{font-size:11.5px;color:var(--muted);margin-bottom:4px}.team-track{height:5px;background:#e8eef7;border-radius:4px;overflow:hidden}.team-track span{display:block;height:100%;background:var(--blue);width:0;transition:width .2s}
+.team-grid{display:grid;grid-template-columns:minmax(0,2.1fr) minmax(290px,.9fr);gap:14px;align-items:start}.team-stage{display:flex;flex-direction:column}
+.team-now{display:flex;gap:10px;align-items:flex-start;padding:10px 15px;border-bottom:1px solid var(--line);background:#f8fbff;min-height:66px}.team-now p{font-size:12.5px;color:#3d5373;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.team-now-head{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px}.team-arrow svg{width:15px;height:15px;color:var(--blue)}
+.team-board{position:relative;padding:14px 15px 12px;display:grid;gap:18px}.team-edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}.team-edges .edge{fill:none;stroke:#d3dff0;stroke-width:1.5}.team-edges .edge.live{stroke:var(--blue);stroke-width:2.5;stroke-dasharray:6 5}.team-edges .edge-dot{fill:var(--blue);stroke:white;stroke-width:2}
+.team-node{position:relative;z-index:1;background:white;border:1px solid var(--line);border-radius:11px;padding:10px 11px;min-width:0;transition:box-shadow .2s,border-color .2s,transform .2s}.team-node.active{border-color:var(--blue);box-shadow:0 0 0 3px #3b72ef33;transform:translateY(-1px)}.team-node.active .agent-dot{box-shadow:0 0 0 3px #1fa46355}.team-node.target{border-color:#7ea3ea;box-shadow:0 0 0 3px #7ea3ea26}
+.team-master{max-width:560px;width:100%;justify-self:center;background:linear-gradient(180deg,#f4f8ff,#fff)}.team-node-head{display:flex;align-items:center;gap:8px}.team-node-title{display:flex;flex-wrap:wrap;align-items:center;column-gap:2px;min-width:0;flex:1}.team-node-title small{flex-basis:100%;color:var(--muted);font-size:11px}
+.team-light{width:9px;height:9px;border-radius:50%;background:#d9e2ee;flex:none}.team-node.active .team-light{background:#1fa463;box-shadow:0 0 0 4px #1fa46326}
+.team-job{font-size:11.5px;color:var(--muted);margin:5px 0 6px}.team-stats{display:flex;gap:9px;flex-wrap:wrap;font-size:11.5px;color:#4b6080}.team-stats strong{color:var(--ink)}.team-last{font-size:11.5px;color:#34496a;margin-top:6px;border-top:1px dashed #e3eaf4;padding-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.9em}.team-master .team-last{-webkit-line-clamp:1;min-height:1.5em}
+.team-split{margin-top:8px}.split-bar{display:flex;height:8px;border-radius:5px;overflow:hidden;background:#eef2f8;margin-bottom:5px;gap:2px}.split-bar span{display:block}.team-split small{font-size:11px;color:var(--muted)}
+.split-legend{display:flex;gap:10px;flex-wrap:wrap}.split-legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px}.split-supply{background:#2f9e6e}.split-logistics{background:#e0a020}.split-records{background:#7a63c9}.split-communications{background:#1f97a6}
+.system-dot{background:#eef2f8;color:#4b6080}.system-dot svg{width:13px;height:13px}
+.team-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}.team-row.systems{grid-template-columns:repeat(6,minmax(0,1fr))}.team-row .team-node{padding:9px 10px}.team-node-title strong{white-space:nowrap}.team-stats{margin-top:6px}
+.team-systems-head{display:flex;align-items:center;font-size:11.5px;color:#4b6080;margin-bottom:-14px;text-transform:uppercase;letter-spacing:.03em}
+.team-system{position:relative;z-index:1;background:#fbfcfe;border:1px solid var(--line);border-radius:9px;padding:7px 9px;display:grid;gap:1px;min-width:0;font-size:12px;transition:box-shadow .2s,border-color .2s}.team-system small{color:var(--muted);font-size:10.5px;line-height:1.3}.team-system em{font-style:normal;font-size:10px;color:#6b7f9c}.team-system .team-count{font-weight:700;font-size:11px;color:var(--deep);min-height:1em}.team-system.active,.team-system.target{border-color:var(--blue);box-shadow:0 0 0 3px #3b72ef2b;background:#fff}
+.team-summary{border-top:1px solid var(--line);padding:10px 15px}.team-facts{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:#4b6080}.team-facts strong{color:var(--ink);font-size:14px}.team-result{font-size:12.5px;color:#3d5373;margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.team-feed-card{display:flex;flex-direction:column;height:min(640px,calc(100vh - 200px));min-height:420px}.team-filters{display:flex;gap:6px;flex-wrap:wrap;padding:0 15px 10px}.team-filters .chip{border:1px solid var(--line);background:white;border-radius:20px;padding:5px 10px;font-size:11.5px;font-weight:650;color:#4b6080}.team-filters .chip.on{background:var(--ink);border-color:var(--ink);color:white}
+.team-feed{list-style:none;margin:0;padding:0 15px 12px;overflow:auto;flex:1;min-height:0;border-top:1px solid var(--line)}.team-line{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid #eef2f7;font-size:12px}.team-line.result{opacity:.82}.team-line p{color:#4b6080;margin-top:2px;overflow-wrap:anywhere}.team-line-head{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.agent-dot{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;font-size:11px;font-weight:800;flex:none}
+.team-live{margin:0 0 10px}.team-empty{padding:18px}.team-empty h2{margin:6px 0}.team-empty p{color:var(--muted);margin-bottom:12px}.team-rerun{margin-top:12px}
+@media (max-width:1100px){.team-grid{grid-template-columns:1fr}.team-feed-card{max-height:460px;min-height:0}}
+@media (max-width:760px){.team-row{grid-template-columns:repeat(2,minmax(0,1fr))}.team-row.systems{grid-template-columns:repeat(2,minmax(0,1fr))}.team-row .team-node:last-child{grid-column:1/-1}.team-source{flex-basis:100%}.team-source select{flex:1;max-width:none}.tip-pop{position:fixed;left:16px;right:16px;bottom:16px;top:auto;transform:none;max-width:none;width:auto}}
+@media (prefers-reduced-motion:reduce){.team-node,.team-track span{transition:none}}
+.first-run{padding:20px}.first-run h2{margin:6px 0 4px}.first-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:26px;align-items:start}
+.first-list{margin:12px 0 16px;padding-left:20px;display:grid;gap:7px;color:#34496a}.first-live{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:#45638b;margin:0 0 14px}
+.first-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.first-fact{border:1px solid var(--line);border-radius:10px;padding:12px;background:#f8fbff}.first-fact strong{display:block;font-size:26px;line-height:1.1;color:var(--ink)}.first-fact span{font-size:12px;color:var(--muted)}
+.first-steps{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:12px}.first-step{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:10px;background:white}.first-step.todo{opacity:.55}.first-step.active{border-color:var(--blue);box-shadow:0 0 0 3px #3b72ef22}.first-step.done{background:#f6fbf8;border-color:#cfe9db}
+.first-step ul{margin:6px 0 0;padding-left:18px;color:#3d5373;font-size:12.5px;display:grid;gap:3px}.first-mark{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#eef2f8;font-weight:800;font-size:12px;flex:none}.first-step.done .first-mark{background:#1fa463;color:white}.first-step.active .first-mark{background:var(--pale)}
+.spinner{width:14px;height:14px;border:2px solid #b8cdf0;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.first-empty{display:flex;gap:12px;padding:18px;align-items:flex-start}.first-empty>svg{width:22px;height:22px;color:var(--blue);margin-top:2px}.first-empty h2{margin-bottom:4px}.first-empty p{color:var(--muted);margin-bottom:12px}
+.link-button{border:0;background:none;color:#45638b;font-size:12px;font-weight:650;text-decoration:underline;text-underline-offset:3px;padding:4px 6px}.link-button.armed{color:#9f2c42}
+@media (max-width:760px){.first-grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.spinner{animation:none}}
+.table-more{display:flex;align-items:center;gap:10px;padding:8px 15px;border-top:1px solid var(--line);background:#fbfcfe}.table-more small{color:var(--muted)}
+.impact-view-trials .case-stack{display:none}.impact-view-batches .iv-trials,.impact-view-shipments .iv-trials{display:none}.impact-view-batches .case-stack>section:nth-child(2),.impact-view-shipments .case-stack>section:nth-child(1){display:none}.impact-view .case-stack.space{margin-top:0}
+.region-quiet{display:flex;gap:8px;align-items:center;padding:12px 15px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}.region-quiet svg{width:15px;height:15px}
+h2 .tip{margin-left:6px}th .tip{margin-left:4px}
+.trail-watch{padding:0 15px 8px}
 </style>
 </head>
 <body>
@@ -112,6 +156,7 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 <script id="portfolio-data" type="application/json">{"schema_version":"0.1","synthetic_operational_data":true,"note":"Fictional sponsor portfolio for the RegChain demo. No real studies, sites, products or patients.","assessment_as_of":"2026-11-14T10:00:00Z","studies":[{"id":"STUDY-001","title":"UK legacy-cohort study","phase":"III","therapy_area":"Oncology","status":"active","countries":["GB"],"source_ref":"SRC-CTMS"},{"id":"STUDY-002","title":"Germany-only distribution study","phase":"II","therapy_area":"Immunology","status":"active","countries":["DE"],"source_ref":"SRC-CTMS"},{"id":"STUDY-003","title":"UK labeling and supply study","phase":"III","therapy_area":"Cardiology","status":"active","countries":["GB"],"source_ref":"SRC-CTMS"},{"id":"STUDY-004","title":"Multinational asthma maintenance study","phase":"III","therapy_area":"Respiratory","status":"active","countries":["GB","DE","PL","ES"],"source_ref":"SRC-CTMS"},{"id":"STUDY-005","title":"Rare disease enzyme replacement study","phase":"II","therapy_area":"Rare disease","status":"active","countries":["GB","FR","IT"],"source_ref":"SRC-CTMS"},{"id":"STUDY-006","title":"Paediatric vaccine booster study","phase":"III","therapy_area":"Vaccines","status":"active","countries":["GB","NL"],"source_ref":"SRC-CTMS"},{"id":"STUDY-007","title":"Migraine prevention study","phase":"II","therapy_area":"Neurology","status":"active","countries":["GB","IE"],"source_ref":"SRC-CTMS"},{"id":"STUDY-008","title":"Type 2 diabetes outcomes study","phase":"III","therapy_area":"Metabolic","status":"active","countries":["GB","US","CA"],"source_ref":"SRC-CTMS"},{"id":"STUDY-009","title":"Rheumatoid arthritis biologic study","phase":"III","therapy_area":"Immunology","status":"active","countries":["GB","DE"],"source_ref":"SRC-CTMS"},{"id":"STUDY-010","title":"US oncology dose-finding study","phase":"I","therapy_area":"Oncology","status":"active","countries":["US"],"source_ref":"SRC-CTMS"},{"id":"STUDY-011","title":"Japan bridging study","phase":"I","therapy_area":"Metabolic","status":"active","countries":["JP"],"source_ref":"SRC-CTMS"},{"id":"STUDY-012","title":"EU psoriasis study","phase":"III","therapy_area":"Dermatology","status":"active","countries":["DE","FR","ES"],"source_ref":"SRC-CTMS"},{"id":"STUDY-013","title":"Spain and Portugal hepatitis study","phase":"II","therapy_area":"Infectious disease","status":"active","countries":["ES","PT"],"source_ref":"SRC-CTMS"},{"id":"STUDY-014","title":"Nordic heart failure study","phase":"III","therapy_area":"Cardiology","status":"active","countries":["SE","DK","FI"],"source_ref":"SRC-CTMS"},{"id":"STUDY-015","title":"US and Canada obesity study","phase":"II","therapy_area":"Metabolic","status":"active","countries":["US","CA"],"source_ref":"SRC-CTMS"},{"id":"STUDY-016","title":"France and Belgium lupus study","phase":"II","therapy_area":"Immunology","status":"active","countries":["FR","BE"],"source_ref":"SRC-CTMS"},{"id":"STUDY-017","title":"Australia chronic pain study","phase":"II","therapy_area":"Neurology","status":"active","countries":["AU"],"source_ref":"SRC-CTMS"},{"id":"STUDY-018","title":"UK oncology follow-up study, supply closed","phase":"III","therapy_area":"Oncology","status":"completed","countries":["GB"],"source_ref":"SRC-CTMS"}],"study_countries":[{"id":"STUDY-001-GB","study_id":"STUDY-001","country_code":"GB","jurisdiction":"UK","authorization_cohort":"old_rules","site_ids":["SITE-GB-02","SITE-GB-03"],"source_ref":"SRC-CTMS"},{"id":"STUDY-002-DE","study_id":"STUDY-002","country_code":"DE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-DE-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-003-GB","study_id":"STUDY-003","country_code":"GB","jurisdiction":"UK","authorization_cohort":"old_rules","site_ids":["SITE-GB-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-004-GB","study_id":"STUDY-004","country_code":"GB","jurisdiction":"UK","authorization_cohort":"unknown","site_ids":["SITE-GB-04","SITE-GB-05"],"source_ref":"SRC-CTMS"},{"id":"STUDY-004-DE","study_id":"STUDY-004","country_code":"DE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-DE-02"],"source_ref":"SRC-CTMS"},{"id":"STUDY-004-PL","study_id":"STUDY-004","country_code":"PL","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-PL-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-004-ES","study_id":"STUDY-004","country_code":"ES","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-ES-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-005-GB","study_id":"STUDY-005","country_code":"GB","jurisdiction":"UK","authorization_cohort":"new_rules","site_ids":["SITE-GB-06"],"source_ref":"SRC-CTMS"},{"id":"STUDY-005-FR","study_id":"STUDY-005","country_code":"FR","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-FR-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-005-IT","study_id":"STUDY-005","country_code":"IT","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-IT-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-006-GB","study_id":"STUDY-006","country_code":"GB","jurisdiction":"UK","authorization_cohort":"old_rules","site_ids":["SITE-GB-07"],"source_ref":"SRC-CTMS"},{"id":"STUDY-006-NL","study_id":"STUDY-006","country_code":"NL","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-NL-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-007-GB","study_id":"STUDY-007","country_code":"GB","jurisdiction":"UK","authorization_cohort":"new_rules","site_ids":["SITE-GB-08"],"source_ref":"SRC-CTMS"},{"id":"STUDY-007-IE","study_id":"STUDY-007","country_code":"IE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-IE-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-008-GB","study_id":"STUDY-008","country_code":"GB","jurisdiction":"UK","authorization_cohort":"new_rules","site_ids":["SITE-GB-09"],"source_ref":"SRC-CTMS"},{"id":"STUDY-008-US","study_id":"STUDY-008","country_code":"US","jurisdiction":"US","authorization_cohort":"not_applicable","site_ids":["SITE-US-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-008-CA","study_id":"STUDY-008","country_code":"CA","jurisdiction":"CA","authorization_cohort":"not_applicable","site_ids":["SITE-CA-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-009-GB","study_id":"STUDY-009","country_code":"GB","jurisdiction":"UK","authorization_cohort":"old_rules","site_ids":["SITE-GB-10"],"source_ref":"SRC-CTMS"},{"id":"STUDY-009-DE","study_id":"STUDY-009","country_code":"DE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-DE-03"],"source_ref":"SRC-CTMS"},{"id":"STUDY-010-US","study_id":"STUDY-010","country_code":"US","jurisdiction":"US","authorization_cohort":"not_applicable","site_ids":["SITE-US-02"],"source_ref":"SRC-CTMS"},{"id":"STUDY-011-JP","study_id":"STUDY-011","country_code":"JP","jurisdiction":"JP","authorization_cohort":"not_applicable","site_ids":["SITE-JP-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-012-DE","study_id":"STUDY-012","country_code":"DE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-DE-04"],"source_ref":"SRC-CTMS"},{"id":"STUDY-012-FR","study_id":"STUDY-012","country_code":"FR","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-012-ES","study_id":"STUDY-012","country_code":"ES","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-013-ES","study_id":"STUDY-013","country_code":"ES","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-ES-02"],"source_ref":"SRC-CTMS"},{"id":"STUDY-013-PT","study_id":"STUDY-013","country_code":"PT","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-014-SE","study_id":"STUDY-014","country_code":"SE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-SE-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-014-DK","study_id":"STUDY-014","country_code":"DK","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-014-FI","study_id":"STUDY-014","country_code":"FI","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-015-US","study_id":"STUDY-015","country_code":"US","jurisdiction":"US","authorization_cohort":"not_applicable","site_ids":["SITE-US-03"],"source_ref":"SRC-CTMS"},{"id":"STUDY-015-CA","study_id":"STUDY-015","country_code":"CA","jurisdiction":"CA","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-016-FR","study_id":"STUDY-016","country_code":"FR","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":["SITE-FR-02"],"source_ref":"SRC-CTMS"},{"id":"STUDY-016-BE","study_id":"STUDY-016","country_code":"BE","jurisdiction":"EU","authorization_cohort":"not_applicable","site_ids":[],"source_ref":"SRC-CTMS"},{"id":"STUDY-017-AU","study_id":"STUDY-017","country_code":"AU","jurisdiction":"AU","authorization_cohort":"not_applicable","site_ids":["SITE-AU-01"],"source_ref":"SRC-CTMS"},{"id":"STUDY-018-GB","study_id":"STUDY-018","country_code":"GB","jurisdiction":"UK","authorization_cohort":"old_rules","site_ids":["SITE-GB-11"],"source_ref":"SRC-CTMS"}],"sites":[{"id":"SITE-GB-01","study_id":"STUDY-003","country_code":"GB","city":"London","patients_on_treatment":14,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-02","study_id":"STUDY-001","country_code":"GB","city":"Manchester","patients_on_treatment":9,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-03","study_id":"STUDY-001","country_code":"GB","city":"Glasgow","patients_on_treatment":7,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-04","study_id":"STUDY-004","country_code":"GB","city":"Birmingham","patients_on_treatment":22,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-05","study_id":"STUDY-004","country_code":"GB","city":"Leeds","patients_on_treatment":17,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-06","study_id":"STUDY-005","country_code":"GB","city":"Cambridge","patients_on_treatment":6,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-07","study_id":"STUDY-006","country_code":"GB","city":"Bristol","patients_on_treatment":40,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-08","study_id":"STUDY-007","country_code":"GB","city":"Edinburgh","patients_on_treatment":25,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-09","study_id":"STUDY-008","country_code":"GB","city":"Newcastle","patients_on_treatment":31,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-10","study_id":"STUDY-009","country_code":"GB","city":"Oxford","patients_on_treatment":19,"source_ref":"SRC-CTMS"},{"id":"SITE-GB-11","study_id":"STUDY-018","country_code":"GB","city":"Cardiff","patients_on_treatment":0,"source_ref":"SRC-CTMS"},{"id":"SITE-DE-01","study_id":"STUDY-002","country_code":"DE","city":"Berlin","patients_on_treatment":12,"source_ref":"SRC-CTMS"},{"id":"SITE-DE-02","study_id":"STUDY-004","country_code":"DE","city":"Munich","patients_on_treatment":20,"source_ref":"SRC-CTMS"},{"id":"SITE-PL-01","study_id":"STUDY-004","country_code":"PL","city":"Warsaw","patients_on_treatment":15,"source_ref":"SRC-CTMS"},{"id":"SITE-ES-01","study_id":"STUDY-004","country_code":"ES","city":"Madrid","patients_on_treatment":11,"source_ref":"SRC-CTMS"},{"id":"SITE-FR-01","study_id":"STUDY-005","country_code":"FR","city":"Lyon","patients_on_treatment":5,"source_ref":"SRC-CTMS"},{"id":"SITE-IT-01","study_id":"STUDY-005","country_code":"IT","city":"Milan","patients_on_treatment":4,"source_ref":"SRC-CTMS"},{"id":"SITE-NL-01","study_id":"STUDY-006","country_code":"NL","city":"Utrecht","patients_on_treatment":35,"source_ref":"SRC-CTMS"},{"id":"SITE-IE-01","study_id":"STUDY-007","country_code":"IE","city":"Dublin","patients_on_treatment":13,"source_ref":"SRC-CTMS"},{"id":"SITE-US-01","study_id":"STUDY-008","country_code":"US","city":"Boston","patients_on_treatment":44,"source_ref":"SRC-CTMS"},{"id":"SITE-CA-01","study_id":"STUDY-008","country_code":"CA","city":"Toronto","patients_on_treatment":18,"source_ref":"SRC-CTMS"},{"id":"SITE-DE-03","study_id":"STUDY-009","country_code":"DE","city":"Hamburg","patients_on_treatment":16,"source_ref":"SRC-CTMS"},{"id":"SITE-US-02","study_id":"STUDY-010","country_code":"US","city":"Houston","patients_on_treatment":12,"source_ref":"SRC-CTMS"},{"id":"SITE-JP-01","study_id":"STUDY-011","country_code":"JP","city":"Osaka","patients_on_treatment":10,"source_ref":"SRC-CTMS"},{"id":"SITE-DE-04","study_id":"STUDY-012","country_code":"DE","city":"Frankfurt","patients_on_treatment":21,"source_ref":"SRC-CTMS"},{"id":"SITE-ES-02","study_id":"STUDY-013","country_code":"ES","city":"Seville","patients_on_treatment":14,"source_ref":"SRC-CTMS"},{"id":"SITE-SE-01","study_id":"STUDY-014","country_code":"SE","city":"Gothenburg","patients_on_treatment":27,"source_ref":"SRC-CTMS"},{"id":"SITE-US-03","study_id":"STUDY-015","country_code":"US","city":"Chicago","patients_on_treatment":33,"source_ref":"SRC-CTMS"},{"id":"SITE-FR-02","study_id":"STUDY-016","country_code":"FR","city":"Lille","patients_on_treatment":8,"source_ref":"SRC-CTMS"},{"id":"SITE-AU-01","study_id":"STUDY-017","country_code":"AU","city":"Melbourne","patients_on_treatment":16,"source_ref":"SRC-CTMS"}],"products":[{"id":"IMP-001","study_id":"STUDY-001","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-002","study_id":"STUDY-002","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-003","study_id":"STUDY-003","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-004","study_id":"STUDY-004","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-005","study_id":"STUDY-005","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-006","study_id":"STUDY-006","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-007","study_id":"STUDY-007","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-008","study_id":"STUDY-008","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-009","study_id":"STUDY-009","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-010","study_id":"STUDY-010","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-011","study_id":"STUDY-011","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-012","study_id":"STUDY-012","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-013","study_id":"STUDY-013","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-014","study_id":"STUDY-014","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-015","study_id":"STUDY-015","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-016","study_id":"STUDY-016","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-017","study_id":"STUDY-017","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"},{"id":"IMP-018","study_id":"STUDY-018","category":"finished_IMP","role":"investigational","source_ref":"SRC-SUPPLY"}],"label_specs":[{"id":"IMP-001-UK-v1","product_id":"IMP-001","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-001-UK-v2","product_id":"IMP-001","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-002-UK-v1","product_id":"IMP-002","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-002-UK-v2","product_id":"IMP-002","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-003-UK-v1","product_id":"IMP-003","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-003-UK-v2","product_id":"IMP-003","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-004-UK-v1","product_id":"IMP-004","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-004-UK-v2","product_id":"IMP-004","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-005-UK-v1","product_id":"IMP-005","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-005-UK-v2","product_id":"IMP-005","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-006-UK-v1","product_id":"IMP-006","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-006-UK-v2","product_id":"IMP-006","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-007-UK-v1","product_id":"IMP-007","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-007-UK-v2","product_id":"IMP-007","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-008-UK-v1","product_id":"IMP-008","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-008-UK-v2","product_id":"IMP-008","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-009-UK-v1","product_id":"IMP-009","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-009-UK-v2","product_id":"IMP-009","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-010-UK-v1","product_id":"IMP-010","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-010-UK-v2","product_id":"IMP-010","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-011-UK-v1","product_id":"IMP-011","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-011-UK-v2","product_id":"IMP-011","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-012-UK-v1","product_id":"IMP-012","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-012-UK-v2","product_id":"IMP-012","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-013-UK-v1","product_id":"IMP-013","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-013-UK-v2","product_id":"IMP-013","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-014-UK-v1","product_id":"IMP-014","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-014-UK-v2","product_id":"IMP-014","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-015-UK-v1","product_id":"IMP-015","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-015-UK-v2","product_id":"IMP-015","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-016-UK-v1","product_id":"IMP-016","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-016-UK-v2","product_id":"IMP-016","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-017-UK-v1","product_id":"IMP-017","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-017-UK-v2","product_id":"IMP-017","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"},{"id":"IMP-018-UK-v1","product_id":"IMP-018","version":"1","jurisdiction":"UK","legacy_reference":true,"source_ref":"SRC-SUPPLY"},{"id":"IMP-018-UK-v2","product_id":"IMP-018","version":"2","jurisdiction":"UK","legacy_reference":false,"source_ref":"SRC-SUPPLY"}],"batches":[{"id":"A-101","study_id":"STUDY-001","study_country_id":"STUDY-001-GB","product_id":"IMP-001","label_spec_id":"IMP-001-UK-v1","physical_manufacture_date":"2026-04-10","finished_imp_qp_certification_date":"2026-04-20","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"B-102","study_id":"STUDY-003","study_country_id":"STUDY-003-GB","product_id":"IMP-003","label_spec_id":"IMP-003-UK-v1","physical_manufacture_date":"2026-04-20","finished_imp_qp_certification_date":"2026-05-05","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"C-103","study_id":"STUDY-003","study_country_id":"STUDY-003-GB","product_id":"IMP-003","label_spec_id":"IMP-003-UK-v2","physical_manufacture_date":"2026-04-24","finished_imp_qp_certification_date":"2026-05-05","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"D-104","study_id":"STUDY-001","study_country_id":"STUDY-001-GB","product_id":"IMP-001","label_spec_id":"IMP-001-UK-v1","physical_manufacture_date":"2026-05-12","finished_imp_qp_certification_date":null,"intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"E-105","study_id":"STUDY-002","study_country_id":"STUDY-002-DE","product_id":"IMP-002","label_spec_id":null,"physical_manufacture_date":"2026-04-22","finished_imp_qp_certification_date":"2026-05-05","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"F-106","study_id":"STUDY-003","study_country_id":"STUDY-003-GB","product_id":"IMP-003","label_spec_id":"IMP-003-UK-v1","physical_manufacture_date":"2026-04-15","finished_imp_qp_certification_date":"2026-04-28","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"G-107","study_id":"STUDY-001","study_country_id":"STUDY-001-GB","product_id":"IMP-001","label_spec_id":"IMP-001-UK-v1","physical_manufacture_date":"2026-05-29","finished_imp_qp_certification_date":"2026-06-10","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"H-108","study_id":"STUDY-001","study_country_id":"STUDY-001-GB","product_id":"IMP-001","label_spec_id":"IMP-001-UK-v2","physical_manufacture_date":"2026-08-20","finished_imp_qp_certification_date":"2026-09-02","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"J-201","study_id":"STUDY-004","study_country_id":"STUDY-004-GB","product_id":"IMP-004","label_spec_id":"IMP-004-UK-v1","physical_manufacture_date":"2026-03-18","finished_imp_qp_certification_date":"2026-03-30","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"J-202","study_id":"STUDY-004","study_country_id":"STUDY-004-GB","product_id":"IMP-004","label_spec_id":"IMP-004-UK-v1","physical_manufacture_date":"2026-07-01","finished_imp_qp_certification_date":"2026-07-14","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"J-203","study_id":"STUDY-004","study_country_id":"STUDY-004-GB","product_id":"IMP-004","label_spec_id":"IMP-004-UK-v2","physical_manufacture_date":"2026-09-17","finished_imp_qp_certification_date":"2026-10-01","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"J-204","study_id":"STUDY-004","study_country_id":"STUDY-004-DE","product_id":"IMP-004","label_spec_id":null,"physical_manufacture_date":"2026-07-01","finished_imp_qp_certification_date":"2026-07-14","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"K-301","study_id":"STUDY-005","study_country_id":"STUDY-005-GB","product_id":"IMP-005","label_spec_id":"IMP-005-UK-v1","physical_manufacture_date":"2026-05-08","finished_imp_qp_certification_date":"2026-05-20","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"K-302","study_id":"STUDY-005","study_country_id":"STUDY-005-GB","product_id":"IMP-005","label_spec_id":"IMP-005-UK-v1","physical_manufacture_date":"2026-07-30","finished_imp_qp_certification_date":"2026-08-11","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"K-303","study_id":"STUDY-005","study_country_id":"STUDY-005-FR","product_id":"IMP-005","label_spec_id":null,"physical_manufacture_date":"2026-07-30","finished_imp_qp_certification_date":"2026-08-11","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"L-401","study_id":"STUDY-006","study_country_id":"STUDY-006-GB","product_id":"IMP-006","label_spec_id":"IMP-006-UK-v1","physical_manufacture_date":"2026-02-02","finished_imp_qp_certification_date":"2026-02-15","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"L-402","study_id":"STUDY-006","study_country_id":"STUDY-006-GB","product_id":"IMP-006","label_spec_id":"IMP-006-UK-v1","physical_manufacture_date":"2026-04-14","finished_imp_qp_certification_date":"2026-04-27","intended_trial_use_confirmed":false,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"L-403","study_id":"STUDY-006","study_country_id":"STUDY-006-GB","product_id":"IMP-006","label_spec_id":"IMP-006-UK-v2","physical_manufacture_date":"2026-06-17","finished_imp_qp_certification_date":"2026-06-30","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"M-501","study_id":"STUDY-007","study_country_id":"STUDY-007-GB","product_id":"IMP-007","label_spec_id":"IMP-007-UK-v2","physical_manufacture_date":"2026-09-04","finished_imp_qp_certification_date":"2026-09-18","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"M-502","study_id":"STUDY-007","study_country_id":"STUDY-007-GB","product_id":"IMP-007","label_spec_id":"IMP-007-UK-v2","physical_manufacture_date":"2026-10-06","finished_imp_qp_certification_date":"2026-10-20","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"N-601","study_id":"STUDY-008","study_country_id":"STUDY-008-GB","product_id":"IMP-008","label_spec_id":"IMP-008-UK-v1","physical_manufacture_date":"2026-05-14","finished_imp_qp_certification_date":"2026-05-28","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"N-602","study_id":"STUDY-008","study_country_id":"STUDY-008-GB","product_id":"IMP-008","label_spec_id":null,"physical_manufacture_date":"2026-08-11","finished_imp_qp_certification_date":"2026-08-25","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"N-603","study_id":"STUDY-008","study_country_id":"STUDY-008-US","product_id":"IMP-008","label_spec_id":null,"physical_manufacture_date":"2026-08-11","finished_imp_qp_certification_date":"2026-08-25","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"P-701","study_id":"STUDY-009","study_country_id":"STUDY-009-GB","product_id":"IMP-009","label_spec_id":"IMP-009-UK-v1","physical_manufacture_date":"2026-03-20","finished_imp_qp_certification_date":"2026-04-01","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":true,"source_ref":"SRC-SUPPLY"},{"id":"P-702","study_id":"STUDY-009","study_country_id":"STUDY-009-GB","product_id":"IMP-009","label_spec_id":"IMP-009-UK-v1","physical_manufacture_date":"2026-06-23","finished_imp_qp_certification_date":"2026-07-07","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-801","study_id":"STUDY-010","study_country_id":"STUDY-010-US","product_id":"IMP-010","label_spec_id":null,"physical_manufacture_date":"2026-09-01","finished_imp_qp_certification_date":"2026-09-15","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-802","study_id":"STUDY-011","study_country_id":"STUDY-011-JP","product_id":"IMP-011","label_spec_id":null,"physical_manufacture_date":"2026-08-05","finished_imp_qp_certification_date":"2026-08-19","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-803","study_id":"STUDY-012","study_country_id":"STUDY-012-DE","product_id":"IMP-012","label_spec_id":null,"physical_manufacture_date":"2026-07-20","finished_imp_qp_certification_date":"2026-08-03","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-804","study_id":"STUDY-013","study_country_id":"STUDY-013-ES","product_id":"IMP-013","label_spec_id":null,"physical_manufacture_date":"2026-06-01","finished_imp_qp_certification_date":"2026-06-15","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-805","study_id":"STUDY-014","study_country_id":"STUDY-014-SE","product_id":"IMP-014","label_spec_id":null,"physical_manufacture_date":"2026-09-09","finished_imp_qp_certification_date":"2026-09-23","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-806","study_id":"STUDY-015","study_country_id":"STUDY-015-US","product_id":"IMP-015","label_spec_id":null,"physical_manufacture_date":"2026-10-05","finished_imp_qp_certification_date":"2026-10-19","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-807","study_id":"STUDY-016","study_country_id":"STUDY-016-FR","product_id":"IMP-016","label_spec_id":null,"physical_manufacture_date":"2026-08-26","finished_imp_qp_certification_date":"2026-09-09","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"},{"id":"R-808","study_id":"STUDY-017","study_country_id":"STUDY-017-AU","product_id":"IMP-017","label_spec_id":null,"physical_manufacture_date":"2026-07-08","finished_imp_qp_certification_date":"2026-07-22","intended_trial_use_confirmed":true,"legacy_labeling_evidence_on_file":false,"source_ref":"SRC-SUPPLY"}],"shipments":[{"id":"SHP-01","batch_ids":["B-102"],"site_id":"SITE-GB-01","study_country_id":"STUDY-003-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-11-22","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-02","batch_ids":["D-104"],"site_id":"SITE-GB-02","study_country_id":"STUDY-001-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-11-25","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-03","batch_ids":["E-105"],"site_id":"SITE-DE-01","study_country_id":"STUDY-002-DE","destination_jurisdiction":"EU","planned_dispatch_date":"2026-11-23","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-EU-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-04","batch_ids":["J-202"],"site_id":"SITE-GB-04","study_country_id":"STUDY-004-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-11-19","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-05","batch_ids":["K-301"],"site_id":"SITE-GB-06","study_country_id":"STUDY-005-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-11-27","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-06","batch_ids":["N-601"],"site_id":"SITE-GB-09","study_country_id":"STUDY-008-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-12-02","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-07","batch_ids":["L-403"],"site_id":"SITE-GB-07","study_country_id":"STUDY-006-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-11-24","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-08","batch_ids":["P-702"],"site_id":"SITE-GB-10","study_country_id":"STUDY-009-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-12-04","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-09","batch_ids":["M-501"],"site_id":"SITE-GB-08","study_country_id":"STUDY-007-GB","destination_jurisdiction":"UK","planned_dispatch_date":"2026-12-08","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-UK-01","source_ref":"SRC-SUPPLY"},{"id":"SHP-10","batch_ids":["J-204"],"site_id":"SITE-DE-02","study_country_id":"STUDY-004-DE","destination_jurisdiction":"EU","planned_dispatch_date":"2026-11-26","preparation_lead_calendar_days":5,"logistics_partner_id":"PARTNER-LOGISTICS-EU-01","source_ref":"SRC-SUPPLY"}],"partners":[{"id":"PARTNER-PACKAGING-01","role":"packaging_and_labeling"},{"id":"PARTNER-LOGISTICS-UK-01","role":"logistics_uk"},{"id":"PARTNER-LOGISTICS-EU-01","role":"logistics_eu"}],"regulatory_case":{"id":"RC-UK-001","jurisdiction":"UK","requirement_record_id":"GB/IMP_LABELING","effective_date":"2026-04-28","rule_event":"finished_imp_qp_certification_date","evidence_source_ids":["reg46-before","reg46-after","sch14-para6","mhra-labelling-transition"]},"source_records":[{"id":"SRC-CTMS","source_system":"CTMS demo","record_version":"1","observed_at":"2026-11-14T09:00:00Z"},{"id":"SRC-SUPPLY","source_system":"Clinical supply demo","record_version":"1","observed_at":"2026-11-14T09:00:00Z"}]}</script>
 <script id="spain-data" type="application/json">{"schema_version":1,"note":"FICTIONAL demo scenario. The information note, the authority, the trial, the sites, the companies and the people are invented for the RegChain demo. None of it is a real rule or a real record.","case":{"id":"RC-ES-001","requirement":"ES/IMP_SHIPPING_DOCUMENTS","effective":"2027-03-01","transitionDeliveredBy":"2027-03-08","noticeBusinessDays":3,"preparedAt":"2026-11-10T09:44:00Z","policy":"From 1 Mar 2027, every IMP shipment to a trial site in Spain carries a delivery note in Spanish with the EU trial number, the hospital pharmacy code and each batch number, and the hospital pharmacy gets an electronic notice at least 3 business days before delivery.","instruction":"For each shipment to a Spanish site dispatched from 1 Mar 2027, or delivered after 8 Mar 2027, print the Spanish delivery note at the depot and send the hospital pharmacy notice 3 business days before delivery. Complete the missing hospital pharmacy codes before the first affected shipment.","conditions":["Applies to IMP shipments to clinical trial sites in Spain.","Shipments dispatched before 1 Mar 2027 and delivered by 8 Mar 2027 can follow the earlier procedure.","Labeling requirements do not change."],"sectionEdits":[{"section":"invoice","replaces":"Delivery note in English or Spanish with the trial number and kit numbers.","text":"From 1 Mar 2027: a delivery note in Spanish with the EU trial number, the hospital pharmacy code and the batch number of each product."},{"section":"logistics","replaces":"","text":"From 1 Mar 2027: send the hospital pharmacy an electronic notice at least 3 business days before delivery. Shipments without the notice or the Spanish delivery note are refused and returned."},{"section":"contacts","replaces":"","text":"From 1 Mar 2027: keep the hospital pharmacy code of every Spanish site. It must be on each delivery note."}],"evidence":[{"id":"EV-ES-01","point":"Point 1","excerpt":"cada envío de medicamentos en investigación a un centro de ensayo clínico en España deberá ir acompañado de un albarán de entrega redactado en español"},{"id":"EV-ES-02","point":"Point 3","excerpt":"con una antelación mínima de tres días hábiles respecto a la fecha prevista de entrega"},{"id":"EV-ES-03","point":"Point 5","excerpt":"Los envíos despachados antes del 1 de marzo de 2027 y entregados a más tardar el 8 de marzo de 2027 podrán seguir el procedimiento anterior"}]},"notice":{"id":"es-notice","title":"Nota informativa 12/2026 (escenario ilustrativo)","titleEn":"Information note 12/2026 (illustrative scenario)","authority":"Autoridad nacional de medicamentos (escenario ilustrativo)","published":"2026-11-10","effective":"2027-03-01","language":"es","text":"Nota informativa 12/2026 (escenario ilustrativo)\nDocumentación que debe acompañar a los envíos de medicamentos en investigación a los centros de ensayos clínicos en España\n1. A partir del 1 de marzo de 2027, cada envío de medicamentos en investigación a un centro de ensayo clínico en España deberá ir acompañado de un albarán de entrega redactado en español.\n2. El albarán de entrega indicará el número de ensayo clínico de la UE, el código del servicio de farmacia del hospital receptor y el número de lote de cada medicamento incluido en el envío.\n3. El promotor enviará al servicio de farmacia del hospital receptor un aviso electrónico de cada envío con una antelación mínima de tres días hábiles respecto a la fecha prevista de entrega.\n4. El servicio de farmacia rechazará los envíos que no cumplan los requisitos de los puntos 1 a 3, y los medicamentos rechazados se devolverán al remitente.\n5. Los envíos despachados antes del 1 de marzo de 2027 y entregados a más tardar el 8 de marzo de 2027 podrán seguir el procedimiento anterior.\n6. Esta nota no modifica los requisitos de etiquetado de los medicamentos en investigación.\nEscenario ilustrativo: esta nota no procede de ninguna autoridad real."},"trial":{"id":"CTP-7842-201","title":"Phase III study of XZ-417 in rheumatology","product":"XZ-417 50 mg film-coated tablets","phase":"III","countries":["DE","ES","IT","PL"],"plannedSites":64,"plannedPatients":480,"firstPatientIn":"2027-02-15","depot":"Central EU depot, Belgium","standardLeadBusinessDays":5,"expeditedLeadBusinessDays":2,"labelSpec":{"id":"XZ417-BKL-v1","type":"Multilingual booklet label","languages":["de","es","it","pl","en"]},"batches":[{"id":"XZ417-26A","qp":"2026-11-02"},{"id":"XZ417-26B","qp":"2027-02-15"},{"id":"XZ417-26C","qp":null}],"sites":[{"id":"ES-01","city":"Madrid","hospital":"Hospital pharmacy, site ES-01","pharmacyCode":"FH-28-0101","plannedPatients":12},{"id":"ES-02","city":"Madrid","hospital":"Hospital pharmacy, site ES-02","pharmacyCode":"FH-28-0207","plannedPatients":10},{"id":"ES-03","city":"Barcelona","hospital":"Hospital pharmacy, site ES-03","pharmacyCode":"FH-08-0112","plannedPatients":12},{"id":"ES-04","city":"Barcelona","hospital":"Hospital pharmacy, site ES-04","pharmacyCode":"FH-08-0315","plannedPatients":8},{"id":"ES-05","city":"Valencia","hospital":"Hospital pharmacy, site ES-05","pharmacyCode":"FH-46-0104","plannedPatients":9},{"id":"ES-06","city":"Sevilla","hospital":"Hospital pharmacy, site ES-06","pharmacyCode":null,"plannedPatients":8},{"id":"ES-07","city":"Bilbao","hospital":"Hospital pharmacy, site ES-07","pharmacyCode":"FH-48-0109","plannedPatients":7},{"id":"ES-08","city":"Málaga","hospital":"Hospital pharmacy, site ES-08","pharmacyCode":null,"plannedPatients":6}],"shipments":[{"id":"SHP-ES-01","batch":"XZ417-26A","carrier":"EU logistics partner","site":"ES-01","kind":"Initial site supply","dispatch":"2027-02-01","delivery":"2027-02-03","kits":12},{"id":"SHP-ES-02","batch":"XZ417-26A","carrier":"EU logistics partner","site":"ES-03","kind":"Initial site supply","dispatch":"2027-02-02","delivery":"2027-02-04","kits":12},{"id":"SHP-ES-03","batch":"XZ417-26A","carrier":"EU logistics partner","site":"ES-05","kind":"Initial site supply","dispatch":"2027-02-08","delivery":"2027-02-10","kits":12},{"id":"SHP-ES-04","batch":"XZ417-26A","carrier":"EU logistics partner","site":"ES-02","kind":"Initial site supply","dispatch":"2027-02-15","delivery":"2027-02-17","kits":12},{"id":"SHP-ES-05","batch":"XZ417-26B","carrier":"EU logistics partner","site":"ES-04","kind":"Initial site supply, held for the site initiation visit","dispatch":"2027-02-26","delivery":"2027-03-09","kits":12},{"id":"SHP-ES-06","batch":"XZ417-26B","carrier":"EU logistics partner","site":"ES-07","kind":"Initial site supply","dispatch":"2027-03-01","delivery":"2027-03-03","kits":12},{"id":"SHP-ES-07","batch":"XZ417-26B","carrier":"EU logistics partner","site":"ES-01","kind":"Resupply forecast","dispatch":"2027-03-04","delivery":"2027-03-08","kits":6},{"id":"SHP-ES-08","batch":"XZ417-26B","carrier":"EU logistics partner","site":"ES-06","kind":"Initial site supply","dispatch":"2027-03-08","delivery":"2027-03-10","kits":12},{"id":"SHP-ES-09","batch":"XZ417-26C","carrier":"EU logistics partner","site":"ES-03","kind":"Resupply forecast","dispatch":"2027-03-15","delivery":"2027-03-17","kits":6},{"id":"SHP-ES-10","batch":"XZ417-26C","carrier":"EU logistics partner","site":"ES-08","kind":"Initial site supply","dispatch":"2027-03-22","delivery":"2027-03-24","kits":12}]},"specification":{"version":4,"published":"2026-10-05","next":"2027-01-20","owner":"C. Ruiz, Regulatory Affairs Spain","sections":{"regulatory":{"owner":"C. Ruiz, Regulatory Affairs Spain","checked":"2026-10-05","review":"2027-04-05","sources":["annex","qa"],"change":"eu","notes":["eu-pack"],"items":["Label under Annex VI of Regulation (EU) 536/2014. The expiry date may be left off the immediate pack when the outer pack stays with it, or for blisters and small units (B.6.2 and B.6.3).","Label language: Spanish (company standard; Article 69 lets each Member State set it)."]},"import":{"owner":"D. Ortega, Trade Compliance EU","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["Supply comes from the central depot in Belgium, within the EU.","Each shipment travels with the QP release documentation of its batches."]},"invoice":{"owner":"D. Ortega, Trade Compliance EU","checked":"2026-10-05","review":"2027-01-20","sources":["es-notice"],"case":"es","items":["Pro-forma invoice: “No commercial value. Value for customs purposes only.”","Delivery note in English or Spanish with the trial number and kit numbers."]},"logistics":{"owner":"M. Silva, Clinical Supply Logistics EU","checked":"2026-10-05","review":"2027-01-20","sources":["es-notice"],"case":"es","items":["Prepare each shipment 5 business days before dispatch, or 2 when expedited.","Road transport from the central depot in Belgium at 15–25 °C with a temperature monitor.","Hospital pharmacies receive deliveries on working days only."]},"carriers":{"owner":"M. Silva, Clinical Supply Logistics EU","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["EU logistics partner: road shipments from the central depot to sites."]},"ior":{"owner":"D. Ortega, Trade Compliance EU","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["Consignee: the hospital pharmacy of each trial site."]},"contacts":{"owner":"Local affiliate, Spain","checked":"2026-10-05","review":"2027-01-20","sources":[],"case":"es","items":["Hospital pharmacy contact for each site, kept in the site file."]},"notes":{"owner":"C. Ruiz, Regulatory Affairs Spain","checked":"2026-10-05","review":"2027-01-20","sources":[],"items":["Check regional public holidays: hospital pharmacies do not receive deliveries on them."]}}}}</script>
 <script id="specifications-data" type="application/json">{"schema_version":1,"note":"FICTIONAL Country Specifications, shaped like real ones. Regulatory lines paraphrase official sources checked on 14 Nov 2026; company details and people are invented.","countries":{"uk":{"version":12,"published":"2026-09-09","next":"2026-12-09","owner":"A. Novak, Regulatory Affairs UK","sections":{"regulatory":{"owner":"A. Novak, Regulatory Affairs UK","checked":"2026-02-02","review":"2026-05-02","sources":["statute","transition"],"case":"uk","notes":["uk-label","uk-transition"],"items":["Label IMPs under Part 7 as it stood before the 2025 amendment: regulation 46 applies Article 15 of Directive 2003/94/EC.","Each trial needs MHRA authorisation and a favourable ethics opinion before IMP is released to sites.","Label language: English (company standard)."]},"import":{"owner":"M. Okafor, Trade Compliance UK","checked":"2026-06-03","review":"2026-09-03","sources":["imports","list"],"change":"import","notes":["gb-import"],"items":["From approved countries (initially the EU and EEA): the QP of a UK MIA(IMP) holder checks each batch's QP certification before release to the trial. The batch is not certified again.","From any other country: import and QP certification by the UK MIA(IMP) holder.","Each shipment travels with a commercial invoice and the batch's QP certification evidence."]},"permits":{"owner":"A. Novak, Regulatory Affairs UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["MHRA clinical trial authorisation for each trial, tracked in the trial system.","The UK depot holds the UK MIA(IMP) used for import oversight. Licence copy filed in the quality system.","Controlled drugs need a Home Office import licence for each shipment."]},"controlled":{"owner":"A. Novak, Regulatory Affairs UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["No IMP in our active UK trials is a controlled drug.","Check every new IMP against the schedules of the Misuse of Drugs Regulations 2001 before its first UK shipment."]},"invoice":{"owner":"M. Okafor, Trade Compliance UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["“No commercial value. Value for customs purposes only.”","“Investigational medicinal product for clinical trial use only.”","The trial reference and the UK importer of record on every invoice."]},"ports":{"owner":"S. Hughes, Clinical Supply Logistics UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["Air: London Heathrow (LHR), for shipments from outside Europe.","Road: Dover, for shipments from the EU depot."]},"logistics":{"owner":"S. Hughes, Clinical Supply Logistics UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["Prepare each shipment 5 calendar days before dispatch.","2–8 °C products: validated shipper, transit under 72 hours.","The depot dispatches and receives on working days only."]},"carriers":{"owner":"S. Hughes, Clinical Supply Logistics UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["UK logistics partner: deliveries from the UK depot to sites.","EU logistics partner: shipments from the EU depot to the UK."]},"ior":{"owner":"M. Okafor, Trade Compliance UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["Importer of record: the UK affiliate.","Consignee: the UK depot, the UK MIA(IMP) holder."]},"contacts":{"owner":"Local affiliate, UK","checked":"2026-06-03","review":"2026-09-03","sources":[],"items":["Clinical supply lead: R. Evans","Depot QP: K. Shah","Customs broker: contracted UK customs broker"]},"notes":{"owner":"A. Novak, Regulatory Affairs UK","checked":"2026-09-09","review":"2026-12-09","sources":[],"items":["Allow two extra working days for customs clearance in December."]}}},"de":{"version":8,"published":"2026-10-01","next":"2027-01-15","owner":"L. Weber, Regulatory Affairs EU","sections":{"regulatory":{"owner":"L. Weber, Regulatory Affairs EU","checked":"2026-10-01","review":"2027-04-01","sources":["annex","qa"],"change":"eu","notes":["eu-pack"],"items":["Label under Annex VI of Regulation (EU) 536/2014. The expiry date may be left off the immediate pack when the outer pack stays with it, or for blisters and small units (B.6.2 and B.6.3).","Label language: German (company standard; Article 69 lets each Member State set it)."]}}},"fr":{"version":9,"published":"2026-09-24","next":"2027-01-08","owner":"L. Weber, Regulatory Affairs EU","sections":{"regulatory":{"owner":"L. Weber, Regulatory Affairs EU","checked":"2026-09-24","review":"2027-03-24","sources":["annex","qa"],"change":"eu","notes":["eu-pack"],"items":["Label under Annex VI of Regulation (EU) 536/2014. The expiry date may be left off the immediate pack when the outer pack stays with it, or for blisters and small units (B.6.2 and B.6.3).","Label language: French (company standard; Article 69 lets each Member State set it)."]}}},"us":{"version":15,"published":"2026-08-20","next":"2026-11-20","owner":"J. Carter, Regulatory Affairs US","sections":{"regulatory":{"owner":"J. Carter, Regulatory Affairs US","checked":"2026-08-20","review":"2027-02-20","sources":[],"notes":["us-label"],"items":["Immediate package label: “Caution: New Drug—Limited by Federal (or United States) law to investigational use.” (21 CFR 312.6(a))","No label statement may be false or misleading, or present the drug as safe or effective for what is being investigated (21 CFR 312.6(b))."]},"import":{"owner":"J. Carter, Regulatory Affairs US","checked":"2026-08-20","review":"2027-02-20","sources":[],"notes":["us-import"],"items":["Import only under an IND in effect, for the investigation it covers (21 CFR 312.110).","Ship to investigators 30 days after FDA receives the IND, or earlier if FDA authorises it (21 CFR 312.40(c)).","Consignee: the sponsor, a qualified investigator named in the IND, or the US agent of a foreign sponsor named in the IND (21 CFR 312.110(a))."]}}}}}</script>
+<script id="israel-data" type="application/json">{"schema_version":1,"note":"FICTIONAL illustrative scenario for the RegChain prototype. The rule, the trial, the sites, the batches and the shipments are invented to show how RegChain handles a label that can no longer serve two countries. It is not a real Ministry of Health notice and not legal advice.","case":{"id":"il","title":"Israel: shared booklet labels no longer accepted","authority":"Israel Ministry of Health (illustrative scenario)","published":"2026-11-12","effective":"2027-01-03","requirement":"IL/IMP_LABEL_SINGLE_COUNTRY","summary":"From 3 January 2027, investigational products imported for Israeli sites must carry an Israel-only label in Hebrew with the Ministry of Health trial approval number. Multi-country booklet labels that also cover other countries are refused at import, even when they include Hebrew.","transition":"Kits imported before 3 January 2027 under a shared booklet label may be used at the site until they expire.","consequence":"The shared booklet for Israel, Greece and Cyprus can no longer serve Israel. Stock pooled across the three countries splits in two: the booklet batches stay with Greece and Cyprus, and Israeli sites need Israel-only kits.","evidence":[{"id":"il-1","locator":"Section 2","excerpt":"Investigational products imported for a clinical trial in Israel shall bear a label intended for Israel only."},{"id":"il-2","locator":"Section 3","excerpt":"A label shared with another country shall not be accepted at import from 3 January 2027."}]},"trial":{"id":"STUDY-021","title":"Multinational psoriasis biologic study","product":"IMP-021","phase":"III","countries":["IL","GR","CY"],"depot":"Central EU depot, Belgium","standardLeadBusinessDays":5,"labels":[{"id":"LBL-BK-07","type":"Booklet","countries":["IL","GR","CY"],"languages":["he","el","en"],"status":"approved"},{"id":"LBL-IL-02","type":"Single-country","countries":["IL"],"languages":["he","en"],"status":"approved","moHApprovalNumber":true}],"batches":[{"id":"Q-801","label":"LBL-BK-07","qp":"2026-09-02","expiry":"2028-03-31"},{"id":"Q-802","label":"LBL-BK-07","qp":"2026-10-20","expiry":"2028-06-30"},{"id":"Q-815","label":"LBL-IL-02","qp":"2026-10-28","expiry":"2028-06-30"}],"sites":[{"id":"SITE-IL-01","country":"IL","city":"Tel Aviv","hospital":"Tel Aviv site pharmacy","patients":14},{"id":"SITE-IL-02","country":"IL","city":"Haifa","hospital":"Haifa site pharmacy","patients":18},{"id":"SITE-IL-03","country":"IL","city":"Jerusalem","hospital":"Jerusalem site pharmacy","patients":11},{"id":"SITE-GR-01","country":"GR","city":"Athens","hospital":"Athens site pharmacy","patients":16},{"id":"SITE-CY-01","country":"CY","city":"Nicosia","hospital":"Nicosia site pharmacy","patients":7}],"shipments":[{"id":"SHP-IL-01","site":"SITE-IL-01","batch":"Q-801","kits":10,"dispatch":"2026-11-23","delivery":"2026-11-26","carrier":"EMEA specialty courier","importApproval":"approved"},{"id":"SHP-IL-02","site":"SITE-IL-02","batch":"Q-801","kits":12,"dispatch":"2027-01-04","delivery":"2027-01-07","carrier":"EMEA specialty courier","importApproval":"approved"},{"id":"SHP-IL-03","site":"SITE-IL-03","batch":"Q-802","kits":10,"dispatch":"2027-01-12","delivery":"2027-01-15","carrier":"EMEA specialty courier","importApproval":"requested"},{"id":"SHP-GR-01","site":"SITE-GR-01","batch":"Q-801","kits":8,"dispatch":"2027-01-11","delivery":"2027-01-14","carrier":"EMEA specialty courier","importApproval":"not needed"},{"id":"SHP-CY-01","site":"SITE-CY-01","batch":"Q-802","kits":6,"dispatch":"2027-01-13","delivery":"2027-01-18","carrier":"EMEA specialty courier","importApproval":"not needed"}]},"specifications":{"il":{"version":3,"published":"2026-06-01","next":"2027-06-01","owner":"N. Levi, Regulatory Affairs Israel","sections":{"regulatory":{"owner":"N. Levi, Regulatory Affairs Israel","checked":"2026-06-01","review":"2026-12-01","case":"il","items":["Label language: Hebrew (required), English allowed alongside.","Shared booklet labels with other countries are accepted until 2 January 2027 (illustrative scenario: from 3 January 2027 an Israel-only label with the Ministry of Health trial approval number)."]},"import":{"owner":"N. Levi, Regulatory Affairs Israel","checked":"2026-06-01","review":"2026-12-01","items":["A Ministry of Health import approval for each shipment, quoted on the airway bill.","The batch's QP release documentation travels with the shipment."]},"logistics":{"owner":"M. Peeters, Clinical Supply Logistics EU","checked":"2026-09-01","review":"2026-12-01","items":["Prepare each shipment 5 business days before dispatch from the Belgian depot.","Sites receive on Israeli working days only: Sunday to Thursday. No delivery on Friday or Saturday.","2–8 °C products: validated shipper, transit under 96 hours."]},"carriers":{"owner":"M. Peeters, Clinical Supply Logistics EU","checked":"2026-09-01","review":"2026-12-01","items":["EMEA specialty courier (temperature-controlled, Belgium to Israel, Greece and Cyprus)"]},"ior":{"owner":"N. Levi, Regulatory Affairs Israel","checked":"2026-06-01","review":"2026-12-01","items":["Importer of record: the sponsor's local representative in Israel. Consignee: the hospital pharmacy of the trial site."]},"notes":{"owner":"N. Levi, Regulatory Affairs Israel","checked":"2026-06-01","review":"2026-12-01","items":["Plan Israel as its own label group in regional booklets: some destinations in the region do not accept packs that carry Hebrew text or an Israeli approval number, so stock labelled for Israel cannot always be moved to a neighbouring country."]}}},"gr":{"version":2,"published":"2026-05-15","next":"2027-05-15","owner":"E. Papadopoulou, Regulatory Affairs Greece","sections":{"regulatory":{"owner":"E. Papadopoulou, Regulatory Affairs Greece","checked":"2026-05-15","review":"2026-11-30","items":["Label under Annex VI of Regulation (EU) 536/2014.","Label language: Greek. Multi-country booklets that include Greek are accepted."]},"logistics":{"owner":"M. Peeters, Clinical Supply Logistics EU","checked":"2026-09-01","review":"2026-12-01","items":["Prepare each shipment 5 business days before dispatch from the Belgian depot.","Sites receive on working days, Monday to Friday."]},"carriers":{"owner":"M. Peeters, Clinical Supply Logistics EU","checked":"2026-09-01","review":"2026-12-01","items":["EMEA specialty courier (temperature-controlled, Belgium to Israel, Greece and Cyprus)"]}}},"cy":{"version":2,"published":"2026-05-15","next":"2027-05-15","owner":"E. Papadopoulou, Regulatory Affairs Greece","sections":{"regulatory":{"owner":"E. Papadopoulou, Regulatory Affairs Greece","checked":"2026-05-15","review":"2026-11-30","items":["Label under Annex VI of Regulation (EU) 536/2014.","Label language: Greek. Multi-country booklets that include Greek are accepted."]},"logistics":{"owner":"M. Peeters, Clinical Supply Logistics EU","checked":"2026-09-01","review":"2026-12-01","items":["Prepare each shipment 5 business days before dispatch from the Belgian depot.","Sites receive on working days, Monday to Friday."]},"carriers":{"owner":"M. Peeters, Clinical Supply Logistics EU","checked":"2026-09-01","review":"2026-12-01","items":["EMEA specialty courier (temperature-controlled, Belgium to Israel, Greece and Cyprus)"]}}}},"operations":{"depotStock":{"Q-801":40,"Q-802":30,"Q-815":14},"relabel":{"label":"LBL-IL-02","slots":[{"date":"2026-12-08","kits":30},{"date":"2026-12-15","kits":30}],"turnaroundBusinessDays":2},"transitBusinessDays":3,"siteStockDays":{"SITE-IL-01":21,"SITE-IL-02":16,"SITE-IL-03":12,"SITE-GR-01":19,"SITE-CY-01":25},"importApprovals":{"SHP-IL-01":{"status":"approved","number":"MOH-IMP-26-4410"},"SHP-IL-02":{"status":"approved","number":"MOH-IMP-26-4471"},"SHP-IL-03":{"status":"requested","requested":"2026-11-09","typicalBusinessDays":10}},"contacts":{"SITE-IL-03":{"contact":"Local representative, Israel","channel":"Email","typicalResponseBusinessDays":2}}}}</script>
 <script id="dashboard-data">
 "use strict";
 // Fictional demo portfolio (demo-data/uk-labelling-portfolio.json), added by the local server.
@@ -123,6 +168,11 @@ const portfolio = (() => {
 // Fictional Spain scenario (demo-data/spain-scenario.json), also added by the local server. Without it, Spain is left out.
 const spain = (() => {
   try {const source=document.getElementById("spain-data");return source?JSON.parse(source.textContent):null;}
+  catch {return null;}
+})();
+// Fictional Israel scenario (demo-data/israel-scenario.json): one booklet label that can no longer serve two countries.
+const israel = (() => {
+  try {const source=document.getElementById("israel-data");return source?JSON.parse(source.textContent):null;}
   catch {return null;}
 })();
 const replayDate = "14 Nov 2026";
@@ -155,7 +205,7 @@ const resources = [
  {name:"EMA CTIS public portal",text:"EU and EEA trial searches, EU trial numbers and public trial information. Use explicit registry identifiers to link records.",url:"https://www.ema.europa.eu/en/human-regulatory-overview/research-development/clinical-trials-human-medicines/clinical-trials-information-system-ctis"},
  {name:"AACT database",text:"Relational ClinicalTrials.gov data for SQL queries and bulk snapshots. AACT is a mirror of the registry.",url:"https://aact.ctti-clinicaltrials.org/landing"}
 ];
-const regions = ["Europe","North America","Asia","Oceania","South America","Africa"];
+const regions = ["Europe","Middle East","North America","Asia","Oceania","South America","Africa"];
 const countries = [
  {id:"uk",name:"United Kingdom",region:"Europe",changes:["uk","import"]},
  {id:"de",name:"Germany",region:"Europe",shared:["eu"]},
@@ -205,6 +255,27 @@ if(spain) {
     after:"A delivery note in Spanish with the EU trial number, the hospital pharmacy code and each batch number, plus an electronic notice 3 business days before delivery. Shipments without them are refused.",
     need:"Dispatch and delivery dates of each shipment to a Spanish site, each site's hospital pharmacy code, and the documents the depot prints.",
     evidence:[spain.notice.id],studyNote:"Trial "+spain.trial.id+" opens "+spain.trial.sites.length+" Spanish sites from February 2027."});
+}
+// The fictional Israel scenario: the Israel, Greece and Cyprus specifications, the notice and the change.
+if(israel) {
+  const ilCase=israel.case;
+  const day=value=>new Intl.DateTimeFormat("en-GB",{dateStyle:"medium",timeZone:"UTC"}).format(new Date(value));
+  countries.splice(countries.findIndex(country=>country.id==="fr")+1,0,{id:"gr",name:"Greece",region:"Europe",shared:["eu"]},{id:"cy",name:"Cyprus",region:"Europe",shared:["eu"]});
+  countries.splice(countries.findIndex(country=>country.region==="North America"),0,{id:"il",name:"Israel",region:"Middle East",changes:["il"]});
+  // A section with no watched source has an empty list, like the internal sections of the other specifications.
+  for(const spec of Object.values(israel.specifications)) for(const section of Object.values(spec.sections)) {section.sources??=[];section.items??=[];}
+  Object.assign(countrySpecs,israel.specifications);
+  sources.push({id:"il-notice",title:"Labelling of investigational products imported for Israel",authority:ilCase.authority,scope:"IL",type:"Notice",path:"Ministry of Health / Clinical trials / Notices",
+    checked:"09:45",status:"New",tone:"blue",edition:day(ilCase.published),section:"Sections 2 and 3 · applies from "+day(ilCase.effective),change:"il",url:null,
+    text:ilCase.evidence.map(item=>item.locator+". "+item.excerpt).join("\n\n"),
+    result:"New notice found two days after it was published. From "+day(ilCase.effective)+", Israeli sites accept only kits with an Israel-only label: a booklet shared with other countries is refused at import."});
+  changes.push({id:"il",title:"Israel: shared booklet labels no longer accepted",authority:ilCase.authority,scope:"IL",kind:"Labeling",status:"Assess impact",tone:"amber",when:"Applies from "+day(ilCase.effective),
+    sinceLabel:day(ilCase.published),
+    summary:"From "+day(ilCase.effective)+", kits imported for Israeli sites need an Israel-only label. The booklet shared with Greece and Cyprus is refused, so one stock can no longer serve the three countries.",
+    before:"One booklet label in Hebrew, Greek and English serves Israel, Greece and Cyprus, so the depot keeps one stock for the three countries.",
+    after:"Israel accepts only an Israel-only label with the Ministry of Health trial approval number. The booklet stays valid for Greece and Cyprus; Israeli sites need relabelled or Israel-only kits.",
+    need:"Each Israeli shipment's import date, the label on each batch, Israel-only stock, relabelling slots and the Ministry of Health import approvals.",
+    evidence:["il-notice"],studyNote:"Trial "+israel.trial.id+" supplies "+israel.trial.sites.length+" sites in Israel, Greece and Cyprus from one booklet stock."});
 }
 // What the official sources say, shown in the specification sections that cite them.
 // Short paraphrases written from the sources named in `ref` (checked 14 Nov 2026), not reviewed advice.
@@ -341,7 +412,7 @@ function spainImpact() {
   const missing=[...new Map(affected.filter(item=>!item.site.pharmacyCode).map(item=>[item.site.id,item.site])).values()];
   return {all,affected,first:affected[0],missing,sites:spain?.trial.sites.length??0};
 }
-const countryNames = {GB:"UK",DE:"Germany",FR:"France",IT:"Italy",ES:"Spain",PL:"Poland",NL:"Netherlands",IE:"Ireland",PT:"Portugal",SE:"Sweden",DK:"Denmark",FI:"Finland",BE:"Belgium",US:"United States",CA:"Canada",JP:"Japan",AU:"Australia"};
+const countryNames = {IL:"Israel",GR:"Greece",CY:"Cyprus",GB:"UK",DE:"Germany",FR:"France",IT:"Italy",ES:"Spain",PL:"Poland",NL:"Netherlands",IE:"Ireland",PT:"Portugal",SE:"Sweden",DK:"Denmark",FI:"Finland",BE:"Belgium",US:"United States",CA:"Canada",JP:"Japan",AU:"Australia"};
 const partnerNames = {"PARTNER-LOGISTICS-UK-01":"UK logistics partner","PARTNER-LOGISTICS-EU-01":"EU logistics partner"};
 function portfolioBatches() {
   return portfolio.batches.map(batch=>{
@@ -585,14 +656,20 @@ const icons = {
   countries:'<path d="M3 14V2.5m0 1c2-1.5 3.3-.5 5 0 1.8.5 3 .7 5-1v7c-2 1.7-3.2 1.5-5 1-1.7-.5-3-1.5-5 0"/>',
   schedule:'<rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/><path d="M5.5 2.5v3m5-3v3M2.5 7h11M6 10.5h3.5"/>',
   review:'<path d="M5 2.5h6l2 2v9H3v-11h2zm.5 6 1.6 1.6 3.5-3.5"/>',
+  team:'<circle cx="8" cy="3.6" r="1.9"/><circle cx="3.4" cy="12.2" r="1.7"/><circle cx="8" cy="12.2" r="1.7"/><circle cx="12.6" cy="12.2" r="1.7"/><path d="M8 5.5v4.9M6.6 5 4.3 10.6M9.4 5l2.3 5.6"/>',
+  play:'<path d="M5 3.5v9l7-4.5z"/>',
+  pause:'<path d="M5.5 3.5v9m5-9v9"/>',
+  step:'<path d="M3.5 3.5v9l6-4.5zM12.5 3.5v9"/>',
+  rewind:'<path d="M12.5 3.5v9l-6-4.5zM3.5 3.5v9"/>',
   plans:'<circle cx="4" cy="4" r="1.7"/><circle cx="12" cy="4" r="1.7"/><circle cx="8" cy="12.2" r="1.7"/><path d="M5.7 4h4.6M4.8 5.5l2.4 5M11.2 5.5l-2.4 5"/>',
   shipments:'<path d="M2.5 5 8 2.5 13.5 5v6L8 13.5 2.5 11zM2.5 5 8 7.5 13.5 5M8 7.5v6"/>'
 };
-const navItems = {overview:"Overview",shipments:"Shipment checks",plans:"Agent plans",countries:"Country specifications",sources:"Source log",schedule:"Monitoring schedule"};
+const navItems = {overview:"Overview",shipments:"Shipment checks",plans:"Agent plans",team:"Agents in action",countries:"Country specifications",sources:"Source log",schedule:"Monitoring schedule"};
 const byId = id => document.getElementById(id);
 const esc = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const icon = name => '<svg viewBox="0 0 16 16" aria-hidden="true">'+icons[name]+'</svg>';
 const badge = (text,tone="") => '<span class="badge '+tone+'">'+esc(text)+'</span>';
+const tip = (text,label="What this means") => '<span class="tip"><button type="button" class="tip-btn" aria-label="'+esc(label+": "+text)+'"></button><span class="tip-pop" role="tooltip">'+esc(text)+'</span></span>';
 const trigger = (text,act,value="",tone="",symbol="") => '<button type="button" class="btn '+tone+'" data-act="'+act+'" data-value="'+esc(value)+'">'+(symbol?icon(symbol):"")+esc(text)+'</button>';
 const openLink = (text,url,tone="") => '<a class="btn '+tone+'" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(text)+icon("external")+'</a>';
 let page = "overview";
@@ -758,7 +835,7 @@ function portfolioImpactCard() {
     return '<tr><td><button type="button" class="entity-button" data-act="shipment" data-value="'+esc(shipment.id)+'"><span>'+esc(shipment.id)+'<small class="sub">Batch '+esc(shipment.batch)+' · '+esc(statusOf(shipment.batch))+'</small></span></button></td><td>'+esc(shipment.site||shipment.destination)+'</td><td class="nowrap">'+esc(displayDay(shipment.preparationDate))+'</td>'+
       '<td>'+badge(days<=0?"Today":days===1?"1 day":days+" days",days<=0?"red":days<=3?"amber":"")+'</td><td>'+esc(shipment.patients)+'</td></tr>';
   }).join("");
-  return '<section class="card portfolio-impact"><div class="card-head"><div><h2>UK labeling change · portfolio impact</h2><p>Found at the first scan on '+esc(displayDay(asOf))+' · the rule has applied since '+esc(displayDay(ukCase.effective))+', '+behind+' days earlier</p></div>'+trigger("Open the UK case","open-case","uk","primary","arrow")+'</div>'+
+  return '<section class="card portfolio-impact"><div class="card-head"><div><h2>UK labeling change · portfolio impact'+tip("Trials, batches and shipments that need work because of the amended UK labelling rules, with the shipment that must be prepared first.","About this impact")+'</h2><p>Found at the first scan on '+esc(displayDay(asOf))+' · the rule has applied since '+esc(displayDay(ukCase.effective))+', '+behind+' days earlier</p></div>'+trigger("Open the UK case","open-case","uk","primary","arrow")+'</div>'+
     '<div class="case-pad">'+headline+'</div>'+
     (rows?'<div class="table-wrap" tabindex="0"><table><caption class="sr">UK shipments that need action before dispatch</caption><thead><tr><th>Shipment</th><th>Site</th><th>Prepare by</th><th>Time left</th><th>Patients on treatment</th></tr></thead><tbody>'+rows+'</tbody></table></div>':"")+
     '<div class="card-foot"><small>'+esc(patients+" patients on treatment at the sites these shipments resupply · "+portfolio.batches.length+" batches and "+portfolio.shipments.length+" shipments checked")+'</small></div></section>';
@@ -776,28 +853,171 @@ function spainImpactCard() {
   const headline='<p class="impact-headline">From <strong>'+esc(displayDay(esCase.effective))+'</strong>, in '+daysFrom(esCase.effective)+' days, shipments to Spanish sites need a delivery note in Spanish and a notice to the hospital pharmacy 3 business days ahead. For '+esc(spain.trial.id)+', <strong>'+affected.length+' of '+all.length+'</strong> planned shipments are affected'+
     (first?'. The first must be prepared by <strong>'+esc(displayDay(first.prepareBy))+'</strong>, in '+daysFrom(first.prepareBy)+' days':'')+
     (missing.length?', and <strong>'+missing.length+'</strong> sites have no hospital pharmacy code yet.':'.')+'</p>';
-  return '<section class="card portfolio-impact"><div class="card-head"><div><h2>Spain shipping-document change · early warning</h2><p>Information note published '+esc(displayDay(spain.notice.published))+' · trial '+esc(spain.trial.id)+'</p></div>'+trigger("Open the Spain case","open-case","es","primary","arrow")+'</div>'+
+  return '<section class="card portfolio-impact"><div class="card-head"><div><h2>Spain shipping-document change · early warning'+tip("The rule applies from 1 Mar 2027. RegChain flags the shipments it will reach now, so pharmacy codes and documents are ready in time. Illustrative scenario.","About this warning")+'</h2><p>Information note published '+esc(displayDay(spain.notice.published))+' · trial '+esc(spain.trial.id)+'</p></div>'+trigger("Open the Spain case","open-case","es","primary","arrow")+'</div>'+
     '<div class="case-pad">'+headline+'</div>'+
     (rows?'<div class="table-wrap" tabindex="0"><table><caption class="sr">Shipments to Spanish sites that need the new documents</caption><thead><tr><th>Shipment</th><th>Site</th><th>Dispatch</th><th>Prepare by</th><th>Time left</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div>':"")+
     '<div class="card-foot"><small>'+esc(all.length+" shipments to "+spain.trial.sites.length+" Spanish sites checked · "+(all.length-affected.length)+" can follow the earlier procedure · business days skip weekends only")+'</small></div></section>';
 }
+function israelImpactCard() {
+  if(!israel||!changeOpen("il")) return "";
+  const pool=israelLabelPool();
+  const blocked=pool.israeli.filter(item=>item.result==="Blocked");
+  const shared=pool.batches.filter(batch=>batch.shared);
+  const headline='<p class="impact-headline">From <strong>'+esc(displayDay(pool.effective))+'</strong>, in '+daysFrom(pool.effective)+' days, Israeli sites accept only kits with an Israel-only label. '+
+    'The booklet shared with Greece and Cyprus can no longer serve Israel: <strong>'+pool.sharedKits+' kits</strong> in batches '+esc(shared.map(batch=>batch.id).join(" and "))+' stay with Greece and Cyprus, and Israel has <strong>'+pool.israelOnlyKits+
+    '</strong> Israel-only kits for the <strong>'+pool.needed+'</strong> it needs after that day. <strong>'+blocked.length+' of '+pool.israeli.length+'</strong> Israeli shipments are blocked.</p>';
+  const rows=pool.israeli.map(item=>'<tr><td><button type="button" class="entity-button" data-act="shipment" data-value="'+esc(item.id)+'"><span>'+esc(item.id)+'<small class="sub">Batch '+esc(item.batch)+'</small></span></button></td>'+
+    '<td>'+esc(item.site)+'</td><td class="nowrap">'+esc(displayDay(item.dispatch))+'<span class="sub">Import '+esc(displayDay(item.delivery))+'</span></td><td>'+badge(...resultStyle[item.result])+'</td>'+
+    '<td>'+(needsAction(item)?'<button type="button" class="plan-link" data-act="open-agents" data-value="'+esc(item.id)+'">'+planBadge(item.id)+icon("chevron")+'</button>':'<span class="muted">None needed</span>')+'</td></tr>').join("");
+  return '<section class="card portfolio-impact"><div class="card-head"><div><h2>Israel label change · supply impact'+tip("One booklet label used to serve Israel, Greece and Cyprus. From the rule's date Israel refuses it, so the same kits can no longer go to both: Israeli sites need relabelled or Israel-only kits. Illustrative scenario.","About this impact")+'</h2><p>Notice published '+esc(displayDay(israel.case.published))+' · trial '+esc(israel.trial.id)+' · Israel, Greece and Cyprus</p></div>'+trigger("Open the Israel change","open-case","il","primary","arrow")+'</div>'+
+    '<div class="case-pad">'+headline+'</div><div class="table-wrap" tabindex="0"><table class="stack-table"><caption class="sr">Shipments to Israeli sites and their plans</caption><thead><tr><th>Shipment</th><th>Site</th><th>Dispatch</th><th>Check</th><th>Agent plan</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+    '<div class="card-foot"><small>'+esc("Greece and Cyprus keep the booklet · Israeli sites receive Sunday to Thursday · illustrative scenario")+'</small></div></section>';
+}
+// The impact of each open change, one at a time, so the Overview stays one screen of work.
+let impactTab = null;
+function impactCards() {
+  const cards=[["uk","UK labeling",portfolioImpactCard],["il","Israel label",israelImpactCard],["es","Spain documents",spainImpactCard]].map(([id,label,render])=>({id,label,html:render()})).filter(card=>card.html);
+  if(!cards.length) return "";
+  const active=cards.find(card=>card.id===impactTab)??cards[0];
+  if(cards.length===1) return active.html;
+  return '<div class="impact-tabs" role="tablist" aria-label="Impact of each open change">'+cards.map(card=>'<button type="button" role="tab" class="impact-tab" aria-selected="'+(card===active)+'" data-act="impact-tab" data-value="'+card.id+'">'+esc(card.label)+'</button>').join("")+'</div>'+active.html;
+}
 // Open changes counted by where they apply, for the Overview tile.
 function changeScopes() {
-  const names={UK:"UK",GB:"GB",ES:"Spain",EU:"shared EU"};
+  const names={UK:"UK",GB:"GB",IL:"Israel",ES:"Spain",EU:"shared EU"};
   const order=Object.values(names);
   const counts=openChanges().reduce((all,change)=>{const name=names[change.scope]??change.scope;all[name]=(all[name]??0)+1;return all;},{});
   return Object.entries(counts).sort(([a],[b])=>order.indexOf(a)-order.indexOf(b)).map(([name,count])=>count+" "+name).join(" · ");
 }
 function overview() {
+  if(firstRun!=="done") return firstRunView();
   return heading("Regulatory monitor","Open a change to see its evidence, impact and next action.",'<button id="replay" class="btn primary" type="button" data-act="replay">'+icon("retry")+'Run checks</button>')+
-    '<div class="runbar"><div class="runbar-left">'+icon("clock")+'<strong>Check run '+String(scheduleState.runCount).padStart(2,"0")+'</strong><span class="separator">·</span><span>'+ (scheduleState.lastAt?"Last run "+scheduleDate(scheduleState.lastAt):replayDate) +'</span></div><div class="actions">'+badge("Completed with 1 retry needed","amber")+badge(scheduleState.enabled?cadence(scheduleState.days):"Schedule paused",scheduleState.enabled?"blue":"")+'</div></div>'+
+    '<div class="runbar"><div class="runbar-left">'+icon("clock")+'<strong>Check run '+String(scheduleState.runCount).padStart(2,"0")+'</strong><span class="separator">·</span><span>'+ (scheduleState.lastAt?"Last run "+scheduleDate(scheduleState.lastAt):replayDate) +'</span></div><div class="actions">'+emptyControl()+badge("Completed with 1 retry needed","amber")+badge(scheduleState.enabled?cadence(scheduleState.days):"Schedule paused",scheduleState.enabled?"blue":"")+'</div></div>'+
     '<div class="tiles" aria-label="Check summary">'+
       (()=>{const all=plannedShipments();const blocked=all.filter(item=>item.result==="Blocked");return tile("Shipments blocked",blocked.length,"Of "+all.length+" planned · "+(blocked[0]?"first: "+blocked[0].id+", prepare by "+displayDay(blocked[0].prepareBy):"none blocked"),"shipments","shipments");})()+
       tile("Open changes",openChanges().length,changeScopes(),"changes")+
       tile("Trials to review",ukOpen()?studies.filter(study=>study.status==="Batch review").length:0,portfolio?"Of "+studies.length+" checked · UK labeling":"UK labeling · portfolio","studies")+
       tile("Checks to retry",retryCount(),retryCount()?"Coverage gap in Great Britain":"All source checks completed","alert","retry-filter")+
-    '</div>'+portfolioImpactCard()+spainImpactCard()+regionCard();
+    '</div>'+impactCards()+regionCard();
 }
+// ---------- First run: an empty workspace, filled by the first check ----------
+const firstRunKey = "regchain-first-run-v1";
+// A check interrupted by a reload starts again from the empty workspace.
+let firstRun = (()=>{try {const value=localStorage.getItem(firstRunKey)||"done";return value==="checking"?"empty":value;} catch {return "done";}})();
+let firstSteps = [];
+let firstArmed = false;
+let firstLive = false;
+let serverAuthMode = null;
+const setFirstRun = value => {firstRun=value;try {localStorage.setItem(firstRunKey,value);} catch {}};
+const firstStepNames = [
+  "Read the official sources and compare them with the versions on record",
+  "Assess what each change means for trials, batches and stock",
+  "Re-check every planned shipment against its destination's rules",
+  "Hand the shipments that need action to the agent team"
+];
+const pause = ms => new Promise(resolve=>setTimeout(resolve,ms));
+function emptyPage() {
+  return heading(esc(navItems[page]??"RegChain"),"This page fills once RegChain has run its first check.")+
+    '<section class="card first-empty">'+icon("info")+'<div><h2>Nothing here yet</h2><p>Run the first check on the Overview. RegChain finds what changed in the official sources, re-checks every planned shipment and asks the agent team for plans.</p>'+
+    '<div class="actions">'+trigger("Go to the Overview","nav","overview","primary","arrow")+'</div></div></section>';
+}
+function firstRunView() {
+  const shipments=plannedShipments();
+  const facts=[[sources.length,"official sources watched"],[shipments.length,"planned shipments"],[new Set(shipments.map(item=>item.trial)).size,"trials with planned shipments"],[new Set(shipments.map(item=>item.countryId)).size,"destination countries"],[6,"company systems over MCP"],[5,"AI agents and one rule checker"]];
+  const head=heading("Regulatory monitor",firstRun==="checking"?"The first check is running. Each step shows what RegChain found.":"RegChain is connected to the official sources and to the supply plan. Nothing has been checked yet.");
+  const live=agentServer()&&agentState.status?.keySet&&agentState.status?.sdk;
+  if(firstRun==="empty") {
+    return head+'<section class="card first-run"><div class="first-grid"><div><div class="plan-eyebrow">Ready for the first check</div><h2>What changed, and what does it mean for our shipments?</h2>'+
+      '<p class="muted">The first check takes about a minute. You can follow every step.</p><ol class="first-list">'+firstStepNames.map(name=>'<li>'+esc(name)+'</li>').join("")+'</ol>'+
+      (live?'<label class="first-live"><input type="checkbox" id="first-live"'+(firstLive?" checked":"")+'> Let the live AI agents plan (Claude; takes several minutes). Without it, the same steps run with coded decisions.</label>':"")+
+      '<div class="actions">'+trigger("Run the first check","first-run","","primary","retry")+'</div></div>'+
+      '<div class="first-facts">'+facts.map(([value,label])=>'<div class="first-fact"><strong>'+value+'</strong><span>'+esc(label)+'</span></div>').join("")+'</div></div></section>';
+  }
+  return head+'<section class="card first-run"><div class="plan-eyebrow">The first check is running</div><h2>Finding what changed</h2><ol class="first-steps" id="first-steps">'+firstStepsHtml()+'</ol></section>';
+}
+function firstStepsHtml() {
+  return firstSteps.map((step,index)=>'<li class="first-step '+step.state+'"><span class="first-mark" aria-hidden="true">'+(step.state==="done"?"✓":step.state==="active"?'<span class="spinner"></span>':index+1)+'</span><div><strong>'+esc(step.name)+'</strong>'+
+    (step.lines.length?'<ul>'+step.lines.map(line=>'<li>'+escd(line)+'</li>').join("")+'</ul>':"")+'</div></li>').join("");
+}
+function paintFirst() {
+  const list=byId("first-steps");
+  if(list) list.innerHTML=firstStepsHtml();
+}
+async function runFirstCheck() {
+  if(firstRun==="checking") return;
+  firstLive=Boolean(byId("first-live")?.checked);
+  setFirstRun("checking");
+  firstSteps=firstStepNames.map(name=>({name,state:"todo",lines:[]}));
+  render();
+  notify("The first check is running.");
+  const step=async (index,work)=>{
+    firstSteps[index].state="active";paintFirst();
+    try {await work(firstSteps[index]);} catch(error) {firstSteps[index].lines.push("Could not finish this step: "+error.message);}
+    firstSteps[index].state="done";paintFirst();
+    await pause(500);
+  };
+  await step(0,async current=>{
+    const replays=serverMode()?Promise.all(["uk-labelling","es-notice"].map(set=>apiWrite("POST","/v1/replays",{fixture_set:set,extraction_mode:"recorded"}).catch(error=>({error:error.message})))):Promise.resolve([]);
+    for(let index=1;index<=sources.length;index++) {current.lines=[index+" of "+sources.length+" sources read"];paintFirst();await pause(160);}
+    const [uk,es]=await replays;
+    current.lines=[sources.length+" of "+sources.length+" sources read and compared · 3 changes found"];
+    current.lines.push(uk&&!uk.error?"UK: regulation 46 changed (a "+String(uk.comparison_status).replace("_"," ")+"), "+uk.evidence.filter(item=>item.found).length+" evidence passages found word for word in the official text":"UK: the stored official text was used");
+    current.lines.push(es&&!es.error?"Spain: a new information note, "+es.evidence.filter(item=>item.found).length+" evidence passages found word for word":"Spain: the new information note");
+    if(israel) current.lines.push("Israel: a new Ministry of Health notice on shared booklet labels (illustrative scenario)");
+    if(serverMode()) await loadServerState();
+  });
+  await step(1,async current=>{
+    const uk=ukLabelImpact();
+    current.lines.push("UK labeling: "+uk.trials+" of "+studies.length+" trials and "+uk.batches+" batches need action; the first shipment must be prepared by "+displayDay(uk.first?.preparationDate));
+    paintFirst();await pause(450);
+    if(israel) {const pool=israelLabelPool();current.lines.push("Israel: the shared booklet splits. "+pool.sharedKits+" kits stay with Greece and Cyprus; Israel has "+pool.israelOnlyKits+" Israel-only kits for the "+pool.needed+" it needs");paintFirst();await pause(450);}
+    if(spain) {const {affected,all}=spainImpact();current.lines.push("Spain: "+affected.length+" of "+all.length+" shipments need the new delivery note and pharmacy notice");}
+  });
+  await step(2,async current=>{
+    const all=plannedShipments();
+    const count=result=>all.filter(item=>item.result===result).length;
+    current.lines.push(all.length+" shipments re-checked: "+count("Blocked")+" blocked, "+count("Confirm")+" to confirm before dispatch, "+count("Ready")+" ready to ship");
+    const first=all.find(item=>item.result==="Blocked");
+    if(first) current.lines.push("Most urgent: "+first.id+" to "+first.site+", prepare by "+displayDay(first.prepareBy));
+  });
+  await step(3,async current=>{
+    const needs=plannedShipments().filter(needsAction).length;
+    current.lines.push("The master agent ranks the "+needs+" shipments and starts the specialists on each one");
+    await pause(600);
+  });
+  setFirstRun("done");
+  if(agentServer()&&!portfolioState.running) {
+    teamSource="portfolio";
+    teamData={...teamData,key:null};
+    teamAutoplay=!firstLive;
+    page="team";
+    startPortfolioRun(firstLive?"live":"scripted");
+    byId("page-title")?.focus({preventScroll:true});
+    window.scrollTo(0,0);
+  } else render();
+  notify("The first check is done. The agents are planning every shipment that needs action.");
+}
+// Rehearse on one computer: archive plans and approvals, start each case again, and show the empty workspace.
+async function startFromEmpty() {
+  if(!firstArmed) {firstArmed=true;render();return;}
+  firstArmed=false;
+  try {
+    await agentPost("/api/agent/start-fresh",{plans:true,by:"Start from empty"});
+    for(const id of Object.keys(governedCases)) await apiWrite("POST","/v1/cases/"+encodeURIComponent(id)+"/reset",{}).catch(()=>null);
+    for(const id of Object.keys(manualShipmentActions)) await apiWrite("DELETE","/v1/shipment-actions/"+encodeURIComponent(id)).catch(()=>null);
+  } catch(error) {notify("Could not start from empty: "+error.message);return;}
+  portfolioState={running:false,events:[],record:null,error:"",mode:null,order:[]};
+  agentState={...agentState,running:false,events:[],record:null,error:"",shipment:null};
+  agentPlans={};agentApprovals={};agentApprovalLog=[];
+  teamData={key:null,events:[],record:null,loading:false,error:"",live:false};
+  setFirstRun("empty");
+  page="overview";
+  await loadServerState();
+  await loadAgentData();
+  render();
+  notify("The workspace is empty. Run the first check when you are ready.");
+}
+const emptyControl = () => serverMode()&&serverAuthMode==="local"?'<button type="button" class="link-button'+(firstArmed?" armed":"")+'" data-act="start-empty">'+(firstArmed?"Archive plans and start from empty? Click again":"Start from empty")+'</button>':"";
 function tile(title,value,hint,symbol,target) {
   const body='<div class="tile-top"><span class="tile-icon">'+icon(symbol)+'</span>'+title+'</div><strong>'+value+'</strong><small>'+hint+'</small>';
   return target?'<button type="button" class="tile" data-act="metric" data-value="'+target+'">'+body+'</button>':'<div class="tile">'+body+'</div>';
@@ -807,18 +1027,20 @@ function changeRow(change) {
     badge(...(isGoverned(change.id)?caseStatus(change.id):changeStatus(change)))+'</span><small>'+change.scope+' · '+change.kind+' · '+change.when+(openFor(change)&&!changeResolved(change.id)?' · '+openFor(change):'')+'</small><span class="change-summary">'+change.summary+'</span></span>'+icon("chevron")+'</button>';
 }
 function regionCard() {
+  const quiet=[];
   const content=regions.map(region=>{
     const local=openCountries().filter(country=>country.region===region);
     const shared=region==="Europe"?changes.filter(change=>change.scope==="EU"):[];
+    if(!local.length&&!shared.length) {quiet.push(region);return "";}
     const summary=local.length ? local.length+(local.length===1?" country":" countries")+" with open changes" : shared.length ? "Shared updates" : "Not monitored yet";
     const countryLinks=local.map(country=>'<h3 class="jurisdiction">'+country.name+'</h3>'+openChangeIds(country).map(id=>changeRow(changes.find(change=>change.id===id))).join("")).join("");
     const sharedLinks=shared.length?'<h3 class="jurisdiction">European Union · shared scope</h3>'+shared.map(changeRow).join(""):"";
     return '<details class="region" data-region="'+region+'"'+(expandedRegions.has(region)?" open":"")+'><summary>'+icon("chevron")+'<span class="region-label"><strong>'+region+'</strong><small>'+summary+'</small></span></summary>'+
       (countryLinks+sharedLinks || '<div class="region-child"><small>No monitored sources in this region yet.</small></div>')+'</details>';
-  }).join("");
+  }).join("")+(quiet.length?'<div class="region-quiet">'+icon("info")+'<span>No open changes, or no sources monitored yet: '+esc(quiet.join(", "))+'</span></div>':"");
   const resolved=changes.filter(change=>!openChanges().includes(change));
   const history=resolved.length?'<details class="region source-references"><summary>Resolved changes ('+resolved.length+')</summary>'+resolved.map(changeRow).join("")+'</details>':"";
-  return '<section id="regions" class="card" aria-labelledby="regions-title"><div class="card-head"><div><h2 id="regions-title">Changes by region</h2><p>Open monitoring cases</p></div></div><div class="region-list">'+content+'</div>'+history+'</section>';
+  return '<section id="regions" class="card" aria-labelledby="regions-title"><div class="card-head"><div><h2 id="regions-title">Changes by region'+tip("A change is an update RegChain found in an official source. It stays open until someone decides: a governed case for a rule that applies, or not relevant.","About changes")+'</h2><p>Open monitoring cases</p></div></div><div class="region-list">'+content+'</div>'+history+'</section>';
 }
 const countryById = id => countries.find(country=>country.id===id);
 // Library dates follow the demo's assessment day, like the rest of the replay.
@@ -896,7 +1118,7 @@ function watchText(countryId,sectionId) {
   const retry=watched.filter(source=>source.status==="Retry needed").length;
   return plural(watched.length,"source")+" watched · checked "+replayDate+(retry?" · "+retry+" needs a retry":"");
 }
-const countryCodes = {uk:"GB",de:"DE",fr:"FR",es:"ES",us:"US",jp:"JP",au:"AU",br:"BR",za:"ZA"};
+const countryCodes = {il:"IL",gr:"GR",cy:"CY",uk:"GB",de:"DE",fr:"FR",es:"ES",us:"US",jp:"JP",au:"AU",br:"BR",za:"ZA"};
 // Active trials, sites, patients and planned shipments in one country of the demo portfolio,
 // plus the fictional Spain scenario's trial for Spain.
 function countryPortfolio(countryId) {
@@ -1028,7 +1250,7 @@ function countrySpecification() {
     (links.length?'<div class="card-foot"><small>Related open changes</small><div class="actions">'+links.join("")+'</div></div>':"")+'</section>';
 }
 function countryLibrary() {
-  return heading("Country specifications","The specifications colleagues maintain for each country, and what has changed since the last update.")+
+  return heading("Country specifications","The specifications colleagues maintain for each country, and what has changed since the last update."+tip("A Country Specification lists what a shipment to that country needs: label, import and export rules, permits, logistics, carriers and contacts. A pending change becomes a new version once the Regulatory SME approves it.","About Country Specifications"))+
     '<div class="library-layout"><section class="card"><div class="card-head"><label class="field" style="width:100%">Find a country<input id="country-search" type="search" placeholder="Country or continent" value="'+esc(countrySearch)+'"></label></div><div id="country-list">'+countryList()+'</div></section><div id="country-requirements">'+countrySpecification()+'</div></div>';
 }
 function practiceList(items) {
@@ -1099,7 +1321,7 @@ function sectionTrials(id) {
     '<div class="actions">'+trigger("Back to the section","spec-section",id,"","arrow")+(caseId&&caseOpen(caseId)?trigger("Open the "+(caseId==="uk"?"UK":"Spain")+" case","open-case",caseId,"primary","arrow"):"")+'</div>');
 }
 function monitoringSchedule() {
-  return heading("Monitoring schedule","Set the interval for automatic checks.")+
+  return heading("Monitoring schedule","Set the interval for automatic checks."+tip("Each check reads the official sources, compares them with the stored versions and re-checks every planned shipment. A change is flagged the day it is found.","About the schedule"))+
     '<div class="layout">'+
     '<section class="card"><div class="card-head"><div><h2>Automatic checks</h2><p>Settings</p></div>'+badge(scheduleState.enabled?cadence(scheduleState.days):"Paused",scheduleState.enabled?"blue":"")+'</div><div class="settings">'+
     '<form id="schedule-form"><label class="toggle"><input type="checkbox" name="enabled"'+(scheduleState.enabled?" checked":"")+'> Run checks automatically</label><label class="field">Repeat every (days)<input type="number" name="days" min="1" max="365" step="1" value="'+scheduleState.days+'" required></label><div class="actions"><button type="submit" class="btn primary">Save schedule</button></div></form>'+
@@ -1137,8 +1359,17 @@ function resourceCard(name,text,url,linkName) {
 function sourceReferences() {
   return '<details class="card source-references space"><summary>Study data sources</summary><div class="drawer-body"><div class="resource-grid">'+resources.map(item=>resourceCard(item.name,item.text,item.url,"Open data source")).join("")+'</div></div></details>';
 }
+// Short explanations for panel titles people ask about.
+const panelTips = {
+  "AI reading of the source change":"Claude reads the official texts and drafts the change. RegChain then checks every quote word for word against the source, and the effective date against the recorded rule. A failed check blocks approval, and the Regulatory SME decides.",
+  "Regulatory evidence":"Tier 1 is binding law. Tier 2 is official guidance on how the authority reads it. Each excerpt comes from the source version RegChain stored, so it can be checked later.",
+  "Assessment":"Act: work is needed before dispatch. Check: confirm the specification, no change expected. Look back: batches that may already have shipped under the old label.",
+  "Batch applicability":"For the UK rule, the date that decides is the finished-IMP QP certification date, compared with 28 Apr 2026.",
+  "Owner decision":"A change without a governed case still needs a decision from the Regulatory SME: not relevant, open a case, or keep assessing. It never sits open without one.",
+  "Label pool after the change":"A booklet label covers several countries, so one stock can serve all of them. When one country stops accepting the shared booklet, the stock splits: that country's sites need relabelled or single-country kits."
+};
 function panel(title,description,body,action="") {
-  return '<section class="card"><div class="card-head"><div><h2>'+esc(title)+'</h2>'+(description?'<p>'+esc(description)+'</p>':"")+'</div>'+action+'</div>'+body+'</section>';
+  return '<section class="card"><div class="card-head"><div><h2>'+esc(title)+(panelTips[title]?tip(panelTips[title],"About "+title):"")+'</h2>'+(description?'<p>'+esc(description)+'</p>':"")+'</div>'+action+'</div>'+body+'</section>';
 }
 const casePad = body => '<div class="case-pad">'+body+'</div>';
 const listItems = items => '<ul class="case-list">'+items.map(item=>'<li>'+item+'</li>').join("")+'</ul>';
@@ -1507,9 +1738,24 @@ function caseImpact() {
     ["Act","Work needed before dispatch: "+plural(summary.act.trials.length,"trial")+" · "+plural(summary.act.batches.length,"batch","batches")+" · "+plural(summary.act.shipments.length,"shipment")],
     ["Check","Confirm, no change expected: "+plural(summary.check.trials.length,"trial")+" · "+plural(summary.check.batches.length,"batch","batches")+" · "+plural(summary.check.shipments.length,"shipment")],
     ["Look back","Legacy-label batches certified since 28 Apr: "+(summary.lookback.map(batch=>batch.id).join(", ")||"none")+". Check whether any were shipped."]
-  ]:[["Open since",change.sinceLabel??"Unknown"],["Applicability","Public registry screening only"]];
+  ]:change.id==="il"?israelFacts():[["Open since",change.sinceLabel??"Unknown"],["Applicability","Public registry screening only"]];
   const context=panel("Assessment",change.id==="uk"?ukCase.snapshot:"",casePad(factlist(facts)+'<h3>Inputs to check</h3><p>'+esc(change.need)+'</p>'));
-  return (change.id==="uk"?aiCard():"")+'<div class="case-layout">'+evidence+context+'</div>'+(change.id==="uk"?"":changeDecisionPanel(change))+'<div id="study-card" class="space">'+studyCard()+operationalImpact()+'</div>';
+  return (change.id==="uk"?aiCard():"")+'<div class="case-layout">'+evidence+context+'</div>'+(change.id==="uk"?"":changeDecisionPanel(change))+'<div id="study-card" class="space">'+(change.id==="il"?israelPoolPanel():caseImpactSection())+'</div>';
+}
+function israelFacts() {
+  const pool=israelLabelPool();
+  const blocked=pool.israeli.filter(item=>item.result==="Blocked");
+  return [["Applies to","Kits imported for Israeli sites from "+displayDay(pool.effective)],
+    ["Label pool","The booklet "+pool.batches.find(batch=>batch.shared)?.labelSpec.id+" covers Israel, Greece and Cyprus; after the date it serves Greece and Cyprus only"],
+    ["Stock","Booklet kits: "+pool.sharedKits+" · Israel-only kits: "+pool.israelOnlyKits+" · needed in Israel after the date: "+pool.needed],
+    ["Shipments",blocked.length+" of "+pool.israeli.length+" Israeli shipments blocked ("+blocked.map(item=>item.id).join(", ")+"); Greece and Cyprus unaffected"],
+    ["Ways out","Relabel booklet kits for Israel at the depot, ship Israel-only stock, or import before the date"]];
+}
+function israelPoolPanel() {
+  const pool=israelLabelPool();
+  return impactTable("Label pool after the change","Which batches can still serve which country · Central EU depot, Belgium",["Batch","Label","Countries on the label","Kits at the depot","Can serve"],
+    pool.batches.map(batch=>[batch.id,batch.labelSpec.type+" "+batch.labelSpec.id,batch.labelSpec.countries.map(code=>countryNames[code]??code).join(", "),String(batch.kits),batch.serves]))+
+    '<div class="space">'+impactTable("Israeli shipments","Import date against "+displayDay(pool.effective),["Shipment","Site","Batch","Import","Check"],pool.israeli.map(item=>[item.id,item.site,item.batch,displayDay(item.delivery),resultStyle[item.result][0]]))+'</div>';
 }
 // A change without a governed case still needs an owner decision, so it never sits open without one.
 function changeDecisionPanel(change) {
@@ -1647,6 +1893,70 @@ function spainShipmentChecks() {
       carrier:item.carrier,patients:null,trial:trial.id,kind:item.kind,caseId:"es",checks};
   });
 }
+// Israel, Greece and Cyprus: the trial in the Israel scenario, supplied from one booklet stock until the rule applies.
+const isIsraeliWeekend = day => [5,6].includes(new Date(day+"T00:00:00Z").getUTCDay());
+function israelShipmentChecks() {
+  if(!israel) return [];
+  const {trial,operations}=israel;
+  const effective=israel.case.effective;
+  const names=list=>list.map(code=>countryNames[code]??code);
+  return trial.shipments.map(item=>{
+    const site=trial.sites.find(entry=>entry.id===item.site);
+    const code=site.country;
+    const countryId=code.toLowerCase();
+    const batch=trial.batches.find(entry=>entry.id===item.batch);
+    const label=trial.labels.find(entry=>entry.id===batch.label);
+    const prepareBy=businessDaysBefore(item.dispatch,trial.standardLeadBusinessDays);
+    const [language,languageName]={IL:["he","Hebrew"],GR:["el","Greek"],CY:["el","Greek"]}[code];
+    const checks=[];
+    checks.push(check(countryId,"regulatory","The label includes "+languageName,label.languages.includes(language)?"Pass":"Fail",label.type+" label "+label.id+" covers "+label.languages.join(", ").toUpperCase()+"."));
+    if(code==="IL") {
+      const others=label.countries.filter(country=>country!=="IL");
+      const refused=others.length>0&&item.delivery>=effective;
+      checks.push(check(countryId,"regulatory","From "+displayDay(effective)+": an Israel-only label with the Ministry of Health trial approval number",refused?"Fail":"Pass",
+        !others.length?label.id+" is an Israel-only label.":refused?label.id+" is shared with "+names(others).join(" and ")+". Kits imported on "+displayDay(item.delivery)+" are refused: relabel them for Israel, use Israel-only stock, or import before "+displayDay(effective)+".":
+        "Shared label "+label.id+" is still accepted: the kits are imported on "+displayDay(item.delivery)+", before "+displayDay(effective)+"."));
+      const approval=operations.importApprovals[item.id];
+      checks.push(check(countryId,"import","A Ministry of Health import approval for this shipment",approval?.status==="approved"?"Pass":approval?.status==="requested"?"Confirm":"Missing",
+        approval?.status==="approved"?"Import approval "+approval.number+" is on record.":approval?.status==="requested"?"Requested on "+displayDay(approval.requested)+"; usually granted in "+approval.typicalBusinessDays+" business days. Confirm it before dispatch.":"No import approval is on record."));
+    } else {
+      const covered=label.countries.includes(code);
+      checks.push(check(countryId,"regulatory","The label covers "+countryNames[code],covered?"Pass":"Fail",
+        covered?label.id+" covers "+names(label.countries).join(", ")+"; a multi-country booklet that includes Greek is accepted.":label.id+" is for "+names(label.countries).join(", ")+" only."));
+    }
+    checks.push(check(countryId,"import","The batch's QP release documentation travels with the shipment",batch.qp&&batch.qp<=item.dispatch?"Pass":"Missing",
+      batch.qp?"Batch "+batch.id+" was QP released on "+displayDay(batch.qp)+".":"Batch "+batch.id+" has no QP release on record."));
+    checks.push(preparationCheck(countryId,prepareBy,"Prepared "+trial.standardLeadBusinessDays+" business days before dispatch"));
+    checks.push(check(countryId,"logistics","Dispatched on a depot working day",isWeekend(item.dispatch)?"Fail":"Pass","Dispatch on "+weekdayName(item.dispatch)+" "+displayDay(item.dispatch)+(isWeekend(item.dispatch)?", a weekend day.":".")));
+    const offDay=code==="IL"?isIsraeliWeekend(item.delivery):isWeekend(item.delivery);
+    checks.push(check(countryId,"logistics",code==="IL"?"Delivered on an Israeli working day (Sunday to Thursday)":"Delivered on a working day",offDay?"Fail":"Pass",
+      "Delivery on "+weekdayName(item.delivery)+" "+displayDay(item.delivery)+(offDay?(code==="IL"?": Israeli sites do not receive on Friday or Saturday.":", a weekend day."):".")));
+    const approved=(countrySpecs[countryId]?.sections.carriers?.items??[]).some(entry=>entry.startsWith(item.carrier));
+    checks.push(check(countryId,"carriers","Carrier on the approved list",approved?"Pass":"Fail",item.carrier+(approved?" is approved.":" is not on the approved list.")));
+    if(code==="IL") checks.push(check(countryId,"ior","Importer of record: the sponsor's local representative; consignee: the site pharmacy","Pass","Consignee: "+site.hospital+"."));
+    return {id:item.id,countryId,site:site.city,hospital:site.hospital,dispatch:item.dispatch,delivery:item.delivery,prepareBy,batch:item.batch,carrier:item.carrier,patients:site.patients,
+      trial:trial.id,kind:"Resupply",caseId:null,checks};
+  });
+}
+// The shared booklet splits: who each batch can still serve once the rule applies, against what Israel needs.
+function israelLabelPool() {
+  if(!israel) return null;
+  const {trial,operations}=israel;
+  const effective=israel.case.effective;
+  const batches=trial.batches.map(batch=>{
+    const label=trial.labels.find(entry=>entry.id===batch.label);
+    const shared=label.countries.length>1;
+    return {...batch,labelSpec:label,kits:operations.depotStock[batch.id]??0,shared,
+      serves:shared?"Greece and Cyprus. Israel only for kits imported before "+displayDay(effective):"Israel"};
+  });
+  const israeli=israelShipmentChecks().filter(item=>item.countryId==="il");
+  const after=israeli.filter(item=>item.delivery>=effective);
+  return {batches,effective,
+    sharedKits:batches.filter(batch=>batch.shared).reduce((sum,batch)=>sum+batch.kits,0),
+    israelOnlyKits:batches.filter(batch=>!batch.shared).reduce((sum,batch)=>sum+batch.kits,0),
+    needed:after.reduce((sum,item)=>sum+(trial.shipments.find(entry=>entry.id===item.id)?.kits??0),0),
+    israeli:israeli.map(item=>({...item,result:shipmentResult(item)})),after};
+}
 function shipmentResult(shipment) {
   const results=shipment.checks.map(item=>item.result);
   return results.some(result=>blocking.includes(result))?"Blocked":results.includes("Confirm")?"Confirm":"Ready";
@@ -1654,7 +1964,7 @@ function shipmentResult(shipment) {
 const resultStyle = {Blocked:["Blocked","red"],Confirm:["Confirm before dispatch","amber"],Ready:["Ready to ship","green"]};
 function plannedShipments() {
   const order={Blocked:0,Confirm:1,Ready:2};
-  return [...portfolioShipmentChecks(),...spainShipmentChecks()].map(shipment=>({...shipment,result:shipmentResult(shipment),action:shipmentActions[shipment.id]}))
+  return [...portfolioShipmentChecks(),...spainShipmentChecks(),...israelShipmentChecks()].map(shipment=>({...shipment,result:shipmentResult(shipment),action:shipmentActions[shipment.id]}))
     .sort((a,b)=>order[a.result]-order[b.result]||a.prepareBy.localeCompare(b.prepareBy));
 }
 function attention(shipment) {
@@ -1702,7 +2012,7 @@ function shipmentTable() {
   const shown=shownShipments();
   const total=plannedShipments().length;
   return '<p class="result-count">'+esc(shown.length===total?"Showing all "+total+" shipments":"Showing "+shown.length+" of "+total+" shipments")+'</p>'+
-    (shown.length?'<div class="table-wrap" tabindex="0"><table class="stack-table ships-table"><caption class="sr">Planned shipments, their check results and their agent plans</caption><thead><tr><th>Shipment</th><th>Destination</th><th>Dispatch</th><th>Prepare by</th><th>Result</th><th>Agent plan</th><th class="hide-narrow">What needs attention</th></tr></thead><tbody>'+
+    (shown.length?'<div class="table-wrap" tabindex="0"><table class="stack-table ships-table"><caption class="sr">Planned shipments, their check results and their agent plans</caption><thead><tr><th>Shipment</th><th>Destination</th><th>Dispatch</th><th>Prepare by'+tip("The day the depot must start preparing the shipment: the dispatch date minus the destination's lead time.","About Prepare by")+'</th><th>Result'+tip("Blocked: a check fails, data is missing or an expert must decide, so the shipment must not leave. Confirm before dispatch: nothing fails, but someone confirms a point. Ready to ship: every connected check passes.","About the result")+'</th><th>Agent plan'+tip("Where the agents' plan stands. Approving it in RegChain changes nothing in IRT, ERP or the depot: each draft is approved in that system.","About agent plans")+'</th><th class="hide-narrow">What needs attention</th></tr></thead><tbody>'+
       shown.map(shipmentRow).join("")+'</tbody></table></div>':'<p class="nothing">No shipments match these filters. '+trigger("Clear the filters","clear-shipment-filters","","quiet")+'</p>');
 }
 function shipmentChecks() {
@@ -1800,8 +2110,9 @@ function describeAction(action) {
 function actionSentence(action,shipment) {
   return {
     swap_batch:"Ship batch "+action.batch_id+(shipment?" instead of "+shipment.batch:""),
-    relabel:"Relabel the kits at the depot on "+isoDay(action.relabel_date),
+    relabel:"Relabel the kits at the depot on "+isoDay(action.relabel_date)+(shipment?.countryId==="il"?" with the Israel-only label":""),
     delay:"Move the dispatch to "+(action.new_dispatch_date?weekdayName(action.new_dispatch_date)+" "+isoDay(action.new_dispatch_date):"a later date"),
+    advance_dispatch:"Dispatch earlier, on "+(action.new_dispatch_date?weekdayName(action.new_dispatch_date)+" "+isoDay(action.new_dispatch_date):"an earlier date"),
     record_authorisation_route:"Correct the trial's authorisation route in IRT: "+String(action.authorisation_route??"").replace("_"," "),
     book_qp_release:"Book the QP release for "+isoDay(action.qp_date),
     obtain_pharmacy_code:"Ask the site for its hospital pharmacy code",
@@ -1902,6 +2213,7 @@ function startPortfolioRun(mode) {
     source.close();
     portfolioState={...portfolioState,running:false,record:JSON.parse(event.data)};
     openPanels.delete("plans-activity");
+    teamData={...teamData,key:null};
     await loadAgentData();
     render();
     notify("Every shipment has a plan or an escalation. Review and approve them, most urgent first.");
@@ -1959,6 +2271,7 @@ function portfolioFeed() {
   return shown.map(agentEvent).join("")||'<li class="nothing">No activity yet.</li>';
 }
 function updatePortfolioFeed() {
+  if(page==="team"&&teamSource==="portfolio") teamFollowLive();
   const list=byId("portfolio-feed");
   if(list) {list.innerHTML=portfolioFeed();list.scrollTop=list.scrollHeight;}
   const progress=byId("portfolio-progress");
@@ -2036,7 +2349,7 @@ function agentView() {
     {label:"Approved in RegChain",sub:approval?(approval.option==="escalate"?"Escalation acknowledged":"By "+approval.by.split(" · ")[0]):"By Clinical Supply",state:approval?"done":record?"active":"todo"},
     {label:"Approved in each system",sub:(()=>{const targets=[...new Set(activeDrafts.map(draft=>draft.target_system==="Depot"?"the depot":draft.target_system))];const list=targets.length>1?targets.slice(0,-1).join(", ")+" and "+targets.at(-1):targets[0]??"each system";return approval&&thisRun?plural(activeDrafts.length,"draft")+" waiting in "+list:"Drafts go to "+list;})(),state:approval&&thisRun?"active":"todo"}
   ]);
-  const problem='<section class="card"><div class="card-head"><div><h2>'+esc(shipment.result==="Blocked"?"Why it is blocked":"What needs confirming")+'</h2><p>Against the '+esc(specCountryName(shipment.countryId))+' Country Specification</p></div>'+trigger("All checks","shipment",shipment.id,"quiet")+'</div>'+
+  const problem='<section class="card"><div class="card-head"><div><h2>'+esc(shipment.result==="Blocked"?"Why it is blocked":"What needs confirming")+tip("The checks this shipment fails or must confirm, against the Country Specification of its destination. A pending change is a rule RegChain already applies while the Regulatory SME reviews it.","About the checks")+'</h2><p>Against the '+esc(specCountryName(shipment.countryId))+' Country Specification</p></div>'+trigger("All checks","shipment",shipment.id,"quiet")+'</div>'+
     '<ul class="issue-list">'+issues.map(item=>'<li>'+badge(...checkStyle[item.result])+'<span><strong>'+esc(specSectionNames[item.section])+'</strong> '+esc(item.detail)+(item.pending?' <small class="pending-basis">'+esc(item.basis)+'</small>':'')+'</span></li>').join("")+'</ul></section>';
   let main="";
   if(agentState.running) {
@@ -2069,7 +2382,7 @@ function agentView() {
   const events=agentState.running?agentState.events:(record?.events??[]);
   const trail=(agentState.running||record)?'<details id="agent-trail" class="card fold"'+(openPanels.has("agent-trail")||agentState.running?" open":"")+'><summary><span class="fold-title">'+icon("changes")+'<strong>How the agents worked it out</strong></span><small id="agent-trail-count" class="muted">'+
       esc(agentState.running?events.length+" steps so far":plural(events.length,"step")+" · "+plural(events.filter(event=>event.type==="tool_call").length,"system call"))+'</small></summary>'+
-      trailFilters(events)+'<ol id="agent-timeline" class="agent-timeline">'+trailList(events)+'</ol></details>':"";
+      (agentState.running?"":'<div class="actions trail-watch">'+trigger("Watch it step by step","watch-team",agentShipment,"quiet","team")+'</div>')+trailFilters(events)+'<ol id="agent-timeline" class="agent-timeline">'+trailList(events)+'</ol></details>':"";
   const runLine=record?'<section class="run-line"><span>'+esc((record.mode==="live"?"AI agents ("+record.models.orchestrator+", "+record.models.specialists+")":"Scripted walkthrough, no AI")+" · run on "+scheduleDate(Date.parse(record.at))+
       (record.mode==="live"?" · "+record.usage.input_tokens+" tokens in, "+record.usage.output_tokens+" out":""))+'</span>'+trigger("Export the audit record","agent-export","","quiet","file")+
       '<details id="agent-rerun" class="rerun"'+(openPanels.has("agent-rerun")?" open":"")+'><summary>Run the agents again</summary>'+runButtons("one","Run the AI agents")+agentSetupNote(status)+'<small class="muted">A new run never inherits an earlier approval.</small></details></section>':"";
@@ -2092,14 +2405,14 @@ function draftsCard(record,chosenId,thisRun,approval) {
   const item=draft=>'<li><span class="system-chip">'+esc(draft.target_system)+'</span><span><strong>'+esc(draft.kind)+'</strong> · '+esc(draft.draft_id)+
     '<small>'+esc(draft.withdrawn?"Withdrawn: "+draft.withdrawn:approved?"Waiting for approval in "+draft.target_system+".":"Goes to "+draft.target_system+" for approval once the plan is approved.")+'</small>'+
     '<details class="draft-text"><summary>Draft text</summary><p>'+escd(draft.body)+'</p></details></span></li>';
-  return '<section class="card space"><div class="card-head"><div><h2>'+(approved?"What happens next":"What approval sends")+'</h2><p>'+esc(active.length?plural(active.length,"draft")+" for people to approve in their own systems":"No drafts")+'</p></div></div>'+
+  return '<section class="card space"><div class="card-head"><div><h2>'+(approved?"What happens next":"What approval sends")+tip("Each draft goes to the system it changes: IRT, ERP, the depot or the QMS. Nothing changes until a qualified person approves the draft there, under that system's own change control.","About drafts")+'</h2><p>'+esc(active.length?plural(active.length,"draft")+" for people to approve in their own systems":"No drafts")+'</p></div></div>'+
     (active.length?'<ul class="draft-list">'+active.map(item).join("")+'</ul>':"")+
     (withdrawn.length?'<details class="withdrawn-drafts"><summary>'+esc(plural(withdrawn.length,"withdrawn draft"))+'</summary><ul class="draft-list withdrawn">'+withdrawn.map(item).join("")+'</ul></details>':"")+'</section>';
 }
 function otherOptionsCard(record,chosenId,verification,approval,shipment) {
   const others=(record.resolution.options??[]).filter(option=>option.id!==chosenId);
   if(!others.length) return "";
-  return '<section class="card space"><div class="card-head"><div><h2>Other options the agents considered</h2><p>Each one checked by RegChain\'s rules</p></div></div><ul class="option-rows">'+
+  return '<section class="card space"><div class="card-head"><div><h2>Other options the agents considered'+tip("Every option the agents built, with RegChain's verdict. An option that fails the rules cannot be approved, whatever the agents recommended.","About the options")+'</h2><p>Each one checked by RegChain\'s rules</p></div></div><ul class="option-rows">'+
     others.map(option=>{
       const check=verification[option.id];
       return '<li><div><strong>'+escd(option.title)+'</strong><small>'+escd(check?.passes?"Also passes, then "+(afterNames[check.after]??check.after)+". "+option.why:optionReason(check))+'</small></div>'+
@@ -2149,7 +2462,7 @@ function plansTable() {
   const shown=shownPlans();
   const total=planRows().length;
   return '<p class="result-count">'+esc(shown.length===total?"Showing all "+total+" shipments that need action":"Showing "+shown.length+" of "+total+" shipments that need action")+'</p>'+
-    (shown.length?'<div class="table-wrap" tabindex="0"><table class="stack-table plans-table"><caption class="sr">Agent plans for every shipment that needs action, most urgent first</caption><thead><tr><th>#</th><th>Shipment</th><th>Prepare by</th><th class="hide-narrow">Problem</th><th>Agent plan</th><th>Next step</th></tr></thead><tbody>'+
+    (shown.length?'<div class="table-wrap" tabindex="0"><table class="stack-table plans-table"><caption class="sr">Agent plans for every shipment that needs action, most urgent first</caption><thead><tr><th>#</th><th>Shipment</th><th>Prepare by</th><th class="hide-narrow">Problem</th><th>Agent plan'+tip("Plan to approve: an option passed RegChain's rules. Escalation: no option passes, so a person decides. Approved: Clinical Supply approved it, and the drafts wait in each system.","About agent plans")+'</th><th>Next step</th></tr></thead><tbody>'+
       shown.map(planRow).join("")+'</tbody></table></div>':'<p class="nothing">No shipments match these filters. '+trigger("Show all","plans-status","all","quiet")+'</p>');
 }
 function plansView() {
@@ -2163,7 +2476,7 @@ function plansView() {
   const record=portfolioState.record;
   const lastRun=record&&!portfolioState.running?'<section class="run-line"><span>'+esc("Planned together on "+scheduleDate(Date.parse(record.at))+" · "+(record.mode==="live"?"AI agents":"scripted walkthrough, no AI")+" · "+
       plural(record.summary?.calls??0,"system call")+" · "+plural(record.summary?.reallocated??0,"plan")+" re-planned so nothing is promised twice")+'</span>'+trigger("Export the audit record","portfolio-export","","quiet","file")+'</section>':"";
-  return heading("Agent plans","Every shipment that needs action, most urgent first. The agents propose a plan, RegChain checks it, and Clinical Supply approves.",runButtons("all","Plan all with AI agents"))+
+  return heading("Agent plans","Every shipment that needs action, most urgent first. The agents propose a plan, RegChain checks it, and Clinical Supply approves."+tip("Only options that pass RegChain's fixed rules can be approved, and the server checks them again when someone approves. Kits and relabelling slots promised to one plan are never offered to another.","About agent plans"),runButtons("all","Plan all with AI agents"))+
     agentSetupNote(status)+
     (portfolioState.error?'<p class="form-feedback" role="alert">'+esc(portfolioState.error)+'</p>':"")+
     portfolioProgress()+
@@ -2176,6 +2489,318 @@ function plansView() {
       esc(portfolioState.running?"Live":plural(portfolioState.events.length,"step"))+'</small></summary><ol id="portfolio-feed" class="agent-timeline">'+portfolioFeed()+'</ol></details>':"")+
     controlsPanel("plans-controls",status)+lastRun;
 }
+// ---------- Agents in action: the master agent hands out the work, specialists read the systems, RegChain checks ----------
+const teamSpecialists = ["supply","logistics","records","communications","verifier"];
+const teamSystems = [["RegChain","Specifications and shipment checks"],["IRT","Stock, sites and shipments"],["ERP","Batches, labels, QP plans"],["Depot","Relabelling and couriers"],["eTMF","Authorisations, approvals, contacts"],["Draft inbox","Drafts for people to approve"]];
+const teamModels = {orchestrator:"Claude Opus 5.5",supply:"Claude Sonnet 5.5",logistics:"Claude Sonnet 5.5",records:"Claude Sonnet 5.5",communications:"Claude Sonnet 5.5",verifier:"Fixed rules · no AI"};
+const teamInitials = {orchestrator:"M",supply:"S",logistics:"L",records:"R",communications:"C",verifier:"V"};
+const teamShort = {orchestrator:"Master",supply:"Supply",logistics:"Logistics",records:"Records",communications:"Comms",verifier:"Verifier"};
+const teamNodeName = id => !id?"":id.startsWith("sys:")?id.slice(4):id==="orchestrator"?"Master agent":agentProfiles[id]?.name??id;
+// A system's answer in one line: how many records, or the main fields, instead of raw JSON.
+function teamAnswer(text) {
+  let value;
+  try {value=JSON.parse(text);} catch {return clip(text,200);}
+  const plain=item=>item===null||["string","number","boolean"].includes(typeof item);
+  const fields=item=>Object.entries(item).filter(([,field])=>plain(field)).slice(0,4).map(([key,field])=>key.replaceAll("_"," ")+" "+field).join(" · ");
+  if(Array.isArray(value)) return !value.length?"Nothing found.":plural(value.length,"record")+": "+value.slice(0,3).map(item=>plain(item)?item:(item.batch??item.id??item.shipment??fields(item))+(item.kits!==undefined?" ("+item.kits+" kits)":"")).join(", ")+(value.length>3?", …":"");
+  if(value&&typeof value==="object") return value.error?"Error: "+value.error:fields(value)||"Answered.";
+  return String(value);
+}
+let teamSource = "portfolio";
+let teamData = {key:null,events:[],record:null,loading:false,error:"",live:false};
+let teamIndex = 0;
+let teamPlaying = false;
+let teamSpeed = 4;
+let teamTimer = null;
+let teamFilter = "all";
+let teamShown = 0;
+// After the first check, a scripted run finishes in seconds: replay it at a pace people can follow.
+let teamAutoplay = false;
+// The last portfolio run with each shipment's own run placed where the master agent handed it out.
+async function loadTeamTimeline(source=teamSource) {
+  if(!agentServer()) return;
+  if(source==="portfolio"&&portfolioState.running) {teamFollowLive();return;}
+  teamData={...teamData,key:source,loading:true,error:"",live:false};
+  try {
+    if(source==="portfolio") {
+      const record=await aiRequest("/api/agent/portfolio-last");
+      const ids=[...new Set(record.events.filter(event=>event.type==="delegate_shipment").map(event=>event.shipment))];
+      const runs=Object.fromEntries(await Promise.all(ids.map(async id=>[id,await aiRequest("/api/agent/last?shipment="+encodeURIComponent(id)).catch(()=>null)])));
+      const events=[];
+      for(const event of record.events) {
+        events.push(event);
+        if(event.type==="delegate_shipment"&&runs[event.shipment]) events.push(...runs[event.shipment].events.map(item=>({...item,shipment:event.shipment,nested:true})));
+      }
+      teamData={key:source,events,record,loading:false,error:"",live:false};
+    } else {
+      const record=await aiRequest("/api/agent/last?shipment="+encodeURIComponent(source));
+      teamData={key:source,events:record.events.map(item=>({...item,shipment:source})),record,loading:false,error:"",live:false};
+    }
+    teamIndex=teamData.events.length;
+    if(teamAutoplay&&teamData.events.length) {teamAutoplay=false;teamIndex=0;teamShown=0;teamSpeed=4;teamPlaying=true;if(page==="team") {render();teamTick();}return;}
+  } catch(error) {
+    teamData={key:source,events:[],record:null,loading:false,error:error.message.includes("No ")?"":error.message,live:false};
+    teamIndex=0;
+  }
+  if(page==="team") render();
+}
+function teamFollowLive() {
+  teamData={key:"portfolio",events:portfolioState.events,record:null,loading:false,error:"",live:true};
+  teamPause();
+  teamIndex=portfolioState.events.length;
+  if(page!=="team") return;
+  if(byId("team-board")) teamPaint(false); else render();
+}
+// Who each step goes from and to, so the board can draw it.
+function teamRoute(event) {
+  const system=event.system?"sys:"+event.system:null;
+  const verify=event.tool==="verify_option";
+  switch(event.type) {
+    case "delegate": return ["orchestrator",event.to];
+    case "tool_call": return verify?[event.agent,"verifier"]:[event.agent,system];
+    case "tool_result": return verify?["verifier",event.agent]:[system,event.agent];
+    case "report": return [event.agent,"orchestrator"];
+    case "draft": return [agentProfiles[event.agent]?event.agent:"orchestrator","sys:Draft inbox"];
+    case "verified": case "warning": case "allocation": return ["verifier","orchestrator"];
+    default: return [agentProfiles[event.agent]?event.agent:"orchestrator",null];
+  }
+}
+const teamActor = event => event.type==="tool_result"?(event.tool==="verify_option"?"verifier":event.agent):event.type==="tool_call"?event.agent:["verified","warning","allocation"].includes(event.type)?"verifier":agentProfiles[event.agent]?event.agent:"orchestrator";
+function teamVerdict(text) {
+  try {
+    const result=JSON.parse(text);
+    return result.passes?"Passes: "+(afterNames[result.after]??result.after)+".":"Does not pass: "+humanDates((result.notes??[]).find(note=>note.startsWith("Not feasible"))?.replace("Not feasible: ","")??"the shipment would still be blocked.");
+  } catch {return clip(text,200);}
+}
+// One step in plain words: what kind of work it is, and the detail.
+function teamSentence(event) {
+  const name=id=>agentProfiles[id]?.name??id;
+  switch(event.type) {
+    case "goal": return ["Sets the goal",event.text];
+    case "triage": return ["Ranks the work, most urgent first",event.text];
+    case "delegate_shipment": return ["Starts the team on "+event.shipment,event.text];
+    case "delegate": return ["Hands a task to the "+name(event.to),event.text];
+    case "tool_call": return event.tool==="verify_option"?["Asks the RegChain verifier to test an option",(event.input?.actions??[]).map(action=>actionSentence(action)).join(" · ")]:
+      event.tool==="create_draft"?["Puts a draft in the Draft inbox",[event.input?.target_system,event.input?.title].filter(Boolean).join(" · ")]:
+      ["Reads "+event.system,event.tool.replaceAll("_"," ")+" · "+clip(Object.values(event.input??{}).filter(value=>typeof value!=="object").join(", "),120)];
+    case "tool_result": return event.tool==="verify_option"?["The RegChain verifier answers",teamVerdict(event.text)]:event.tool==="create_draft"?["The Draft inbox keeps the draft",teamAnswer(event.text)]:[event.system+" answers",teamAnswer(event.text)];
+    case "report": return ["Reports back to the master agent",event.text];
+    case "draft": return ["Drafts a change for a person to approve",event.text??event.title??""];
+    case "verified": return ["Checks every option against the rules",event.text];
+    case "allocation": return ["Checks the plans together",event.text];
+    case "warning": return ["Withdraws a recommendation that fails",event.text];
+    case "resolution": return ["Recommends",event.text];
+    case "shipment_done": return ["Gets the result for "+event.shipment,event.text];
+    case "done": return ["Finishes",event.text];
+    case "error": return ["Stops",event.text];
+    default: return ["Notes",event.text];
+  }
+}
+function teamTally(events) {
+  const agents=Object.fromEntries(["orchestrator",...teamSpecialists].map(id=>[id,{tasks:0,calls:0,reports:0,drafts:0,checks:0,teams:0,last:null}]));
+  const systems=Object.fromEntries(teamSystems.map(([name])=>[name,0]));
+  const shipments=new Set();
+  for(const event of events) {
+    if(event.shipment) shipments.add(event.shipment);
+    const actor=agents[teamActor(event)]??agents.orchestrator;
+    if(event.type==="delegate"&&agents[event.to]) agents[event.to].tasks++;
+    if(event.type==="delegate_shipment") agents.orchestrator.teams++;
+    if(event.type==="tool_call") {
+      if(event.tool==="verify_option") agents.verifier.checks++;
+      else {agents[event.agent]&&agents[event.agent].calls++;if(event.system in systems) systems[event.system]++;}
+    }
+    if(event.type==="report") actor.reports++;
+    if(event.type==="draft"||(event.type==="tool_call"&&event.tool==="create_draft")) agents.orchestrator.drafts++;
+    if(["allocation","warning"].includes(event.type)) agents.verifier.checks++;
+    if(event.type!=="tool_result") actor.last=event;
+  }
+  agents.orchestrator.drafts=Math.max(agents.orchestrator.drafts,0);
+  return {agents,systems,shipments};
+}
+function teamSources() {
+  const runs=Object.keys(agentPlans).sort();
+  const label=id=>{const shipment=plannedShipments().find(item=>item.id===id);return shipment?id+" · "+shipment.site+", "+specCountryName(shipment.countryId):id;};
+  return '<label class="team-source"><span>Run</span><select id="team-source"><option value="portfolio"'+(teamSource==="portfolio"?" selected":"")+'>Every shipment: the master agent and the whole team</option>'+
+    (runs.length?'<optgroup label="One shipment">'+runs.map(id=>'<option value="'+esc(id)+'"'+(teamSource===id?" selected":"")+'>'+esc(label(id))+'</option>').join("")+'</optgroup>':"")+'</select></label>';
+}
+function teamControls() {
+  const total=teamData.events.length;
+  const disabled=!total||teamData.live?" disabled":"";
+  return '<div class="team-bar card">'+teamSources()+
+    '<div class="team-buttons" role="group" aria-label="Replay">'+
+      '<button type="button" class="btn" data-act="team-restart" aria-label="Back to the start"'+disabled+'>'+icon("rewind")+'</button>'+
+      '<button type="button" id="team-play" class="btn primary" data-act="team-play"'+disabled+'>'+(teamPlaying?icon("pause")+"Pause":icon("play")+(teamIndex>=total&&total?"Replay":"Play"))+'</button>'+
+      '<button type="button" class="btn" data-act="team-step" aria-label="One step"'+disabled+'>'+icon("step")+'</button></div>'+
+    '<div class="team-speed" role="group" aria-label="Speed">'+[1,2,4,8].map(speed=>'<button type="button" class="speed'+(teamSpeed===speed?" on":"")+'" data-act="team-speed" data-value="'+speed+'" aria-pressed="'+(teamSpeed===speed)+'">'+speed+'×</button>').join("")+'</div>'+
+    '<div class="team-progress"><div class="team-progress-text" id="team-progress-text"></div><div class="team-track"><span id="team-track"></span></div></div></div>';
+}
+function teamCard(id) {
+  const profile=agentProfiles[id];
+  const master=id==="orchestrator";
+  const tips={orchestrator:"The master agent reads the shipment checks, splits the work into tasks for the specialists, builds two or three options and has RegChain test each one. It never changes a validated system.",
+    verifier:"Not an AI. Fixed rules in RegChain decide whether each option passes the destination's specification and whether stock or relabelling slots are already promised to another shipment."};
+  return '<div class="team-node'+(master?" team-master":"")+'" data-node="'+id+'"><div class="team-node-head"><span class="agent-dot '+profile.tone+'">'+teamInitials[id]+'</span><span class="team-node-title"><strong>'+(master?"Master agent":esc(teamShort[id]))+'</strong>'+
+    tip(tips[id]??profile.job+".","About the "+(master?"master agent":profile.name))+'<small>'+esc(teamModels[id].replace("Claude ",""))+(master?" · orchestrator":"")+'</small></span></div>'+
+    '<div class="team-stats" data-stats="'+id+'"></div><p class="team-last" data-last="'+id+'"></p>'+(master?'<div class="team-split" data-split></div>':"")+'</div>';
+}
+function teamView() {
+  const head=heading("Agents in action","The master agent hands work to the specialists, they read the company's systems, and RegChain tests every option before a person approves it.",
+    '<div class="actions">'+trigger("Agent plans","nav","plans","quiet","arrow")+'</div>');
+  if(!agentServer()) return head+'<section class="card plan-hero empty"><div class="plan-eyebrow">Needs RegChain running</div><h2>Open RegChain at http://127.0.0.1:4173/ to watch the agents</h2></section>';
+  if(portfolioState.running&&teamSource==="portfolio"&&!teamData.live) {teamData={key:"portfolio",events:portfolioState.events,record:null,loading:false,error:"",live:true};teamIndex=portfolioState.events.length;teamShown=0;}
+  if(teamData.key!==teamSource&&!teamData.loading) queueMicrotask(()=>loadTeamTimeline());
+  const busy=portfolioState.running||agentState.running;
+  const loading=teamData.loading||teamData.key!==teamSource;
+  const empty=!loading&&!teamData.events.length;
+  const runCard='<section class="card team-empty"><div class="plan-eyebrow">'+(loading?"Loading the last run…":"No run on this computer yet")+'</div><h2>Run the team on every shipment that needs action</h2>'+
+    '<p>The master agent ranks the shipments by urgency, starts the specialists on each one and has RegChain check the plans together, so no kits or relabelling slot are promised twice.</p>'+runButtons("all","Run the AI agents")+agentSetupNote(agentState.status)+'</section>';
+  if(empty||loading) return head+(teamData.error?'<p class="form-feedback">'+esc(teamData.error)+'</p>':"")+runCard;
+  const board='<section class="card team-stage"><div class="team-now" id="team-now" aria-live="off"></div>'+
+    '<div class="team-board" id="team-board"><svg class="team-edges" id="team-edges" aria-hidden="true"></svg>'+
+      teamCard("orchestrator")+'<div class="team-row">'+teamSpecialists.map(teamCard).join("")+'</div>'+
+      '<div class="team-systems-head"><strong>Company systems over MCP</strong>'+tip("Each system is reached through its own MCP server. IRT, ERP, the depot and the eTMF are read-only to the agents. The only thing an agent can create is a draft in the draft inbox, which a person approves in the real system.","About the systems")+'</div>'+
+      '<div class="team-row systems">'+teamSystems.map(([name,job])=>'<div class="team-system" data-node="sys:'+esc(name)+'" title="'+esc(job)+'"><strong>'+esc(name)+'</strong><span class="team-count" data-system="'+esc(name)+'"></span><em>'+(name==="Draft inbox"?"draft-only":"read-only")+'</em></div>').join("")+'</div>'+
+    '</div><div class="team-summary" id="team-summary"></div></section>';
+  const feed='<section class="card team-feed-card"><div class="card-head"><div><h2>What each agent did</h2><p id="team-feed-count"></p></div></div>'+
+    '<div class="team-filters" role="group" aria-label="Show the steps of">'+[["all","All"],["orchestrator","Master"],...teamSpecialists.map(id=>[id,teamShort[id]])].map(([id,name])=>'<button type="button" class="chip'+(teamFilter===id?" on":"")+'" data-act="team-filter" data-value="'+id+'" aria-pressed="'+(teamFilter===id)+'">'+esc(name)+'</button>').join("")+'</div>'+
+    '<ol class="team-feed" id="team-feed" tabindex="0" aria-label="Steps of the run"></ol></section>';
+  const live=teamData.live?'<div class="inline-note team-live">'+icon("clock")+'<span><strong>Live.</strong> The team is working now; each step appears as it happens.</span></div>':"";
+  const rerun='<details class="rerun team-rerun"><summary>Run the team again</summary>'+runButtons("all","Run the AI agents")+agentSetupNote(agentState.status)+'<small class="muted">The new run replaces this replay. Approved plans are kept, and their stock stays promised.</small></details>';
+  return head+live+teamControls()+'<div class="team-grid">'+board+feed+'</div>'+(busy?"":rerun);
+}
+function teamLine(event,index) {
+  const actor=teamActor(event);
+  const [what,detail]=teamSentence(event);
+  const profile=agentProfiles[actor]??agentProfiles.orchestrator;
+  return '<li class="team-line'+(event.type==="tool_result"?" result":"")+'" data-agent="'+actor+'" data-index="'+index+'"><span class="agent-dot '+profile.tone+'" aria-hidden="true">'+teamInitials[actor]+'</span><div><div class="team-line-head"><strong>'+esc(teamNodeName(actor))+'</strong> '+esc(what)+
+    (event.shipment&&teamSource==="portfolio"?'<span class="system-chip">'+esc(event.shipment)+'</span>':"")+'</div>'+(detail?'<p>'+escd(clip(detail,320))+'</p>':"")+'</div></li>';
+}
+// Paint the board for the steps shown so far. full: also rebuild the feed.
+function teamPaint(full) {
+  const board=byId("team-board");
+  if(!board) return;
+  const events=teamData.events;
+  const shown=events.slice(0,teamIndex);
+  const current=shown.at(-1);
+  const tally=teamTally(shown);
+  const route=current?teamRoute(current):[null,null];
+  for(const node of board.querySelectorAll("[data-node]")) {
+    node.classList.toggle("active",node.dataset.node===route[0]);
+    node.classList.toggle("target",node.dataset.node===route[1]);
+  }
+  for(const id of ["orchestrator",...teamSpecialists]) {
+    const item=tally.agents[id];
+    const stats=board.querySelector('[data-stats="'+id+'"]');
+    const handedOut=Object.values(tally.agents).reduce((sum,agent)=>sum+agent.tasks,0);
+    const parts=id==="orchestrator"?[...(teamSource==="portfolio"?[[item.teams,"shipment","shipments"]]:[]),[handedOut,"task out","tasks out"],[tally.agents.verifier.checks,"option tested","options tested"],[tally.systems["Draft inbox"],"draft","drafts"]]:
+      id==="verifier"?[[item.checks,"option tested","options tested"]]:[[item.tasks,"task","tasks"],[item.calls,"read","reads"],[item.reports,"report","reports"]];
+    if(stats) stats.innerHTML=parts.map(([count,one,many])=>'<span><strong>'+count+'</strong> '+(count===1?one:many)+'</span>').join("");
+    const last=board.querySelector('[data-last="'+id+'"]');
+    if(last) last.textContent=item.last?humanDates(clip(teamSentence(item.last).filter(Boolean).join(": "),150)):"Waiting for work";
+  }
+  const split=board.querySelector("[data-split]");
+  if(split) {
+    const handed=teamSpecialists.filter(id=>id!=="verifier").map(id=>[id,tally.agents[id].tasks]).filter(([,count])=>count);
+    const total=handed.reduce((sum,[,count])=>sum+count,0);
+    split.innerHTML=total?'<div class="split-bar" role="img" aria-label="'+esc("Tasks handed out: "+handed.map(([id,count])=>agentProfiles[id].name+" "+count).join(", "))+'">'+handed.map(([id,count])=>'<span class="split-'+id+'" style="flex:'+count+'" title="'+esc(agentProfiles[id].name+": "+count)+'"></span>').join("")+'</div>'+
+      '<small class="split-legend">'+handed.map(([id,count])=>'<span><i class="split-'+id+'"></i>'+esc(teamShort[id])+" "+count+'</span>').join("")+'</small>':"<small>No tasks handed out yet</small>";
+  }
+  for(const [name,count] of Object.entries(tally.systems)) {
+    const cell=board.querySelector('[data-system="'+name+'"]');
+    if(cell) cell.textContent=count?plural(count,name==="Draft inbox"?"draft":"read"):"";
+  }
+  const now=byId("team-now");
+  if(now) {
+    if(!current) now.innerHTML='<span class="muted">Press Play to watch the run step by step.</span>';
+    else {
+      const [what,detail]=teamSentence(current);
+      const [from,target]=route;
+      const fromSystem=from?.startsWith("sys:");
+      const dotOf=id=>id?.startsWith("sys:")?'<span class="agent-dot system-dot" aria-hidden="true">'+icon("file")+'</span>':'<span class="agent-dot '+(agentProfiles[id]??agentProfiles.orchestrator).tone+'" aria-hidden="true">'+teamInitials[id]+'</span>';
+      now.innerHTML=dotOf(from)+'<div><div class="team-now-head"><strong>'+esc(teamNodeName(from))+'</strong>'+
+        (target?'<span class="team-arrow">'+icon("arrow")+'</span><strong>'+esc(teamNodeName(target))+'</strong>':"")+(fromSystem?'<span class="muted">answers</span>':"")+(current.shipment?'<span class="system-chip">'+esc(current.shipment)+'</span>':"")+'</div><p><strong>'+esc(what)+'.</strong> '+escd(clip(detail??"",260))+'</p></div>';
+    }
+  }
+  const total=events.length;
+  const text=byId("team-progress-text");
+  if(text) text.textContent=teamData.live?"Live · "+plural(total,"step"):"Step "+teamIndex+" of "+total+" · "+plural(tally.shipments.size||1,"shipment");
+  const track=byId("team-track");
+  if(track) track.style.width=(total?Math.round(teamIndex/total*100):0)+"%";
+  const play=byId("team-play");
+  if(play) play.innerHTML=teamPlaying?icon("pause")+"Pause":icon("play")+(teamIndex>=total&&total?"Replay":"Play");
+  const summary=byId("team-summary");
+  if(summary) summary.innerHTML=teamSummary(tally);
+  const feed=byId("team-feed");
+  if(feed) {
+    const keep=feed.scrollHeight-feed.scrollTop-feed.clientHeight<40;
+    if(full||teamShown>teamIndex||!teamData.live&&teamShown===0) {
+      feed.innerHTML=shown.map((event,index)=>({event,index})).filter(({event})=>teamFilter==="all"||teamActor(event)===teamFilter).slice(-250).map(({event,index})=>teamLine(event,index)).join("");
+    } else {
+      feed.insertAdjacentHTML("beforeend",shown.slice(teamShown).map((event,index)=>({event,index:teamShown+index})).filter(({event})=>teamFilter==="all"||teamActor(event)===teamFilter).map(({event,index})=>teamLine(event,index)).join(""));
+      while(feed.children.length>250) feed.firstElementChild.remove();
+    }
+    teamShown=teamIndex;
+    if(keep||full) feed.scrollTop=feed.scrollHeight;
+    const count=byId("team-feed-count");
+    if(count) count.textContent=teamFilter==="all"?plural(shown.length,"step")+" so far":plural(shown.filter(event=>teamActor(event)===teamFilter).length,"step")+" by the "+(teamFilter==="orchestrator"?"master agent":agentProfiles[teamFilter].name);
+  }
+  teamEdges(route);
+}
+function teamSummary(tally) {
+  const record=teamData.record;
+  const finished=teamIndex>=teamData.events.length&&!teamData.live;
+  const reads=Object.entries(tally.systems).filter(([name])=>name!=="Draft inbox").reduce((sum,[,count])=>sum+count,0);
+  const facts=[[tally.shipments.size||(teamSource==="portfolio"?0:1),"shipment","shipments"],[reads,"system read","system reads"],[tally.agents.verifier.checks,"option tested","options tested"],[tally.systems["Draft inbox"],"draft for people","drafts for people"]];
+  let result="";
+  if(finished&&record?.summary) result=record.summary.plans+" plans pass the rules, "+record.summary.escalated+" escalated, "+record.summary.reallocated+" re-planned so nothing is promised twice.";
+  else if(finished&&record?.resolution) result=record.resolution.summary;
+  return '<div class="team-facts">'+facts.map(([count,one,many])=>'<span><strong>'+count+'</strong> '+(count===1?one:many)+'</span>').join("")+'</div>'+
+    '<p class="team-result">'+(result?'<strong>'+escd(result)+'</strong> ':'')+'Nothing changed in any validated system: each draft waits for a person.'+
+    (finished?' '+trigger(teamSource==="portfolio"?"Review the plans":"Open the plan",teamSource==="portfolio"?"nav":"open-agents",teamSource==="portfolio"?"plans":teamSource,"quiet","arrow"):"")+'</p>';
+}
+// The line for the current step, drawn between the two cards it connects, with a dot travelling along it.
+function teamEdges(route) {
+  const board=byId("team-board");
+  const svg=byId("team-edges");
+  if(!board||!svg) return;
+  const box=board.getBoundingClientRect();
+  svg.setAttribute("viewBox","0 0 "+Math.round(box.width)+" "+Math.round(box.height));
+  const center=(id,side)=>{
+    const node=board.querySelector('[data-node="'+CSS.escape(id)+'"]');
+    if(!node) return null;
+    const rect=node.getBoundingClientRect();
+    return {x:rect.left-box.left+rect.width/2,y:side==="top"?rect.top-box.top:side==="bottom"?rect.bottom-box.top:rect.top-box.top+rect.height/2};
+  };
+  const master=center("orchestrator","bottom");
+  let lines=teamSpecialists.map(id=>{const to=center(id,"top");return master&&to?'<path class="edge" d="M'+master.x+' '+master.y+' C'+master.x+' '+(master.y+28)+' '+to.x+' '+(to.y-28)+' '+to.x+' '+to.y+'"/>':"";}).join("");
+  const [from,to]=route;
+  if(from&&to&&from!==to) {
+    const a=center(from),b=center(to);
+    if(a&&b) {
+      lines+='<path class="edge live" d="M'+a.x+' '+a.y+' L'+b.x+' '+b.y+'"/>';
+      svg.innerHTML=lines;
+      if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const dot=document.createElementNS("http://www.w3.org/2000/svg","circle");
+        dot.setAttribute("r","6");dot.setAttribute("class","edge-dot");
+        svg.appendChild(dot);
+        dot.animate([{transform:"translate("+a.x+"px,"+a.y+"px)"},{transform:"translate("+b.x+"px,"+b.y+"px)"}],{duration:Math.max(220,700/teamSpeed*2),easing:"ease-in-out",fill:"forwards"});
+      }
+      return;
+    }
+  }
+  svg.innerHTML=lines;
+}
+const teamDelay = event => (event?.type==="tool_result"?0.45:1)*1100/teamSpeed;
+function teamTick() {
+  clearTimeout(teamTimer);
+  if(!teamPlaying) return;
+  if(teamIndex>=teamData.events.length) {teamPlaying=false;teamPaint(false);notify("Replay finished.");return;}
+  teamIndex++;
+  teamPaint(false);
+  teamTimer=setTimeout(teamTick,teamDelay(teamData.events[teamIndex-1]));
+}
+function teamPause() {teamPlaying=false;clearTimeout(teamTimer);}
+window.addEventListener("resize",()=>{if(page==="team") teamEdges(teamData.events[teamIndex-1]?teamRoute(teamData.events[teamIndex-1]):[null,null]);});
 async function approveAgentPlan(optionId,shipmentId=agentShipment,runAt=agentState.record?.at) {
   if(!canApprovePlans()) return;
   try {
@@ -2225,6 +2850,12 @@ function exportPortfolioRun() {
 // Start again for a rehearsal: open the page with ?fresh (decisions) or ?fresh=all (decisions and plans).
 // Saved decisions on this computer are cleared; approvals and runs on the server are archived, never deleted.
 async function startFreshFromUrl() {
+  if(new URLSearchParams(location.search).has("empty")&&agentServer()) {
+    await loadServerState();
+    if(serverAuthMode==="local") {firstArmed=true;await startFromEmpty();}
+    history.replaceState(null,"",location.pathname);
+    return true;
+  }
   const fresh=new URLSearchParams(location.search).get("fresh");
   if(fresh===null||!agentServer()) return false;
   try {
@@ -2236,6 +2867,7 @@ async function startFreshFromUrl() {
 }
 startFreshFromUrl().then(started=>{if(!started) loadAgentData();});
 const views = {
+  team:teamView,
   agent:agentView,
   plans:plansView,
   shipments:shipmentChecks,
@@ -2243,13 +2875,33 @@ const views = {
   countries:countryLibrary,
   schedule:monitoringSchedule,
   case:changeWorkspace,
-  sources:()=>heading("Source log","Review page checks, retry status and linked evidence.")+sourceCard()+sourceReferences(),
+  sources:()=>heading("Source log","Review page checks, retry status and linked evidence."+tip("Every official page RegChain watches. New or Changed: a difference was found and linked to a change. Retry needed: the page did not answer, so coverage has a gap until it is read again.","About the source log"))+sourceCard()+sourceReferences(),
 };
 // Opened as a file, the page cannot reach the agents, approvals or live source checks: say so on every page, with the address to open.
 const fileNotice = () => location.protocol.startsWith("http")?"":'<div class="file-notice" role="note">'+icon("info")+'<span><strong>This is the page opened as a file.</strong> Agent plans, approvals and live checks work when RegChain is running: open '+'<a href="http://127.0.0.1:4173/">http://127.0.0.1:4173</a>'+' after starting Start-RegChain.cmd.</span></div>';
-function render() {shell();byId("view").innerHTML=fileNotice()+views[page]();updateRun();}
+// Long tables show their first rows and a button for the rest, so no page turns into an endless scroll.
+const expandedTables = new Set();
+function collapseLongTables(root) {
+  if(!root) return;
+  for(const table of root.querySelectorAll(".table-wrap table")) {
+    const body=table.tBodies[0];
+    if(!body) continue;
+    const rows=[...body.rows];
+    const wrap=table.closest(".table-wrap");
+    if(wrap.nextElementSibling?.classList.contains("table-more")) wrap.nextElementSibling.remove();
+    if(rows.length<=12) {rows.forEach(row=>{row.hidden=false;});continue;}
+    const key=(table.querySelector("caption")?.textContent||wrap.closest("section")?.querySelector("h2")?.textContent||"table")+" · "+rows.length;
+    const open=expandedTables.has(key);
+    rows.forEach((row,index)=>{row.hidden=!open&&index>=10;});
+    wrap.insertAdjacentHTML("afterend",'<div class="table-more"><button type="button" class="btn quiet" data-act="table-more" data-value="'+esc(key)+'" aria-expanded="'+open+'">'+(open?"Show the first 10":"Show all "+rows.length)+'</button><small>'+(open?"All "+rows.length+" shown":"10 of "+rows.length+" shown")+'</small></div>');
+  }
+}
+let collapsing = false;
+const tableWatcher = new MutationObserver(()=>{if(collapsing) return;collapsing=true;try {collapseLongTables(byId("view"));} finally {tableWatcher.takeRecords();collapsing=false;}});
+tableWatcher.observe(byId("view"),{childList:true,subtree:true});
+function render() {shell();byId("view").innerHTML=fileNotice()+(firstRun!=="done"&&page!=="overview"?emptyPage():views[page]());updateRun();if(page==="team"&&firstRun==="done") teamPaint(true);}
 function notify(text="") {byId("announce").textContent=text;}
-function navigate(to) {page=to;render();byId("page-title").focus({preventScroll:true});window.scrollTo(0,0);}
+function navigate(to) {if(to!=="team") teamPause();page=to;render();byId("page-title").focus({preventScroll:true});window.scrollTo(0,0);}
 function factlist(facts) {
   return '<dl class="facts">'+facts.map(([label,value])=>'<div><dt>'+esc(label)+'</dt><dd>'+esc(value)+'</dd></div>').join("")+'</dl>';
 }
@@ -2315,7 +2967,14 @@ function selectChange(id) {
   studyView=studies.some(study=>study.changes.includes(id))?"portfolio":"registry";
 }
 function updateStudies() {
-  byId("study-card").innerHTML=studyCard()+operationalImpact();
+  byId("study-card").innerHTML=caseImpactSection();
+}
+let impactView = "trials";
+function caseImpactSection() {
+  if(currentChange!=="uk"||studyView!=="portfolio") return studyCard()+operationalImpact();
+  const tabs=[["trials","Trials",studies.length],["batches","Batches",assessedBatches.length],["shipments","Shipments",shipmentFindings().length]];
+  return '<div class="impact-tabs" role="tablist" aria-label="Impact on the portfolio">'+tabs.map(([id,label,count])=>'<button type="button" role="tab" class="impact-tab" aria-selected="'+(impactView===id)+'" data-act="impact-view" data-value="'+id+'">'+label+' · '+count+'</button>').join("")+'</div>'+
+    '<div class="impact-view impact-view-'+impactView+'"><div class="iv-trials">'+studyCard()+'</div>'+operationalImpact()+'</div>';
 }
 function replay(reason="manual") {
   if (replaying) return;
@@ -2416,6 +3075,17 @@ const actions={
   "case-proposal":id=>openCase(id,"proposal"),
   "open-spec":value=>{const [country,section]=value.split(":");currentCountry=country;specFilter="all";navigate("countries");if(section) sectionDetail(section);},
   "open-case":openCase,
+  "watch-team":id=>{teamPause();teamSource=id||"portfolio";teamData={...teamData,key:null};teamIndex=0;teamShown=0;teamAutoplay=true;navigate("team");},
+  "table-more":key=>{if(expandedTables.has(key)) expandedTables.delete(key); else expandedTables.add(key);collapseLongTables(byId("view"));document.querySelector('[data-act="table-more"][data-value="'+CSS.escape(key)+'"]')?.focus();},
+  "impact-view":view=>{impactView=view;byId("study-card").innerHTML=caseImpactSection();byId("study-card").querySelector('[data-act="impact-view"][aria-selected="true"]')?.focus();},
+  "first-run":()=>runFirstCheck(),
+  "start-empty":()=>startFromEmpty(),
+  "team-play":()=>{if(teamPlaying){teamPause();teamPaint(false);return;}if(teamIndex>=teamData.events.length){teamIndex=0;teamShown=0;teamPaint(true);}teamPlaying=true;teamTick();},
+  "team-step":()=>{teamPause();if(teamIndex>=teamData.events.length){teamIndex=0;teamShown=0;teamPaint(true);}teamIndex=Math.min(teamIndex+1,teamData.events.length);teamPaint(false);},
+  "team-restart":()=>{teamPause();teamIndex=0;teamShown=0;teamPaint(true);},
+  "team-speed":value=>{teamSpeed=Number(value);for(const button of document.querySelectorAll('[data-act="team-speed"]')){const on=button.dataset.value===value;button.classList.toggle("on",on);button.setAttribute("aria-pressed",String(on));}},
+  "team-filter":value=>{teamFilter=value;for(const button of document.querySelectorAll('[data-act="team-filter"]')){const on=button.dataset.value===value;button.classList.toggle("on",on);button.setAttribute("aria-pressed",String(on));}teamPaint(true);},
+  "impact-tab":id=>{impactTab=id;render();byId("view").querySelector('[data-act="impact-tab"][aria-selected="true"]')?.focus();},
   "case-history":id=>openCase(id,"history"),
   "workflow-tab":tab=>{workflowTab=tab;render();byId("view").querySelector('[data-act="workflow-tab"][data-value="'+tab+'"]').focus();},
   "export-workflow":exportWorkflow,
@@ -2476,6 +3146,7 @@ document.addEventListener("input",event=>{
   }
 });
 document.addEventListener("change",event=>{
+  if(event.target.id==="team-source"){teamPause();teamSource=event.target.value;teamData={...teamData,key:null};teamIndex=0;teamShown=0;render();return;}
   if(event.target.id==="shipment-plan"){shipmentPlanFilter=event.target.value;byId("shipment-results").innerHTML=shipmentTable();return;}
   if(event.target.id==="plans-country"||event.target.id==="plans-window"){if(event.target.id==="plans-country") plansCountry=event.target.value; else plansWindow=event.target.value;byId("plans-results").innerHTML=plansTable();return;}
   if(event.target.id==="trail-raw"){trailRaw=event.target.checked;byId("agent-timeline").innerHTML=trailList(agentState.running?agentState.events:(agentState.record?.events??[]));return;}
@@ -2649,6 +3320,7 @@ async function loadServerState() {
   try {
     const [session,cases,actions,decisions]=await Promise.all([aiRequest("/v1/session"),aiRequest("/v1/cases"),aiRequest("/v1/shipment-actions"),aiRequest("/v1/change-decisions")]);
     signedInUser=session.mode==="password"?session.user:null;
+    serverAuthMode=session.mode;
     if(session.role) workflowRole=session.role;
     else if(session.mode!=="password") await apiWrite("POST","/v1/session",{role:workflowRole});
     for(const item of cases.cases) setWorkflow(item.workflow);

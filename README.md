@@ -54,6 +54,14 @@ To turn it on:
 
 `npm run check:ai` tests the source fetching and RegChain's checks without calling the API.
 
+## First run and the agents at work
+
+Open **http://127.0.0.1:4173/?empty** to start from an empty workspace (one-person mode only): plans and approvals are archived and the cases start again. The Overview then shows what RegChain is connected to and one button, **Run the first check**. It reads the official sources and finds three changes (UK labelling, a Spanish notice, an Israeli label rule), assesses what each one means, re-checks all 25 planned shipments and hands the 18 that need action to the agent team. The page then opens **Agents in action**.
+
+**Agents in action**, in the menu, shows the team at work: the master agent ranks the shipments and hands tasks to the Supply, Logistics, Records and Communications agents; they read IRT, ERP, the depot and the eTMF over MCP; the RegChain verifier (fixed rules, no AI) tests every option. Replay any run step by step at 1× to 8×, filter the steps by agent, or pick one shipment. A live run streams in as it happens.
+
+The Israel scenario ([RegChain-AI-Israel-Scenario.md](RegChain-AI-Israel-Scenario.md), illustrative) shows a booklet label that can no longer serve two countries: from 3 Jan 2027 Israel refuses the label shared with Greece and Cyprus, so the stock splits and the agents choose between Israel-only kits, relabelling and an earlier import.
+
 ## Agents
 
 **Agent plans**, in the menu, lists every shipment that needs action, most urgent first. Each one opens a plan page where an orchestrator (Claude Opus 5.5) and four specialist agents (Claude Sonnet 5.5) work through the problem:
@@ -72,6 +80,7 @@ Only options that pass the fixed rules can be approved, only by Clinical Supply,
 - [Deployment: settings, Docker, HTTPS, users, backups and upgrades](RegChain-AI-Deployment.md)
 - [Validation outline: intended use, GAMP 5, Part 11 and Annex 11, and what a company still decides](RegChain-AI-Validation.md)
 - [User journeys and demo scenarios: every path, who takes it, and the clicks for each demo](RegChain-AI-User-Journeys.md)
+- [Israel scenario: one label that can no longer serve two countries (illustrative)](RegChain-AI-Israel-Scenario.md)
 - [Agents: how they resolve blocked shipments within validated systems](RegChain-AI-Agents.md)
 - [Product review, 15 Nov 2026: is the problem real, what was fixed, what is open](RegChain-AI-Product-Review.md)
 - [Project plan: what is done and what is next](RegChain-AI-Project-Plan.md)

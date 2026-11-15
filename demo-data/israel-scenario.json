@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "note": "FICTIONAL illustrative scenario for the RegChain prototype. The rule, the trial, the sites, the batches and the shipments are invented to show how RegChain handles a label that can no longer serve two countries. It is not a real Ministry of Health notice and not legal advice.",
+  "case": {
+    "id": "il",
+    "title": "Israel: shared booklet labels no longer accepted",
+    "authority": "Israel Ministry of Health (illustrative scenario)",
+    "published": "2026-11-12",
+    "effective": "2027-01-03",
+    "requirement": "IL/IMP_LABEL_SINGLE_COUNTRY",
+    "summary": "From 3 January 2027, investigational products imported for Israeli sites must carry an Israel-only label in Hebrew with the Ministry of Health trial approval number. Multi-country booklet labels that also cover other countries are refused at import, even when they include Hebrew.",
+    "transition": "Kits imported before 3 January 2027 under a shared booklet label may be used at the site until they expire.",
+    "consequence": "The shared booklet for Israel, Greece and Cyprus can no longer serve Israel. Stock pooled across the three countries splits in two: the booklet batches stay with Greece and Cyprus, and Israeli sites need Israel-only kits.",
+    "evidence": [
+      { "id": "il-1", "locator": "Section 2", "excerpt": "Investigational products imported for a clinical trial in Israel shall bear a label intended for Israel only." },
+      { "id": "il-2", "locator": "Section 3", "excerpt": "A label shared with another country shall not be accepted at import from 3 January 2027." }
+    ]
+  },
+  "trial": {
+    "id": "STUDY-021",
+    "title": "Multinational psoriasis biologic study",
+    "product": "IMP-021",
+    "phase": "III",
+    "countries": ["IL", "GR", "CY"],
+    "depot": "Central EU depot, Belgium",
+    "standardLeadBusinessDays": 5,
+    "labels": [
+      { "id": "LBL-BK-07", "type": "Booklet", "countries": ["IL", "GR", "CY"], "languages": ["he", "el", "en"], "status": "approved" },
+      { "id": "LBL-IL-02", "type": "Single-country", "countries": ["IL"], "languages": ["he", "en"], "status": "approved", "moHApprovalNumber": true }
+    ],
+    "batches": [
+      { "id": "Q-801", "label": "LBL-BK-07", "qp": "2026-09-02", "expiry": "2028-03-31" },
+      { "id": "Q-802", "label": "LBL-BK-07", "qp": "2026-10-20", "expiry": "2028-06-30" },
+      { "id": "Q-815", "label": "LBL-IL-02", "qp": "2026-10-28", "expiry": "2028-06-30" }
+    ],
+    "sites": [
+      { "id": "SITE-IL-01", "country": "IL", "city": "Tel Aviv", "hospital": "Tel Aviv site pharmacy", "patients": 14 },
+      { "id": "SITE-IL-02", "country": "IL", "city": "Haifa", "hospital": "Haifa site pharmacy", "patients": 18 },
+      { "id": "SITE-IL-03", "country": "IL", "city": "Jerusalem", "hospital": "Jerusalem site pharmacy", "patients": 11 },
+      { "id": "SITE-GR-01", "country": "GR", "city": "Athens", "hospital": "Athens site pharmacy", "patients": 16 },
+      { "id": "SITE-CY-01", "country": "CY", "city": "Nicosia", "hospital": "Nicosia site pharmacy", "patients": 7 }
+    ],
+    "shipments": [
+      { "id": "SHP-IL-01", "site": "SITE-IL-01", "batch": "Q-801", "kits": 10, "dispatch": "2026-11-23", "delivery": "2026-11-26", "carrier": "EMEA specialty courier", "importApproval": "approved" },
+      { "id": "SHP-IL-02", "site": "SITE-IL-02", "batch": "Q-801", "kits": 12, "dispatch": "2027-01-04", "delivery": "2027-01-07", "carrier": "EMEA specialty courier", "importApproval": "approved" },
+      { "id": "SHP-IL-03", "site": "SITE-IL-03", "batch": "Q-802", "kits": 10, "dispatch": "2027-01-12", "delivery": "2027-01-15", "carrier": "EMEA specialty courier", "importApproval": "requested" },
+      { "id": "SHP-GR-01", "site": "SITE-GR-01", "batch": "Q-801", "kits": 8, "dispatch": "2027-01-11", "delivery": "2027-01-14", "carrier": "EMEA specialty courier", "importApproval": "not needed" },
+      { "id": "SHP-CY-01", "site": "SITE-CY-01", "batch": "Q-802", "kits": 6, "dispatch": "2027-01-13", "delivery": "2027-01-18", "carrier": "EMEA specialty courier", "importApproval": "not needed" }
+    ]
+  },
+  "specifications": {
+    "il": {
+      "version": 3,
+      "published": "2026-06-01",
+      "next": "2027-06-01",
+      "owner": "N. Levi, Regulatory Affairs Israel",
+      "sections": {
+        "regulatory": { "owner": "N. Levi, Regulatory Affairs Israel", "checked": "2026-06-01", "review": "2026-12-01", "case": "il", "items": [
+          "Label language: Hebrew (required), English allowed alongside.",
+          "Shared booklet labels with other countries are accepted until 2 January 2027 (illustrative scenario: from 3 January 2027 an Israel-only label with the Ministry of Health trial approval number)."
+        ] },
+        "import": { "owner": "N. Levi, Regulatory Affairs Israel", "checked": "2026-06-01", "review": "2026-12-01", "items": [
+          "A Ministry of Health import approval for each shipment, quoted on the airway bill.",
+          "The batch's QP release documentation travels with the shipment."
+        ] },
+        "logistics": { "owner": "M. Peeters, Clinical Supply Logistics EU", "checked": "2026-09-01", "review": "2026-12-01", "items": [
+          "Prepare each shipment 5 business days before dispatch from the Belgian depot.",
+          "Sites receive on Israeli working days only: Sunday to Thursday. No delivery on Friday or Saturday.",
+          "2–8 °C products: validated shipper, transit under 96 hours."
+        ] },
+        "carriers": { "owner": "M. Peeters, Clinical Supply Logistics EU", "checked": "2026-09-01", "review": "2026-12-01", "items": ["EMEA specialty courier (temperature-controlled, Belgium to Israel, Greece and Cyprus)"] },
+        "ior": { "owner": "N. Levi, Regulatory Affairs Israel", "checked": "2026-06-01", "review": "2026-12-01", "items": ["Importer of record: the sponsor's local representative in Israel. Consignee: the hospital pharmacy of the trial site."] },
+        "notes": { "owner": "N. Levi, Regulatory Affairs Israel", "checked": "2026-06-01", "review": "2026-12-01", "items": [
+          "Plan Israel as its own label group in regional booklets: some destinations in the region do not accept packs that carry Hebrew text or an Israeli approval number, so stock labelled for Israel cannot always be moved to a neighbouring country."
+        ] }
+      }
+    },
+    "gr": {
+      "version": 2,
+      "published": "2026-05-15",
+      "next": "2027-05-15",
+      "owner": "E. Papadopoulou, Regulatory Affairs Greece",
+      "sections": {
+        "regulatory": { "owner": "E. Papadopoulou, Regulatory Affairs Greece", "checked": "2026-05-15", "review": "2026-11-30", "items": ["Label under Annex VI of Regulation (EU) 536/2014.", "Label language: Greek. Multi-country booklets that include Greek are accepted."] },
+        "logistics": { "owner": "M. Peeters, Clinical Supply Logistics EU", "checked": "2026-09-01", "review": "2026-12-01", "items": ["Prepare each shipment 5 business days before dispatch from the Belgian depot.", "Sites receive on working days, Monday to Friday."] },
+        "carriers": { "owner": "M. Peeters, Clinical Supply Logistics EU", "checked": "2026-09-01", "review": "2026-12-01", "items": ["EMEA specialty courier (temperature-controlled, Belgium to Israel, Greece and Cyprus)"] }
+      }
+    },
+    "cy": {
+      "version": 2,
+      "published": "2026-05-15",
+      "next": "2027-05-15",
+      "owner": "E. Papadopoulou, Regulatory Affairs Greece",
+      "sections": {
+        "regulatory": { "owner": "E. Papadopoulou, Regulatory Affairs Greece", "checked": "2026-05-15", "review": "2026-11-30", "items": ["Label under Annex VI of Regulation (EU) 536/2014.", "Label language: Greek. Multi-country booklets that include Greek are accepted."] },
+        "logistics": { "owner": "M. Peeters, Clinical Supply Logistics EU", "checked": "2026-09-01", "review": "2026-12-01", "items": ["Prepare each shipment 5 business days before dispatch from the Belgian depot.", "Sites receive on working days, Monday to Friday."] },
+        "carriers": { "owner": "M. Peeters, Clinical Supply Logistics EU", "checked": "2026-09-01", "review": "2026-12-01", "items": ["EMEA specialty courier (temperature-controlled, Belgium to Israel, Greece and Cyprus)"] }
+      }
+    }
+  },
+  "operations": {
+    "depotStock": { "Q-801": 40, "Q-802": 30, "Q-815": 14 },
+    "relabel": { "label": "LBL-IL-02", "slots": [{ "date": "2026-12-08", "kits": 30 }, { "date": "2026-12-15", "kits": 30 }], "turnaroundBusinessDays": 2 },
+    "transitBusinessDays": 3,
+    "siteStockDays": { "SITE-IL-01": 21, "SITE-IL-02": 16, "SITE-IL-03": 12, "SITE-GR-01": 19, "SITE-CY-01": 25 },
+    "importApprovals": {
+      "SHP-IL-01": { "status": "approved", "number": "MOH-IMP-26-4410" },
+      "SHP-IL-02": { "status": "approved", "number": "MOH-IMP-26-4471" },
+      "SHP-IL-03": { "status": "requested", "requested": "2026-11-09", "typicalBusinessDays": 10 }
+    },
+    "contacts": { "SITE-IL-03": { "contact": "Local representative, Israel", "channel": "Email", "typicalResponseBusinessDays": 2 } }
+  }
+}

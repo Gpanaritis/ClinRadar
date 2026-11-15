@@ -51,6 +51,7 @@ const dataFiles = [
   { id: "portfolio-data", file: join(__dirname, "demo-data", "uk-labelling-portfolio.json"), name: "Portfolio" },
   { id: "spain-data", file: join(__dirname, "demo-data", "spain-scenario.json"), name: "Spain scenario" },
   { id: "specifications-data", file: join(__dirname, "demo-data", "country-specifications.json"), name: "Country Specifications" },
+  { id: "israel-data", file: join(__dirname, "demo-data", "israel-scenario.json"), name: "Israel scenario" },
 ];
 function dashboardPage() {
   let page = dashboardHtml;

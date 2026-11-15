@@ -28,6 +28,9 @@ flowchart LR
   PANEL -->|Open the plan / Plan with agents| PLAN
   AP -->|a row| PLAN
   PLAN -->|All agent plans| AP
+  OV -->|Run the first check| TEAM[Agents in action]
+  PLAN -->|Watch it step by step| TEAM
+  AP --> TEAM
   CASE --> T1[Evidence & impact]
   CASE --> T2[SME decision]
   CASE --> T3[Country specification]
@@ -36,7 +39,7 @@ flowchart LR
   MS[Monitoring schedule]
 ```
 
-The menu has: **Overview · Shipment checks · Agent plans · Country specifications · Source log · Monitoring schedule**. A plan page always opens under **Agent plans**, and its breadcrumb leads back there.
+The menu has: **Overview · Shipment checks · Agent plans · Agents in action · Country specifications · Source log · Monitoring schedule**. A plan page always opens under **Agent plans**, and its breadcrumb leads back there.
 
 ### What each screen is for
 
@@ -97,7 +100,7 @@ flowchart TD
 
 1. **Overview** → tile **Shipments blocked**.
 2. **Shipment checks** → **Agent plans** (top right).
-3. **Plan all with AI agents**. Without a key, use **Scripted walkthrough (no AI)**. A progress bar shows "Planning 16 shipments · N done".
+3. **Plan all with AI agents**. Without a key, use **Scripted walkthrough (no AI)**. A progress bar shows "Planning 18 shipments · N done".
 4. Choose **Prepare by: Within 7 days**.
 5. Go down the list. Choose **Approve** for a plan; choose **Acknowledge** for an escalation (SHP-03, SHP-05). For anything you want to read first, open the shipment.
 6. The **Approved** chip counts what is done. Each draft waits for approval in its own system.
@@ -180,6 +183,24 @@ flowchart TD
    - the agents book the QP release for 2 Mar 2027;
    - they ask the site for its pharmacy code, with the message drafted in Spanish and English.
 
+### J12 · The first check, from an empty workspace
+
+1. Open **http://127.0.0.1:4173/?empty**. The Overview says what RegChain is connected to: 8 official sources, 25 planned shipments, 6 company systems over MCP, 5 AI agents and one rule checker. Every other page says "Nothing here yet".
+2. **Run the first check**. Four steps run in about a minute, each with what it found:
+   1. the sources are read and compared: the UK regulation changed, with both evidence passages found word for word; a new Spanish note; a new Israeli notice;
+   2. the impact: 7 of 18 UK trials, the Israeli label pool split, 6 of 10 Spanish shipments;
+   3. 25 shipments re-checked: 13 blocked, 5 to confirm, 7 ready;
+   4. the 18 that need action go to the agent team.
+3. The page opens **Agents in action** and replays the run at 4×. Pause, step, change the speed, or filter by agent.
+4. At the end: **Review the plans** opens Agent plans.
+
+### J13 · One label, two countries (Israel, illustrative)
+
+1. Overview → **Israel label** tab: from 3 Jan 2027 Israel refuses the booklet shared with Greece and Cyprus. 70 kits stay with Greece and Cyprus; Israel has 14 Israel-only kits for the 22 it needs. 2 of 3 Israeli shipments are blocked.
+2. **Open the Israel change**: the evidence, the assessment and the **Label pool after the change**.
+3. **Agents in action → Run → SHP-IL-03**: the master agent sends Logistics to find a Thursday delivery (Friday is not an Israeli working day), Records to check the import approval, Communications to draft a Hebrew and English note, and Supply to find Israel-only stock. The verifier tests three ways out.
+4. **Agent plans**: SHP-IL-02 takes the Israel-only kits, so SHP-IL-03 is re-planned to relabelling.
+
 ### J10 · A source check failed
 
 **Overview** → tile **Checks to retry** → **Source log** → the GOV.UK check → **Retry this check**. The page fetches the official page again and records the result.
@@ -195,17 +216,29 @@ flowchart TD
 ### Before any demo (2 minutes)
 
 1. Open **Start-RegChain.cmd** and keep its window open. Always use the address **http://127.0.0.1:4173**, never the HTML file itself: opened as a file, the page shows an orange notice, and the agents, approvals and live checks don't work.
-2. Open **http://127.0.0.1:4173/?fresh**. This clears decisions saved in the browser and archives the approvals; the plans stay. The address goes back to normal by itself.
-   - To start with no plans at all, open **http://127.0.0.1:4173/?fresh=all**.
+2. Open **http://127.0.0.1:4173/?empty** for Scenario A: an empty workspace, plans and approvals archived, cases started again. The address goes back to normal by itself.
+   - For the other scenarios, open **http://127.0.0.1:4173/?fresh** (clears decisions, keeps the plans) or **?fresh=all** (no plans at all).
 3. Check **Acting as**: P. Laine · Clinical Supply.
 4. On **Agent plans**, check that **Plan all with AI agents** is enabled. If it isn't, the key is missing; use the scripted walkthrough.
 5. The day before, run **Plan all with AI agents** once. The board keeps the plans, so the demo works even if the venue's internet fails.
 
-### Scenario A · The 5-minute pitch
+### Scenario A · The 5-minute pitch, from an empty workspace
 
 | Time | Screen | Click | Say |
 |---|---|---|---|
-| 0:00 | Overview | Tile **Shipments blocked** | "11 of 20 planned shipments would leave the depot breaking their country's rules." |
+| 0:00 | Overview, empty | Nothing yet | "RegChain is connected to 8 official sources and to the supply plan: 25 shipments. Nothing has been checked." |
+| 0:15 | Overview | **Run the first check** | Read the lines as they appear: "The UK regulation changed, and both evidence passages are found word for word. A new Spanish note. A new Israeli rule. 13 shipments would leave the depot breaking their country's rules." |
+| 1:00 | Agents in action | Watch the replay; chip **Verifier** | "The master agent ranks 18 shipments and hands tasks to four specialists. They read IRT, ERP, the depot and the eTMF over MCP, read-only. Every option goes to the RegChain verifier: fixed rules, not AI." |
+| 2:00 | Agents in action | **Run → SHP-IL-03** | "Israel will refuse the label it shares with Greece and Cyprus. Friday is not a working day there, and the import approval is pending. Watch the team split the work." |
+| 3:00 | Agent plans | Chip **Re-planned** | "SHP-IL-02 is more urgent and takes the Israel-only kits, so SHP-IL-03 is relabelled instead. Nothing is promised twice." |
+| 3:45 | Plan page SHP-04 | **Approve this plan** | "I approve as Clinical Supply. The drafts still go to IRT for their own signature. Nothing changed in any validated system." |
+| 4:30 | Plan page | **How the agents are controlled** | "Read-only, drafts only, rules decide, people approve, every step logged." |
+
+### Scenario A2 · The original 5-minute pitch, with plans prepared
+
+| Time | Screen | Click | Say |
+|---|---|---|---|
+| 0:00 | Overview | Tile **Shipments blocked** | "13 of 25 planned shipments would leave the depot breaking their country's rules." |
 | 0:30 | Shipment checks | SHP-04's row | "This one must be prepared today: 22 patients, a legacy label after the UK cutoff, and IRT doesn't know the trial's authorisation route." |
 | 1:00 | Shipment panel → plan page | **Open the plan**, then **Run the agents again → Run the AI agents** | "An orchestrator delegates to supply, logistics and records agents. They read IRT, ERP, the depot and the eTMF through MCP, read-only." While it runs, open **How the agents worked it out**. |
 | 2:15 | Plan page | Read the recommended plan, then **Approve this plan** | "RegChain's fixed rules checked every option. The delay fails, so it can't be approved. I approve as Clinical Supply; the drafts still go to IRT for their own e-signature." |
@@ -216,7 +249,7 @@ flowchart TD
 
 ### Scenario B · The 3-minute version
 
-1. **Shipment checks**: 11 blocked.
+1. **Shipment checks**: 13 blocked.
 2. Plan page for SHP-04: the plan recorded beforehand, then **Approve this plan**.
 3. **Agent plans**: the **Re-planned** chip, then **Escalations**.
 4. **How the agents are controlled**.
@@ -241,4 +274,4 @@ flowchart TD
 
 ### After the demo
 
-Open **http://127.0.0.1:4173/?fresh** to clear the approvals made on stage. Nothing is deleted: approvals and runs are archived in `.regchain-cache/`.
+Open **http://127.0.0.1:4173/?empty** to be ready for the next Scenario A, or **?fresh** to clear only the approvals made on stage. Nothing is deleted: approvals and runs are archived in `.regchain-cache/`.
