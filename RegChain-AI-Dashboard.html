@@ -1231,7 +1231,7 @@ function firstRunView() {
     [2,"official feeds: UK FCDO travel advice and GDACS alerts"],
     [shipments.length,"planned shipments in the supply plan"],
     [systems,"company systems over MCP, read-only or drafts only"],
-    [5,"AI agents and one rule checker with no AI"+(agentServer()&&agentState.status&&!live?" · scripted without a Claude key":"")]
+    [9,"AI agents, every plan tested by a fixed-rule guardrail"+(agentServer()&&agentState.status&&!live?" · connect Claude to run them live":"")]
   ];
   const head=heading("Overview",firstRun==="checking"?"The first check is running. Each step shows what ClinRadar found.":"External risk and country regulatory intelligence for global clinical supply. Nothing has been checked yet.");
   if(firstRun==="empty") {
@@ -1723,7 +1723,7 @@ function choice(name,value,checked,title,text) {
 }
 function settingsView() {
   if(serverMode()&&!settingsState.loaded&&!settingsState.loading&&!settingsState.error) queueMicrotask(loadSettings);
-  const tabs=[["monitoring","Monitoring schedule","schedule"],["ai","AI connections","plug"],["sources","Sources","file"]];
+  const tabs=[["monitoring","Monitoring schedule","schedule"],["ai","AI agents & integrations","plug"],["sources","Sources","file"]];
   return heading("Settings","When ClinRadar checks, what the AI agents connect to, and every official source it reads."+tip("Served by ClinRadar, settings are kept on the server and every change is recorded in the audit trail with who made it and when. Keys and passwords are never entered here.","About the settings"),
     serverMode()?'<div class="actions settings-role">'+caseRoleSelect()+'</div>':"")+
     '<div class="settings-tabs" role="tablist" aria-label="Settings">'+tabs.map(([id,label,symbol])=>'<button type="button" role="tab" id="settings-tab-'+id+'" class="settings-tab" aria-selected="'+(settingsTab===id)+'" aria-controls="settings-panel" data-act="settings-tab" data-value="'+id+'">'+icon(symbol)+esc(label)+'</button>').join("")+'</div>'+
@@ -1775,16 +1775,16 @@ function settingsLog(kind) {
       '<p class="muted">'+(kind==="monitoring"?"No change yet. The schedule is ClinRadar's default.":"No connection requests yet.")+'</p>')+'</div></section>';
 }
 // What each agent works with: the systems behind its tools (regchain-ai/agent.mjs).
-const teamUses = {orchestrator:["ClinRadar","CTMS","Draft inbox"],supply:["IRT","ERP"],logistics:["IRT","ERP","Depot","Courier"],records:["eTMF","IRT"],communications:["ClinRadar"],verifier:["ClinRadar rules"]};
+const teamUses = {orchestrator:["ClinRadar","CTMS","Draft inbox"],supply:["IRT","ERP"],logistics:["IRT","ERP","Depot","Courier"],records:["eTMF","IRT"],communications:["ClinRadar"],verifier:["ClinRadar rules"],
+  weather:["GDACS","Enterprise risk alerts"],transport:["Transport notices","Courier","Depot","Enterprise risk alerts"],security:["UK FCDO travel advice","Enterprise risk alerts"],regulatory:["Country Specifications","Official regulatory sources"]};
 function modelName(id) {
   const match=/claude-(opus|sonnet|haiku|fable)-(\d+)-(\d+)/i.exec(String(id??""));
   return match?match[1][0].toUpperCase()+match[1].slice(1).toLowerCase()+" "+match[2]+"."+match[3]:String(id??"");
 }
+// Each agent's role on screen. The models behind the roles are set on the server (REGCHAIN_MODEL_*), recorded in every
+// run and in the audit trail, and documented in RegChain-AI-Deployment.md; the screens show the job, not the model.
 function agentModel(id) {
-  if(id==="verifier") return "Fixed rules · no AI";
-  const models=agentState.status?.models;
-  const chosen=id==="orchestrator"?models?.orchestrator:teamWatch.includes(id)?models?.watch:models?.specialists;
-  return chosen?modelName(chosen):teamModels[id].replace("Claude ","");
+  return teamModels[id];
 }
 function aiServiceCard() {
   const status=agentState.status;
@@ -1794,26 +1794,24 @@ function aiServiceCard() {
   const [tone,title,text]=!server?["off","Not reachable from this file","Open ClinRadar at http://127.0.0.1:4173 to see the connection."]:
     !status?["off","Checking","Asking the ClinRadar server."]:
     ready?["ready","Ready for live runs","The agents and the regulation check call Claude."]:
-    ["partial","Scripted walkthrough only",typeof status.setup==="string"&&status.setup?humanDates(status.setup):!status.sdk?"The Claude package for this service is not installed: run npm install in the ClinRadar folder, then restart ClinRadar.":"The service is not set up yet: add its settings to the .env file next to serve-regchain.cjs, then restart ClinRadar."];
+    ["partial","Offline demo only",typeof status.setup==="string"&&status.setup?humanDates(status.setup):!status.sdk?"The Claude package for this service is not installed: run npm install in the ClinRadar folder, then restart ClinRadar.":"The service is not set up yet: add its settings to the .env file next to serve-regchain.cjs, then restart ClinRadar."];
   const known=server&&status;
   return '<section class="card"><div class="card-head"><div><h2>Claude service</h2><p>The AI the agents and the regulation check use</p></div></div><div class="settings-body">'+
     '<div class="service-state '+tone+'"><span class="light" aria-hidden="true"></span><span><strong>'+esc(title)+'</strong><small>'+esc(text)+'</small></span></div>'+
-    factlist([["Service",service],["Settings and credentials",!known?"—":status.keySet?"Set on the server":"Missing"],["Claude package",!known?"—":status.sdk?"Installed":"Not installed"],["Without AI","The scripted walkthrough runs the same steps with recorded answers"]])+
+    factlist([["Service",service],["Settings and credentials",!known?"—":status.keySet?"Set on the server":"Missing"],["Claude package",!known?"—":status.sdk?"Installed":"Not installed"],["Without Claude","The offline demo runs the same steps through the same systems, with prepared decisions"]])+
     '<p class="key-note">'+icon("review")+'<span><strong>Keys are never entered on this page.</strong> ClinRadar reaches Claude through Anthropic or the company\'s own cloud (AWS, Google Cloud or Microsoft Azure), chosen on the server with REGCHAIN_AI_PROVIDER. Keys stay in the server\'s .env file or the cloud identity ClinRadar runs under, so no key reaches a browser, a log or the audit trail. Changing the service or a model is a change to a validated system and goes through change control (RegChain-AI-Deployment.md, "Which Claude service").</span></p>'+
   '</div></section>';
 }
 function agentsCard() {
-  const ids=["orchestrator","supply","logistics","records","communications","verifier"];
-  const checkModel=aiStates.uk?.status?.model;
-  const check=checkModel?modelName(checkModel):"Opus 5.5";
+  const ids=["orchestrator",...teamWatch,"supply","logistics","records","communications","verifier"];
   const rows=ids.map(id=>{
     const profile=agentProfiles[id];
     const rules=id==="verifier";
     return '<tr><td><span class="name-cell"><span class="agent-dot '+profile.tone+'" aria-hidden="true">'+teamInitials[id]+'</span><span><strong>'+esc(id==="orchestrator"?"Master agent":profile.name)+'</strong><small>'+esc(profile.job)+'</small></span></span></td>'+
       '<td><span class="access'+(rules?" rules":"")+'">'+esc(agentModel(id))+'</span></td><td>'+esc(teamUses[id].join(", "))+'</td></tr>';
-  }).join("")+'<tr><td><span class="name-cell"><span class="agent-dot agent-orchestrator" aria-hidden="true">AI</span><span><strong>Regulation check</strong><small>Reads the old and new legal text and drafts the change; ClinRadar verifies every quote</small></span></span></td><td><span class="access">'+esc(check)+'</span></td><td>Official sources</td></tr>';
-  return '<section class="card"><div class="card-head"><div><h2>Agents and their models</h2><p>Who does what, and which systems each one reads</p></div></div>'+
-    '<div class="table-wrap" tabindex="0"><table class="stack-table conn-table"><caption class="sr">Agents, their models and the systems they use</caption><thead><tr><th>Agent</th><th>Model</th><th>Works with</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>';
+  }).join("")+'<tr><td><span class="name-cell"><span class="agent-dot agent-orchestrator" aria-hidden="true">AI</span><span><strong>Regulation check</strong><small>Reads the old and new legal text and drafts the change; ClinRadar verifies every quote</small></span></span></td><td><span class="access">AI check</span></td><td>Official sources</td></tr>';
+  return '<section class="card"><div class="card-head"><div><h2>The AI agent team</h2><p>Who does what, and which systems each one reads</p></div></div>'+
+    '<div class="table-wrap" tabindex="0"><table class="stack-table conn-table"><caption class="sr">Agents, their roles and the systems they use</caption><thead><tr><th>Agent</th><th>Role</th><th>Works with</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>';
 }
 function systemsCard() {
   const status=agentState.status;
@@ -2039,7 +2037,7 @@ function workflowDecision() {
 function workflowProposal() {
   const decision=panel("SME decision","Role and rationale are recorded in the case history.",casePad(workflowDecision()),caseRoleSelect());
   const published=workflow.publication;
-  const origin=workflow.draftSource==="ai"?"Drafted by the AI check ("+(workflow.aiModel||"AI")+", "+scheduleDate(Date.parse(workflow.aiRunAt))+") after all checks passed. The SME decides.":
+  const origin=workflow.draftSource==="ai"?"Drafted by the AI check ("+scheduleDate(Date.parse(workflow.aiRunAt))+") after all checks passed. The SME decides.":
     workflow.draftSource==="sme"?"Edited by the Regulatory SME.":"Prepared before the AI check. A passing AI check replaces it with a checked draft.";
   const governed=activeCase();
   const spec=countrySpecs[governed.country];
@@ -2259,7 +2257,7 @@ function aiResult(result) {
     proposal+
     '<h3>Claims and their quotes</h3>'+claims+
     (draft.uncertainties.length?'<h3>For the SME to confirm</h3>'+listItems(draft.uncertainties.map(esc)):"")+
-    '<div class="card-foot"><small>'+esc((aiState.fresh?"Live check":"Recorded check")+" · "+scheduleDate(Date.parse(result.at))+" · "+result.model)+'</small></div>';
+    '<div class="card-foot"><small>'+esc((aiState.fresh?"Live AI check":"Recorded AI check")+" · "+scheduleDate(Date.parse(result.at)))+'</small></div>';
 }
 function aiCard() {
   const busy=aiState.phase==="running";
@@ -2646,7 +2644,7 @@ const agentProfiles = {
   logistics:{name:"Logistics agent",tone:"agent-logistics",job:"Relabelling, label approvals, site stock, couriers"},
   records:{name:"Records agent",tone:"agent-records",job:"Authorisations and site contacts in the eTMF"},
   communications:{name:"Communications agent",tone:"agent-comms",job:"Messages in English and the local language"},
-  verifier:{name:"ClinRadar verifier",tone:"agent-verifier",job:"Fixed rules, no AI: does each option pass, and is anything promised twice?"},
+  verifier:{name:"ClinRadar verifier",tone:"agent-verifier",job:"The guardrail on the AI: fixed rules test every option it proposes. Does it pass, and is anything promised twice?"},
   weather:{name:"Weather & natural hazards agent",tone:"agent-weather",job:"Sweeps GDACS alerts (floods, cyclones, earthquakes, wildfires) in the monitored countries and on our routes"},
   transport:{name:"Strikes & transport agent",tone:"agent-transport",job:"Sweeps strikes, airport, port and road notices, and the courier's and depot's operations"},
   security:{name:"Security & travel advice agent",tone:"agent-security",job:"Sweeps UK FCDO travel advice, unrest and border closures in the monitored countries"},
@@ -2746,7 +2744,7 @@ function startAgentRun(mode) {
   agentState={...agentState,shipment,running:true,events:[],record:null,error:"",mode};
   openPanels.add("agent-trail");
   render();
-  notify(mode==="live"?"The agents are working. This takes a minute or two.":"Running the scripted walkthrough.");
+  notify(mode==="live"?"The agents are working. This takes a minute or two.":"Running the offline demo.");
   const source=new EventSource("/api/agent/run?shipment="+encodeURIComponent(shipment)+"&mode="+mode);
   source.onmessage=event=>{agentState.events.push(JSON.parse(event.data));if(page==="agent"&&agentShipment===shipment) updateAgentTimeline();};
   source.addEventListener("complete",event=>{
@@ -2767,7 +2765,7 @@ function startPortfolioRun(mode) {
   portfolioState={...portfolioState,running:true,events:[],record:null,error:"",mode,order:[]};
   openPanels.add("plans-activity");
   render();
-  notify(mode==="live"?"The agents are planning every shipment. This takes several minutes.":"Running the scripted walkthrough for every shipment.");
+  notify(mode==="live"?"The agents are planning every shipment. This takes several minutes.":"Running the offline demo for every shipment.");
   const source=new EventSource("/api/agent/portfolio-run?mode="+mode);
   source.onmessage=event=>{
     const data=JSON.parse(event.data);
@@ -2869,7 +2867,7 @@ function controlsPanel(id,status) {
 function agentSetupNote(status) {
   const live=agentServer()&&status?.keySet&&status?.sdk;
   return !agentServer()?'<div class="inline-note">'+icon("info")+'<span>The agents need the local server: open ClinRadar with Start-ClinRadar.cmd.</span></div>':
-    !live?'<p class="setup-line">'+icon("info")+'<span>AI agents are not connected yet, so the scripted walkthrough runs the same steps with coded decisions. An administrator connects Claude under <button type="button" class="link-button" data-act="open-settings" data-value="ai">Settings › AI connections</button>.</span></p>':"";
+    !live?'<p class="setup-line">'+icon("info")+'<span>Claude is not connected on this server yet. The offline demo runs the same steps through the same systems, with prepared decisions. An administrator connects Claude under <button type="button" class="link-button" data-act="open-settings" data-value="ai">Settings › AI agents &amp; integrations</button>.</span></p>':"";
 }
 const approverNote = () => canApprovePlans()?"":'<p class="form-feedback">Clinical Supply approves supply plans. Choose '+esc(roleName("viewer",workflow))+' under Acting as.</p>';
 function runButtons(scope,primaryLabel) {
@@ -2879,7 +2877,7 @@ function runButtons(scope,primaryLabel) {
   const act=scope==="all"?"portfolio-run":"agent-run";
   return '<div class="actions">'+
     '<button type="button" class="btn '+(live?"primary":"")+'" data-act="'+act+'" data-value="live"'+(live&&!busy?"":" disabled")+'>'+icon("retry")+esc(primaryLabel)+'</button>'+
-    '<button type="button" class="btn '+(live?"":"primary")+'" data-act="'+act+'" data-value="scripted"'+(agentServer()&&!busy?"":" disabled")+'>Scripted walkthrough (no AI)</button></div>';
+    '<button type="button" class="btn '+(live?"":"primary")+'" data-act="'+act+'" data-value="scripted"'+(agentServer()&&!busy?"":" disabled")+'>Offline demo run</button></div>';
 }
 function journeySteps(steps) {
   return '<ol class="journey" aria-label="Where this shipment stands">'+steps.map((step,index)=>'<li class="journey-step '+step.state+'"'+(step.state==="active"?' aria-current="step"':'')+'><span class="journey-num">'+(step.state==="done"?"✓":index+1)+'</span><span><strong>'+esc(step.label)+'</strong><small>'+esc(step.sub)+'</small></span></li>').join("")+'</ol>';
@@ -3043,7 +3041,7 @@ function agentView() {
   const trail=(agentState.running||record)?'<details id="agent-trail" class="card fold"'+(openPanels.has("agent-trail")||agentState.running?" open":"")+'><summary><span class="fold-title">'+icon("changes")+'<strong>How the agents worked it out</strong></span><small id="agent-trail-count" class="muted">'+
       esc(agentState.running?events.length+" steps so far":plural(events.length,"step")+" · "+plural(events.filter(event=>event.type==="tool_call").length,"system call"))+'</small></summary>'+
       (agentState.running?"":'<div class="actions trail-watch">'+trigger("Watch it step by step","watch-team",agentShipment,"quiet","team")+'</div>')+trailFilters(events)+'<ol id="agent-timeline" class="agent-timeline">'+trailList(events)+'</ol></details>':"";
-  const runLine=record?'<section class="run-line"><span>'+esc((record.mode==="live"?"AI agents ("+record.models.orchestrator+", "+record.models.specialists+(record.models.service?", through "+record.models.service:"")+")":"Scripted walkthrough, no AI")+" · run on "+scheduleDate(Date.parse(record.at))+
+  const runLine=record?'<section class="run-line"><span>'+esc((record.mode==="live"?"AI agents"+(record.models?.service?" through "+record.models.service:""):"Offline demo run")+" · run on "+scheduleDate(Date.parse(record.at))+
       (record.mode==="live"?" · "+record.usage.input_tokens+" tokens in, "+record.usage.output_tokens+" out":""))+'</span>'+trigger("Export the audit record","agent-export","","quiet","file")+
       '<details id="agent-rerun" class="rerun"'+(openPanels.has("agent-rerun")?" open":"")+'><summary>Run the agents again</summary>'+runButtons("one","Run the AI agents")+agentSetupNote(status)+'<small class="muted">A new run never inherits an earlier approval.</small></details></section>':"";
   const left=(needs?problemCard(shipment,issues):"")+routeCard(shipment);
@@ -3140,7 +3138,7 @@ function needsActionPanel() {
     return '<button type="button" class="filter-chip" data-act="plans-status" data-value="'+id+'" aria-pressed="'+(plansFilter===id)+'">'+esc(group.label)+' <span class="chip-count">'+count+'</span></button>';
   }).join("");
   const record=portfolioState.record;
-  const lastRun=record&&!portfolioState.running?'<section class="run-line"><span>'+esc("Planned together on "+scheduleDate(Date.parse(record.at))+" · "+(record.mode==="live"?"AI agents":"scripted walkthrough, no AI")+" · "+
+  const lastRun=record&&!portfolioState.running?'<section class="run-line"><span>'+esc("Planned together on "+scheduleDate(Date.parse(record.at))+" · "+(record.mode==="live"?"AI agents":"offline demo run")+" · "+
       plural(record.summary?.calls??0,"system call")+" · "+plural(record.summary?.reallocated??0,"plan")+" re-planned so nothing is promised twice")+'</span>'+trigger("Export the audit record","portfolio-export","","quiet","file")+'</section>':"";
   return '<div class="section-intro"><p>Most urgent first. The agents propose a plan, ClinRadar\'s rules check it, and Clinical Supply approves.'+tip("Only options that pass ClinRadar's fixed rules can be approved, and the server checks them again when someone approves. Kits and relabelling slots promised to one plan are never offered to another.","About agent plans")+'</p>'+runButtons("all","Plan all with AI agents")+'</div>'+
     agentSetupNote(status)+
@@ -3163,8 +3161,8 @@ const teamShows = event => teamFilter==="all"||(teamFilter==="watch"?teamWatch.i
 const teamSystems = [["ClinRadar","Specifications, shipment checks and external risk"],["CTMS","Active-trial portfolio"],["IRT","Stock, sites and shipments"],["ERP","Batches, labels, QP plans"],["Depot","Relabelling and collections"],["Courier","Bookings and tracking"],["eTMF","Authorisations, approvals, contacts"],["Draft inbox","Drafts for people to approve"]];
 // Runs recorded before the rename call the specifications system "RegChain".
 const systemName = name => ["RegChain","SupplyShield"].includes(name)?"ClinRadar":name;
-const teamModels = {orchestrator:"Claude Opus 5.5",supply:"Claude Sonnet 5.5",logistics:"Claude Sonnet 5.5",records:"Claude Sonnet 5.5",communications:"Claude Sonnet 5.5",verifier:"Fixed rules · no AI",
-  weather:"Claude Haiku 5.5",transport:"Claude Haiku 5.5",security:"Claude Haiku 5.5",regulatory:"Claude Haiku 5.5"};
+const teamModels = {orchestrator:"AI orchestrator",supply:"AI specialist",logistics:"AI specialist",records:"AI specialist",communications:"AI specialist",verifier:"Guardrail",
+  weather:"AI watch agent",transport:"AI watch agent",security:"AI watch agent",regulatory:"AI watch agent"};
 const teamInitials = {orchestrator:"M",supply:"S",logistics:"L",records:"R",communications:"C",verifier:"V",weather:"W",transport:"T",security:"A",regulatory:"G"};
 const teamShort = {orchestrator:"Master",supply:"Supply",logistics:"Logistics",records:"Records",communications:"Comms",verifier:"Verifier",weather:"Weather",transport:"Transport",security:"Security",regulatory:"Regulatory"};
 const teamNodeName = id => !id?"":id.startsWith("sys:")?id.slice(4):id==="orchestrator"?"Master agent":agentProfiles[id]?.name??id;
@@ -3317,7 +3315,7 @@ function teamCard(id) {
   // Every part of a card has a fixed height, so the board does not move while the run is replayed.
   return '<div class="team-node'+(master?" team-master":"")+(id==="verifier"?" team-rules":"")+'" data-node="'+id+'">'+
     '<div class="team-node-head"><span class="agent-dot '+profile.tone+'">'+teamInitials[id]+'</span><span class="team-name"><strong>'+(master?"Master agent":esc(teamShort[id]))+'</strong><span class="team-light" aria-hidden="true"></span></span></div>'+
-    '<div class="team-sub"><span class="team-model" title="'+esc(agentModel(id))+'">'+esc(id==="verifier"?"Rules · no AI":agentModel(id)+(master?" · orchestrator":""))+'</span>'+tip(tips[id]??profile.job+".","About the "+(master?"master agent":profile.name))+'</div>'+
+    '<div class="team-sub"><span class="team-model" title="'+esc(agentModel(id))+'">'+esc(agentModel(id))+'</span>'+tip(tips[id]??profile.job+".","About the "+(master?"master agent":profile.name))+'</div>'+
     '<div class="team-stats" data-stats="'+id+'"></div><p class="team-last" data-last="'+id+'"></p>'+(master?'<div class="team-split" data-split></div>':"")+'</div>';
 }
 function teamView() {
@@ -3343,7 +3341,7 @@ function teamView() {
   const feed='<section class="card team-feed-card"><div class="card-head"><div><h2>What each agent did</h2><p id="team-feed-count"></p></div></div>'+
     '<div class="team-filters" role="group" aria-label="Show the steps of">'+[["all","All"],["watch","Watch team"],["orchestrator","Master"],...teamSpecialists.map(id=>[id,teamShort[id]])].map(([id,name])=>'<button type="button" class="chip'+(teamFilter===id?" on":"")+'" data-act="team-filter" data-value="'+id+'" aria-pressed="'+(teamFilter===id)+'">'+esc(name)+'</button>').join("")+'</div>'+
     '<ol class="team-feed" id="team-feed" tabindex="0" aria-label="Steps of the run"></ol></section>';
-  const live=teamData.live?'<div class="inline-note team-live">'+icon("clock")+'<span><strong>Live.</strong> The team is working now; each step appears as it happens.</span></div>':"";
+  const live=teamData.live?'<div class="inline-note team-live">'+icon("clock")+'<span>'+(portfolioState.mode==="live"?'<strong>Live AI run.</strong> The team is working now; each step appears as it happens.':'<strong>Offline demo.</strong> The same steps through the same systems, with prepared decisions; each step appears as it happens.')+'</span></div>':"";
   const rerun='<details class="rerun team-rerun"><summary>Run the team again</summary>'+runButtons("all","Run the AI agents")+agentSetupNote(agentState.status)+'<small class="muted">The new run replaces this replay. Approved plans are kept, and their stock stays promised.</small></details>';
   return head+live+teamControls()+'<div class="team-grid">'+board+feed+'</div>'+(busy?"":rerun);
 }
@@ -3407,7 +3405,7 @@ function teamPaint(full) {
   }
   const total=events.length;
   const text=byId("team-progress-text");
-  if(text) text.textContent=teamData.live?"Live · "+plural(total,"step"):"Step "+teamIndex+" of "+total+" · "+plural(tally.shipments.size||1,"shipment");
+  if(text) text.textContent=teamData.live?(portfolioState.mode==="live"?"Live · ":"Offline demo · ")+plural(total,"step"):"Step "+teamIndex+" of "+total+" · "+plural(tally.shipments.size||1,"shipment");
   const track=byId("team-track");
   if(track) track.style.width=(total?Math.round(teamIndex/total*100):0)+"%";
   const play=byId("team-play");
