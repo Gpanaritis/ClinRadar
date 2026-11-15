@@ -154,7 +154,7 @@ What these two settings change:
 
 ## Public preview on Cloudflare Workers
 
-The launch page and a standalone copy of the dashboard can be published as static files on Cloudflare Workers. `wrangler.jsonc` names the Worker `trialready-landing` and enables its `workers.dev` address. With Node.js 22.13 or later:
+The launch page and a standalone copy of the dashboard can be published as static files on Cloudflare Workers. `wrangler.jsonc` names the Worker `clinradar` and enables its `workers.dev` address. With Node.js 22.13 or later:
 
 ```sh
 npm ci
