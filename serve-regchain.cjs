@@ -4,7 +4,7 @@ const { createServer, get } = require("node:http");
 const { readFileSync, existsSync } = require("node:fs");
 const { readFile, writeFile, mkdir, appendFile } = require("node:fs/promises");
 const { join, resolve, sep, extname } = require("node:path");
-const { randomBytes } = require("node:crypto");
+const { randomBytes, timingSafeEqual } = require("node:crypto");
 const { pathToFileURL } = require("node:url");
 const { spawn } = require("node:child_process");
 
@@ -454,6 +454,85 @@ async function handleContact(request, response) {
   sendJson(response, 201, { id, receivedAt });
 }
 
+// Enterprise risk alerts: the ingest webhook for the company's crisis-alerting system (regchain-ai/enterprise.mjs).
+// JSON only, 256 KB at most, validated alert by alert, rate-limited per address. With named users (password mode) the
+// caller sends "Authorization: Bearer <REGCHAIN_ENTERPRISE_TOKEN>", and the webhook is refused while that is unset; in
+// local mode only this computer may call it. Each alert is stored in the data folder and audited.
+const enterpriseLimit = createRateLimiter(config.writesPerMinute);
+const LOOPBACK = ["127.0.0.1", "::1", "::ffff:127.0.0.1"];
+function sameSecret(given, expected) {
+  const a = Buffer.from(String(given));
+  const b = Buffer.from(String(expected));
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+async function handleEnterpriseAlerts(request, response) {
+  const refuse = (status, error, headers = {}) => {
+    request.resume();
+    response.writeHead(status, { ...securityHeaders({ secure: config.secureCookies }), "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", ...headers });
+    response.end(JSON.stringify({ error }));
+  };
+  if (request.method !== "POST") return refuse(405, "Send enterprise alerts with POST.", { Allow: "POST" });
+  if (request.headers.origin && !allowedOrigins.includes(request.headers.origin)) return refuse(403, "Requests from other sites are refused.");
+  if (config.auth === "password") {
+    const token = String(process.env.REGCHAIN_ENTERPRISE_TOKEN ?? "").trim();
+    if (!token) return refuse(503, "The enterprise alert webhook is off: set REGCHAIN_ENTERPRISE_TOKEN on the server to turn it on.");
+    const given = /^Bearer\s+(.+)$/i.exec(String(request.headers.authorization ?? ""))?.[1]?.trim();
+    if (!given || !sameSecret(given, token)) return refuse(401, "Send the enterprise system's bearer token.", { "WWW-Authenticate": "Bearer" });
+  } else if (!LOOPBACK.includes(request.socket?.remoteAddress)) {
+    return refuse(403, "In local mode, only this computer may send enterprise alerts.");
+  }
+  const wait = enterpriseLimit(clientAddress(request, config.trustProxy));
+  if (wait) return refuse(429, "Too many requests. Try again in a minute.", { "Retry-After": String(wait) });
+  if (!String(request.headers["content-type"] || "").toLowerCase().startsWith("application/json")) return refuse(415, "Send the alerts as JSON (Content-Type: application/json).");
+  const maxBytes = 256 * 1024;
+  if (Number(request.headers["content-length"] || 0) > maxBytes) return refuse(413, "The request is too large: send at most 256 KB per request.");
+  const raw = await new Promise(done => {
+    const chunks = [];
+    let size = 0;
+    request.on("data", chunk => {
+      size += chunk.length;
+      if (size > maxBytes) {
+        request.removeAllListeners("data");
+        request.resume();
+        done(null);
+      } else chunks.push(chunk);
+    });
+    request.on("end", () => done(Buffer.concat(chunks)));
+    request.on("error", () => done(null));
+  });
+  if (raw === null) {
+    response.setHeader("Connection", "close");
+    sendJson(response, 413, { error: "The request is too large: send at most 256 KB per request." });
+    return;
+  }
+  let body;
+  try {
+    body = JSON.parse(raw.toString("utf8"));
+  } catch {
+    sendJson(response, 400, { error: "The request is not valid JSON." });
+    return;
+  }
+  const { validateAlerts, storeEnterpriseAlerts } = await loadModule("enterprise.mjs");
+  const { alerts, errors } = validateAlerts(body);
+  if (errors) {
+    sendJson(response, 422, { error: "Some alerts are not valid; none were stored.", details: errors.slice(0, 20) });
+    return;
+  }
+  const { dataDir, appendAudit, openDatabase, transaction } = await loadModule("db.mjs");
+  const stored = await storeEnterpriseAlerts(dataDir(__dirname), alerts);
+  const db = openDatabase(__dirname);
+  transaction(db, () => {
+    for (const alert of alerts) appendAudit(db, { actor: alert.system, role: null, type: "enterprise.alert_received", subjectType: "enterprise_alert", subjectId: alert.id,
+      detail: `${alert.severity ?? "Alert"} · ${alert.title}`, data: { country: alert.location.country, category: alert.category, window: alert.window, receivedAt: alert.receivedAt } });
+  });
+  // Say at once what ClinRadar made of each alert.
+  const { loadData } = await loadModule("rules.mjs");
+  const summary = (await loadData(__dirname)).supplyshield?.enterprise;
+  const results = alerts.map(alert => ({ id: alert.id, result: summary?.alerts.find(item => item.id === alert.id)?.result ?? "stored" }));
+  logger.info("enterprise alerts stored", { count: alerts.length });
+  sendJson(response, 202, { received: alerts.length, stored, results });
+}
+
 // The /v1 API (regchain-ai/api.mjs): the database, the regulation pipeline and the case workflow on the server.
 let apiPromise = null;
 const api = () => (apiPromise ??= loadModule("api.mjs").then(module => module.createApi({ root: __dirname, config, allowedOrigins, logger, analyze: caseId => runAnalysis(caseId) })));
@@ -756,6 +835,11 @@ async function handleRequest(request, response, path) {
   }
   if (path === "/api/contact") {
     await handleContact(request, response);
+    return;
+  }
+  // The enterprise alert webhook is called by another system, with its own bearer token, not a signed-in person.
+  if (path === "/api/enterprise-alerts") {
+    await handleEnterpriseAlerts(request, response);
     return;
   }
   // In a shared deployment, the agents and the dashboard (with its data) need a signed-in user.

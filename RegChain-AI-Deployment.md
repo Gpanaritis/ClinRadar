@@ -41,6 +41,7 @@ All settings are environment variables. An unset variable uses the default.
 | `REGCHAIN_LOGIN_LOCK_MINUTES` | `15` | The window in which failures are counted, so a lock lasts at most this long |
 | `REGCHAIN_WRITES_PER_MINUTE` | `120` | Per client address per minute: write requests to `/v1`, and separately requests to `/api` that start work. Over the limit: 429 with `Retry-After` |
 | `REGCHAIN_CONTACTS_PER_HOUR` | `10` | Per client address per hour: messages sent through the public contact form (`POST /api/contact`). Over the limit: 429 with `Retry-After` |
+| `REGCHAIN_ENTERPRISE_TOKEN` | none | Password mode: the bearer token the enterprise risk system sends to `POST /api/enterprise-alerts`. While it is unset the webhook answers 503. In local mode only this computer may post alerts. Use a long random value and keep it in the secret store |
 | `REGCHAIN_LOG_FORMAT` | `json` | `text` gives lines for reading in a terminal |
 | `REGCHAIN_LOG_LEVEL` | `info` | `debug`, `info`, `warn` or `error` |
 | `REGCHAIN_DATA_DIR` | `.regchain-data` in the RegChain folder | Folder of the database. The Docker image sets `/data` |

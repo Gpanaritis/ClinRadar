@@ -5,7 +5,8 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { readFileSync, renameSync } from "node:fs";
-import { appendAudit, openDatabase, transaction } from "./db.mjs";
+import { appendAudit, openDatabase, transaction, dataDir } from "./db.mjs";
+import { readEnterpriseAlerts } from "./enterprise.mjs";
 import { cacheDir } from "./sources.mjs";
 import { computeClinRadar, riskChecks, routeFor, watchSummary } from "./supplyshield.mjs";
 import { readFeeds } from "./feeds.mjs";
@@ -77,15 +78,17 @@ export async function loadData(root) {
   if (network) {
     // ClinRadar: the monitoring scope from the active-trial portfolio, read with the company's status policy
     // (config/supplyshield.yaml), and every external signal matched to our shipments.
-    const [configText, catalogueText] = await Promise.all([
+    // Enterprise risk alerts: the demo file plus whatever the ingest webhook stored in the data folder.
+    const [configText, catalogueText, enterprise] = await Promise.all([
       readFile(join(root, "config", "supplyshield.yaml"), "utf8").catch(() => ""), readFile(join(root, "demo-data", "country-catalogue-iso3166.csv"), "utf8").catch(() => ""),
+      readEnterpriseAlerts(root, dataDir(root)),
     ]);
     const state = readScopeState(root, network);
     data.scopeState = state;
     data.config = configText ? parseYaml(configText) : {};
     data.catalogue = readCatalogue(catalogueText);
     data.supplyshield = computeClinRadar({ network, portfolio, spain, israel, views: allShipmentIds(data).map(id => shipmentView(data, id)), choices: state.choices,
-      connected: state.connected, feeds, recorded, today: data.today, config: data.config, catalogue: data.catalogue, specs });
+      connected: state.connected, feeds, recorded, today: data.today, config: data.config, catalogue: data.catalogue, specs, enterprise });
   }
   return data;
 }
@@ -380,7 +383,7 @@ export function supplyShieldPayload(data) {
   return {
     schema: 1, today: ss.today, checkedAt: ss.checkedAt, scope: ss.scope, signals: ss.signals, counts: ss.counts, byShipment: ss.byShipment, routes: ss.routes,
     feeds: ss.feeds, names: ss.names, extraChecks, results, log: data.scopeState?.log ?? [], connected: data.scopeState?.connected ?? true,
-    patientsAtRisk: ss.patientsAtRisk, costReference: ss.costReference, watch, regulatoryItems: regulatory,
+    patientsAtRisk: ss.patientsAtRisk, costReference: ss.costReference, watch, regulatoryItems: regulatory, enterprise: ss.enterprise ?? null,
   };
 }
 

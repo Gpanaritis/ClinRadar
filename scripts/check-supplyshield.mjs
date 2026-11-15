@@ -75,7 +75,8 @@ assert.equal(strike.tier, "confirmed");
 assert.deepEqual(strike.matches.map(match => `${match.shipment}:${match.leg}:${match.tier}`).sort(), ["SHP-03:road:clear", "SHP-IL-01:air:confirmed"]);
 assert.match(strike.matches.find(match => match.shipment === "SHP-IL-01").evidence.source, /courier booking system/);
 assert.ok(strike.notes.some(note => /no outbound collections/.test(note)), "the depot's own status is reported");
-assert.equal(strike.sources.length, 2, "two reports of the same strike are one signal with two sources");
+assert.equal(strike.sources.length, 3, "three reports of the same strike are one signal with three sources: the airport, the federal notice and the enterprise risk system");
+assert.deepEqual(strike.sources.filter(source => source.enterprise).map(source => source.alert), ["ERS-26-114-0031"], "the enterprise alert corroborates the incident, it is not a new one");
 assert.equal(strike.evidenceLevel, "TRUSTED_CORROBORATED");
 assert.ok(!ss.signals.some(item => item.id === "SIG-BE-STRIKE-1124-FPS"), "not a second incident");
 assert.equal(strike.priority, "CRITICAL", "patients would go without treatment if nobody acts");
@@ -140,7 +141,9 @@ assert.equal(verifyOption(data, "SHP-IL-02", [{ type: "advance_dispatch", new_di
   }
   const watch = Object.fromEntries(payload.watch.map(item => [item.hazard, item]));
   assert.deepEqual([watch.transport.events, watch.transport.touching, watch.transport.confirmed, watch.transport.potential, watch.transport.top[0]], [4, 2, 1, 1, "SIG-BE-STRIKE-1124"]);
-  assert.equal(watch.weather.top[0], "SIG-US-WINTER-1116", "the storm at the US depot comes first for the weather agent");
+  assert.deepEqual(watch.weather.top.slice(0, 2), ["SIG-ENT-ERS-26-114-0042", "SIG-US-WINTER-1116"], "the Andalusian heat outlook (potential exposure) first, then the storm at the US depot");
+  assert.deepEqual([watch.weather.enterprise.received, watch.weather.enterprise.matched, watch.transport.enterprise.gaps], [3, 2, 1], "each watch agent sees its own enterprise alerts");
+  assert.match(watch.transport.finding, /Enterprise risk system: 3 alerts, 1 touches our network \(merged into SIG-BE-STRIKE-1124\), 1 coverage gap \(touches the drug product manufacturer in Switzerland, not monitored\)/);
   assert.ok(watch.weather.touching >= 1 && watch.weather.regions.includes("North America"));
   assert.ok(watch.weather.gaps.some(gap => gap.code === "SG") && /India, 1–3 Nov \(ended\)/.test(watch.weather.finding), "the APAC depot is not monitored; the GDACS cyclone in India is context, not a signal");
   assert.equal(watch.security.top[0], "FCDO-IL-2026-10-27", "advice for parts of Israel needs mapping against our sites");
@@ -149,6 +152,51 @@ assert.equal(verifyOption(data, "SHP-IL-02", [{ type: "advance_dispatch", new_di
   assert.equal(payload.regulatoryItems.find(item => item.id === "MOH-IMP-26-4410").result, "Pass");
   assert.ok(payload.regulatoryItems.every(item => item.hazard === "regulatory"));
   console.log(`ok  watch summary: ${payload.watch.map(item => `${item.name} ${item.events} events, ${item.touching} touching us`).join("; ")}`);
+}
+
+// Enterprise risk alerts: matched to our studies, sites, routes and facilities; the rest counted, not matched.
+{
+  const payload = supplyShieldPayload(data);
+  const enterprise = payload.enterprise;
+  assert.equal(enterprise.system, "Enterprise risk system (illustrative)");
+  assert.deepEqual([enterprise.received, enterprise.matched, enterprise.merged, enterprise.newSignals, enterprise.notMatched, enterprise.gaps], [7, 3, 2, 1, 3, 1]);
+  const result = Object.fromEntries(enterprise.alerts.map(item => [item.id, item.result]));
+  assert.deepEqual(result, {
+    "ERS-26-114-0031": "merged into SIG-BE-STRIKE-1124",
+    "ERS-26-114-0038": "merged into SIG-US-WINTER-1116",
+    "ERS-26-114-0042": "new signal SIG-ENT-ERS-26-114-0042",
+    "ERS-26-114-0045": "no study, site, route or facility affected",
+    "ERS-26-114-0047": "no study, site, route or facility affected",
+    "ERS-26-114-0049": "no study, site, route or facility affected",
+    "ERS-26-114-0052": "touches the drug product manufacturer in Switzerland, not monitored",
+  }, "every alert keeps its own id, and says what became of it");
+  assert.deepEqual(enterprise.alerts.find(item => item.id === "ERS-26-114-0031").shipments.sort(), ["SHP-03", "SHP-IL-01"]);
+  assert.match(enterprise.alerts.find(item => item.id === "ERS-26-114-0052").suggestion, /nobody monitors.*Suggest turning external risk on for Switzerland/);
+  assert.match(enterprise.alerts.find(item => item.id === "ERS-26-114-0045").note, /NorthSea Freight Systems is not one of our carriers/);
+  assert.ok(!ss.signals.some(item => ["SIG-ENT-ERS-26-114-0045", "SIG-ENT-ERS-26-114-0047", "SIG-ENT-ERS-26-114-0049", "SIG-ENT-ERS-26-114-0052"].includes(item.id)), "alerts that touch nothing of ours are counted, not added to the signals");
+  const heat = signal("SIG-ENT-ERS-26-114-0042");
+  assert.deepEqual([heat.tier, heat.evidenceLevel, heat.hazard, heat.illustrative], ["potential", "SINGLE_SOURCE", "weather", true], "an aggregator alone is a single source, and never confirms an impact");
+  assert.deepEqual(heat.matches.map(match => `${match.shipment}:${match.leg}:${match.date}`), ["SHP-ES-08:delivery:2027-03-10", "SHP-ES-10:delivery:2027-03-24"], "deliveries to Sevilla and Málaga in March; Madrid, Barcelona and February deliveries untouched");
+  assert.ok(heat.matches.every(match => match.owner === "Clinical Supply Logistics" && /the depot and the courier that the shipment's qualified packaging holds its temperature range/.test(match.missing)));
+  assert.equal(checkShipment(data, "SHP-ES-08").result, "Blocked", "still blocked for its own reasons: the heat outlook adds a confirmation, not a block");
+  assert.equal(signal("SIG-US-WINTER-1116").sources.length, 2, "the enterprise storm alert corroborates the NWS watch");
+  // Validation and storage, as the ingest webhook uses them.
+  const { validateAlerts, storeEnterpriseAlerts } = await import("../regchain-ai/enterprise.mjs");
+  const { dataDir } = await import("../regchain-ai/db.mjs");
+  const good = { id: "ERS-TEST-1", category: "Airport disruption", severity: "Severe", title: "Tel Aviv: Ben Gurion Airport cargo terminal closed, 5 Jan 2027", location: { country: "IL", city: "Tel Aviv", airport: "TLV" }, window: { from: "2027-01-05", to: "2027-01-05" } };
+  assert.ok(validateAlerts({ alerts: [good] }).alerts?.length === 1);
+  assert.match(validateAlerts([{ ...good, location: { country: "Israel" } }]).errors[0], /location.country/);
+  assert.match(validateAlerts([{ ...good, window: { from: "2027-01-06", to: "2027-01-05" } }]).errors[0], /window/);
+  assert.match(validateAlerts([{ ...good, id: "bad id!" }]).errors[0], /id:/);
+  assert.match(validateAlerts(Array.from({ length: 101 }, (_, index) => ({ ...good, id: `E-${index}` }))).errors[0], /At most 100/);
+  await storeEnterpriseAlerts(dataDir(root), validateAlerts([good]).alerts);
+  const withStored = (await loadData(root)).supplyshield;
+  const stored = withStored.enterprise.alerts.find(item => item.id === "ERS-TEST-1");
+  assert.deepEqual([stored.origin, stored.result, withStored.enterprise.received], ["webhook", "merged into SIG-IL-TLV-0104", 8], "a stored alert is merged with the demo file on load and runs through the same matching");
+  assert.equal(withStored.signals.find(item => item.id === "SIG-IL-TLV-0104").evidenceLevel, "TRUSTED_CORROBORATED", "the runway works now have a second source");
+  const { rm: remove } = await import("node:fs/promises");
+  await remove(join(dataDir(root), "enterprise-alerts.json"));
+  console.log("ok  enterprise risk alerts: 7 received; the Belgian strike and the US storm merge as extra sources, the Andalusian heat outlook is a new single-source potential exposure for SHP-ES-08 and SHP-ES-10, 3 counted (an outage at a forwarder we don't use, a typhoon in Taiwan, a Paris demonstration), 1 coverage gap (the Swiss manufacturer); stored alerts are validated and merged on load");
 }
 console.log("ok  verifier: Amsterdam passes with the same delivery day, Luxembourg needs a monitoring decision, 25 Nov arrives after the Tel Aviv stock runs out, 24 Nov fails at the depot, 20 Nov is too late to prepare, no departure from Paris, no airport for road shipments");
 

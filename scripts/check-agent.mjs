@@ -107,7 +107,15 @@ console.log(`ok  MCP: ${described.map(system => `${system.name} (${system.tools.
   assert.equal(brief.most_relevant[0], "SIG-BE-STRIKE-1124");
   const regulatoryBrief = await read("get_watch_brief", { hazard: "regulatory" });
   assert.ok(regulatoryBrief.items.some(item => item.id === "RC-IL-001" && item.touching.includes("SHP-IL-02")), "the regulatory watch sees which shipments each change affects");
-  console.log(`ok  watch team: ${WATCH_AGENTS.length} agents on ${WATCH_MODEL} with read-only tools; get_risk_signals filters by hazard and region; get_watch_brief gives sources, countries and gaps`);
+  // Enterprise risk alerts, read-only, optionally for one kind of hazard.
+  assert.ok(specsTools.some(tool => tool.name === "get_enterprise_alerts" && tool.readOnly));
+  assert.ok(["weather", "transport", "security"].every(id => AGENTS[id].tools.includes("specs__get_enterprise_alerts")) && !AGENTS.regulatory.tools.includes("specs__get_enterprise_alerts"));
+  const enterpriseAll = await read("get_enterprise_alerts", {});
+  assert.deepEqual([enterpriseAll.received, enterpriseAll.matched, enterpriseAll.notMatched, enterpriseAll.gaps], [7, 3, 3, 1]);
+  const enterpriseTransport = await read("get_enterprise_alerts", { hazard: "transport" });
+  assert.ok(enterpriseTransport.alerts.length === 3 && enterpriseTransport.alerts.every(item => item.hazard === "transport"));
+  assert.equal(enterpriseTransport.alerts.find(item => item.id === "ERS-26-114-0031").result, "merged into SIG-BE-STRIKE-1124");
+  console.log(`ok  watch team: ${WATCH_AGENTS.length} agents on ${WATCH_MODEL} with read-only tools; get_risk_signals filters by hazard and region; get_watch_brief gives sources, countries and gaps; get_enterprise_alerts gives what the enterprise risk system alerted and what ClinRadar made of it`);
 }
 
 // 5. Scripted runs on each kind of shipment.
@@ -157,6 +165,9 @@ assert.deepEqual(board.board.map(row => row.shipment).slice(0, 4), ["SHP-IL-01",
   assert.ok(!events.slice(triageAt).some(event => event.type === "delegate" && !event.nested && ["weather", "transport", "security", "regulatory"].includes(event.to)), "the sweep comes before triage");
   assert.match(before.find(event => event.agent === "transport" && event.type === "report").text, /^Strikes & transport: 4 events in 17 monitored countries; 1 confirmed disruption — SHP-IL-01's flight BRU → TLV on 24 Nov cancelled \(courier\); SHP-03 checked, not affected\./);
   assert.match(before.find(event => event.agent === "weather" && event.type === "report").text, /US depot \(Allentown, Pennsylvania\).*winter storm watch/);
+  assert.ok(["weather", "transport", "security"].every(id => before.some(event => event.agent === id && event.type === "tool_call" && event.tool === "get_enterprise_alerts" && event.input.hazard === id)), "the watch agents read the enterprise alerts of their own kind");
+  assert.match(before.find(event => event.agent === "transport" && event.type === "report").text, /Enterprise risk system: 3 alerts, 1 touches our network \(merged into SIG-BE-STRIKE-1124\), 1 coverage gap/);
+  assert.equal(board.watch.find(item => item.agent === "weather").enterprise.matched, 2);
   assert.match(events[triageAt].text, /^Patients first: SHP-IL-01 runs out on 27 Nov \(14 patients\)/);
   assert.deepEqual(events[triageAt].patientsFirst, ["SHP-IL-01"]);
   assert.deepEqual(board.watch.map(item => [item.agent, item.name, item.hazard]), [["weather", "Weather & natural hazards", "weather"], ["transport", "Strikes & transport", "transport"], ["security", "Security & travel advice", "security"], ["regulatory", "Regulatory & customs", "regulatory"]]);
