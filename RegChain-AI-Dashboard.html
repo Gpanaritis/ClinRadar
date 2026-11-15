@@ -3985,7 +3985,7 @@ function studiesView() {
   const rows=shown.map(item=>'<tr><td><button type="button" class="entity-button" data-act="open-study" data-value="'+esc(item.id)+'">'+esc(item.id)+'</button><small class="muted block">'+esc([item.title,item.phase?"Phase "+item.phase:"",item.area].filter(Boolean).join(" · "))+'</small></td>'+
     '<td>'+esc(statusText(item.status))+'</td><td><span class="study-countries">'+studyCountries(item)+'</span></td>'+
     '<td>'+esc(item.sites.length?plural(item.sites.length,"site")+(item.patients?" · "+item.patients+" patients":""):"—")+'</td>'+
-    '<td>'+esc(item.shipments.length?plural(item.shipments.length,"planned shipment"):"—")+'</td><td>'+(item.counted?studyRisk(item):'<span class="muted">'+esc(item.note||"Not counted by the status policy")+'</span>')+'</td></tr>').join("");
+    '<td>'+esc(item.shipments.length?plural(item.shipments.length,"planned shipment"):"—")+'</td><td>'+(item.counted||item.shipments.length?studyRisk(item):"")+(item.counted?"":'<small class="muted block">'+esc(item.note||"Not counted by the status policy")+'</small>')+'</td></tr>').join("");
   return heading("Studies","Every study in the CTMS with its countries, sites and planned shipments, and what puts its supply at risk.")+
     '<section class="card"><div class="card-head"><div class="chip-filters" role="group" aria-label="Show studies">'+chips+'</div>'+
     '<p class="source-line">'+icon("plug")+esc("From "+studySources.map(([name])=>name).join(", "))+tip(studySources.map(([name,what])=>name+": "+what).join(". ")+". Read-only; every number links back to its system of record.","Where these numbers come from")+'</p></div>'+
