@@ -1516,7 +1516,8 @@ function aiServiceCard() {
 }
 function agentsCard() {
   const ids=["orchestrator","supply","logistics","records","communications","verifier"];
-  const check=aiState?.status?.model?modelName(aiState.status.model):"Opus 5.5";
+  const checkModel=aiStates.uk?.status?.model;
+  const check=checkModel?modelName(checkModel):"Opus 5.5";
   const rows=ids.map(id=>{
     const profile=agentProfiles[id];
     const rules=id==="verifier";
@@ -1568,8 +1569,14 @@ function connectionRequestCard() {
     '</form></details>';
 }
 let agentStatusAsked = false;
+let aiCheckStatusAsked = false;
 function aiConnectionsPanel() {
   if(serverMode()&&!agentState.status&&!agentStatusAsked) {agentStatusAsked=true;queueMicrotask(loadAgentStatus);}
+  // The regulation check's model on the chosen Claude service (a Bedrock or Foundry name can differ), from /api/ai/status.
+  if(serverMode()&&!aiStates.uk.status&&!aiCheckStatusAsked) {
+    aiCheckStatusAsked=true;
+    aiRequest(aiPath("/api/ai/status","uk")).then(status=>{aiStates.uk.status=status;if(page==="settings"&&settingsTab==="ai") render();}).catch(()=>{});
+  }
   return '<div class="settings-grid"><div class="settings-stack">'+agentsCard()+'</div><div class="settings-stack">'+aiServiceCard()+'</div></div>'+
     systemsCard()+'<div class="settings-grid space"><div class="settings-stack">'+connectionRequestCard()+'</div><div class="settings-stack">'+settingsLog("connections")+'</div></div>';
 }
