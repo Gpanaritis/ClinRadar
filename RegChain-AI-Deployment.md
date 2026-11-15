@@ -152,6 +152,20 @@ What these two settings change:
 - **HTTPS.** With an `https://` public origin, the session cookie gets the `Secure` flag and pages send `Strict-Transport-Security`.
 - **Client address.** With `REGCHAIN_TRUST_PROXY`, RegChain uses the first address in `X-Forwarded-For` for the lockout per address, the write rate limit, the request logs and the audit of sign-ins. Turn it on only when RegChain can be reached through the proxy alone and the proxy writes that header itself. Caddy replaces the header by default; in nginx use `proxy_set_header X-Forwarded-For $remote_addr;`. Without it, every user appears to come from the proxy, so all of them share one lockout counter per address and one write limit.
 
+## Public preview on Cloudflare Workers
+
+The launch page and a standalone copy of the dashboard can be published as static files on Cloudflare Workers. `wrangler.jsonc` names the Worker `trialready-landing` and enables its `workers.dev` address. With Node.js 22.13 or later:
+
+```sh
+npm ci
+npx wrangler login
+npm run deploy:landing
+```
+
+Wrangler first runs `npm run build:landing`, which checks the embedded data and writes `dist/landing/`. The dashboard goes at `/` and the launch page at `/site/`, matching the local server. Only `dist/landing` is uploaded. The build marks both pages as standalone so they send no requests to the Node server. The dashboard uses its embedded fictional data and browser storage. The launch page's contact form says that messages cannot be sent from the preview. Live AI, agent plans, server approvals, sign-in, the contact form and the SQLite API need the Node server described in this document.
+
+Validate without publishing with `npm run deploy:landing -- --dry-run`. For CI, set `CLOUDFLARE_ACCOUNT_ID` and a `CLOUDFLARE_API_TOKEN` that has Workers deployment permission.
+
 ## Run without Docker
 
 1. Install Node.js 22.13 or later (`package.json` requires it; the image and CI use Node 24).

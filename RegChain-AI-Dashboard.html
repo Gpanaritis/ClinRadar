@@ -906,7 +906,7 @@ let sourceSearch = "";
 let currentCountry = "uk";
 // One workflow per governed case; `workflow` is the one for the case on screen.
 // Served by ClinRadar, the server is the system of record and the page loads its state from /v1; opened as a file, browser storage is used.
-const serverMode = () => location.protocol.startsWith("http");
+const serverMode = () => location.protocol.startsWith("http") && document.documentElement?.dataset.regchainMode !== "static";
 const workflows = Object.fromEntries(Object.keys(governedCases).map(id=>[id,serverMode()?initialWorkflow(id):readWorkflow(id)]));
 let workflow = workflows.uk;
 const isGoverned = id => Object.hasOwn(governedCases,id);
@@ -942,7 +942,7 @@ for(const [id,check] of Object.entries(storedJson(sourceChecksKey))) {
 const retryCount = () => sources.filter(source=>source.status==="Retry needed").length;
 // Decisions on changes that have no governed case: not relevant, open a case, or keep assessing.
 const changeDecisionsKey = "regchain-change-decisions-v1";
-let changeDecisions = location.protocol.startsWith("http")?{}:storedJson(changeDecisionsKey);
+let changeDecisions = serverMode()?{}:storedJson(changeDecisionsKey);
 const changeResolved = id => !isGoverned(id) && changeDecisions[id]?.decision==="not-relevant";
 // A case stays open until its follow-up is verified; a rejected edit still leaves the rule unresolved.
 const caseOpen = id => workflows[id].stage!=="closed";
@@ -2336,7 +2336,7 @@ function auditPanel() {
     listItems([...workflow.events].reverse().map(event=>'<strong>'+esc(event.type.replaceAll("."," · ").replaceAll("_"," "))+'</strong><small>'+esc(event.actor+" · "+scheduleDate(event.at)+" · revision "+event.revision)+'</small><small>'+esc(event.detail)+'</small>'))+'</div></details>';
 }
 // One AI state per governed case; `aiState` is the one for the case on screen.
-const aiStates = Object.fromEntries(Object.keys(governedCases).map(id=>[id,{phase:location.protocol.startsWith("http")?"idle":"offline",status:null,result:null,error:"",fresh:false}]));
+const aiStates = Object.fromEntries(Object.keys(governedCases).map(id=>[id,{phase:serverMode()?"idle":"offline",status:null,result:null,error:"",fresh:false}]));
 let aiState = aiStates.uk;
 const aiPath = (path,caseId) => path+"?case="+encodeURIComponent(caseId);
 async function aiRequest(path,options={}) {
@@ -2554,7 +2554,7 @@ function operationalImpact() {
 // Results: Pass, Confirm (check before dispatch), and three that block dispatch: Fail, Missing data, Expert decision.
 // "Not checked" marks a requirement whose data is not connected yet; it never blocks.
 const shipmentActionsKey = "regchain-shipment-actions-v1";
-let shipmentActions = location.protocol.startsWith("http")?{}:storedJson(shipmentActionsKey);
+let shipmentActions = serverMode()?{}:storedJson(shipmentActionsKey);
 let manualShipmentActions = {};
 let shipmentFilter = "all";
 let shipmentCountry = "all";
@@ -2846,7 +2846,7 @@ const afterNames = {Ready:"ready to ship",Confirm:"confirm before dispatch",Bloc
 const airportNames = {AMS:"Amsterdam Schiphol",LUX:"Luxembourg Airport",BRU:"Brussels Airport",LGG:"Liège Airport",TLV:"Ben Gurion Airport",CDG:"Paris Charles de Gaulle",FRA:"Frankfurt Airport",DXB:"Dubai International Airport",SIN:"Singapore Changi",LHR:"London Heathrow"};
 const airportName = code => airportNames[code]?airportNames[code]+" ("+code+")":String(code??"another airport");
 const actionNames = {reroute:"Leave from another airport",swap_batch:"Swap batch",relabel:"Relabel",delay:"Delay dispatch",record_authorisation_route:"Record the authorisation route",book_qp_release:"Book the QP release",obtain_pharmacy_code:"Obtain the pharmacy code",create_label_specification:"Create the label specification",proceed:"Proceed as planned"};
-const agentServer = () => location.protocol.startsWith("http");
+const agentServer = () => serverMode();
 const canApprovePlans = () => workflowRole==="viewer";
 const clip = (text,size) => {text=String(text??"");return text.length>size?text.slice(0,size-1)+"…":text;};
 const isoDay = day => /^\d{4}-\d{2}-\d{2}$/.test(String(day??""))?displayDay(day):day;
@@ -5002,8 +5002,8 @@ const views = {
   settings:settingsView,
   case:changeWorkspace
 };
-// Opened as a file, the page cannot reach the agents, approvals or live source checks: say so on every page, with the address to open.
-const fileNotice = () => location.protocol.startsWith("http")?"":'<div class="file-notice" role="note">'+icon("info")+'<span><strong>This is the page opened as a file.</strong> Agent plans, approvals, monitoring changes and live feeds work when ClinRadar is running: open '+'<a href="http://127.0.0.1:4173/">http://127.0.0.1:4173</a>'+' after starting Start-ClinRadar.cmd.</span></div>';
+// Opened as a file or hosted as a standalone preview, the page cannot reach the agents, approvals or live source checks: say so on every page.
+const fileNotice = () => serverMode()?"":'<div class="file-notice" role="note">'+icon("info")+(location.protocol.startsWith("http")?'<span><strong>Standalone preview.</strong> This page uses fictional demo data and saves changes in this browser. Agent plans, server approvals, monitoring changes and live feeds need the ClinRadar server.</span>':'<span><strong>This is the page opened as a file.</strong> Agent plans, approvals, monitoring changes and live feeds work when ClinRadar is running: open '+'<a href="http://127.0.0.1:4173/">http://127.0.0.1:4173</a>'+' after starting Start-ClinRadar.cmd.</span>')+'</div>';
 // Long tables show their first rows and a button for the rest, so no page turns into an endless scroll.
 const expandedTables = new Set();
 function collapseLongTables(root) {
@@ -5067,7 +5067,7 @@ function sourceDetail(id) {
     ["Source edition",source.edition],["Compared section",source.status==="Retry needed"?"Comparison pending":source.section]
   ])+block("Check result",source.result)+(source.url?'<section><h3>Page URL</h3><a class="url" href="'+esc(source.url)+'" target="_blank" rel="noopener noreferrer">'+esc(source.url)+'</a></section>':
     '<section class="drawer-block"><h3>Text of the note (in Spanish)</h3><p class="note-text" lang="es">'+esc(source.text??"")+'</p></section>')+
-  (source.status==="Retry needed"?'<div class="actions">'+(location.protocol.startsWith("http")?trigger("Retry this check","retry-source",source.id,"primary","retry"):'<p>Retry needs the local server: open ClinRadar with Start-ClinRadar.cmd.</p>')+'</div>':"")+
+  (source.status==="Retry needed"?'<div class="actions">'+(serverMode()?trigger("Retry this check","retry-source",source.id,"primary","retry"):'<p>Retry needs the local server: open ClinRadar with Start-ClinRadar.cmd.</p>')+'</div>':"")+
   (source.change && page==="settings"?'<div>'+trigger("View related change","open-case",source.change,"","arrow")+'</div>':""));
 }
 function studyDetail(id) {
