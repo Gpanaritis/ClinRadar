@@ -109,6 +109,11 @@ The server also enforces the AI gate:
 | `POST /v1/outbox/dispatch` | Retry event delivery |
 | `GET /v1/shipment-actions`, `PUT` and `DELETE /v1/shipment-actions/{id}` | Manual hold, swap or proceed |
 | `GET /v1/change-decisions`, `PUT /v1/change-decisions/{id}` | Owner decisions on changes without a governed case |
+| `GET /v1/monitoring-scope` | SupplyShield's scope: countries with an operationally active trial, recommended countries with their evidence and switches, registered countries that are not operationally active; undetermined with no portfolio connected |
+| `GET /v1/signals?tier=`, `GET /v1/signals/{id}` | External signals in monitored countries, matched to shipments and classified, with the evidence or the missing evidence |
+| `GET /v1/shipments/{id}/risk` | A shipment's route with the day of each leg, its external-risk matches, and its route and import-approval checks |
+
+The SupplyShield routes are read-only. The scope changes only through the page's monitoring switches (`POST /api/supplyshield/monitoring`: Clinical Supply for external risk, the Regulatory SME for regulatory and customs, always with a reason), and every change is in the audit trail.
 
 ## Data
 

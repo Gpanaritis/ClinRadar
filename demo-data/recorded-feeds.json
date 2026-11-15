@@ -1,0 +1,719 @@
+{
+  "fetchedAt": "2026-11-15T09:15:13.944Z",
+  "live": false,
+  "attribution": {
+    "fcdo": "UK FCDO travel advice via the GOV.UK content API · Open Government Licence v3.0",
+    "gdacs": "GDACS · European Commission Joint Research Centre and UN OCHA"
+  },
+  "fcdo": {
+    "IE": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/ireland",
+      "title": "Ireland travel advice",
+      "updatedAt": "2026-09-04T10:53:16+01:00",
+      "reviewedAt": "2026-09-04T09:53:16Z",
+      "alertStatus": [],
+      "change": "Addition of information about ID requirements for travel between the UK and Ireland under the Common Travel Area (‘Entry requirements’ page)."
+    },
+    "DE": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/germany",
+      "title": "Germany travel advice",
+      "updatedAt": "2026-08-11T10:18:05+01:00",
+      "reviewedAt": "2026-08-11T09:18:05Z",
+      "alertStatus": [],
+      "change": "Updated information on European Entry-Exit System (EES) (‘Entry requirements’ page)."
+    },
+    "PL": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/poland",
+      "title": "Poland travel advice",
+      "updatedAt": "2026-11-11T15:42:44+00:00",
+      "reviewedAt": "2026-11-11T15:42:44Z",
+      "alertStatus": [],
+      "change": "Updated information following the terrorist attack in Kraków, including advice for those affected (‘Warnings and insurance’ page)."
+    },
+    "ES": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/spain",
+      "title": "Spain travel advice",
+      "updatedAt": "2026-11-10T15:29:19+00:00",
+      "reviewedAt": "2026-11-10T15:29:19Z",
+      "alertStatus": [],
+      "change": "New information about a national strike planned for 11 November ('Warnings and insurance' page)."
+    },
+    "FR": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/france",
+      "title": "France travel advice",
+      "updatedAt": "2026-10-22T17:57:33+01:00",
+      "reviewedAt": "2026-10-22T16:57:33Z",
+      "alertStatus": [],
+      "change": "Updated information about demonstrations (‘Warnings and insurance’ page)."
+    },
+    "IT": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/italy",
+      "title": "Italy travel advice",
+      "updatedAt": "2026-11-03T11:56:35+00:00",
+      "reviewedAt": "2026-11-03T11:56:35Z",
+      "alertStatus": [],
+      "change": "Removal of information about national strike."
+    },
+    "NL": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/netherlands",
+      "title": "Netherlands travel advice",
+      "updatedAt": "2026-08-11T10:20:34+01:00",
+      "reviewedAt": "2026-08-11T09:20:34Z",
+      "alertStatus": [],
+      "change": "Updated information on European Entry-Exit System (EES) (‘Entry requirements’ page)."
+    },
+    "BE": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/belgium",
+      "title": "Belgium travel advice",
+      "updatedAt": "2026-10-17T20:49:24+01:00",
+      "reviewedAt": "2026-10-17T19:49:24Z",
+      "alertStatus": [],
+      "change": "Additional information on demonstrations and strikes (Safety and security)."
+    },
+    "PT": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/portugal",
+      "title": "Portugal travel advice",
+      "updatedAt": "2026-11-12T11:00:21+00:00",
+      "reviewedAt": "2026-11-12T11:00:21Z",
+      "alertStatus": [],
+      "change": "Removal of information on severe weather"
+    },
+    "SE": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/sweden",
+      "title": "Sweden travel advice",
+      "updatedAt": "2026-08-11T10:23:29+01:00",
+      "reviewedAt": "2026-08-11T09:23:29Z",
+      "alertStatus": [],
+      "change": "Updated information on European Entry-Exit System (EES) (‘Entry requirements’ page)."
+    },
+    "DK": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/denmark",
+      "title": "Denmark travel advice",
+      "updatedAt": "2026-08-11T10:18:28+01:00",
+      "reviewedAt": "2026-08-11T09:18:28Z",
+      "alertStatus": [],
+      "change": "Updated information on European Entry-Exit System (EES) (‘Entry requirements’ page)."
+    },
+    "FI": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/finland",
+      "title": "Finland travel advice",
+      "updatedAt": "2026-08-11T10:18:13+01:00",
+      "reviewedAt": "2026-08-11T09:18:13Z",
+      "alertStatus": [],
+      "change": "Updated information on European Entry-Exit System (EES) (‘Entry requirements’ page)."
+    },
+    "US": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/usa",
+      "title": "USA travel advice",
+      "updatedAt": "2026-11-14T02:26:03+00:00",
+      "reviewedAt": "2026-11-14T02:26:03Z",
+      "alertStatus": [],
+      "change": "Updated information on air traffic disruptions across the US"
+    },
+    "CA": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/canada",
+      "title": "Canada travel advice",
+      "updatedAt": "2026-06-02T17:02:41+01:00",
+      "reviewedAt": "2026-06-02T16:02:41Z",
+      "alertStatus": [],
+      "change": "Addition of information about entry requirements for those entering from Ebola-affected regions ('Entry requirements' page)."
+    },
+    "MX": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/mexico",
+      "title": "Mexico travel advice",
+      "updatedAt": "2026-10-20T14:20:31+01:00",
+      "reviewedAt": "2026-10-20T13:20:31Z",
+      "alertStatus": [
+        "avoid_all_but_essential_travel_to_parts"
+      ],
+      "change": "Removal of information about Hurricane Trudy ('Warnings and insurance' page)."
+    },
+    "JP": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/japan",
+      "title": "Japan travel advice",
+      "updatedAt": "2026-08-28T16:22:35+01:00",
+      "reviewedAt": "2026-08-28T15:22:35Z",
+      "alertStatus": [],
+      "change": "Addition of information about flooding and heavy rain ('Safety and security' page)."
+    },
+    "AU": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/australia",
+      "title": "Australia travel advice",
+      "updatedAt": "2026-03-19T14:06:09+00:00",
+      "reviewedAt": "2026-03-19T14:06:09Z",
+      "alertStatus": [],
+      "change": "Updated information about global travel impacts due to escalation in the Middle East (‘Warnings and insurance’ page)."
+    },
+    "IL": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/israel",
+      "title": "Israel travel advice",
+      "updatedAt": "2026-10-27T16:05:38+00:00",
+      "reviewedAt": "2026-10-27T16:05:38Z",
+      "alertStatus": [
+        "avoid_all_travel_to_parts",
+        "avoid_all_but_essential_travel_to_parts"
+      ],
+      "change": "Updated information about Regional tensions (‘Warnings and insurance’ page)"
+    },
+    "GR": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/greece",
+      "title": "Greece travel advice",
+      "updatedAt": "2026-11-03T11:18:20+00:00",
+      "reviewedAt": "2026-11-03T11:18:20Z",
+      "alertStatus": [],
+      "change": "New information about winter weather in Greece, including flash flooding ('Warnings and insurance' page)."
+    },
+    "CY": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/cyprus",
+      "title": "Cyprus travel advice",
+      "updatedAt": "2026-08-14T10:34:05+01:00",
+      "reviewedAt": "2026-08-14T09:34:05Z",
+      "alertStatus": [],
+      "change": "New information about fertility treatment (‘Safety and security’ page)."
+    },
+    "LU": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/luxembourg",
+      "title": "Luxembourg travel advice",
+      "updatedAt": "2026-08-11T10:19:44+01:00",
+      "reviewedAt": "2026-08-11T09:19:44Z",
+      "alertStatus": [],
+      "change": "Updated information on European Entry-Exit System (EES) (‘Entry requirements’ page)."
+    },
+    "CH": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/switzerland",
+      "title": "Switzerland travel advice",
+      "updatedAt": "2026-08-11T10:23:45+01:00",
+      "reviewedAt": "2026-08-11T09:23:45Z",
+      "alertStatus": [],
+      "change": "Updated information on European Entry-Exit System (EES) (‘Entry requirements’ page)."
+    },
+    "AT": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/austria",
+      "title": "Austria travel advice",
+      "updatedAt": "2026-08-11T10:19:06+01:00",
+      "reviewedAt": "2026-08-11T09:19:06Z",
+      "alertStatus": [],
+      "change": "Updated information on European Entry-Exit System (EES) (‘Entry requirements’ page)."
+    },
+    "CZ": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/czech-republic",
+      "title": null,
+      "updatedAt": "2025-07-10T17:12:02+01:00",
+      "reviewedAt": null,
+      "alertStatus": [],
+      "change": ""
+    },
+    "SK": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/slovakia",
+      "title": "Slovakia travel advice",
+      "updatedAt": "2026-08-28T14:01:26+01:00",
+      "reviewedAt": "2026-08-28T13:01:26Z",
+      "alertStatus": [],
+      "change": "This travel advice has been updated for accuracy with changes made throughout, including border with Ukraine, political demonstrations, skiing and hiking, taxi’s, and extreme weather and natural disasters (‘Safety and security page’)."
+    },
+    "UA": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/ukraine",
+      "title": "Ukraine travel advice",
+      "updatedAt": "2026-10-02T09:30:25+01:00",
+      "reviewedAt": "2026-10-02T08:30:25Z",
+      "alertStatus": [
+        "avoid_all_travel_to_parts",
+        "avoid_all_but_essential_travel_to_parts"
+      ],
+      "change": "Updated information about the Russian invasion of Ukraine ('Warnings and insurance' page)."
+    },
+    "BY": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/belarus",
+      "title": "Belarus travel advice",
+      "updatedAt": "2026-09-10T14:40:11+01:00",
+      "reviewedAt": "2026-09-10T13:40:11Z",
+      "alertStatus": [
+        "avoid_all_travel_to_whole_country"
+      ],
+      "change": "Updated information on buying flight tickets if the journey is starting in, or within, Russia ('Safety and security’ page)"
+    },
+    "LT": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/lithuania",
+      "title": "Lithuania travel advice",
+      "updatedAt": "2026-08-11T10:19:26+01:00",
+      "reviewedAt": "2026-08-11T09:19:26Z",
+      "alertStatus": [],
+      "change": "Updated information on European Entry-Exit System (EES) (‘Entry requirements’ page)."
+    },
+    "RU": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/russia",
+      "title": "Russia travel advice",
+      "updatedAt": "2026-09-18T11:01:11+01:00",
+      "reviewedAt": "2026-09-18T10:01:11Z",
+      "alertStatus": [
+        "avoid_all_travel_to_whole_country"
+      ],
+      "change": "Updated information about drone attacks leading to short-notice restrictions on airspace use and airport operations (‘Warnings and insurance’ and ‘Safety and security’ pages)."
+    },
+    "AD": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/andorra",
+      "title": "Andorra travel advice",
+      "updatedAt": "2025-12-10T12:46:46+00:00",
+      "reviewedAt": "2025-12-10T12:46:46Z",
+      "alertStatus": [],
+      "change": "New information about dual nationals returning to the UK (‘Entry requirements’ page)."
+    },
+    "MC": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/monaco",
+      "title": "Monaco travel advice",
+      "updatedAt": "2025-12-10T13:45:13+00:00",
+      "reviewedAt": "2025-12-10T13:45:13Z",
+      "alertStatus": [],
+      "change": "New information about dual nationals returning to the UK (‘Entry requirements’ page)."
+    },
+    "SI": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/slovenia",
+      "title": "Slovenia travel advice",
+      "updatedAt": "2026-08-11T10:22:42+01:00",
+      "reviewedAt": "2026-08-11T09:22:42Z",
+      "alertStatus": [],
+      "change": "Updated information on European Entry-Exit System (EES) (‘Entry requirements’ page)."
+    },
+    "SM": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/san-marino",
+      "title": "San Marino travel advice",
+      "updatedAt": "2025-12-10T13:33:32+00:00",
+      "reviewedAt": "2025-12-10T13:33:32Z",
+      "alertStatus": [],
+      "change": "New information about dual nationals returning to the UK (‘Entry requirements’ page)."
+    },
+    "NO": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/norway",
+      "title": "Norway travel advice",
+      "updatedAt": "2026-08-25T09:47:40+01:00",
+      "reviewedAt": "2026-08-25T08:47:40Z",
+      "alertStatus": [],
+      "change": "Removal of information about an ongoing air traffic controllers' strike ('Warnings and insurance' page)."
+    },
+    "MA": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/morocco",
+      "title": "Morocco travel advice",
+      "updatedAt": "2026-08-19T12:00:36+01:00",
+      "reviewedAt": "2026-08-19T11:00:36Z",
+      "alertStatus": [],
+      "change": "This travel advice has been reviewed for accuracy with updates made throughout, including new information about passports, using dating applications, outdoor activities and adventure tourism, using electronic scooters and bikes, quad biking, hot air balloons and beaches and wildfires; information ab"
+    },
+    "GI": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/gibraltar",
+      "title": "Gibraltar (British Overseas Territory) travel advice",
+      "updatedAt": "2026-07-14T09:32:42+01:00",
+      "reviewedAt": "2026-07-14T08:32:42Z",
+      "alertStatus": [],
+      "change": "New information that, from 15 July 2026, the UK-EU Agreement in respect of Gibraltar will provisionally apply, including new information about entry requirements for people travelling on a full British citizen passport ('Entry requirements' page)."
+    },
+    "DZ": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/algeria",
+      "title": "Algeria travel advice",
+      "updatedAt": "2026-09-25T16:01:59+01:00",
+      "reviewedAt": "2026-09-25T15:01:59Z",
+      "alertStatus": [
+        "avoid_all_travel_to_parts"
+      ],
+      "change": "Updated information about customs rules, terrorism in Algeria, political situation and personal ID (‘Entry requirements’ and ‘Safety and security’ pages)."
+    },
+    "EG": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/egypt",
+      "title": "Egypt travel advice",
+      "updatedAt": "2026-10-27T16:03:56+00:00",
+      "reviewedAt": "2026-10-27T16:03:56Z",
+      "alertStatus": [
+        "avoid_all_travel_to_parts",
+        "avoid_all_but_essential_travel_to_parts"
+      ],
+      "change": "Updated information about Regional tensions (see ‘Warnings and insurance’ page)"
+    },
+    "JO": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/jordan",
+      "title": "Jordan travel advice",
+      "updatedAt": "2026-10-27T16:06:24+00:00",
+      "reviewedAt": "2026-10-27T16:06:24Z",
+      "alertStatus": [
+        "avoid_all_travel_to_parts"
+      ],
+      "change": "Updated information about regional tensions (‘Warnings and insurance’ page)."
+    },
+    "LB": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/lebanon",
+      "title": "Lebanon travel advice",
+      "updatedAt": "2026-08-10T14:51:12+01:00",
+      "reviewedAt": "2026-08-10T13:51:12Z",
+      "alertStatus": [
+        "avoid_all_travel_to_parts",
+        "avoid_all_but_essential_travel_to_parts"
+      ],
+      "change": "FCDO has changed the areas of Lebanon where it advises against all travel or all but essential travel. FCDO no longer advises against all travel or all but essential travel to some parts of Lebanon. FCDO continues to advise against all travel and all but essential travel to other areas of Lebanon."
+    },
+    "SY": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/syria",
+      "title": "Syria travel advice",
+      "updatedAt": "2026-10-27T16:05:05+00:00",
+      "reviewedAt": "2026-10-27T16:05:05Z",
+      "alertStatus": [
+        "avoid_all_travel_to_whole_country"
+      ],
+      "change": "Updated information about regional tensions (‘Warnings and insurance’ page)."
+    },
+    "PS": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/the-occupied-palestinian-territories",
+      "title": null,
+      "updatedAt": "2025-09-21T14:40:44+01:00",
+      "reviewedAt": null,
+      "alertStatus": [],
+      "change": ""
+    },
+    "TR": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/turkey",
+      "title": "Turkey travel advice",
+      "updatedAt": "2026-10-27T16:07:12+00:00",
+      "reviewedAt": "2026-10-27T16:07:12Z",
+      "alertStatus": [
+        "avoid_all_travel_to_parts"
+      ],
+      "change": "Updated information about regional tensions (‘Warnings and insurance’ page)."
+    },
+    "AL": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/albania",
+      "title": "Albania travel advice",
+      "updatedAt": "2026-10-15T16:44:54+01:00",
+      "reviewedAt": "2026-10-15T15:44:54Z",
+      "alertStatus": [],
+      "change": "New information about demonstrations in Tirana ('Warnings and insurance' page)."
+    },
+    "MK": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/north-macedonia",
+      "title": "North Macedonia travel advice",
+      "updatedAt": "2026-08-13T16:16:47+01:00",
+      "reviewedAt": "2026-08-13T15:16:47Z",
+      "alertStatus": [],
+      "change": "New information on wait times if travelling to and from the Schengen area from North Macedonia ('Warnings and insurance' page)."
+    },
+    "BG": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/bulgaria",
+      "title": "Bulgaria travel advice",
+      "updatedAt": "2026-08-11T10:18:49+01:00",
+      "reviewedAt": "2026-08-11T09:18:49Z",
+      "alertStatus": [],
+      "change": "Updated information on European Entry-Exit System (EES) (‘Entry requirements’ page)."
+    },
+    "LY": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/libya",
+      "title": "Libya travel advice",
+      "updatedAt": "2026-07-21T10:00:09+01:00",
+      "reviewedAt": "2026-07-21T09:00:09Z",
+      "alertStatus": [
+        "avoid_all_travel_to_parts",
+        "avoid_all_but_essential_travel_to_parts"
+      ],
+      "change": "FCDO now advises against all but essential travel to the cities of Tripoli, Benghazi, Al-Bayda and Derna, and the surrounding area knows as Jebel Akhdar, either side of the coastal and desert roads between and including the towns of Al-Maqrun and Al-Tamimi, Misrata ('Warnings and insurance' and 'Reg"
+    },
+    "TN": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/tunisia",
+      "title": "Tunisia travel advice",
+      "updatedAt": "2026-07-24T17:07:53+01:00",
+      "reviewedAt": "2026-07-24T16:07:53Z",
+      "alertStatus": [
+        "avoid_all_travel_to_parts"
+      ],
+      "change": "This travel advice has been reviewed for accuracy with changes made throughout, including visa requirements, taking money into and out of Tunisia, electronic devices, drugs and illegal substances and power supply in summer months ('Entry requirements' and 'Safety and security') pages."
+    },
+    "MT": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/malta",
+      "title": "Malta travel advice",
+      "updatedAt": "2026-08-11T10:20:07+01:00",
+      "reviewedAt": "2026-08-11T09:20:07Z",
+      "alertStatus": [],
+      "change": "Updated information on European Entry-Exit System (EES) (‘Entry requirements’ page)."
+    },
+    "HR": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/croatia",
+      "title": "Croatia travel advice",
+      "updatedAt": "2026-08-11T10:18:43+01:00",
+      "reviewedAt": "2026-08-11T09:18:43Z",
+      "alertStatus": [],
+      "change": "Updated information on European Entry-Exit System (EES) (‘Entry requirements’ page)."
+    },
+    "EE": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/estonia",
+      "title": "Estonia travel advice",
+      "updatedAt": "2026-08-11T10:18:21+01:00",
+      "reviewedAt": "2026-08-11T09:18:21Z",
+      "alertStatus": [],
+      "change": "Updated information on European Entry-Exit System (EES) (‘Entry requirements’ page)."
+    },
+    "LV": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/latvia",
+      "title": "Latvia travel advice",
+      "updatedAt": "2026-08-11T10:17:07+01:00",
+      "reviewedAt": "2026-08-11T09:17:07Z",
+      "alertStatus": [],
+      "change": "Updated information on European Entry-Exit System (EES) (‘Entry requirements’ page)."
+    },
+    "CU": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/cuba",
+      "title": "Cuba travel advice",
+      "updatedAt": "2026-09-25T12:36:31+01:00",
+      "reviewedAt": "2026-09-25T11:36:31Z",
+      "alertStatus": [
+        "avoid_all_but_essential_travel_to_whole_country"
+      ],
+      "change": "This travel advice has been reviewed for accuracy with changes made throughout, including protests in Cuba, power outages and fuel and water shortages, travel disruption, international card transactions, travel insurance, visa requirements, travelling to the USA from Cuba, taking money into Cuba, cr"
+    },
+    "BS": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/bahamas",
+      "title": "Bahamas travel advice",
+      "updatedAt": "2026-05-28T17:01:45+01:00",
+      "reviewedAt": "2026-05-28T16:01:45Z",
+      "alertStatus": [],
+      "change": "New information about Ebola screening when arriving in country ('Entry requirements' page)."
+    },
+    "CN": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/china",
+      "title": "China travel advice",
+      "updatedAt": "2026-08-27T23:02:55+01:00",
+      "reviewedAt": "2026-08-27T22:02:55Z",
+      "alertStatus": [],
+      "change": "\"Updated information on Warnings and insurance\""
+    },
+    "KR": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/south-korea",
+      "title": "South Korea travel advice",
+      "updatedAt": "2026-05-14T11:06:39+01:00",
+      "reviewedAt": "2026-05-14T10:06:39Z",
+      "alertStatus": [],
+      "change": "Updated information about submitting e-Arrivals cards when arriving in Korea (‘Entry requirements’ page)."
+    },
+    "TW": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/taiwan",
+      "title": "Taiwan travel advice",
+      "updatedAt": "2026-08-28T13:31:24+01:00",
+      "reviewedAt": "2026-08-28T12:31:24Z",
+      "alertStatus": [],
+      "change": "Updated information of the health risks you’ll face in Taiwan (‘Health’ page)."
+    },
+    "NZ": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/new-zealand",
+      "title": "New Zealand travel advice",
+      "updatedAt": "2026-03-19T14:06:12+00:00",
+      "reviewedAt": "2026-03-19T14:06:12Z",
+      "alertStatus": [],
+      "change": "Updated information about global travel impacts due to escalation in the Middle East (‘Warnings and insurance’ page)."
+    },
+    "ID": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/indonesia",
+      "title": "Indonesia travel advice",
+      "updatedAt": "2026-09-18T11:54:47+01:00",
+      "reviewedAt": "2026-09-18T10:54:47Z",
+      "alertStatus": [],
+      "change": "FCDO no longer advises against all travel to volcanoes in Indonesia and will no longer advise against all travel in the event of future volcanic eruptions. FCDO have added new information about volcanoes in Indonesia, including information from the local authorities who enforce exclusion zones on a "
+    },
+    "PG": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/papua-new-guinea",
+      "title": "Papua New Guinea travel advice",
+      "updatedAt": "2026-08-17T15:35:08+01:00",
+      "reviewedAt": "2026-08-17T14:35:08Z",
+      "alertStatus": [
+        "avoid_all_but_essential_travel_to_parts"
+      ],
+      "change": "Updated information about interruptions to the supply of water and electricity (‘Warnings and insurance’ page)."
+    },
+    "TL": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/timor-leste",
+      "title": "East Timor (Timor-Leste) travel advice",
+      "updatedAt": "2025-12-10T12:48:06+00:00",
+      "reviewedAt": "2025-12-10T12:48:06Z",
+      "alertStatus": [],
+      "change": "New information about dual nationals returning to the UK (‘Entry requirements’ page)."
+    },
+    "SG": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/singapore",
+      "title": "Singapore travel advice",
+      "updatedAt": "2026-03-19T14:08:04+00:00",
+      "reviewedAt": "2026-03-19T14:08:04Z",
+      "alertStatus": [],
+      "change": "Updated information about global travel impacts due to escalation in the Middle East (‘Warnings and insurance’ page)."
+    },
+    "AE": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/united-arab-emirates",
+      "title": "United Arab Emirates travel advice",
+      "updatedAt": "2026-10-27T16:03:20+00:00",
+      "reviewedAt": "2026-10-27T16:03:20Z",
+      "alertStatus": [],
+      "change": "Updated information about regional tensions (‘Warnings and insurance’ page)"
+    },
+    "IN": {
+      "ok": true,
+      "url": "https://www.gov.uk/foreign-travel-advice/india",
+      "title": "India travel advice",
+      "updatedAt": "2026-10-07T11:56:27+01:00",
+      "reviewedAt": "2026-10-07T10:56:27Z",
+      "alertStatus": [
+        "avoid_all_travel_to_parts"
+      ],
+      "change": "This travel advice has been reviewed for accuracy, with minor amendments made throughout, including updated information on access permits, scams, trekking in India, air and rail travel, India-Pakistan border area and Western India and healthcare in India (‘Entry requirements’,‘Safety and security’ a"
+    }
+  },
+  "gdacs": {
+    "ok": true,
+    "url": "https://www.gdacs.org/gdacsapi/api/events/geteventlist/SEARCH?eventlist=EQ;TC;FL;VO;DR;WF&fromDate=2026-10-31&toDate=2026-11-15&alertlevel=Orange;Red",
+    "events": [
+      {
+        "id": "GDACS-DR-1023877-14",
+        "type": "DR",
+        "typeName": "Drought",
+        "alert": "Orange",
+        "name": "Northern South America, Panama Isthmus-2026",
+        "countries": [],
+        "from": "2022-09-21",
+        "to": "2026-11-13",
+        "url": "https://www.gdacs.org/report.aspx?eventid=1023877&episodeid=14&eventtype=DR",
+        "modifiedAt": "2026-11-15T05:57:10"
+      },
+      {
+        "id": "GDACS-DR-1018332-27",
+        "type": "DR",
+        "typeName": "Drought",
+        "alert": "Orange",
+        "name": "Europe-2026",
+        "countries": [
+          "AD",
+          "AL",
+          "AT",
+          "BE",
+          "BG",
+          "BY",
+          "CH",
+          "CZ",
+          "DE",
+          "DK",
+          "ES",
+          "FR",
+          "HR",
+          "IE",
+          "IT",
+          "LU",
+          "NL",
+          "PL",
+          "SE",
+          "SI",
+          "SK",
+          "UA"
+        ],
+        "from": "2025-12-21",
+        "to": "2026-11-13",
+        "url": "https://www.gdacs.org/report.aspx?eventid=1018332&episodeid=27&eventtype=DR",
+        "modifiedAt": "2026-11-15T05:57:03"
+      },
+      {
+        "id": "GDACS-DR-1027449-14",
+        "type": "DR",
+        "typeName": "Drought",
+        "alert": "Orange",
+        "name": "Central America-2026",
+        "countries": [
+          "CU",
+          "MX",
+          "US"
+        ],
+        "from": "2026-04-21",
+        "to": "2026-11-13",
+        "url": "https://www.gdacs.org/report.aspx?eventid=1027449&episodeid=14&eventtype=DR",
+        "modifiedAt": "2026-11-15T05:57:16"
+      },
+      {
+        "id": "GDACS-DR-1027450-13",
+        "type": "DR",
+        "typeName": "Drought",
+        "alert": "Orange",
+        "name": "East Africa, Central Sahel-2026",
+        "countries": [],
+        "from": "2026-05-21",
+        "to": "2026-11-13",
+        "url": "https://www.gdacs.org/report.aspx?eventid=1027450&episodeid=13&eventtype=DR",
+        "modifiedAt": "2026-11-15T05:57:29"
+      },
+      {
+        "id": "GDACS-TC-1001346-10",
+        "type": "TC",
+        "typeName": "Tropical cyclone",
+        "alert": "Red",
+        "name": "MURASU-26",
+        "countries": [
+          "IN"
+        ],
+        "from": "2026-11-01",
+        "to": "2026-11-03",
+        "url": "https://www.gdacs.org/report.aspx?eventid=1001346&episodeid=10&eventtype=TC",
+        "modifiedAt": "2026-11-04T06:01:20"
+      }
+    ]
+  },
+  "note": "A recorded copy of the official feeds, for checks without internet. Metadata only: alert status, update time and change note."
+}

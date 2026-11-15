@@ -1,0 +1,162 @@
+{
+  "schema_version": "1.0",
+  "note": "Fictional sponsor operations for SupplyShield AI: no real studies, sites, companies, flights, permits or shipments. Countries, borders, sea neighbours, cities and airports are real geography.",
+  "as_of": "2026-11-14T10:00:00Z",
+  "ctms": {
+    "system": "CTMS",
+    "connected": true,
+    "snapshot_at": "2026-11-14T06:00:00Z",
+    "definition": "A study counts when its CTMS status is one of the active statuses in config/supplyshield.yaml. A country counts (CORE_ACTIVE) when the study counts and the country is ACTIVE: at least one site there is activated and the company supplies investigational product to it. NOT_STARTED and CLOSED countries do not count; an UNKNOWN or contradictory status is shown for confirmation, never guessed.",
+    "studies": [
+      { "id": "STUDY-001", "status": "TREATMENT_ONGOING", "countries": { "GB": { "status": "ACTIVE" } } },
+      { "id": "STUDY-002", "status": "RECRUITING", "countries": { "DE": { "status": "ACTIVE" } } },
+      { "id": "STUDY-003", "status": "ACTIVE_NOT_RECRUITING", "countries": { "GB": { "status": "ACTIVE" } } },
+      { "id": "STUDY-004", "status": "RECRUITING", "countries": { "GB": { "status": "ACTIVE" }, "DE": { "status": "ACTIVE" }, "PL": { "status": "ACTIVE" }, "ES": { "status": "ACTIVE" } } },
+      { "id": "STUDY-005", "status": "TREATMENT_ONGOING", "countries": { "GB": { "status": "ACTIVE" }, "FR": { "status": "ACTIVE" }, "IT": { "status": "ACTIVE" } } },
+      { "id": "STUDY-006", "status": "FOLLOW_UP_ONGOING", "countries": { "GB": { "status": "ACTIVE" }, "NL": { "status": "ACTIVE" } } },
+      { "id": "STUDY-007", "status": "RECRUITING", "countries": { "GB": { "status": "ACTIVE" }, "IE": { "status": "ACTIVE" } } },
+      { "id": "STUDY-008", "status": "ACTIVE_NOT_RECRUITING", "countries": { "GB": { "status": "ACTIVE" }, "US": { "status": "ACTIVE" }, "CA": { "status": "ACTIVE" } } },
+      { "id": "STUDY-009", "status": "TREATMENT_ONGOING", "countries": { "GB": { "status": "ACTIVE" }, "DE": { "status": "ACTIVE" } } },
+      { "id": "STUDY-010", "status": "RECRUITING", "countries": { "US": { "status": "ACTIVE" } } },
+      { "id": "STUDY-011", "status": "ENROLLING_BY_INVITATION", "countries": { "JP": { "status": "ACTIVE" } } },
+      { "id": "STUDY-012", "status": "RECRUITING", "countries": { "DE": { "status": "ACTIVE" }, "FR": { "status": "NOT_STARTED", "note": "Approved; no site activated yet." }, "ES": { "status": "NOT_STARTED", "note": "Approved; no site activated yet." } } },
+      { "id": "STUDY-013", "status": "RECRUITING", "countries": { "ES": { "status": "ACTIVE" }, "PT": { "status": "UNKNOWN", "note": "The CTMS says approved and not started; IRT shows site PT-01 (Lisbon) activated on 10 Nov 2026. Owner confirmation requested from the study manager." } } },
+      { "id": "STUDY-014", "status": "TREATMENT_ONGOING", "countries": { "SE": { "status": "ACTIVE" }, "DK": { "status": "NOT_STARTED", "note": "Approved; no site activated yet." }, "FI": { "status": "NOT_STARTED", "note": "Approved; no site activated yet." } } },
+      { "id": "STUDY-015", "status": "RECRUITING", "countries": { "US": { "status": "ACTIVE" }, "CA": { "status": "NOT_STARTED", "note": "Approved; no site activated yet." }, "MX": { "status": "CLOSED", "note": "The only Mexican site closed on 30 Jun 2025; no patients on treatment." } } },
+      { "id": "STUDY-016", "status": "RECRUITING", "countries": { "FR": { "status": "ACTIVE" }, "BE": { "status": "NOT_STARTED", "note": "Approved; the Ghent site is not activated yet and no product has been shipped." } } },
+      { "id": "STUDY-017", "status": "TREATMENT_ONGOING", "countries": { "AU": { "status": "ACTIVE" } } },
+      { "id": "STUDY-018", "status": "COMPLETED", "countries": { "GB": { "status": "CLOSED", "note": "Study completed; supply closed." } } },
+      { "id": "STUDY-019", "title": "Brazil dengue vaccine study", "status": "COMPLETED", "countries": { "BR": { "status": "CLOSED", "note": "Completed in June 2025; returns and destruction finished." } } },
+      { "id": "STUDY-020", "title": "Inflammatory bowel disease study, on hold", "status": "SUSPENDED", "countries": { "AT": { "status": "ACTIVE", "note": "Enrolment suspended on 2 Oct 2026 pending a protocol amendment; 24 kits of investigational product remain at the Vienna site.", "inventoryOnSite": 24 } } },
+      { "id": "CTP-7842-201", "status": "NOT_YET_RECRUITING", "countries": { "ES": { "status": "ACTIVE", "note": "First patient expected on 15 Feb 2027; initial site supply from 1 Feb 2027." } } },
+      { "id": "STUDY-021", "status": "RECRUITING", "countries": { "IL": { "status": "ACTIVE" }, "GR": { "status": "ACTIVE" }, "CY": { "status": "ACTIVE" } } }
+    ]
+  },
+  "facilities": [
+    { "id": "DEPOT-UK", "name": "UK depot", "kind": "depot", "country": "GB", "city": "Reading", "airport": "LHR", "role": "Stores and dispatches kits to UK sites." },
+    { "id": "DEPOT-BE", "name": "Central EU depot, Belgium", "kind": "depot", "country": "BE", "city": "Mechelen", "airport": "BRU", "role": "Stores, relabels and dispatches kits to sites in the EU, Israel and Cyprus; resupplies the APAC depot." },
+    { "id": "PACK-NL", "name": "Packaging site, Netherlands", "kind": "packaging", "country": "NL", "city": "Breda", "role": "Packages and labels kits; QP release for EU trials." },
+    { "id": "DEPOT-US", "name": "US depot", "kind": "depot", "country": "US", "city": "Allentown, Pennsylvania", "airport": "PHL", "role": "Stores and dispatches kits to US and Canadian sites." },
+    { "id": "DEPOT-SG", "name": "APAC depot, Singapore", "kind": "depot", "country": "SG", "city": "Singapore", "airport": "SIN", "role": "Stores and dispatches kits to sites in Australia and Japan.", "studies": ["STUDY-011", "STUDY-017"] },
+    { "id": "MFG-CH", "name": "Drug product manufacturer, Switzerland", "kind": "manufacturer", "country": "CH", "city": "Basel", "role": "Makes the drug product for STUDY-021 and CTP-7842-201.", "studies": ["STUDY-021", "CTP-7842-201"] },
+    { "id": "API-IN", "name": "Active ingredient supplier, India", "kind": "supplier", "country": "IN", "city": "Hyderabad", "role": "Supplies the active ingredient for STUDY-004.", "studies": ["STUDY-004"] }
+  ],
+  "airports": {
+    "BRU": { "name": "Brussels Airport", "city": "Brussels", "country": "BE" },
+    "AMS": { "name": "Amsterdam Schiphol", "city": "Amsterdam", "country": "NL" },
+    "FRA": { "name": "Frankfurt Airport", "city": "Frankfurt", "country": "DE" },
+    "LUX": { "name": "Luxembourg Airport", "city": "Luxembourg", "country": "LU" },
+    "TLV": { "name": "Ben Gurion Airport", "city": "Tel Aviv", "country": "IL" },
+    "ATH": { "name": "Athens International Airport", "city": "Athens", "country": "GR" },
+    "LCA": { "name": "Larnaca International Airport", "city": "Larnaca", "country": "CY" },
+    "LHR": { "name": "London Heathrow", "city": "London", "country": "GB" },
+    "PHL": { "name": "Philadelphia International Airport", "city": "Philadelphia", "country": "US" },
+    "DXB": { "name": "Dubai International Airport", "city": "Dubai", "country": "AE" },
+    "SIN": { "name": "Singapore Changi Airport", "city": "Singapore", "country": "SG" },
+    "MEL": { "name": "Melbourne Airport", "city": "Melbourne", "country": "AU" },
+    "KIX": { "name": "Kansai International Airport", "city": "Osaka", "country": "JP" },
+    "ZRH": { "name": "Zurich Airport", "city": "Zurich", "country": "CH" },
+    "HYD": { "name": "Rajiv Gandhi International Airport", "city": "Hyderabad", "country": "IN" }
+  },
+  "lanes": [
+    { "id": "LANE-UK", "carrier": "UK logistics partner", "from": "DEPOT-UK", "to": ["GB"], "mode": "road", "countries": ["GB"], "transitBusinessDays": 1, "purpose": "UK site supply" },
+    { "id": "LANE-BE-DE", "carrier": "EU logistics partner", "from": "DEPOT-BE", "to": ["DE"], "mode": "road", "countries": ["BE", "DE"], "transitBusinessDays": 2, "purpose": "German site supply" },
+    { "id": "LANE-BE-ES", "carrier": "EU logistics partner", "from": "DEPOT-BE", "to": ["ES"], "mode": "road", "countries": ["BE", "FR", "ES"], "transitBusinessDays": 2, "purpose": "Spanish site supply" },
+    { "id": "LANE-BE-IL", "carrier": "EMEA specialty courier", "from": "DEPOT-BE", "to": ["IL"], "mode": "air", "departure": "BRU", "arrival": "TLV", "countries": ["BE", "IL"], "transitBusinessDays": 3, "purpose": "Israeli site supply" },
+    { "id": "LANE-BE-GR", "carrier": "EMEA specialty courier", "from": "DEPOT-BE", "to": ["GR"], "mode": "air", "departure": "BRU", "arrival": "ATH", "countries": ["BE", "GR"], "transitBusinessDays": 3, "purpose": "Greek site supply" },
+    { "id": "LANE-BE-CY", "carrier": "EMEA specialty courier", "from": "DEPOT-BE", "to": ["CY"], "mode": "air", "departure": "BRU", "arrival": "LCA", "countries": ["BE", "CY"], "transitBusinessDays": 3, "purpose": "Cypriot site supply" },
+    { "id": "LANE-BE-SG", "carrier": "EMEA specialty courier", "from": "DEPOT-BE", "to": ["SG"], "mode": "air", "departure": "BRU", "via": "DXB", "arrival": "SIN", "countries": ["BE", "AE", "SG"], "transitBusinessDays": 4, "purpose": "APAC depot resupply, every six weeks; next on 7 Dec 2026" },
+    { "id": "LANE-SG-AU", "carrier": "APAC specialty courier", "from": "DEPOT-SG", "to": ["AU"], "mode": "air", "departure": "SIN", "arrival": "MEL", "countries": ["SG", "AU"], "transitBusinessDays": 2, "purpose": "Australian site supply" },
+    { "id": "LANE-SG-JP", "carrier": "APAC specialty courier", "from": "DEPOT-SG", "to": ["JP"], "mode": "air", "departure": "SIN", "arrival": "KIX", "countries": ["SG", "JP"], "transitBusinessDays": 2, "purpose": "Japanese site supply" },
+    { "id": "LANE-NL-BE", "carrier": "EU logistics partner", "from": "PACK-NL", "to": ["BE"], "mode": "road", "countries": ["NL", "BE"], "transitBusinessDays": 1, "purpose": "Packaged kits to the central EU depot" },
+    { "id": "LANE-NL-UK", "carrier": "EU logistics partner", "from": "PACK-NL", "to": ["GB"], "mode": "road", "countries": ["NL", "BE", "FR", "GB"], "transitBusinessDays": 2, "purpose": "Packaged kits to the UK depot, through the Channel Tunnel" },
+    { "id": "LANE-CH-NL", "carrier": "EU logistics partner", "from": "MFG-CH", "to": ["NL"], "mode": "road", "countries": ["CH", "DE", "NL"], "transitBusinessDays": 2, "purpose": "Drug product to the packaging site" },
+    { "id": "LANE-IN-CH", "carrier": "Bulk freight forwarder", "from": "API-IN", "to": ["CH"], "mode": "air", "departure": "HYD", "arrival": "ZRH", "countries": ["IN", "CH"], "transitBusinessDays": 4, "purpose": "Active ingredient to the manufacturer" },
+    { "id": "LANE-US", "carrier": "North America courier", "from": "DEPOT-US", "to": ["US", "CA"], "mode": "road", "countries": ["US", "CA"], "transitBusinessDays": 2, "purpose": "US and Canadian site supply" }
+  ],
+  "departure_alternatives": [
+    { "lane": "LANE-BE-IL", "carrier": "EMEA specialty courier", "airport": "BRU", "roadHours": 0.5, "days": ["Mon", "Tue", "Wed", "Thu", "Fri"], "qualified": "2–8 °C lane qualified", "booked": true },
+    { "lane": "LANE-BE-IL", "carrier": "EMEA specialty courier", "airport": "AMS", "roadHours": 2.5, "days": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri"], "qualified": "2–8 °C lane qualified" },
+    { "lane": "LANE-BE-IL", "carrier": "EMEA specialty courier", "airport": "FRA", "roadHours": 4.5, "days": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], "qualified": "2–8 °C lane qualified" },
+    { "lane": "LANE-BE-IL", "carrier": "EMEA specialty courier", "airport": "LUX", "roadHours": 2.5, "days": ["Tue", "Thu"], "qualified": "2–8 °C lane qualified" }
+  ],
+  "permits": [
+    { "id": "MOH-IMP-26-4410", "country": "IL", "shipment": "SHP-IL-01", "kind": "Ministry of Health import approval", "holder": "The sponsor's local representative, Israel", "consignee": "Tel Aviv site pharmacy", "kits": 10, "validUntil": "2027-02-28", "portOfEntry": "TLV", "source": "eTMF" },
+    { "id": "MOH-IMP-26-4471", "country": "IL", "shipment": "SHP-IL-02", "kind": "Ministry of Health import approval", "holder": "The sponsor's local representative, Israel", "consignee": "Haifa site pharmacy", "kits": 12, "validUntil": "2027-03-31", "portOfEntry": "TLV", "source": "eTMF" }
+  ],
+  "operational_status": [
+    { "id": "OPS-001", "system": "courier", "source": "EMEA specialty courier booking system", "shipment": "SHP-IL-01", "leg": "air", "node": "BRU", "date": "2026-11-24", "status": "cancelled", "detail": "The booked cargo flight from Brussels to Tel Aviv on 24 Nov 2026 is cancelled: Brussels Airport has no departures that day. The next free departure from Brussels is on 25 Nov.", "nextAvailable": "2026-11-25", "recordedAt": "2026-11-14T08:10:00Z" },
+    { "id": "OPS-002", "system": "courier", "source": "EU logistics partner tracking", "shipment": "SHP-03", "leg": "road", "node": "BE", "date": "2026-11-24", "status": "operating", "detail": "Collection at the depot on 23 Nov at 07:00; the truck crosses into Germany the same evening and is not in Belgium on 24 Nov.", "recordedAt": "2026-11-14T08:25:00Z" },
+    { "id": "OPS-003", "system": "depot", "source": "Depot system, Central EU depot", "facility": "DEPOT-BE", "date": "2026-11-24", "status": "reduced", "detail": "Open with reduced staff; no outbound collections on 24 Nov. No shipment is booked for collection that day.", "recordedAt": "2026-11-14T07:55:00Z" }
+  ],
+  "monitoring_decisions": [
+    { "country": "BE", "kind": "external", "enabled": true, "by": "P. Laine", "role": "viewer", "at": "2026-11-02T09:14:00Z", "reason": "Our central EU depot is in Belgium: most EU, Israeli and Cypriot shipments leave from it." }
+  ],
+  "geography": {
+    "source": "Reference geography for the demo: land borders between neighbouring states (metropolitan territory) and shared maritime boundaries or close sea crossings. Check against a maintained dataset such as Natural Earth before production use.",
+    "names": {
+      "GB": "United Kingdom", "IE": "Ireland", "DE": "Germany", "PL": "Poland", "ES": "Spain", "FR": "France", "IT": "Italy", "NL": "Netherlands",
+      "BE": "Belgium", "PT": "Portugal", "SE": "Sweden", "DK": "Denmark", "FI": "Finland", "US": "United States", "CA": "Canada", "MX": "Mexico",
+      "JP": "Japan", "AU": "Australia", "IL": "Israel", "GR": "Greece", "CY": "Cyprus", "LU": "Luxembourg", "CH": "Switzerland", "AT": "Austria",
+      "CZ": "Czech Republic", "SK": "Slovakia", "UA": "Ukraine", "BY": "Belarus", "LT": "Lithuania", "RU": "Russia", "AD": "Andorra", "MC": "Monaco",
+      "SI": "Slovenia", "SM": "San Marino", "VA": "Vatican City", "NO": "Norway", "MA": "Morocco", "GI": "Gibraltar", "DZ": "Algeria", "EG": "Egypt",
+      "JO": "Jordan", "LB": "Lebanon", "SY": "Syria", "PS": "Palestinian territories", "TR": "Türkiye", "AL": "Albania", "MK": "North Macedonia",
+      "BG": "Bulgaria", "LY": "Libya", "TN": "Tunisia", "MT": "Malta", "HR": "Croatia", "EE": "Estonia", "LV": "Latvia", "CU": "Cuba", "BS": "The Bahamas",
+      "CN": "China", "KR": "South Korea", "TW": "Taiwan", "NZ": "New Zealand", "ID": "Indonesia", "PG": "Papua New Guinea", "TL": "Timor-Leste",
+      "SG": "Singapore", "AE": "United Arab Emirates", "IN": "India", "BR": "Brazil"
+    },
+    "supranational": {
+      "EU": {
+        "name": "European Union",
+        "members": ["AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PL", "PT", "RO", "SE", "SI", "SK"],
+        "rules": "EU Clinical Trials Regulation 536/2014, EudraLex Volume 10, EU GMP for investigational products, EU GDP and the EU customs tariff (TARIC)"
+      }
+    },
+    "regions": {
+      "GB": "Europe", "IE": "Europe", "DE": "Europe", "PL": "Europe", "ES": "Europe", "FR": "Europe", "IT": "Europe", "NL": "Europe", "BE": "Europe",
+      "PT": "Europe", "SE": "Europe", "DK": "Europe", "FI": "Europe", "LU": "Europe", "CH": "Europe", "AT": "Europe", "CZ": "Europe", "SK": "Europe",
+      "UA": "Europe", "BY": "Europe", "LT": "Europe", "RU": "Europe", "AD": "Europe", "MC": "Europe", "SI": "Europe", "SM": "Europe", "VA": "Europe",
+      "NO": "Europe", "GI": "Europe", "AL": "Europe", "MK": "Europe", "BG": "Europe", "MT": "Europe", "HR": "Europe", "EE": "Europe", "LV": "Europe",
+      "GR": "Europe", "CY": "Europe", "TR": "Europe",
+      "IL": "Middle East", "EG": "Middle East", "JO": "Middle East", "LB": "Middle East", "SY": "Middle East", "PS": "Middle East", "AE": "Middle East",
+      "US": "North America", "CA": "North America", "MX": "North America", "CU": "North America", "BS": "North America",
+      "JP": "Asia", "CN": "Asia", "KR": "Asia", "TW": "Asia", "SG": "Asia", "IN": "Asia", "ID": "Asia", "TL": "Asia",
+      "AU": "Oceania", "NZ": "Oceania", "PG": "Oceania",
+      "MA": "Africa", "DZ": "Africa", "LY": "Africa", "TN": "Africa",
+      "BR": "South America"
+    },
+    "land": {
+      "GB": ["IE"], "IE": ["GB"], "DE": ["AT", "BE", "CH", "CZ", "DK", "FR", "LU", "NL", "PL"], "PL": ["BY", "CZ", "DE", "LT", "RU", "SK", "UA"],
+      "ES": ["AD", "FR", "GI", "MA", "PT"], "FR": ["AD", "BE", "CH", "DE", "ES", "IT", "LU", "MC"], "IT": ["AT", "CH", "FR", "SI", "SM", "VA"],
+      "NL": ["BE", "DE"], "BE": ["DE", "FR", "LU", "NL"], "PT": ["ES"], "SE": ["FI", "NO"], "DK": ["DE"], "FI": ["NO", "RU", "SE"],
+      "US": ["CA", "MX"], "CA": ["US"], "MX": ["US"], "JP": [], "AU": [], "IL": ["EG", "JO", "LB", "PS", "SY"], "GR": ["AL", "BG", "MK", "TR"], "CY": []
+    },
+    "sea": {
+      "GB": ["BE", "FR", "IE", "NL", "NO"], "IE": ["GB"], "DE": ["DK", "NL", "PL"], "PL": ["DE", "DK", "RU", "SE"], "ES": ["DZ", "FR", "IT", "MA", "PT"],
+      "FR": ["BE", "ES", "GB", "IT", "MC"], "IT": ["AL", "FR", "GR", "HR", "LY", "MT", "SI", "TN"], "NL": ["BE", "DE", "GB"], "BE": ["FR", "GB", "NL"],
+      "PT": ["ES", "MA"], "SE": ["DE", "DK", "EE", "FI", "LT", "LV", "NO", "PL"], "US": ["BS", "CA", "CU", "MX", "RU"], "CA": ["US"],
+      "JP": ["CN", "KR", "RU", "TW"], "AU": ["ID", "NZ", "PG", "TL"], "IL": ["CY", "EG", "LB"], "GR": ["AL", "CY", "EG", "IT", "LY", "TR"],
+      "CY": ["EG", "GR", "IL", "LB", "SY", "TR"]
+    },
+    "fcdo": {
+      "IE": "ireland", "DE": "germany", "PL": "poland", "ES": "spain", "FR": "france", "IT": "italy", "NL": "netherlands", "BE": "belgium",
+      "PT": "portugal", "SE": "sweden", "DK": "denmark", "FI": "finland", "US": "usa", "CA": "canada", "MX": "mexico", "JP": "japan",
+      "AU": "australia", "IL": "israel", "GR": "greece", "CY": "cyprus", "LU": "luxembourg", "CH": "switzerland", "AT": "austria",
+      "CZ": "czech-republic", "SK": "slovakia", "UA": "ukraine", "BY": "belarus", "LT": "lithuania", "RU": "russia", "AD": "andorra",
+      "MC": "monaco", "SI": "slovenia", "SM": "san-marino", "NO": "norway", "MA": "morocco", "GI": "gibraltar",
+      "DZ": "algeria", "EG": "egypt", "JO": "jordan", "LB": "lebanon", "SY": "syria", "PS": "the-occupied-palestinian-territories",
+      "TR": "turkey", "AL": "albania", "MK": "north-macedonia", "BG": "bulgaria", "LY": "libya", "TN": "tunisia", "MT": "malta",
+      "HR": "croatia", "EE": "estonia", "LV": "latvia", "CU": "cuba", "BS": "bahamas", "CN": "china", "KR": "south-korea", "TW": "taiwan",
+      "NZ": "new-zealand", "ID": "indonesia", "PG": "papua-new-guinea", "TL": "timor-leste", "SG": "singapore", "AE": "united-arab-emirates",
+      "IN": "india"
+    },
+    "iso3": {
+      "GBR": "GB", "IRL": "IE", "DEU": "DE", "POL": "PL", "ESP": "ES", "FRA": "FR", "ITA": "IT", "NLD": "NL", "BEL": "BE", "PRT": "PT", "SWE": "SE",
+      "DNK": "DK", "FIN": "FI", "USA": "US", "CAN": "CA", "MEX": "MX", "JPN": "JP", "AUS": "AU", "ISR": "IL", "GRC": "GR", "CYP": "CY", "LUX": "LU",
+      "CHE": "CH", "AUT": "AT", "CZE": "CZ", "SVK": "SK", "UKR": "UA", "BLR": "BY", "LTU": "LT", "RUS": "RU", "AND": "AD", "MCO": "MC", "SVN": "SI",
+      "SMR": "SM", "VAT": "VA", "NOR": "NO", "MAR": "MA", "GIB": "GI", "DZA": "DZ", "EGY": "EG", "JOR": "JO", "LBN": "LB", "SYR": "SY", "PSE": "PS",
+      "TUR": "TR", "ALB": "AL", "MKD": "MK", "BGR": "BG", "LBY": "LY", "TUN": "TN", "MLT": "MT", "HRV": "HR", "EST": "EE", "LVA": "LV", "CUB": "CU",
+      "BHS": "BS", "CHN": "CN", "KOR": "KR", "TWN": "TW", "NZL": "NZ", "IDN": "ID", "PNG": "PG", "TLS": "TL", "SGP": "SG", "ARE": "AE", "IND": "IN"
+    }
+  }
+}

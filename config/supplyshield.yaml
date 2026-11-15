@@ -1,0 +1,53 @@
+company_scope:
+  source_of_truth: approved_ctms_or_study_master
+  active_statuses:
+  - RECRUITING
+  - ENROLLING_BY_INVITATION
+  - ACTIVE_NOT_RECRUITING
+  - TREATMENT_ONGOING
+  - FOLLOW_UP_ONGOING
+  include_not_yet_recruiting: false
+  include_suspended: false
+  include_completed: false
+  country_scope_from_active_sites: true
+  core_countries_auto_enabled: true
+  apply_relevant_supranational_rules: true
+country_recommendations:
+  suggest_land_neighbors: true
+  suggest_maritime_or_air_neighbors: true
+  suggest_documented_transit_countries: true
+  suggest_supplier_and_depot_countries: true
+  suggest_shared_logistics_hubs: true
+  suggest_time_bounded_geopolitical_exposure: true
+  historical_conflict_context_days: 365
+  current_incident_context_days: 90
+  auto_enable_recommendations: false
+  new_country_event_monitor_default: false
+  new_country_regulation_monitor_default: false
+  require_user_approval_per_extra_country: true
+monitored_categories:
+  weather: true
+  natural_disasters: true
+  transport: true
+  geopolitical: true
+  regulatory_customs: true
+  supplier: true
+  cyber_outage: true
+  public_health_optional: false
+  utilities_optional: false
+governance:
+  preserve_prior_source_versions: true
+  approval_before_cid_publish: true
+  approval_before_operational_changes: true
+  no_patient_level_data: true
+  fail_closed_on_authorization_error: true
+  explain_insufficient_data: true
+  write_audit_log: true
+  country_recommendation_review_required: true
+monitoring:
+  study_scope_reconciliation_hours: 24
+  weather_poll_minutes: 30
+  disaster_poll_minutes: 30
+  regulatory_poll_hours: 24
+  strict_provider_rate_limits: true
+  source_outage_creates_coverage_alert: true

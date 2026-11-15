@@ -61,13 +61,13 @@ export function createCaseModel(data) {
   function initialWorkflow(caseId = "uk") {
     const governed = governedCases[caseId];
     return { schema: 1, caseId, stage: "review", revision: 1, draft: governed.initialText, decision: null, publication: null, task: null, events: [{
-      eventId: governed.id + "-01", type: "case.prepared", actor: "RegChain monitor", at: governed.preparedAt,
+      eventId: governed.id + "-01", type: "case.prepared", actor: "SupplyShield monitor", at: governed.preparedAt,
       revision: 1, detail: caseId === "uk" ? "Source evidence compared and portfolio assessment prepared." : "New information note found on publication and the trial's Spanish shipments assessed.",
     }] };
   }
   function appendWorkflowEvent(state, type, role, now, detail) {
     const eventId = caseOf(state).id + "-" + String(state.events.length + 1).padStart(2, "0");
-    state.events.push({ eventId, type, actor: roleName(role, state) ?? (role === "scheduler" ? "RegChain scheduler" : role === "ai" ? "RegChain AI check" : "RegChain publisher"), at: now, revision: state.revision, detail });
+    state.events.push({ eventId, type, actor: roleName(role, state) ?? (role === "scheduler" ? "SupplyShield scheduler" : role === "ai" ? "SupplyShield AI check" : "SupplyShield publisher"), at: now, revision: state.revision, detail });
   }
   function workflowStep(state, command, role, now) {
     const { action, revision } = command;
@@ -371,7 +371,7 @@ export function returnDueDeferrals(db, model, today, now = new Date().toISOStrin
       state.stage = "review";
       state.decision = null;
       const governed = model.governedCases[key];
-      state.events.push({ eventId: governed.id + "-" + String(state.events.length + 1).padStart(2, "0"), type: "proposal.returned_on_due_date", actor: "RegChain scheduler", at: now, revision: state.revision,
+      state.events.push({ eventId: governed.id + "-" + String(state.events.length + 1).padStart(2, "0"), type: "proposal.returned_on_due_date", actor: "SupplyShield scheduler", at: now, revision: state.revision,
         detail: "Deferred case returned to the review queue on its scheduled date." });
       persist(db, model, row, before, state, "scheduler", now);
     });

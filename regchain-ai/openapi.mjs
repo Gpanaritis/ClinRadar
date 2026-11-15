@@ -14,9 +14,14 @@ const caseId = { name: "id", in: "path", required: true, schema: { type: "string
 
 export const OPENAPI = {
   openapi: "3.1.0",
-  info: { title: "RegChain AI API", version: "1.0.0", description: "Regulatory change cases, evidence, impact, decisions and audit for clinical supply. Writes check the session's role on the server and accept an Idempotency-Key." },
+  info: { title: "SupplyShield AI API", version: "1.1.0", description: "External risk and country regulatory intelligence for global clinical supply: the monitoring scope set by the active-trial portfolio, external signals matched to shipments, regulatory change cases, evidence, impact, decisions and audit. Writes check the session's role on the server and accept an Idempotency-Key." },
   servers: [{ url: "/" }],
   paths: {
+    "/v1/monitoring-scope": { get: { summary: "The monitoring scope: countries with an operationally active trial (monitored automatically), recommended countries with their evidence and monitoring switches (off until a person turns them on), and registered countries that are not operationally active. Undetermined when no active-trial portfolio is connected.", responses: ok("Scope") } },
+    "/v1/signals": { get: { summary: "External signals in monitored countries, matched to shipments, facilities, routes and deadlines, each classified as observed, potential exposure, confirmed disruption or not affected after check",
+      parameters: [{ name: "tier", in: "query", required: false, schema: { enum: ["observed", "potential", "confirmed", "clear"] } }], responses: { ...ok("Signals"), 400: errors[400] } } },
+    "/v1/signals/{id}": { get: { summary: "One signal with every match and the evidence or missing evidence behind it", parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], responses: { ...ok("Signal"), 404: errors[404] } } },
+    "/v1/shipments/{id}/risk": { get: { summary: "One shipment's route with the day of each leg, its external-risk matches, and the route and import-approval checks", parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" }, example: "SHP-IL-01" }], responses: { ...ok("Shipment risk"), 404: errors[404] } } },
     "/v1/health": { get: { summary: "Service health, schema version and audit-chain check", responses: ok("Healthy") } },
     "/v1/session": {
       get: { summary: "The role held by this session", responses: ok("Session") },
