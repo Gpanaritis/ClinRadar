@@ -2,7 +2,9 @@
 //   1. settings, password hashing, user rules, sign-in lockout and session expiry, security headers, rate limits;
 //   2. the real server started with named users (REGCHAIN_AUTH=password) on a free port: sign-in gating, roles,
 //      same-site and input checks, the page's script nonce, sign-out, lockout, a backup taken while it runs, and the
-//      write rate limit.
+//      write rate limit;
+//   3. an administrator connects the Claude API key: only administrators can connect or use it, and no answer, log, audit
+//      entry or file on disk carries it (a stand-in for Anthropic's API on this computer checks the key).
 // Usage: node scripts/check-security.mjs   (everything runs in temporary folders)
 
 import assert from "node:assert/strict";
@@ -192,10 +194,10 @@ server.stdout.on("data", chunk => { serverOutput += chunk; });
 server.stderr.on("data", chunk => { serverOutput += chunk; });
 const exited = new Promise(resolve => server.once("exit", resolve));
 
-function call(method, path, { body, headers = {}, cookie } = {}) {
+function call(method, path, { body, headers = {}, cookie, at = port } = {}) {
   return new Promise((resolve, reject) => {
     const data = body === undefined ? null : typeof body === "string" ? body : JSON.stringify(body);
-    const request = httpRequest({ host: "127.0.0.1", port, method, path, headers: { Host: `127.0.0.1:${port}`,
+    const request = httpRequest({ host: "127.0.0.1", port: at, method, path, headers: { Host: `127.0.0.1:${at}`,
       ...(data !== null ? { "Content-Type": "application/json", "Content-Length": Buffer.byteLength(data) } : {}), ...(cookie ? { Cookie: cookie } : {}), ...headers } }, response => {
       let text = "";
       response.setEncoding("utf8");
@@ -466,6 +468,103 @@ try {
     second.kill();
   }
   console.log("ok  enterprise alert webhook off: with named users and no REGCHAIN_ENTERPRISE_TOKEN it answers 503 and stores nothing");
+
+  // An administrator connects the Claude API key. A stand-in for Anthropic's API accepts one key and refuses the rest.
+  {
+    const GOOD = "sk-ant-api03-" + "k".repeat(40) + "ZQ9x";
+    const seen = [];
+    const anthropic = createServer((req, res) => {
+      seen.push(req.url);
+      const ok = (req.headers["x-api-key"] ?? String(req.headers.authorization ?? "").replace(/^Bearer /, "")) === GOOD;
+      res.writeHead(ok ? 200 : 401, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(ok ? { data: [], has_more: false, first_id: null, last_id: null } : { type: "error", error: { type: "authentication_error", message: "invalid x-api-key" } }));
+    });
+    const stubPort = await new Promise(resolve => anthropic.listen(0, "127.0.0.1", () => resolve(anthropic.address().port)));
+    const keyPort = await new Promise(resolve => {
+      const probe = createServer().listen(0, "127.0.0.1", () => { const { port: free } = probe.address(); probe.close(() => resolve(free)); });
+    });
+    const keyDir = join(temp, "data-key");
+    const keyEnv = { ...env, REGCHAIN_PORT: String(keyPort), REGCHAIN_DATA_DIR: keyDir, ANTHROPIC_BASE_URL: `http://127.0.0.1:${stubPort}` };
+    const keyUsers = (args, password) => spawnSync(process.execPath, [join(root, "scripts", "users.mjs"), ...args], { env: { ...keyEnv, ...(password ? { REGCHAIN_NEW_PASSWORD: password } : {}) }, encoding: "utf8" });
+    assert.equal(keyUsers(["add", "kim.admin", "Kim Admin", "viewer", "--admin"], "kim-admin-password").status, 0);
+    assert.equal(keyUsers(["add", "sam.supply", "Sam Supply", "viewer"], "sam-supply-password").status, 0);
+    assert.equal(keyUsers(["add", "rita.reg", "Rita Regulatory", "reviewer"], "rita-reg-password").status, 0);
+    assert.equal(keyUsers(["admin", "rita.reg", "on"]).status, 0, "the users command grants the administrator flag");
+    assert.equal(keyUsers(["admin", "rita.reg", "off"]).status, 0, "and takes it away");
+    assert.match(keyUsers(["list"]).stdout, /kim\.admin/);
+    const third = spawn(process.execPath, [join(root, "serve-regchain.cjs")], { cwd: root, env: keyEnv, stdio: ["ignore", "pipe", "pipe"] });
+    let thirdOutput = "";
+    third.stdout.on("data", chunk => { thirdOutput += chunk; });
+    third.stderr.on("data", chunk => { thirdOutput += chunk; });
+    const answers = [];
+    const send = async (method, path, options = {}) => { const response = await call(method, path, { ...options, at: keyPort }); answers.push(response.text, JSON.stringify(response.headers)); return response; };
+    try {
+      let up = null;
+      for (let attempt = 0; attempt < 120 && !up; attempt += 1) {
+        up = await call("GET", "/v1/health", { at: keyPort }).catch(() => null);
+        if (up?.status !== 200) { up = null; await new Promise(resolve => setTimeout(resolve, 500)); }
+      }
+      assert.ok(up, "the server with an administrator answers\n" + thirdOutput);
+      const login = async (username, password) => {
+        const response = await send("POST", "/v1/auth/login", { body: { username, password } });
+        assert.equal(response.status, 200, response.text);
+        return String(response.headers["set-cookie"]).split(";")[0];
+      };
+      const kim = await login("kim.admin", "kim-admin-password");
+      const sam = await login("sam.supply", "sam-supply-password");
+      const rita = await login("rita.reg", "rita-reg-password");
+
+      assert.equal((await send("POST", "/api/ai/key", { body: { key: GOOD } })).status, 401, "nobody connects a key before signing in");
+      assert.equal((await send("POST", "/api/ai/key", { body: { key: GOOD }, cookie: sam })).status, 403, "only an administrator connects Claude");
+      assert.equal((await send("POST", "/api/ai/key", { body: { key: GOOD }, cookie: rita })).status, 403, "a flag taken away is gone");
+      assert.equal((await send("POST", "/api/ai/key", { body: { key: GOOD }, cookie: kim, headers: { Origin: "https://evil.example" } })).status, 403, "another site cannot post a key");
+      assert.equal((await send("POST", "/api/ai/key", { body: { key: "not-a-key" }, cookie: kim })).status, 422, "only an Anthropic key");
+      const refused = await send("POST", "/api/ai/key", { body: { key: "sk-ant-api03-" + "x".repeat(40) }, cookie: kim });
+      assert.equal(refused.status, 422, "a key Anthropic refuses is not stored");
+      assert.equal((await send("GET", "/api/agent/status", { cookie: kim })).json.connection.set, false);
+
+      const connected = await send("POST", "/api/ai/key", { body: { key: GOOD }, cookie: kim });
+      assert.equal(connected.status, 200, connected.text);
+      assert.deepEqual([connected.json.keySet, connected.json.source, connected.json.admin, connected.json.connection.last4, connected.json.connection.checked, connected.json.connection.by],
+        [true, "connected", true, "ZQ9x", true, "Kim Admin"], "connected, checked with Anthropic, and only the last four characters come back");
+
+      const forSam = (await send("GET", "/api/agent/status", { cookie: sam })).json;
+      assert.deepEqual([forSam.keySet, forSam.connection.set, forSam.connection.last4, forSam.canConnect], [false, true, undefined, false], "anyone else keeps the offline demo and never sees the key");
+      assert.match(forSam.setup, /administrators only/);
+      assert.equal((await send("GET", "/api/agent/status", { cookie: kim })).json.keySet, true, "the administrator can run the AI live");
+      const calls = seen.length;
+      const samRun = await send("GET", "/api/agent/run?shipment=SHP-IL-01&mode=live", { cookie: sam, headers: { "Sec-Fetch-Site": "same-origin" } });
+      assert.match(samRun.text, /administrators only/, "a live run by anyone else is refused");
+      assert.equal(seen.length, calls, "and nothing reached Claude");
+      assert.equal((await send("POST", "/api/ai/analyze?case=uk", { body: {}, cookie: sam })).status, 403, "Clinical Supply cannot start the AI check");
+      await send("GET", "/", { cookie: kim });
+      await send("GET", "/v1/session", { cookie: kim });
+
+      assert.equal((await send("POST", "/api/ai/key/remove", { body: {}, cookie: sam })).status, 403, "only an administrator removes the key");
+      const removed = await send("POST", "/api/ai/key/remove", { body: {}, cookie: kim });
+      assert.deepEqual([removed.status, removed.json.keySet, removed.json.connection.set], [200, false, false], "removed: live runs are off");
+
+      // Nothing that leaves the server, nothing it writes, carries the key.
+      const reconnected = await send("POST", "/api/ai/key", { body: { key: GOOD }, cookie: kim });
+      assert.equal(reconnected.status, 200);
+      for (const text of answers) assert.ok(!text.includes(GOOD) && !text.includes(GOOD.slice(13, 45)), "no answer carries the key");
+      assert.ok(!thirdOutput.includes(GOOD), "no log line carries the key");
+      const files = [];
+      const walk = async dir => { for (const entry of await readdir(dir, { withFileTypes: true })) entry.isDirectory() ? await walk(join(dir, entry.name)) : files.push(join(dir, entry.name)); };
+      await walk(keyDir);
+      assert.ok(files.some(file => file.endsWith("claude-key.enc.json")), "the key is stored in the data folder");
+      for (const file of files) assert.ok(!(await readFile(file)).includes(GOOD), file + " does not hold the key in plain text");
+      const audit = new DatabaseSync(join(keyDir, "regchain.db"), { readOnly: true });
+      const entries = audit.prepare("SELECT type, actor, detail, data FROM audit_entry WHERE type LIKE 'ai.key_%' ORDER BY seq").all();
+      audit.close();
+      assert.deepEqual(entries.map(entry => entry.type), ["ai.key_connected", "ai.key_removed", "ai.key_connected"]);
+      assert.ok(entries.every(entry => entry.actor === "Kim Admin" && entry.detail.includes("ending ZQ9x") && !JSON.stringify(entry).includes(GOOD)), "the audit names who and when, never the key");
+    } finally {
+      third.kill();
+      anthropic.close();
+    }
+    console.log("ok  Claude key: only an administrator connects or removes it, Anthropic checks it first, only administrators run live AI with it, and no answer, log, audit entry or file carries it");
+  }
 } finally {
   server.kill();
   await Promise.race([exited, new Promise(resolve => setTimeout(resolve, 5000))]);

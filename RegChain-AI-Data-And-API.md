@@ -129,7 +129,7 @@ The database is `.regchain-data/regchain.db`. Git ignores it, and `REGCHAIN_DATA
 - `shipment_action`, `change_decision`
 - `session`, `idempotency_key`, `replay_run`
 - `audit_entry`, `outbox_event`
-- `alert`, `alert_delivery` (migration 3): each alert to Clinical Supply once, with its evidence lines, and each delivery by email or webhook with its attempts and last error. A rehearsal archives open alerts (`archived_at`); nothing is deleted.
+- `alert`, `alert_delivery` (migration 4): each alert to Clinical Supply once, with its evidence lines, and each delivery by email or webhook with its attempts and last error. A rehearsal archives open alerts (`archived_at`); nothing is deleted.
 
 Migrations are numbered and run once. A shipped migration is never edited; a new one is added instead.
 

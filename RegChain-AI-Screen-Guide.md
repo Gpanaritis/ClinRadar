@@ -110,7 +110,7 @@ Opening the UK regulatory section shows the **suggested edit** as a redline: the
 
 ### 12. Settings
 
-**Settings**, last in the menu, has four tabs: Monitoring schedule, Alerts, AI connections and Sources. Served by RegChain, the server keeps the settings and records every change in the audit trail, with who made it and when. **Acting as** at the top switches the role, as on the other pages.
+**Settings**, last in the menu, has four tabs: Monitoring schedule, Alerts, AI agents & integrations, and Sources. Served by RegChain, the server keeps the settings and records every change in the audit trail, with who made it and when. **Acting as** at the top switches the role, as on the other pages.
 
 ![Settings: monitoring schedule](screens/15-settings-monitoring.png)
 

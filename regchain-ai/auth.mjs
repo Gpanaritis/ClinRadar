@@ -32,7 +32,7 @@ function checkPassword(password) {
 // Something to burn the same time on when the username does not exist, so timing does not reveal valid usernames.
 const DUMMY = hashPassword(randomBytes(12).toString("hex"));
 
-export function createUser(db, { username, name, role, password }) {
+export function createUser(db, { username, name, role, password, admin = false }) {
   if (!/^[a-z0-9._-]{3,40}$/i.test(String(username ?? ""))) throw fail(422, "The username needs 3 to 40 letters, digits, dots, dashes or underscores.");
   if (!String(name ?? "").trim()) throw fail(422, "Give the person's name as it should appear in the audit trail.");
   if (!ROLE_IDS.includes(role)) throw fail(422, "The role must be one of " + ROLE_IDS.join(", ") + ".");
@@ -41,11 +41,22 @@ export function createUser(db, { username, name, role, password }) {
   const now = new Date().toISOString();
   const id = newId("usr");
   transaction(db, () => {
-    db.prepare("INSERT INTO app_user (id, username, name, role, password_hash, created_at, password_changed_at) VALUES (?, ?, ?, ?, ?, ?, ?)")
-      .run(id, username, String(name).trim(), role, hashPassword(password), now, now);
-    appendAudit(db, { actor: administrator(), type: "user.created", subjectType: "user", subjectId: id, detail: `${username} · ${role}` });
+    db.prepare("INSERT INTO app_user (id, username, name, role, password_hash, created_at, password_changed_at, admin) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+      .run(id, username, String(name).trim(), role, hashPassword(password), now, now, admin ? 1 : 0);
+    appendAudit(db, { actor: administrator(), type: "user.created", subjectType: "user", subjectId: id, detail: `${username} · ${role}${admin ? " · administrator" : ""}` });
   });
-  return { id, username, name: String(name).trim(), role };
+  return { id, username, name: String(name).trim(), role, admin: Boolean(admin) };
+}
+// An administrator connects Claude in Settings and may start live AI runs. It is a flag on top of the person's one role:
+// it grants no approval, so the four-eyes rules between the roles still hold. Changing it ends their sessions.
+export function setAdmin(db, username, admin) {
+  const user = db.prepare("SELECT id FROM app_user WHERE username = ?").get(username);
+  if (!user) throw fail(404, "No such user.");
+  transaction(db, () => {
+    db.prepare("UPDATE app_user SET admin = ? WHERE id = ?").run(admin ? 1 : 0, user.id);
+    db.prepare("DELETE FROM session WHERE user_id = ?").run(user.id);
+    appendAudit(db, { actor: administrator(), type: admin ? "user.admin_granted" : "user.admin_removed", subjectType: "user", subjectId: user.id, detail: username });
+  });
 }
 export function setPassword(db, username, password) {
   checkPassword(password);
@@ -76,7 +87,7 @@ export function setRole(db, username, role) {
     appendAudit(db, { actor: administrator(), type: "user.role_changed", subjectType: "user", subjectId: user.id, detail: `${username} · ${user.role} → ${role}` });
   });
 }
-export const listUsers = db => db.prepare("SELECT id, username, name, role, active, created_at, last_sign_in FROM app_user ORDER BY username").all();
+export const listUsers = db => db.prepare("SELECT id, username, name, role, admin, active, created_at, last_sign_in FROM app_user ORDER BY username").all();
 
 function recentFailures(db, key, since) {
   return db.prepare("SELECT COUNT(*) AS n FROM login_attempt WHERE key = ? AND ok = 0 AND at >= ?").get(key, since).n;
@@ -110,12 +121,12 @@ export function signIn(db, config, { username, password, address }) {
     db.prepare("DELETE FROM login_attempt WHERE key = ?").run(keys[0]);
     appendAudit(db, { actor: user.name, role: user.role, type: "auth.signed_in", subjectType: "user", subjectId: user.id, detail: user.username, data: { address } });
   });
-  return { sessionId: id, user: { id: user.id, username: user.username, name: user.name, role: user.role }, expiresAt: expires };
+  return { sessionId: id, user: { id: user.id, username: user.username, name: user.name, role: user.role, admin: user.admin === 1 }, expiresAt: expires };
 }
 // The session behind a cookie, if it is still valid. Expired sessions are removed.
 export function sessionFor(db, config, sessionId) {
   if (!sessionId) return null;
-  const row = db.prepare(`SELECT s.*, u.username, u.name, u.role AS user_role, u.active FROM session s LEFT JOIN app_user u ON u.id = s.user_id WHERE s.id = ?`).get(sessionId);
+  const row = db.prepare(`SELECT s.*, u.username, u.name, u.role AS user_role, u.active, u.admin FROM session s LEFT JOIN app_user u ON u.id = s.user_id WHERE s.id = ?`).get(sessionId);
   if (!row) return null;
   const now = Date.now();
   if (config.auth === "password") {
@@ -127,7 +138,7 @@ export function sessionFor(db, config, sessionId) {
     }
   }
   db.prepare("UPDATE session SET last_seen = ? WHERE id = ?").run(new Date(now).toISOString(), row.id);
-  return { id: row.id, role: row.user_id ? row.user_role : row.role, user: row.user_id ? { id: row.user_id, username: row.username, name: row.name } : null };
+  return { id: row.id, role: row.user_id ? row.user_role : row.role, user: row.user_id ? { id: row.user_id, username: row.username, name: row.name, admin: row.admin === 1 } : null };
 }
 export function signOut(db, session) {
   if (!session) return;

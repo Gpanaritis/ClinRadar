@@ -183,15 +183,14 @@ async function streamAgentRun(request, response) {
   };
   const { loadData, shipmentView } = await loadModule("rules.mjs");
   if (!shipmentView(await loadData(__dirname), shipment)) return fail("Unknown shipment.");
-  if (mode === "live") {
-    const ai = claude.claudeStatus();
-    if (!ai.ready) return fail(ai.message);
-  }
+  const ai = mode === "live" ? await aiFor(request) : null;
+  if (ai && !ai.ready) return fail(ai.message);
   if (agentRunning) return fail("An agent run is already in progress.");
   agentRunning = true;
   try {
     const { resolveShipment } = await loadModule("agent.mjs");
-    const record = await resolveShipment({ root: __dirname, shipmentId: shipment, mode, emit: event => response.write("data: " + JSON.stringify(event) + "\n\n") });
+    const client = ai ? await claude.createClaude({ apiKey: ai.apiKey }) : undefined;
+    const record = await resolveShipment({ root: __dirname, shipmentId: shipment, mode, client, emit: event => response.write("data: " + JSON.stringify(event) + "\n\n") });
     const { cacheDir } = await loadModule("sources.mjs");
     const dir = cacheDir(__dirname);
     await mkdir(dir, { recursive: true });
@@ -199,7 +198,7 @@ async function streamAgentRun(request, response) {
     response.write("event: complete\ndata: " + JSON.stringify(record) + "\n\n");
     response.end();
   } catch (error) {
-    const message = claude.credentialsRefused(error) ? claude.credentialsRefused(error) :
+    const message = refusedMessage(error, ai) ? refusedMessage(error, ai) :
       error.code === "ERR_MODULE_NOT_FOUND" ? "The agent packages are not installed. Run npm install in the RegChain folder, then restart RegChain." :
       error.message || "The agent run failed.";
     console.error("Agent run failed: " + message);
@@ -222,34 +221,34 @@ async function streamPortfolioRun(request, response) {
     response.write("event: failure\ndata: " + JSON.stringify({ error: message }) + "\n\n");
     response.end();
   };
-  if (mode === "live") {
-    const ai = claude.claudeStatus();
-    if (!ai.ready) return fail(ai.message);
-  }
+  const ai = mode === "live" ? await aiFor(request) : null;
+  if (ai && !ai.ready) return fail(ai.message);
   if (agentRunning) return fail("An agent run is already in progress.");
   try {
-    const record = await runPortfolio(mode, event => response.write("data: " + JSON.stringify(event) + "\n\n"));
+    const record = await runPortfolio(mode, event => response.write("data: " + JSON.stringify(event) + "\n\n"), ai);
     response.write("event: complete\ndata: " + JSON.stringify(record) + "\n\n");
     response.end();
   } catch (error) {
     fail(error.message);
   }
 }
-// The portfolio run itself: from the page (streamed) or after a scheduled check (in the background).
-async function runPortfolio(mode, emit = () => {}) {
+// The portfolio run itself: from the page (streamed) or after a scheduled check (in the background). `ai` is what
+// aiFor() allowed for a live run: the .env key, or an administrator's connected key; null for a scripted run.
+async function runPortfolio(mode, emit = () => {}, ai = null) {
   if (agentRunning) throw new Error("An agent run is already in progress.");
   agentRunning = true;
   try {
     const { resolvePortfolio } = await loadModule("agent.mjs");
+    const client = ai ? await claude.createClaude({ apiKey: ai.apiKey }) : undefined;
     const { cacheDir } = await loadModule("sources.mjs");
     const dir = cacheDir(__dirname);
     await mkdir(dir, { recursive: true });
-    const { record } = await resolvePortfolio({ root: __dirname, mode, emit,
+    const { record } = await resolvePortfolio({ root: __dirname, mode, client, emit,
       onShipment: async run => (await loadModule("approvals.mjs")).saveRun(__dirname, run) });
     await writeFile(join(dir, "agent-portfolio-run.json"), JSON.stringify(record, null, 2));
     return record;
   } catch (error) {
-    const message = claude.credentialsRefused(error) ? claude.credentialsRefused(error) :
+    const message = refusedMessage(error, ai) ? refusedMessage(error, ai) :
       error.code === "ERR_MODULE_NOT_FOUND" ? "The agent packages are not installed. Run npm install in the RegChain folder, then restart RegChain." :
       error.message || "The portfolio run failed.";
     console.error("Portfolio run failed: " + message);
@@ -307,7 +306,9 @@ async function startScheduler() {
     "Scheduled checks: next full check " + status.nextCheckAt + ", feeds polled every " + status.pollMinutes + " minutes, regulatory sources every " + status.regulatoryHours + " hours.");
 }
 // "Have the agents prepare plans": after a scheduled check, the agents plan every blocked shipment that has no plan yet.
-// Live with Claude when it is set up, otherwise the scripted walkthrough. Plans are drafts; Clinical Supply approves.
+// Live with Claude when the server's own key (.env or cloud identity) is set up, otherwise the scripted walkthrough. A key
+// an administrator connected in Settings serves signed-in administrators only, so a scheduled run never spends it.
+// Plans are drafts; Clinical Supply approves.
 async function agentsAfterCheck() {
   const { readSettings } = await loadModule("settings.mjs");
   if (readSettings(__dirname).monitoring.onBlocked !== "plan" || agentRunning) return;
@@ -316,9 +317,11 @@ async function agentsAfterCheck() {
   const plans = await planSummaries(__dirname);
   const blocked = allShipmentChecks(await loadData(__dirname)).filter(item => item.result === "Blocked" && !plans[item.id]);
   if (!blocked.length) return;
-  const mode = claude.claudeStatus().ready ? "live" : "scripted";
+  const server = claude.claudeStatus();
+  const ai = server.ready ? { ...server, apiKey: null, source: "env" } : null;
+  const mode = ai ? "live" : "scripted";
   logger.info("agents after scheduled check", { mode, shipments: blocked.length });
-  await runPortfolio(mode);
+  await runPortfolio(mode, () => {}, ai);
 }
 function schedulerStatus() {
   return scheduler ? scheduler.status() : { on: false, reason: config.scheduler ? "starting" : "off" };
@@ -335,10 +338,39 @@ async function readJson(request) {
   try { return JSON.parse(body || "{}"); } catch { throw Object.assign(new Error("Invalid JSON."), { statusCode: 400 }); }
 }
 
-// What the page needs to know about the AI: which Claude service, whether it is set up, and if not, the one thing to do.
-function aiSetup() {
+// Whether this request may use Claude, and with which key. A key in the server's .env serves everyone who may start the
+// run, as before. A key an administrator connected in Settings (regchain-ai/vault.mjs) serves signed-in administrators
+// only, so nobody else can spend it; in local mode, without sign-in, it is never used.
+async function aiFor(request) {
   const ai = claude.claudeStatus();
-  return { service: ai.label, keySet: ai.configured, sdk: ai.installed, setup: ai.message };
+  if (ai.ready || ai.provider !== "anthropic") return { ...ai, apiKey: null, source: ai.ready ? "env" : null };
+  const vault = await loadModule("vault.mjs");
+  if (!vault.claudeKeyInfo(__dirname).set) return { ...ai, apiKey: null, source: null };
+  const connected = claude.claudeStatus({ ...process.env, ANTHROPIC_API_KEY: "connected" });
+  if (!connected.ready) return { ...connected, apiKey: null, source: null };
+  const user = config.auth === "password" ? (await (await api()).actorFor(request)).session?.user : null;
+  if (!user?.admin) return { ...ai, apiKey: null, source: "connected", message: "Claude is connected for administrators only. Sign in as an administrator to run the AI live." };
+  const apiKey = vault.readClaudeKey(__dirname);
+  if (!apiKey) return { ...ai, apiKey: null, source: "connected", message: "The connected Claude key cannot be read on this server. An administrator connects it again in Settings." };
+  return { ...connected, apiKey, source: "connected" };
+}
+// Claude refused the key: say where to fix it, .env or Settings.
+function refusedMessage(error, ai) {
+  if (ai?.source === "connected" && (error?.status === 401 || error?.status === 403)) return "Anthropic did not accept the connected Claude key. An administrator connects a new one in Settings › AI agents & integrations.";
+  return claude.credentialsRefused(error);
+}
+
+// What the page needs to know about the AI: which Claude service, whether it is set up for this person, and if not, the
+// one thing to do. Who connected a key and when is shown to everyone; its last four characters to administrators only.
+async function aiSetup(request) {
+  const ai = await aiFor(request);
+  const vault = await loadModule("vault.mjs");
+  const info = vault.claudeKeyInfo(__dirname);
+  const user = config.auth === "password" ? (await (await api()).actorFor(request)).session?.user : null;
+  const admin = Boolean(user?.admin);
+  return { service: ai.label, keySet: ai.configured, sdk: ai.installed, setup: ai.message, source: ai.source, envKey: claude.claudeStatus().configured,
+    authMode: config.auth, admin, canConnect: admin && ai.provider === "anthropic",
+    connection: info.set ? { set: true, by: info.by, at: info.at, checked: info.checked, ...(admin ? { last4: info.last4 } : {}) } : { set: false } };
 }
 
 async function latestAnalysis(caseId) {
@@ -350,7 +382,7 @@ async function latestAnalysis(caseId) {
   }
 }
 
-async function runAnalysis(caseId) {
+async function runAnalysis(caseId, client) {
   const settings = CASES[caseId];
   const { diffLines, cacheDir } = await loadModule("sources.mjs");
   const { draftChange, verifyDraft } = await loadModule("analyze.mjs");
@@ -359,7 +391,7 @@ async function runAnalysis(caseId) {
   const before = sources.find(source => source.role === "before");
   const after = sources.find(source => source.role === "after");
   const diff = settings.diff ? diffLines(before.text || "", after.text || "") : null;
-  const { draft, model, usage } = await draftChange(sources, { profile: caseId });
+  const { draft, model, usage } = await draftChange(sources, { profile: caseId, client });
   const verification = verifyDraft(draft, sources, rule);
   const result = {
     at: new Date().toISOString(),
@@ -641,11 +673,50 @@ async function handleApi(request, response, path) {
     }
     if (config.auth === "password" && API_ROLES[path]) {
       const { session } = await (await api()).actorFor(request);
-      if (session?.role !== API_ROLES[path][0]) {
+      // An administrator may start the AI runs whatever their role; approvals stay with the roles.
+      const adminRun = session?.user?.admin && ["/api/agent/run", "/api/agent/portfolio-run", "/api/ai/analyze"].includes(path);
+      if (session?.role !== API_ROLES[path][0] && !adminRun) {
         sendJson(response, 403, { error: API_ROLES[path][1] });
         return;
       }
     }
+  }
+  // An administrator connects the Claude API key (Anthropic) here, or removes it. The key is checked with Anthropic, kept
+  // encrypted on the server (regchain-ai/vault.mjs) and never sent back: answers carry at most its last four characters.
+  if ((path === "/api/ai/key" || path === "/api/ai/key/remove") && request.method === "POST") {
+    const refuse = (statusCode, message) => Object.assign(new Error(message), { statusCode });
+    try {
+      if (config.auth !== "password") throw refuse(409, "Connecting Claude here needs named users: start ClinRadar with REGCHAIN_AUTH=password and sign in as an administrator, or put the key in the .env file.");
+      const { session } = await (await api()).actorFor(request);
+      if (!session?.user) throw refuse(401, "Sign in first.");
+      if (!session.user.admin) throw refuse(403, "Only an administrator connects Claude.");
+      const settings = claude.claudeSettings();
+      if (settings.provider !== "anthropic") throw refuse(409, "This server reaches Claude through " + settings.label + ", set in the .env file. A key connected here is for the Claude API (Anthropic).");
+      const vault = await loadModule("vault.mjs");
+      const { appendAudit } = await loadModule("db.mjs");
+      const { db } = await (await api()).context();
+      const audit = (type, detail) => appendAudit(db, { actor: session.user.name, role: session.role, type, subjectType: "ai_service", subjectId: "anthropic", detail });
+      if (path === "/api/ai/key/remove") {
+        const result = vault.removeClaudeKey(__dirname);
+        if (result.removed) audit("ai.key_removed", "Claude API key ending " + result.last4 + " removed");
+      } else {
+        const key = vault.checkKeyFormat((await readJson(request)).key);
+        let checked = false;
+        try {
+          await (await claude.createClaude({ apiKey: key })).models.list({ limit: 1 });
+          checked = true;
+        } catch (error) {
+          if (error?.status === 401 || error?.status === 403) throw refuse(422, "Anthropic did not accept this key. Check that it is active and copied in full.");
+          // Anthropic could not be reached: keep the key and say it is not checked yet.
+        }
+        const info = vault.saveClaudeKey(__dirname, key, { by: session.user.name, checked });
+        audit("ai.key_connected", "Claude API key ending " + info.last4 + (checked ? ", accepted by Anthropic" : ", not checked: Anthropic could not be reached"));
+      }
+      sendJson(response, 200, await aiSetup(request));
+    } catch (error) {
+      sendJson(response, error.statusCode ?? 500, { error: error.statusCode ? error.message : "The key could not be saved." });
+    }
+    return;
   }
   const caseId = caseFrom(request.url);
   if (!caseId) {
@@ -656,14 +727,14 @@ async function handleApi(request, response, path) {
     const recorded = await latestAnalysis(caseId);
     sendJson(response, 200, {
       model: claude.claudeSettings().models.aiCheck,
-      ...aiSetup(),
+      ...(await aiSetup(request)),
       recorded: recorded ? { at: recorded.at, model: recorded.model, verified: recorded.verification.verified } : null
     });
     return;
   }
   if (path === "/api/agent/status" && request.method === "GET") {
     sendJson(response, 200, {
-      ...aiSetup(),
+      ...(await aiSetup(request)),
       models: claude.liveModels(),
       systems: await agentSystems(),
       running: agentRunning,
@@ -869,7 +940,7 @@ async function handleApi(request, response, path) {
       return;
     }
     request.resume();
-    const ai = claude.claudeStatus();
+    const ai = await aiFor(request);
     if (!ai.ready) {
       sendJson(response, 503, { error: ai.message });
       return;
@@ -880,13 +951,13 @@ async function handleApi(request, response, path) {
     }
     analysisRunning = true;
     try {
-      const result = await runAnalysis(caseId);
+      const result = await runAnalysis(caseId, ai.apiKey ? await claude.createClaude({ apiKey: ai.apiKey }) : undefined);
       const workflow = await (await api()).recordAnalysisResult(caseId, result).catch(error => { console.error("Recording the AI check failed: " + error.message); return null; });
       sendJson(response, 200, { ...result, workflow });
     } catch (error) {
       // The AI service refusing RegChain's credentials is a problem upstream (502), not a sign-in for this person (401).
       const status = error.status ? 502 : 500;
-      const message = claude.credentialsRefused(error) || error.message || "The AI check failed.";
+      const message = refusedMessage(error, ai) || error.message || "The AI check failed.";
       console.error("AI check failed: " + message);
       sendJson(response, status, { error: message });
     } finally {
