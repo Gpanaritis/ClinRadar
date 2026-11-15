@@ -45,7 +45,7 @@ flowchart LR
   CASE --> T4[Quality follow-up]
   CS[Country specifications] --> SEC[Section detail]
   SET[Settings] --> MS[Monitoring schedule]
-  SET --> AIC[AI connections]
+  SET --> AIC["AI agents & integrations"]
   SET --> SRC
 ```
 
@@ -76,7 +76,7 @@ The menu follows the day's work: **Overview · Shipments · Studies · Signals �
 | **Agents in action** | How did the watch team, the master agent and the specialists work through the shipments? | Replay, pause, step, change the speed, filter by agent |
 | **Country specifications** | What does each country require today, and what is changing? | Open a section |
 | **Settings › Monitoring schedule** | When do the checks run, and do the agents start on their own after a check? | **Save schedule**; **Run checks now** |
-| **Settings › AI connections** | Which Claude models and company systems do the agents use, and is the AI ready? | **Request a new connection**; the Quality owner approves or rejects it |
+| **Settings › AI agents & integrations** | Which agents do what, which company systems do they use, and is Claude connected? An administrator connects the Claude API key here | **Request a new connection**; the Quality owner approves or rejects it |
 | **Settings › Sources** | Did every official source and feed answer? | **Retry this check** |
 
 ### Filters
@@ -119,7 +119,7 @@ The menu follows the day's work: **Overview · Shipments · Studies · Signals �
    - **How the agents are controlled**: the guardrails and the systems connected over MCP.
 9. **The run**: when it ran, **Export the audit record**, and **Run the agents again**.
 
-Before the agents have run, the plan says **No plan yet**, with **Run the AI agents** and **Scripted walkthrough (no AI)**.
+Before the agents have run, the plan says **No plan yet**, with **Run the AI agents** and **Offline demo run**.
 
 ## Journeys
 
@@ -133,7 +133,7 @@ flowchart TD
   B -->|A confirmed disruption| C[Plan a recovery<br/>see J2]
   B -->|Plans to approve| D[Review the plans:<br/>Shipments › Needs action]
   D --> E{Plans exist?}
-  E -->|No| F[Plan all with AI agents<br/>or Scripted walkthrough]
+  E -->|No| F[Plan all with AI agents<br/>or Offline demo run]
   F --> G[Chips: To approve 19 · Escalations 2<br/>Re-planned 2]
   E -->|Yes| G
   G --> H[Prepare by: Within 7 days]
@@ -167,7 +167,7 @@ flowchart TD
 
    **Europe and Middle East** and **World** switch the area.
 3. **Review the plans** opens **Shipments › Needs action**.
-4. **Plan all with AI agents**. Without a key, use **Scripted walkthrough (no AI)**. A progress bar shows "Planning 19 shipments · N done".
+4. **Plan all with AI agents**. Without Claude, use **Offline demo run**. A progress bar shows "Planning 19 shipments · N done".
 5. Choose **Prepare by: Within 7 days**.
 6. Go down the list:
    - choose **Approve** for a plan;
@@ -198,7 +198,7 @@ flowchart TD
 flowchart TD
   A[Overview: SHP-IL-01, flight BRU → TLV cancelled,<br/>confirmed by the courier] --> B[Plan a recovery: shipment page]
   B --> C[Why it needs action: the next free flight delivers 29 Nov,<br/>the site runs out 27 Nov: 14 patients, 2 days without treatment]
-  C --> D[Scripted walkthrough, or Run the AI agents]
+  C --> D[Offline demo run, or Run the AI agents]
   D --> E[Recommended: leave from Amsterdam Schiphol,<br/>delivery stays on 26 Nov]
   D --> F[Luxembourg: Decision needed,<br/>not monitored for external risk]
   D --> G[Dispatch on 25 Nov: Does not pass,<br/>arrives after the site runs out]
@@ -214,7 +214,7 @@ flowchart TD
 3. **Route**: Central EU depot, Belgium → BRU → TLV → Tel Aviv.
    - The flight leg is marked **Confirmed disruption**, with **Open the signal**.
    - Belgium is monitored because P. Laine turned it on; Israel because of the active trial.
-4. Choose **Scripted walkthrough (no AI)**, or **Run the AI agents** if a key is set. The master agent asks for these, in order:
+4. Choose **Offline demo run**, or **Run the AI agents** if Claude is connected. The master agent asks for these, in order:
    - the patient impact;
    - the route;
    - the courier's and the depot's status;
@@ -469,7 +469,7 @@ With **Continue without it**, Belgium stays off. The strike is not matched to SH
    - Each check reads the 8 regulatory sources and the official feeds for the countries monitored for external risk.
    - It then matches every signal and change to the shipments, and re-checks the 25 shipments.
 2. After the next check, blocked shipments without a plan go to the agent team on their own. Clinical Supply finds the plans under **Shipments › Needs action** and still approves each one.
-3. **Settings › AI connections**, acting as **Clinical Supply** (P. Laine): **Request a new connection**, for example to the courier's tracking, read-only. Give its business owner and why it is needed.
+3. **Settings › AI agents & integrations**, acting as **Clinical Supply** (P. Laine): **Request a new connection**, for example to the courier's tracking, read-only. Give its business owner and why it is needed.
 4. Acting as the **Quality owner** (M. Okafor): **Approve**, or **Reject** with a reason. An approved connection is built and validated before any agent uses it; until then the agents keep to the systems listed.
 
 ### J17 · A source check failed
@@ -515,7 +515,7 @@ With **Continue without it**, Belgium stays off. The strike is not matched to SH
 2. Open **http://127.0.0.1:4173/?empty** for Scenario A: an empty workspace, with the CTMS disconnected, plans and approvals archived and the cases started again. The address goes back to normal by itself.
    - For the other scenarios, open **?fresh** (clears decisions, keeps the plans) or **?fresh=all** (no plans at all).
 3. Check **Acting as**: P. Laine · Clinical Supply.
-4. On **Shipments › Needs action**, check that **Plan all with AI agents** is enabled. If it isn't, the key is missing; use the scripted walkthrough.
+4. On **Shipments › Needs action**, check that **Plan all with AI agents** is enabled. If it isn't, Claude is not connected for this person: put the key in `.env`, have an administrator connect it under **Settings › AI agents & integrations** and sign in as that administrator, or use the **Offline demo run**.
 5. The day before, run **Plan all with AI agents** once. The plans stay, so the demo works even if the venue's internet fails.
 6. The official feeds need the internet. Without it, ClinRadar says so and uses the recorded copy.
 
@@ -571,7 +571,7 @@ With **Continue without it**, Belgium stays off. The strike is not matched to SH
 ### Scenario D · No internet, or no API key
 
 - Plans recorded beforehand stay on the Shipments page and the shipment pages, so nothing on screen depends on the venue.
-- **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers in a few seconds. Say so plainly: "This is the scripted walkthrough: the same tools and rules, with the decisions written in code instead of made by Claude."
+- **Offline demo run** runs the same steps through the same MCP servers in a few seconds. Say so plainly: "This is the offline demo: the same tools and rules, with prepared decisions instead of decisions made by Claude."
 - Mention a live run only if one has been recorded. Its time and token use are in the run's audit record.
 - Without the internet, the official feeds come from the recorded copy, and the page says so with its date.
 - The AI check on the change cases shows its last recorded result.

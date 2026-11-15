@@ -166,7 +166,7 @@ The watch agents read the alerts of their own kind (`specs.get_enterprise_alerts
 | 3:45 | Plan page | **Approve this plan** as Clinical Supply. Two drafts: a booking change for the courier and a new collection instruction for the depot | "Nothing has changed in any system yet. Each draft is approved where it belongs." |
 | 4:30 | Audit | Export the audit record; Settings shows who turned Belgium on and why | "Every decision is traceable." |
 
-Without an API key, the agents run as the scripted walkthrough (no AI) through the same MCP servers. Say so plainly. No live Claude run has been recorded yet.
+Without Claude connected, the agents run as the offline demo through the same MCP servers, with prepared decisions. Say so plainly. No live Claude run has been recorded yet.
 
 ## What is real, what is illustrative
 

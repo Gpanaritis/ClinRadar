@@ -132,12 +132,12 @@ The Regulatory SME or the Quality owner changes the schedule; for other roles th
 
 The Overview has one line for the alerts: how many, the latest, failed deliveries and where they go. An alert's link (`/?signal=…`) opens its signal.
 
-![Settings: AI connections](screens/15b-settings-ai-connections.png)
+![Settings: AI agents & integrations](screens/15b-settings-ai-connections.png)
 
-**AI connections shows:**
+**AI agents & integrations shows:**
 
-- **Agents and their models:** each agent, the Claude model it uses and the systems it reads; the verifier is fixed rules, no AI.
-- **Claude service:** which service RegChain calls (Anthropic, or the company's own AWS, Google Cloud or Microsoft Azure, set with `REGCHAIN_AI_PROVIDER`; see [Which Claude service](RegChain-AI-Deployment.md#which-claude-service)), and whether live runs are possible or only the scripted walkthrough, with the one thing still missing. Keys are never entered on the page: they stay in the server's `.env` file or the cloud identity RegChain runs under. Changing the service or a model goes through change control.
+- **The AI agent team:** each agent, its role (AI orchestrator, AI watch agent, AI specialist, or the guardrail: the verifier, whose fixed rules test every option the AI proposes) and the systems it reads. The screen shows the job, not the model; the models are set on the server (`REGCHAIN_MODEL_*`) and recorded in every run.
+- **Claude service:** which service RegChain calls (Anthropic, or the company's own AWS, Google Cloud or Microsoft Azure, set with `REGCHAIN_AI_PROVIDER`; see [Which Claude service](RegChain-AI-Deployment.md#which-claude-service)), and whether live runs are possible or only the offline demo, with the one thing still missing. With sign-in, an administrator can paste the Claude API key here (Anthropic only): it is checked with Anthropic, stored encrypted on the server and never shown again. Everyone sees who connected it and when; administrators also see its last four characters, and only they can start live runs with it (see [Administrators](RegChain-AI-Deployment.md#users-and-roles)). Otherwise the key stays in the server's `.env` file or the cloud identity RegChain runs under. Changing the service or a model goes through change control.
 - **Company systems over MCP:** each system, what the agents may do there (read-only, or draft-only for the Draft inbox), its tools and whether RegChain reached it.
 - **Request a new connection:** anyone can ask for a new system (name, what the agents would read, MCP address if known, read-only or draft-only, business owner, why). The request changes nothing. The Quality owner approves or rejects it with a reason; the person who asked cannot approve their own request. An approved connection still has to be built and validated before any agent uses it.
 
@@ -194,7 +194,7 @@ Opening a shipment shows its **Agent plan** first, with **Open the plan** or **P
 - **Filters:** search, destination, and "Prepare by" (within 7 days, within 30 days, later).
 - **Each row:** the problem, the agent plan and the next step. That is **Approve** for a plan that passes, **Acknowledge** for an escalation, or **Plan** when there is no plan yet.
 
-**Plan all with AI agents**, or **Scripted walkthrough (no AI)**, runs the agent team on every shipment and shows a progress bar. RegChain then checks the plans together, so no kits or relabelling slot is promised twice. A re-planned row says why, for example "the 16 Nov relabelling slot goes to SHP-01, which is more urgent". **What the agents did** and **How the agents are controlled** stay folded until opened.
+**Plan all with AI agents**, or **Offline demo run**, runs the agent team on every shipment and shows a progress bar. RegChain then checks the plans together, so no kits or relabelling slot is promised twice. A re-planned row says why, for example "the 16 Nov relabelling slot goes to SHP-01, which is more urgent". **What the agents did** and **How the agents are controlled** stay folded until opened.
 
 ![Plan page](screens/19b-plan-page.png)
 
@@ -249,7 +249,7 @@ When no option passes, as for SHP-03 (the German label specification takes 15 bu
 
 - **Real:** the MCP servers, the agent loop, the rule checks, the portfolio allocation, the streaming and the approval.
 - **Fictional:** the systems behind the MCP servers are data in `demo-data/supply-operations.json`.
-- **Run modes:** **Run the AI agents** needs the API key and has not been run yet. **Scripted walkthrough (no AI)** runs the same steps with coded decisions and is what these screens show.
+- **Run modes:** **Run the AI agents** needs Claude (a key in `.env`, or one an administrator connected in Settings) and has not been run yet. **Offline demo run** runs the same steps through the same systems with prepared decisions and is what these screens show.
 
 See [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
 

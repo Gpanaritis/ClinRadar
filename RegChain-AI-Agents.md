@@ -98,7 +98,7 @@ flowchart LR
   Malformed dates make an option fail; they never stop the run.
 - **Approvals** (`regchain-ai/approvals.mjs`). The server re-checks an option against the rules and the kits and slots other approved plans hold, refuses a stale or failing one, drafts the changes when someone picks an option other than the recommendation, and logs every approval and withdrawal.
 - **The server** streams each step to the page (`/api/agent/run`, `/api/agent/portfolio-run`), keeps every version of every run, and refuses a second run while one is in progress.
-- **Scripted walkthrough.** The same steps through the same MCP servers, with the decisions written in code instead of made by Claude. It works without an API key and serves as the baseline for tests.
+- **Offline demo run** (the `scripted` mode in the code and the API). The same steps through the same MCP servers, with the decisions written in code instead of made by Claude. It works without Claude and serves as the baseline for tests.
 
 ## Compliance design
 
@@ -120,11 +120,14 @@ Clinical supply runs on validated systems: IRT, ERP, the depot's warehouse syste
 
 ## Running it
 
-- **Scripted walkthrough:** works as soon as RegChain runs.
-  - For one shipment: **Shipments** → SHP-IL-01, SHP-04, SHP-01 or SHP-ES-10 → **Run the agents again** → **Scripted walkthrough (no AI)**.
-  - For every shipment: **Shipments** → **Scripted walkthrough (no AI)**.
+- **Offline demo run:** works as soon as RegChain runs.
+  - For one shipment: **Shipments** → SHP-IL-01, SHP-04, SHP-01 or SHP-ES-10 → **Run the agents again** → **Offline demo run**.
+  - For every shipment: **Shipments** → **Offline demo run**.
   - Every journey and demo script: [RegChain-AI-User-Journeys.md](RegChain-AI-User-Journeys.md).
-- **Live agents:** add `ANTHROPIC_API_KEY` to `.env` next to `serve-regchain.cjs` and restart RegChain. **Run the AI agents** is enabled once the key is set. To reach Claude through AWS, Google Cloud or Azure instead, see [Which Claude service](RegChain-AI-Deployment.md#which-claude-service).
+- **Live agents:** connect Claude in one of two ways. **Run the AI agents** is enabled once Claude is connected for the person signed in.
+  - Add `ANTHROPIC_API_KEY` to `.env` next to `serve-regchain.cjs` and restart RegChain. The key serves everyone who may start a run.
+  - Or, with sign-in, an administrator pastes the key under **Settings › AI agents & integrations**. It is checked with Anthropic and stored encrypted on the server, and only administrators can start live runs with it. See [Users and roles](RegChain-AI-Deployment.md#users-and-roles).
+  - To reach Claude through AWS, Google Cloud or Azure instead, see [Which Claude service](RegChain-AI-Deployment.md#which-claude-service).
   - A run for one shipment takes a minute or two and uses Claude Opus 5.5 for the orchestrator, Claude Sonnet 5.5 for the specialists and Claude Haiku 5.5 for any watch agent it consults.
   - A live portfolio run of 19 shipments takes several minutes and costs more. Run it once before the demo; the page loads the last run.
 - **Tests:** `npm run check:agent` makes no API call and uses a temporary cache, so approvals on the computer never change the results. It checks:

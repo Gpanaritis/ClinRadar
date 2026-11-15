@@ -1822,7 +1822,7 @@ function sectionTrials(id) {
     '<ul class="case-list" style="width:100%">'+items+'</ul>'+
     '<div class="actions">'+trigger("Back to the section","spec-section",id,"","arrow")+(caseId&&caseOpen(caseId)?trigger("Open the "+(caseId==="uk"?"UK":"Spain")+" case","open-case",caseId,"primary","arrow"):"")+'</div>');
 }
-// ---------- Settings: the monitoring schedule and the AI connections ----------
+// ---------- Settings: the monitoring schedule and the AI agents & integrations ----------
 // Served by ClinRadar, the server keeps the settings and records every change in the audit trail (regchain-ai/settings.mjs).
 // Opened as a file, the schedule is kept in this browser and the connections cannot be reached.
 let settingsTab = "monitoring";
@@ -1855,7 +1855,7 @@ function choice(name,value,checked,title,text) {
 function settingsView() {
   if(serverMode()&&!settingsState.loaded&&!settingsState.loading&&!settingsState.error) queueMicrotask(loadSettings);
   const tabs=[["monitoring","Monitoring schedule","schedule"],["alerts","Alerts","bell"],["ai","AI agents & integrations","plug"],["sources","Sources","file"]];
-  return heading("Settings","When ClinRadar checks, what the AI agents connect to, and every official source it reads."+tip("Served by ClinRadar, settings are kept on the server and every change is recorded in the audit trail with who made it and when. Keys and passwords are never entered here.","About the settings"),
+  return heading("Settings","When ClinRadar checks, what the AI agents connect to, and every official source it reads."+tip("Served by ClinRadar, settings are kept on the server and every change is recorded in the audit trail with who made it and when. Passwords are never entered here. The one key that is, the Claude API key, is entered by an administrator under AI agents & integrations, stored encrypted on the server and never shown again.","About the settings"),
     serverMode()?'<div class="actions settings-role">'+caseRoleSelect()+'</div>':"")+
     '<div class="settings-tabs" role="tablist" aria-label="Settings">'+tabs.map(([id,label,symbol])=>'<button type="button" role="tab" id="settings-tab-'+id+'" class="settings-tab" aria-selected="'+(settingsTab===id)+'" aria-controls="settings-panel" data-act="settings-tab" data-value="'+id+'">'+icon(symbol)+esc(label)+'</button>').join("")+'</div>'+
     (settingsState.error?'<p class="form-feedback" role="alert">'+esc("The settings could not be loaded: "+settingsState.error)+'</p>':"")+
@@ -1958,10 +1958,6 @@ function settingsLog(kind) {
 // What each agent works with: the systems behind its tools (regchain-ai/agent.mjs).
 const teamUses = {orchestrator:["ClinRadar","CTMS","Draft inbox"],supply:["IRT","ERP"],logistics:["IRT","ERP","Depot","Courier"],records:["eTMF","IRT"],communications:["ClinRadar"],verifier:["ClinRadar rules"],
   weather:["GDACS","Enterprise risk alerts"],transport:["Transport notices","Courier","Depot","Enterprise risk alerts"],security:["UK FCDO travel advice","Enterprise risk alerts"],regulatory:["Country Specifications","Official regulatory sources"]};
-function modelName(id) {
-  const match=/claude-(opus|sonnet|haiku|fable)-(\d+)-(\d+)/i.exec(String(id??""));
-  return match?match[1][0].toUpperCase()+match[1].slice(1).toLowerCase()+" "+match[2]+"."+match[3]:String(id??"");
-}
 // Each agent's role on screen. The models behind the roles are set on the server (REGCHAIN_MODEL_*), recorded in every
 // run and in the audit trail, and documented in RegChain-AI-Deployment.md; the screens show the job, not the model.
 function agentModel(id) {
