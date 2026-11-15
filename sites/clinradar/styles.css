@@ -64,7 +64,7 @@ img { display: block; max-width: 100%; height: auto; }
 
 /* Hero */
 .hero { background: linear-gradient(180deg, #f3f7ff 0%, #ffffff 100%); border-bottom: 1px solid var(--line); }
-.hero-inner { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 56px; align-items: center; padding-block: 72px 80px; }
+.hero-inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; padding-block: 72px 80px; }
 .eyebrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--blue); margin-bottom: 14px; }
 .hero h1 { font-size: clamp(36px, 4.6vw, 56px); line-height: 1.08; letter-spacing: -0.02em; max-width: 15ch; }
 .lead { font-size: 18px; line-height: 1.6; color: var(--muted); max-width: 60ch; }
@@ -73,16 +73,68 @@ img { display: block; max-width: 100%; height: auto; }
 .hero-note { display: flex; align-items: flex-start; gap: 8px; margin-top: 22px; font-size: 14px; color: var(--soft); }
 .hero-note .icon { width: 16px; height: 16px; margin-top: 3px; }
 
-.signals { min-width: 0; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 18px 48px rgba(16, 33, 63, .09); overflow: hidden; }
-.signals-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--line); }
-.signals-head h2 { font-size: 16px; }
-.signals-head p { font-size: 13px; color: var(--soft); margin-top: 3px; }
-.signal-list li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 14px 20px; border-top: 1px solid #edf1f6; }
-.signal-list li:first-child { border-top: 0; }
-.signal-list strong { display: block; font-size: 14px; line-height: 1.35; }
-.signal-list small { display: block; font-size: 13px; color: var(--soft); margin-top: 2px; line-height: 1.4; }
-.cc { display: grid; place-items: center; width: 36px; height: 28px; border-radius: 6px; background: var(--bg-alt); border: 1px solid var(--line); font-size: 12px; font-weight: 700; color: var(--muted); }
-.tier { font-size: 12px; font-weight: 700; padding: 4px 9px; border-radius: 999px; background: #eef2f7; color: var(--muted); white-space: nowrap; }
+/* Hero map: the same look as "Where it happens" in the app. Land from Natural Earth, inline SVG, no tiles. */
+.netmap { min-width: 0; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 18px 48px rgba(16, 33, 63, .09); overflow: hidden; }
+.netmap-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 16px 20px 14px; }
+.netmap-head h2 { font-size: 16px; }
+.netmap-head p { font-size: 13px; color: var(--soft); margin-top: 3px; line-height: 1.45; }
+.netmap-stage { position: relative; margin: 0 12px; border: 1px solid #d9e4f2; border-radius: 12px; overflow: hidden; background: radial-gradient(140% 110% at 50% -10%, #f4f8fe 0%, #e5edf9 55%, #d9e5f4 100%); }
+.hm-svg { display: block; width: 100%; height: auto; }
+.hm-grat { fill: none; stroke: #cbd9ea; stroke-width: .6; opacity: .6; vector-effect: non-scaling-stroke; }
+.hm-land { fill: #fff; stroke: #c3d2e5; stroke-width: .8; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.hm-land-shadow { fill: #c6d4e7; opacity: .75; }
+.hm-route { fill: none; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.hm-route.ready { stroke: #7d90ae; stroke-width: 1.4; opacity: .55; }
+.hm-route.clear { stroke: #15924a; stroke-width: 2.2; }
+.hm-route.potential { stroke: #d97706; stroke-width: 2.4; stroke-dasharray: 7 6; animation: hm-flow 1.4s linear infinite; }
+.hm-route.confirmed { stroke: #dc2626; stroke-width: 2.8; }
+.hm-leader { fill: none; stroke-width: 1.2; stroke-dasharray: 2 3; vector-effect: non-scaling-stroke; }
+.hm-leader.confirmed { stroke: #dc2626; }
+.hm-leader.potential { stroke: #d97706; }
+.hm-site .halo { fill: #2563eb; opacity: .16; }
+.hm-site .dot { fill: #2f6bf0; stroke: #fff; stroke-width: 1.5; }
+.hm-site.blocked .dot, .hm-site.blocked .halo { fill: #dc2626; }
+.hm-site.confirm .dot { fill: #b45309; }
+.hm-site.confirm .halo { fill: #d97706; }
+.hm-depot .sq { fill: #132446; stroke: #fff; stroke-width: 1.8; }
+.hm-depot .pip { fill: #fff; }
+.hm-event .dot { stroke: #fff; stroke-width: 2; }
+.hm-event .glyph { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; }
+.hm-event.confirmed .dot { fill: #dc2626; }
+.hm-event.potential .dot { fill: #f59e0b; }
+.hm-event.potential .halo { fill: #f59e0b; opacity: .24; }
+.hm-event .pulse { fill: #dc2626; opacity: 0; transform-box: fill-box; transform-origin: center; animation: hm-pulse 2.2s ease-out infinite; }
+.hm-event .pulse.late { animation-delay: 1.1s; }
+@keyframes hm-flow { to { stroke-dashoffset: -26; } }
+@keyframes hm-pulse { 0% { transform: scale(.38); opacity: .45; } 100% { transform: scale(1); opacity: 0; } }
+
+/* The two notes sit over empty parts of the map (Scandinavia, the Libyan coast); the dotted leaders in the SVG end at
+   their edges: the strike note's bottom at 25% of the map, the runway note's right edge at 70%. A narrow map stacks them below. */
+.netmap-stage { container-type: inline-size; }
+.note { position: absolute; width: max-content; max-width: 66%; padding: 8px 11px; border: 1px solid #d5e0ee; border-radius: 10px; background: rgba(255, 255, 255, .96); box-shadow: 0 8px 22px rgba(16, 33, 63, .12); font-size: 12px; line-height: 1.4; color: var(--muted); }
+.note p + p { margin-top: 4px; }
+.note .tier { margin-right: 5px; }
+.note-title { color: var(--ink); font-size: 12.5px; }
+.note-title span { color: var(--soft); white-space: nowrap; margin-left: 2px; }
+.note-strike { left: 27%; bottom: 75%; border-left: 3px solid #dc2626; }
+.note-runway { right: 30%; top: 82%; border-left: 3px solid #f59e0b; }
+.netmap-credit { position: absolute; right: 8px; bottom: 6px; font-size: 10.5px; color: #7d8ca3; }
+@container (max-width: 460px) {
+  .netmap-notes { padding: 8px; border-top: 1px solid #d9e4f2; background: #fff; }
+  .note { position: static; width: auto; max-width: none; box-shadow: none; }
+  .note + .note { margin-top: 8px; }
+  .hm-leader { display: none; }
+  .netmap-credit { bottom: auto; top: 6px; }
+}
+.netmap-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 12px 20px 16px; font-size: 12px; color: var(--muted); }
+.netmap-legend li { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+.key-line { width: 18px; height: 0; border-top: 3px solid; border-radius: 2px; }
+.key-line.red { border-color: #dc2626; }
+.key-line.amber { border-top-style: dashed; border-color: #d97706; }
+.key-line.green { border-color: #15924a; }
+.key-dot { width: 10px; height: 10px; border-radius: 50%; background: #2f6bf0; box-shadow: 0 0 0 3px rgba(37, 99, 235, .16); }
+.key-sq { width: 10px; height: 10px; border-radius: 2px; background: #132446; }
+.tier { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: #eef2f7; color: var(--muted); white-space: nowrap; }
 .tier-red { background: var(--red-pale); color: var(--red); }
 .tier-amber { background: var(--amber-pale); color: var(--amber); }
 .tier-green { background: var(--green-pale); color: var(--green); }
@@ -198,9 +250,8 @@ dialog::backdrop { background: rgba(10, 20, 40, .78); }
   .step-no { width: 36px; height: 36px; }
   .steps h3, .checks h3 { margin: 0; }
   .steps p, .checks p { grid-column: 2; margin-top: 4px; }
-  .signals-head, .signal-list li { padding-inline: 16px; }
-  .signal-list li { grid-template-columns: auto minmax(0, 1fr); }
-  .signal-list .tier { grid-column: 2; justify-self: start; }
+  .netmap-head, .netmap-legend { padding-inline: 14px; }
+  .netmap-stage { margin: 0 8px; }
   .facts dd { font-size: 24px; }
   .facts div { padding: 14px 16px; }
   .contact-form { grid-template-columns: 1fr; padding: 20px 16px; }
@@ -210,4 +261,5 @@ dialog::backdrop { background: rgba(10, 20, 40, .78); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: .01ms !important; }
+  .hm-route.potential, .hm-event .pulse { animation: none; }
 }
