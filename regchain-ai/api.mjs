@@ -306,6 +306,32 @@ export function createApi({ root, config = loadConfig(), allowedOrigins = config
       return { status: 200, body: { change_id: match[1], decision: body.decision, reason, by: actor, at } };
     }],
     ["GET", /^\/v1\/shipment-actions$/, async ({ db }) => ({ status: 200, body: { actions: Object.fromEntries(db.prepare("SELECT * FROM shipment_action").all().map(row => [row.shipment_id, { action: row.action, reason: row.reason, by: row.actor, at: row.recorded_at }])) } })],
+    // SupplyShield, read-only: the monitoring scope, the external signals and one shipment's route. The scope changes only
+    // through the monitoring switches (Clinical Supply, the Regulatory SME), with a reason, in the audit trail.
+    ["GET", /^\/v1\/monitoring-scope$/, async () => {
+      const ss = (await loadData(root)).supplyshield;
+      if (!ss) throw fail(404, "SupplyShield's supply network data is not installed.");
+      return { status: 200, body: ss.scope };
+    }],
+    ["GET", /^\/v1\/signals$/, async ({ url }) => {
+      const ss = (await loadData(root)).supplyshield;
+      if (!ss) throw fail(404, "SupplyShield's supply network data is not installed.");
+      const tier = url.searchParams.get("tier");
+      if (tier && !["observed", "potential", "confirmed", "clear"].includes(tier)) throw fail(400, "tier is observed, potential, confirmed or clear.");
+      return { status: 200, body: { checked_at: ss.checkedAt, counts: ss.counts, feeds: ss.feeds, signals: tier ? ss.signals.filter(signal => signal.tier === tier) : ss.signals } };
+    }],
+    ["GET", /^\/v1\/signals\/([^/]+)$/, async ({ match }) => {
+      const signal = (await loadData(root)).supplyshield?.signals.find(item => item.id === decodeURIComponent(match[1]));
+      if (!signal) throw fail(404, "Unknown signal.");
+      return { status: 200, body: signal };
+    }],
+    ["GET", /^\/v1\/shipments\/([^/]+)\/risk$/, async ({ match }) => {
+      const data = await loadData(root);
+      const id = decodeURIComponent(match[1]);
+      if (!shipmentView(data, id) || !data.supplyshield) throw fail(404, "Unknown shipment.");
+      return { status: 200, body: { shipment: id, route: data.supplyshield.routes[id] ?? null, matches: data.supplyshield.byShipment[id] ?? [],
+        checks: checkShipment(data, id).checks.filter(item => item.section === "risk" || (item.section === "permits" && item.requirement.startsWith("The import approval covers"))) } };
+    }],
     ["PUT", /^\/v1\/shipment-actions\/([^/]+)$/, async ({ db, model, request, match }) => {
       requireSameSite(request);
       const body = validate("shipmentAction", await readBody(request));

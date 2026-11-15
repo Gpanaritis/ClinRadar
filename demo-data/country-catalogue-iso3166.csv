@@ -1,0 +1,250 @@
+﻿iso2,iso3,iso_numeric,country_or_territory_name,default_monitoring,activation_rule,source_coverage,source_registry_owner,notes
+AF,AFG,004,Afghanistan,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+AL,ALB,008,Albania,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+DZ,DZA,012,Algeria,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+AS,ASM,016,American Samoa,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+AD,AND,020,Andorra,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+AO,AGO,024,Angola,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+AI,AIA,660,Anguilla,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+AQ,ATA,010,Antarctica,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+AG,ATG,028,Antigua and Barbuda,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+AR,ARG,032,Argentina,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+AM,ARM,051,Armenia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+AW,ABW,533,Aruba,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+AU,AUS,036,Australia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+AT,AUT,040,Austria,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+AZ,AZE,031,Azerbaijan,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BS,BHS,044,Bahamas,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BH,BHR,048,Bahrain,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BD,BGD,050,Bangladesh,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BB,BRB,052,Barbados,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BY,BLR,112,Belarus,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BE,BEL,056,Belgium,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BZ,BLZ,084,Belize,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BJ,BEN,204,Benin,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BM,BMU,060,Bermuda,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BT,BTN,064,Bhutan,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BO,BOL,068,"Bolivia, Plurinational State of",OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BQ,BES,535,"Bonaire, Sint Eustatius and Saba",OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BA,BIH,070,Bosnia and Herzegovina,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BW,BWA,072,Botswana,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BV,BVT,074,Bouvet Island,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BR,BRA,076,Brazil,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+IO,IOT,086,British Indian Ocean Territory,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BN,BRN,096,Brunei Darussalam,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BG,BGR,100,Bulgaria,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BF,BFA,854,Burkina Faso,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BI,BDI,108,Burundi,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CV,CPV,132,Cabo Verde,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+KH,KHM,116,Cambodia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CM,CMR,120,Cameroon,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CA,CAN,124,Canada,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+KY,CYM,136,Cayman Islands,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CF,CAF,140,Central African Republic,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TD,TCD,148,Chad,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CL,CHL,152,Chile,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CN,CHN,156,China,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CX,CXR,162,Christmas Island,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CC,CCK,166,Cocos (Keeling) Islands,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CO,COL,170,Colombia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+KM,COM,174,Comoros,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CG,COG,178,Congo,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CD,COD,180,"Congo, The Democratic Republic of the",OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CK,COK,184,Cook Islands,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CR,CRI,188,Costa Rica,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+HR,HRV,191,Croatia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CU,CUB,192,Cuba,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CW,CUW,531,Curaçao,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CY,CYP,196,Cyprus,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CZ,CZE,203,Czechia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CI,CIV,384,Côte d'Ivoire,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+DK,DNK,208,Denmark,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+DJ,DJI,262,Djibouti,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+DM,DMA,212,Dominica,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+DO,DOM,214,Dominican Republic,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+EC,ECU,218,Ecuador,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+EG,EGY,818,Egypt,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SV,SLV,222,El Salvador,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GQ,GNQ,226,Equatorial Guinea,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+ER,ERI,232,Eritrea,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+EE,EST,233,Estonia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SZ,SWZ,748,Eswatini,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+ET,ETH,231,Ethiopia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+FK,FLK,238,Falkland Islands (Malvinas),OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+FO,FRO,234,Faroe Islands,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+FJ,FJI,242,Fiji,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+FI,FIN,246,Finland,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+FR,FRA,250,France,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GF,GUF,254,French Guiana,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+PF,PYF,258,French Polynesia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TF,ATF,260,French Southern Territories,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GA,GAB,266,Gabon,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GM,GMB,270,Gambia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GE,GEO,268,Georgia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+DE,DEU,276,Germany,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GH,GHA,288,Ghana,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GI,GIB,292,Gibraltar,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GR,GRC,300,Greece,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GL,GRL,304,Greenland,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GD,GRD,308,Grenada,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GP,GLP,312,Guadeloupe,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GU,GUM,316,Guam,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GT,GTM,320,Guatemala,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GG,GGY,831,Guernsey,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GN,GIN,324,Guinea,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GW,GNB,624,Guinea-Bissau,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GY,GUY,328,Guyana,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+HT,HTI,332,Haiti,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+HM,HMD,334,Heard Island and McDonald Islands,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+VA,VAT,336,Holy See (Vatican City State),OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+HN,HND,340,Honduras,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+HK,HKG,344,Hong Kong,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+HU,HUN,348,Hungary,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+IS,ISL,352,Iceland,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+IN,IND,356,India,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+ID,IDN,360,Indonesia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+IR,IRN,364,"Iran, Islamic Republic of",OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+IQ,IRQ,368,Iraq,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+IE,IRL,372,Ireland,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+IM,IMN,833,Isle of Man,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+IL,ISR,376,Israel,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+IT,ITA,380,Italy,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+JM,JAM,388,Jamaica,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+JP,JPN,392,Japan,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+JE,JEY,832,Jersey,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+JO,JOR,400,Jordan,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+KZ,KAZ,398,Kazakhstan,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+KE,KEN,404,Kenya,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+KI,KIR,296,Kiribati,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+KP,PRK,408,"Korea, Democratic People's Republic of",OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+KR,KOR,410,"Korea, Republic of",OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+KW,KWT,414,Kuwait,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+KG,KGZ,417,Kyrgyzstan,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+LA,LAO,418,Lao People's Democratic Republic,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+LV,LVA,428,Latvia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+LB,LBN,422,Lebanon,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+LS,LSO,426,Lesotho,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+LR,LBR,430,Liberia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+LY,LBY,434,Libya,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+LI,LIE,438,Liechtenstein,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+LT,LTU,440,Lithuania,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+LU,LUX,442,Luxembourg,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MO,MAC,446,Macao,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MG,MDG,450,Madagascar,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MW,MWI,454,Malawi,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MY,MYS,458,Malaysia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MV,MDV,462,Maldives,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+ML,MLI,466,Mali,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MT,MLT,470,Malta,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MH,MHL,584,Marshall Islands,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MQ,MTQ,474,Martinique,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MR,MRT,478,Mauritania,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MU,MUS,480,Mauritius,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+YT,MYT,175,Mayotte,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MX,MEX,484,Mexico,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+FM,FSM,583,"Micronesia, Federated States of",OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MD,MDA,498,"Moldova, Republic of",OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MC,MCO,492,Monaco,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MN,MNG,496,Mongolia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+ME,MNE,499,Montenegro,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MS,MSR,500,Montserrat,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MA,MAR,504,Morocco,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MZ,MOZ,508,Mozambique,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MM,MMR,104,Myanmar,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+NA,NAM,516,Namibia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+NR,NRU,520,Nauru,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+NP,NPL,524,Nepal,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+NL,NLD,528,Netherlands,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+NC,NCL,540,New Caledonia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+NZ,NZL,554,New Zealand,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+NI,NIC,558,Nicaragua,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+NE,NER,562,Niger,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+NG,NGA,566,Nigeria,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+NU,NIU,570,Niue,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+NF,NFK,574,Norfolk Island,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MK,MKD,807,North Macedonia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MP,MNP,580,Northern Mariana Islands,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+NO,NOR,578,Norway,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+OM,OMN,512,Oman,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+PK,PAK,586,Pakistan,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+PW,PLW,585,Palau,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+PS,PSE,275,"Palestine, State of",OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+PA,PAN,591,Panama,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+PG,PNG,598,Papua New Guinea,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+PY,PRY,600,Paraguay,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+PE,PER,604,Peru,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+PH,PHL,608,Philippines,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+PN,PCN,612,Pitcairn,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+PL,POL,616,Poland,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+PT,PRT,620,Portugal,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+PR,PRI,630,Puerto Rico,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+QA,QAT,634,Qatar,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+RO,ROU,642,Romania,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+RU,RUS,643,Russian Federation,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+RW,RWA,646,Rwanda,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+RE,REU,638,Réunion,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+BL,BLM,652,Saint Barthélemy,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SH,SHN,654,"Saint Helena, Ascension and Tristan da Cunha",OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+KN,KNA,659,Saint Kitts and Nevis,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+LC,LCA,662,Saint Lucia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+MF,MAF,663,Saint Martin (French part),OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+PM,SPM,666,Saint Pierre and Miquelon,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+VC,VCT,670,Saint Vincent and the Grenadines,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+WS,WSM,882,Samoa,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SM,SMR,674,San Marino,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+ST,STP,678,Sao Tome and Principe,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SA,SAU,682,Saudi Arabia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SN,SEN,686,Senegal,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+RS,SRB,688,Serbia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SC,SYC,690,Seychelles,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SL,SLE,694,Sierra Leone,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SG,SGP,702,Singapore,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SX,SXM,534,Sint Maarten (Dutch part),OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SK,SVK,703,Slovakia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SI,SVN,705,Slovenia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SB,SLB,090,Solomon Islands,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SO,SOM,706,Somalia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+ZA,ZAF,710,South Africa,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GS,SGS,239,South Georgia and the South Sandwich Islands,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SS,SSD,728,South Sudan,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+ES,ESP,724,Spain,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+LK,LKA,144,Sri Lanka,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SD,SDN,729,Sudan,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SR,SUR,740,Suriname,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SJ,SJM,744,Svalbard and Jan Mayen,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SE,SWE,752,Sweden,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+CH,CHE,756,Switzerland,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+SY,SYR,760,Syrian Arab Republic,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TW,TWN,158,"Taiwan, Province of China",OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TJ,TJK,762,Tajikistan,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TZ,TZA,834,"Tanzania, United Republic of",OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TH,THA,764,Thailand,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TL,TLS,626,Timor-Leste,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TG,TGO,768,Togo,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TK,TKL,772,Tokelau,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TO,TON,776,Tonga,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TT,TTO,780,Trinidad and Tobago,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TN,TUN,788,Tunisia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TM,TKM,795,Turkmenistan,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TC,TCA,796,Turks and Caicos Islands,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TV,TUV,798,Tuvalu,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+TR,TUR,792,Türkiye,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+UG,UGA,800,Uganda,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+UA,UKR,804,Ukraine,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+AE,ARE,784,United Arab Emirates,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+GB,GBR,826,United Kingdom,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+US,USA,840,United States,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+UM,UMI,581,United States Minor Outlying Islands,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+UY,URY,858,Uruguay,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+UZ,UZB,860,Uzbekistan,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+VU,VUT,548,Vanuatu,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+VE,VEN,862,"Venezuela, Bolivarian Republic of",OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+VN,VNM,704,Viet Nam,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+VG,VGB,092,"Virgin Islands, British",OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+VI,VIR,850,"Virgin Islands, U.S.",OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+WF,WLF,876,Wallis and Futuna,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+EH,ESH,732,Western Sahara,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+YE,YEM,887,Yemen,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+ZM,ZMB,894,Zambia,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+ZW,ZWE,716,Zimbabwe,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial
+AX,ALA,248,Åland Islands,OFF,Only if active company study-country or explicitly user enabled,UNVERIFIED,,Reference vocabulary; not evidence of active trial

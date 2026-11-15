@@ -1,6 +1,12 @@
-# TrialReady · RegChain AI
+# TrialReady · SupplyShield AI
 
-RegChain AI is a browser prototype for country regulatory and clinical supply intelligence. **Shipment checks** tests every planned shipment against its destination's Country Specification before it leaves the depot. Changes to the rules reach the specification through governed cases: open one from the regional overview to see evidence, study impact, regulatory review and Quality follow-up.
+SupplyShield AI (formerly RegChain AI) is a browser prototype for external risk and country regulatory intelligence in global clinical supply.
+
+- **Monitoring scope** comes only from the company's authorised active-trial portfolio. Countries with an operationally active trial are monitored automatically. Other countries are recommended with their evidence (depots, suppliers, transit routes, hubs, borders, sea neighbours, current official advice) and stay off until a person turns them on.
+- **Signals** matches external events and regulatory changes to the company's own shipments, facilities, routes and deadlines. Each match is an observed event, a potential exposure, a confirmed disruption or not affected after check.
+- **Shipments** tests every planned shipment against its destination's Country Specification and against the events on its route. AI agents propose recovery options, fixed rules check them, and a named person approves.
+
+The product brief, how each of its twelve rules is built, the demonstration and what is real or illustrative are in [SupplyShield-AI.md](SupplyShield-AI.md). The evidence behind it is in [SupplyShield-AI-Research.md](SupplyShield-AI-Research.md). The files and settings keep the RegChain name (`serve-regchain.cjs`, `regchain-ai/`, `REGCHAIN_*`).
 
 ## Run locally
 
@@ -8,7 +14,7 @@ On Windows, open **Start-RegChain.cmd** from the repository folder. If Node.js i
 
 From a terminal on any system with Node.js, run `node serve-regchain.cjs` from the repository folder and open **http://127.0.0.1:4173/**. Use the same address and browser profile to keep saved review decisions and replay settings across sessions. File-mode browser storage varies by browser and is separate from localhost.
 
-The prototype uses a real UK rule change, a fictional trial portfolio, a fictional Spain scenario and simulated roles. The screens carry no demo labels; this README and the docs below say what is real and what is simulated. The configurable schedule re-runs recorded checks while the dashboard is open.
+The prototype uses a real UK rule change, real official feeds (UK FCDO travel advice and GDACS disaster alerts), a fictional trial portfolio and supply network, illustrative events and rules (labelled so on screen) and simulated roles. The screens carry no demo labels; this README and the docs below say what is real and what is simulated. The configurable schedule re-runs recorded checks while the dashboard is open.
 
 The page carries a copy of the data in `demo-data/`, so the full portfolio and the Spain scenario also show when the file is opened directly. After changing anything in `demo-data/`, run `npm run embed:data` (and `npm run check:data` to confirm the copy is current). The local server always reads the files themselves.
 
@@ -24,6 +30,25 @@ Served by RegChain, the dashboard keeps nothing important in the browser:
 A regulation pipeline snapshots the official sources, detects meaningful changes, resolves the evidence passages, records the AI extraction and assesses the portfolio with fixed rules. The `/v1` API follows section 9 of the specification. Its contract is at http://127.0.0.1:4173/v1/openapi.json, and its health at http://127.0.0.1:4173/v1/health.
 
 `npm run check:server` tests the database, the workflow against the page's own code, the acceptance answer key, the pipeline and the API, without network or AI calls. `npm run check` runs every check. Details: [RegChain-AI-Data-And-API.md](RegChain-AI-Data-And-API.md).
+
+## Monitoring scope and external risk
+
+SupplyShield reads the CTMS snapshot in `demo-data/supply-network.json` with the company's status policy in `config/supplyshield.yaml`, from the SupplyShield starter pack. Of the 22 studies in the snapshot, 18 count. It monitors the 16 countries with an operationally active trial, and EU rules apply to the 10 of them in the EU. It excludes 5 registered countries without an active site. Portugal's contradictory status is shown for confirmation.
+
+It recommends 50 more countries, each with its evidence:
+
+- 6 with a supply link: Belgium, Switzerland, India, Singapore, the United Arab Emirates and Luxembourg.
+- Austria, where a suspended study still has product at its site.
+- 14 next to an active-trial country with current official advice.
+- 29 on proximity only.
+
+Each recommended country has two switches, both off until a person turns them on: **External risk** for Clinical Supply, **Regulatory and customs** for the Regulatory SME. A switch needs a reason, and every change goes into the audit trail. A recommendation can also be dismissed with a reason. In the prepared workspace, Belgium's external-risk switch is on, as a decision P. Laine recorded on 2 Nov 2026.
+
+The orchestrator agent works under the starter pack's master instructions (`SupplyShield-AI-Master-Prompt.md`). [SupplyShield-AI.md](SupplyShield-AI.md) lists how each of the pack's 30 acceptance tests is covered.
+
+**Run the check** reads the official feeds live for the monitored countries: UK FCDO travel advice through the GOV.UK content API (Open Government Licence) and GDACS alerts. A country that doesn't answer keeps its last good record. `npm run record:feeds` refreshes the recorded copy (`demo-data/recorded-feeds.json`) that the demo uses without internet. Only metadata is kept: the alert status, the update time and the change note.
+
+The public API has read-only routes for SupplyShield: `/v1/monitoring-scope`, `/v1/signals` (optionally `?tier=confirmed`), `/v1/signals/{id}` and `/v1/shipments/{id}/risk`. `npm run check:supplyshield` tests the scope, the recommendations, the tiers, the option verifier, the roles, the audit trail, the state with no portfolio connected and the live-feed rules, without network or AI calls.
 
 ## Running it for a team
 
@@ -58,7 +83,13 @@ RegChain uses Claude models only. To reach them through AWS, Google Cloud or Mic
 
 ## First run and the agents at work
 
-Open **http://127.0.0.1:4173/?empty** to start from an empty workspace (one-person mode only): plans and approvals are archived and the cases start again. The Overview then shows what RegChain is connected to and one button, **Run the first check**. It reads the official sources and finds three changes (UK labelling, a Spanish notice, an Israeli label rule), assesses what each one means, re-checks all 25 planned shipments and hands the 18 that need action to the agent team. The page then opens **Agents in action**.
+Open **http://127.0.0.1:4173/?empty** to start from an empty workspace (one-person mode only). Plans and approvals are archived, the cases start again, the CTMS is disconnected and every monitoring decision is cleared; nothing is deleted from the audit trail. The Overview says that SupplyShield cannot determine its monitoring scope and monitors nothing. The first check then works through these steps:
+
+1. It connects the CTMS and derives the scope.
+2. It shows the recommended countries, all off, and invites you to turn on external-risk monitoring for Belgium, where the central EU depot is.
+3. It reads the official sources and feeds.
+4. It sorts the signals into tiers and re-checks all 25 planned shipments.
+5. It hands the shipments that need action to the agent team, and the page opens **Agents in action**.
 
 **Agents in action**, in the menu, shows the team at work: the master agent ranks the shipments and hands tasks to the Supply, Logistics, Records and Communications agents; they read IRT, ERP, the depot and the eTMF over MCP; the RegChain verifier (fixed rules, no AI) tests every option. Replay any run step by step at 1× to 8×, filter the steps by agent, or pick one shipment. A live run streams in as it happens.
 
@@ -68,18 +99,20 @@ The Israel scenario ([RegChain-AI-Israel-Scenario.md](RegChain-AI-Israel-Scenari
 
 ## Agents
 
-**Agent plans**, in the menu, lists every shipment that needs action, most urgent first. Each one opens a plan page where an orchestrator (Claude Opus 5.5) and four specialist agents (Claude Sonnet 5.5) work through the problem:
+**Shipments › Needs action** lists every shipment that needs action, most urgent first. Each one opens a plan page where an orchestrator (Claude Opus 5.5, with SupplyShield's instructions) and four specialist agents (Claude Sonnet 5.5) work through the problem:
 
-- They read IRT, ERP, the depot and the eTMF through six MCP servers, which are read-only except for a draft inbox.
-- They propose two or three options and check each one against RegChain's rules.
-- They draft the changes for people to approve.
+- They read IRT, ERP, the depot, the eTMF, the CTMS and the courier through eight MCP servers, which are read-only except for a draft inbox.
+- They propose two or three options and check each one against SupplyShield's rules. For a confirmed disruption these can include leaving from another qualified airport (`reroute`) or a later dispatch.
+- They draft the changes for people to approve, in IRT, ERP, the depot, the courier, the QMS or the site portal.
 
 Only options that pass the fixed rules can be approved, only by Clinical Supply, and the server checks each one again before recording it. Each draft still needs approval in its own validated system. Approvals and withdrawals are stored in the database with the audit trail, and every version of every run is kept in `.regchain-cache/`.
 
-**Plan all with AI agents**, on Agent plans, runs the agents on every shipment that needs action, most urgent first. RegChain then checks the plans together so no kits or relabelling slot is promised twice: today SHP-06 moves to the 18 Nov slot because SHP-01 needs the 16 Nov one more urgently.
+**Plan all with AI agents**, on Shipments, runs the agents on every shipment that needs action, most urgent first: 19 today, 17 with a plan and 2 escalated. SupplyShield then checks the plans together so that no kit or relabelling slot is promised twice. Today SHP-06 moves to the 18 Nov slot because SHP-01 needs the 16 Nov one more urgently. SHP-IL-01, whose flight the Brussels strike cancelled, leaves from Amsterdam instead.
 
-**Run the AI agents** needs the same `.env` key as the AI step. **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers without calling Claude. To rehearse from a clean start, open **http://127.0.0.1:4173/?fresh** (clears decisions, keeps plans) or **?fresh=all** (also clears plans). Nothing is deleted: cleared approvals are kept in full in the audit trail, and runs are archived in `.regchain-cache/`. Starting fresh works only in the one-person mode. `npm run check:agent` tests the rules, the six MCP servers, scripted runs, the portfolio allocation, server-side approvals and the live loop with a stand-in for Claude, without calling the API. The systems behind the MCP servers are fictional data in `demo-data/supply-operations.json`. Design and compliance notes: [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
+**Run the AI agents** needs the same `.env` key as the AI step. **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers without calling Claude. To rehearse from a clean start, open **http://127.0.0.1:4173/?fresh** (clears decisions, keeps plans) or **?fresh=all** (also clears plans). Nothing is deleted: cleared approvals are kept in full in the audit trail, and runs are archived in `.regchain-cache/`. Starting fresh works only in the one-person mode. `npm run check:agent` tests the rules, the eight MCP servers, scripted runs, the portfolio allocation, server-side approvals and the live loop with a stand-in for Claude, without calling the API. The systems behind the MCP servers are fictional data in `demo-data/supply-operations.json` and `demo-data/supply-network.json`. Design and compliance notes: [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
 
+- [SupplyShield AI: the brief, how each rule is built, the demonstration, what is real](SupplyShield-AI.md)
+- [Research: clinical supply failures, business continuity, competitors, and whether the problem is real](SupplyShield-AI-Research.md)
 - [Database, pipeline and API: the server side, how it works and how it is tested](RegChain-AI-Data-And-API.md)
 - [Deployment: settings, Docker, HTTPS, users, backups and upgrades](RegChain-AI-Deployment.md)
 - [Validation outline: intended use, GAMP 5, Part 11 and Annex 11, and what a company still decides](RegChain-AI-Validation.md)

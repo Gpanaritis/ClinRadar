@@ -301,6 +301,17 @@ async function runAnalysis(caseId) {
 let apiPromise = null;
 const api = () => (apiPromise ??= loadModule("api.mjs").then(module => module.createApi({ root: __dirname, config, allowedOrigins, logger, analyze: caseId => runAnalysis(caseId) })));
 
+// SupplyShield's state for the page: the same payload the page carries for file mode, plus who is asking and what they
+// may switch (Clinical Supply: external risk; the Regulatory SME: regulatory and customs).
+async function supplyShieldState(request) {
+  const { loadData, supplyShieldPayload } = await loadModule("rules.mjs");
+  const { MONITORING_ROLES } = await loadModule("supplyshield.mjs");
+  const payload = supplyShieldPayload(await loadData(__dirname));
+  if (!payload) return { available: false };
+  const { session } = await (await api()).actorFor(request);
+  return { available: true, ...payload, role: session?.role ?? null, roles: MONITORING_ROLES, authMode: config.auth };
+}
+
 async function handleApi(request, response, path) {
   const starts = request.method !== "GET" || path === "/api/agent/run" || path === "/api/agent/portfolio-run";
   if (starts) {
@@ -403,7 +414,7 @@ async function handleApi(request, response, path) {
       const { session, label } = await (await api()).actorFor(request);
       if (path === "/api/agent/start-fresh") {
         if (config.auth !== "local") throw Object.assign(new Error("Starting fresh is only for rehearsals on one computer."), { statusCode: 403 });
-        sendJson(response, 200, await startFresh(__dirname, { plans: Boolean(body.plans), by: label ?? "Start fresh link" }));
+        sendJson(response, 200, await startFresh(__dirname, { plans: Boolean(body.plans), empty: Boolean(body.empty), by: label ?? "Start fresh link" }));
         return;
       }
       if (!session?.role) throw Object.assign(new Error("Choose a role first."), { statusCode: 401 });
@@ -412,6 +423,60 @@ async function handleApi(request, response, path) {
         : await withdrawPlan(__dirname, { shipment: body.shipment, by: label, role: session.role }));
     } catch (error) {
       sendJson(response, error.statusCode || 500, { error: error.message || "The approval could not be recorded." });
+    }
+    return;
+  }
+  // SupplyShield: the monitoring scope from the active-trial portfolio, the recommended countries and their switches, and
+  // every external signal matched to the shipments (regchain-ai/supplyshield.mjs, monitoring.mjs, feeds.mjs).
+  if (path === "/api/supplyshield" && request.method === "GET") {
+    try {
+      sendJson(response, 200, await supplyShieldState(request));
+    } catch (error) {
+      sendJson(response, error.statusCode || 500, { error: error.message || "SupplyShield could not be read." });
+    }
+    return;
+  }
+  if ((path === "/api/supplyshield/monitoring" || path === "/api/supplyshield/recommendation" || path === "/api/supplyshield/portfolio" || path === "/api/supplyshield/check") && request.method === "POST") {
+    if (agentRunning && path !== "/api/supplyshield/check") {
+      sendJson(response, 409, { error: "An agent run is in progress. Change the monitoring scope when it has finished." });
+      return;
+    }
+    try {
+      const body = await readJson(request);
+      const { session, label } = await (await api()).actorFor(request);
+      if (!session?.role) throw Object.assign(new Error("Choose a role first."), { statusCode: 401 });
+      const monitoring = await loadModule("monitoring.mjs");
+      const { loadData } = await loadModule("rules.mjs");
+      const data = await loadData(__dirname);
+      if (!data.network) throw Object.assign(new Error("The supply network data is missing."), { statusCode: 500 });
+      const who = { by: label, role: session.role };
+      if (path === "/api/supplyshield/monitoring") {
+        const allowed = data.supplyshield.scope.recommendations.map(item => item.code);
+        monitoring.setMonitoring(__dirname, data.network, { country: body.country, kind: body.kind, enabled: body.enabled, reason: body.reason }, { ...who, allowed, names: data.supplyshield.names });
+      } else if (path === "/api/supplyshield/recommendation") {
+        const allowed = data.supplyshield.scope.recommendations.map(item => item.code);
+        monitoring.reviewRecommendation(__dirname, data.network, { country: body.country, decision: body.decision, reason: body.reason }, { ...who, allowed, names: data.supplyshield.names });
+      } else if (path === "/api/supplyshield/portfolio") {
+        if (config.auth !== "local") throw Object.assign(new Error("The CTMS connection is part of the deployment, not a page setting."), { statusCode: 403 });
+        monitoring.setPortfolioConnection(__dirname, data.network, Boolean(body.connected), who);
+      } else {
+        // A live check of the official feeds, for the countries monitored for external risk. A country that does not
+        // answer keeps its last good record; the audit entry says how many answered.
+        const { fetchFeeds, saveFeeds } = await loadModule("feeds.mjs");
+        const codes = data.supplyshield.scope.monitored.external;
+        const feeds = await fetchFeeds({ codes, geography: data.network.geography, today: data.today });
+        await saveFeeds(__dirname, feeds);
+        const after = (await loadData(__dirname)).supplyshield;
+        const { appendAudit, openDatabase, transaction } = await loadModule("db.mjs");
+        const db = openDatabase(__dirname);
+        const failed = Object.values(feeds.fcdo).filter(item => !item.ok).length;
+        transaction(db, () => appendAudit(db, { actor: label ?? "SupplyShield", role: session.role, type: "supplyshield.checked", subjectType: "monitoring", subjectId: feeds.fetchedAt,
+          detail: `Official feeds checked for ${codes.length} monitored countries${failed ? ` (${failed} did not answer)` : ""}; ${after.counts.confirmed} confirmed disruptions, ${after.counts.potential} potential exposures, ${after.counts.observed} observed events`,
+          data: { countries: codes, failed, gdacs: feeds.gdacs.ok, counts: after.counts } }));
+      }
+      sendJson(response, 200, await supplyShieldState(request));
+    } catch (error) {
+      sendJson(response, error.statusCode || 500, { error: error.message || "The change could not be recorded." });
     }
     return;
   }

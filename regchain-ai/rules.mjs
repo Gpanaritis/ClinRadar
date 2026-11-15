@@ -7,6 +7,10 @@ import { join } from "node:path";
 import { readFileSync, renameSync } from "node:fs";
 import { appendAudit, openDatabase, transaction } from "./db.mjs";
 import { cacheDir } from "./sources.mjs";
+import { computeSupplyShield, riskChecks, routeFor } from "./supplyshield.mjs";
+import { readFeeds } from "./feeds.mjs";
+import { readScopeState } from "./monitoring.mjs";
+import { parseYaml } from "./yaml-lite.mjs";
 
 // Approvals made before they moved into the database were kept in agent-approvals.json in the cache folder. They are
 // imported once, each with an audit entry, and the file is renamed so it is never read again.
@@ -62,15 +66,50 @@ function mergeIsraelOperations(ops, israel) {
 export async function loadData(root) {
   const read = async name => JSON.parse(await readFile(join(root, "demo-data", name), "utf8"));
   const optional = name => read(name).catch(error => { if (error.code === "ENOENT") return null; throw error; });
-  const [portfolio, spain, specifications, ops, israel, approvals] = await Promise.all([
+  const [portfolio, spain, specifications, ops, israel, approvals, network, recorded, feeds] = await Promise.all([
     read("uk-labelling-portfolio.json"), read("spain-scenario.json"), read("country-specifications.json"), read("supply-operations.json"), optional("israel-scenario.json"), readApprovals(root),
+    optional("supply-network.json"), optional("external-signals.json"), readFeeds(root),
   ]);
   const specs = { ...specifications.countries, es: spain.specification, ...(israel?.specifications ?? {}) };
   if (israel) mergeIsraelOperations(ops, israel);
-  const data = { portfolio, spain, israel, specs, ops, today: portfolio.assessment_as_of.slice(0, 10), ukEffective: "2026-04-28", approvals };
+  const data = { portfolio, spain, israel, specs, ops, network, today: portfolio.assessment_as_of.slice(0, 10), ukEffective: "2026-04-28", approvals };
   data.reservations = Object.entries(approvals).flatMap(([shipment, approval]) => planReservations(data, shipment, approval.actions ?? []));
+  if (network) {
+    // SupplyShield: the monitoring scope from the active-trial portfolio, read with the company's status policy
+    // (config/supplyshield.yaml), and every external signal matched to our shipments.
+    const [configText, catalogueText] = await Promise.all([
+      readFile(join(root, "config", "supplyshield.yaml"), "utf8").catch(() => ""), readFile(join(root, "demo-data", "country-catalogue-iso3166.csv"), "utf8").catch(() => ""),
+    ]);
+    const state = readScopeState(root, network);
+    data.scopeState = state;
+    data.config = configText ? parseYaml(configText) : {};
+    data.catalogue = readCatalogue(catalogueText);
+    data.supplyshield = computeSupplyShield({ network, portfolio, spain, israel, views: allShipmentIds(data).map(id => shipmentView(data, id)), choices: state.choices,
+      connected: state.connected, feeds, recorded, today: data.today, config: data.config, catalogue: data.catalogue, specs });
+  }
   return data;
 }
+
+// The ISO 3166 country catalogue: a vocabulary of names and codes, never a list of countries to monitor.
+function readCatalogue(text) {
+  const names = {};
+  const rows = String(text).replace(/\r/g, "").split("\n").filter(Boolean);
+  for (const row of rows.slice(1)) {
+    const cells = [];
+    let cell = "";
+    let quoted = false;
+    for (const char of row) {
+      if (char === '"') quoted = !quoted;
+      else if (char === "," && !quoted) { cells.push(cell); cell = ""; }
+      else cell += char;
+    }
+    cells.push(cell);
+    if (/^[A-Z]{2}$/.test(cells[0])) names[cells[0]] = cells[3];
+  }
+  return names;
+}
+
+export const allShipmentIds = data => [...data.portfolio.shipments.map(item => item.id), ...data.spain.trial.shipments.map(item => item.id), ...(data.israel?.trial.shipments.map(item => item.id) ?? [])];
 
 const DAY = 86400000;
 export const sectionNames = {
@@ -194,6 +233,21 @@ function israelChecks(data, view, overrides, dispatch, prep) {
     checks.push({ section: "import", requirement: "A Ministry of Health import approval for this shipment", result: approval?.status === "approved" ? "Pass" : approval?.status === "requested" ? "Confirm" : "Missing",
       detail: approval?.status === "approved" ? `Import approval ${approval.number} is on record.` : approval?.status === "requested"
         ? `Requested on ${approval.requested}; usually granted in ${approval.typicalBusinessDays} business days. Confirm it before dispatch.` : "No import approval is on record." });
+    // The approval's own terms: the port of entry, the quantity, the consignee and the validity cover this shipment.
+    const permit = (data.network?.permits ?? []).find(item => item.shipment === view.id);
+    if (permit) {
+      const route = routeFor(data.network, view, overrides);
+      const arrival = route?.arrival ?? null;
+      const kits = view.kits ?? 0;
+      const problems = [
+        arrival && arrival !== permit.portOfEntry ? `the shipment would arrive at ${arrival}, but ${permit.id} names ${permit.portOfEntry} as the port of entry` : "",
+        kits > permit.kits ? `${kits} kits, but ${permit.id} covers ${permit.kits}` : "",
+        delivery > permit.validUntil ? `delivery on ${delivery}, after ${permit.id} expires on ${permit.validUntil}` : "",
+        permit.consignee !== view.hospital ? `${permit.id} names ${permit.consignee} as consignee, not ${view.hospital}` : "",
+      ].filter(Boolean);
+      checks.push({ section: "permits", requirement: "The import approval covers the port of entry, the kits, the consignee and the delivery date", result: problems.length ? "Fail" : "Pass",
+        detail: problems.length ? `Not covered: ${problems.join("; ")}.` : `${permit.id}: port of entry ${permit.portOfEntry}, up to ${permit.kits} kits for ${permit.consignee}, valid until ${permit.validUntil}.` });
+    }
   } else {
     const covered = (label?.countries ?? []).includes(code);
     checks.push({ section: "regulatory", requirement: `The label covers ${code === "GR" ? "Greece" : "Cyprus"}`, result: covered ? "Pass" : "Fail",
@@ -281,6 +335,8 @@ export function checkShipment(data, shipmentId, overrides = {}) {
     checks.push({ section: "ior", requirement: "Consignee: the hospital pharmacy of the trial site", result: "Pass", detail: `Consignee: ${view.hospital}.` });
     checks.push({ section: "invoice", requirement: "Pro-forma invoice statement", result: "Not checked", detail: "Invoice data is not connected yet." });
   }
+  // SupplyShield: external events on this shipment's route, as the carrier and the depot report them.
+  checks.push(...riskChecks(data.supplyshield, data.network, view, overrides));
   const results = checks.map(item => item.result);
   const result = results.some(item => ["Fail", "Missing", "Decision"].includes(item)) ? "Blocked" : results.includes("Confirm") ? "Confirm" : "Ready";
   return { id: view.id, country: view.countryId, dispatch, prepareBy, result, checks };
@@ -305,8 +361,26 @@ export function verifyOptionSafe(data, shipmentId, actions) {
 }
 
 export function allShipmentChecks(data) {
-  const ids = [...data.portfolio.shipments.map(item => item.id), ...data.spain.trial.shipments.map(item => item.id), ...(data.israel?.trial.shipments.map(item => item.id) ?? [])];
-  return ids.map(id => checkShipment(data, id));
+  return allShipmentIds(data).map(id => checkShipment(data, id));
+}
+
+// What the page needs from SupplyShield: the scope, the assessed signals, and for each shipment the route and permit
+// checks these rules add, so the page shows exactly what the agents and the verifier see.
+export function supplyShieldPayload(data) {
+  const ss = data.supplyshield;
+  if (!ss) return null;
+  const extraChecks = {};
+  const results = {};
+  for (const id of allShipmentIds(data)) {
+    const result = checkShipment(data, id);
+    results[id] = result.result;
+    extraChecks[id] = result.checks.filter(item => item.section === "risk" || (item.section === "permits" && item.requirement.startsWith("The import approval covers")));
+  }
+  return {
+    schema: 1, today: ss.today, checkedAt: ss.checkedAt, scope: ss.scope, signals: ss.signals, counts: ss.counts, byShipment: ss.byShipment, routes: ss.routes,
+    feeds: ss.feeds, names: ss.names, extraChecks, results, log: data.scopeState?.log ?? [], connected: data.scopeState?.connected ?? true,
+    patientsAtRisk: ss.patientsAtRisk, costReference: ss.costReference,
+  };
 }
 
 // Test an option against the rules and against what operations can deliver. An option is a list of actions.
@@ -366,8 +440,13 @@ export function verifyOption(data, shipmentId, actions) {
         const delay = daysBetween(view.dispatch, action.new_dispatch_date);
         if (delay < 0) { fail("the new dispatch date is earlier than planned."); break; }
         if (isWeekend(action.new_dispatch_date)) fail(`${action.new_dispatch_date} is a weekend day.`);
+        // Where the planned delivery is known and arrives before the site runs out, the new delivery must too: a later
+        // delivery means patients without treatment.
+        const runsOut = view.siteStockDays !== null ? addDays(data.today, view.siteStockDays) : null;
+        const newDelivery = view.delivery && view.transitBusinessDays ? businessDaysAfter(action.new_dispatch_date, view.transitBusinessDays) : null;
         if (view.siteStockDays !== null && delay >= view.siteStockDays) fail(`the site has ${view.siteStockDays} days of stock; a ${delay}-day delay runs it out.`);
-        else if (view.siteStockDays !== null) notes.push(`The site has ${view.siteStockDays} days of stock; the delay is ${delay} days.`);
+        else if (runsOut && newDelivery && view.delivery <= runsOut && newDelivery > runsOut) fail(`the site runs out on ${runsOut}, but the kits would arrive on ${newDelivery}: ${view.patients ? view.patients + " patients" : "patients"} would go without treatment.`);
+        else if (view.siteStockDays !== null) notes.push(`The site has ${view.siteStockDays} days of stock${runsOut ? `, until ${runsOut}` : ""}; the delay is ${delay} days.`);
         overrides.dispatch = action.new_dispatch_date;
         break;
       }
@@ -421,6 +500,17 @@ export function verifyOption(data, shipmentId, actions) {
         else if (ready > prepareBy) fail(`the label specification (${plan.status}) takes ${plan.leadBusinessDays} business days, ready ${ready}, after preparation starts on ${prepareBy}.`);
         else notes.push(`Label specification ${plan.status}; ready ${ready}, before preparation on ${prepareBy}.`);
         overrides.labelSpecFor = view.countryId.toUpperCase();
+        break;
+      }
+      case "reroute": {
+        // Leave from another qualified airport: same depot, same dispatch day, a different road leg and departure.
+        const route = routeFor(data.network, view, { ...overrides, via: action.via });
+        const alternative = (data.network?.departure_alternatives ?? []).find(item => item.lane === route?.lane && item.airport === action.via);
+        if (!route || route.mode !== "air") { fail("only air routes can leave from another airport."); break; }
+        if (!alternative) { fail(`the ${route.carrier} has no qualified departure from ${action.via} on this route.`); break; }
+        const airport = data.network.airports?.[action.via];
+        notes.push(`Road from the ${view.depot} to ${airport?.name ?? action.via} (about ${alternative.roadHours} h), then the ${route.carrier} flight on ${route.legs.find(leg => leg.kind === "air")?.date} (${alternative.days.join(", ")}; ${alternative.qualified}). Delivery on ${route.delivery}.`);
+        overrides.via = action.via;
         break;
       }
       case "proceed":

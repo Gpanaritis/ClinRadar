@@ -252,6 +252,18 @@ try {
   assert.equal((await call("PUT", "/v1/change-decisions/import", { decision: "assessing", reason: "Watching" })).status, 403, "only the Regulatory SME decides on a change");
   await role("reviewer");
   assert.equal((await call("PUT", "/v1/change-decisions/import", { decision: "assessing", reason: "Watching" })).status, 200);
+  // SupplyShield, read-only: the scope, the signals and one shipment's route.
+  const scope = (await call("GET", "/v1/monitoring-scope")).body;
+  assert.equal(scope.status, "determined");
+  assert.equal(scope.countries.length, 16);
+  assert.ok(scope.recommendations.find(item => item.code === "BE").monitoring.external.on, "Belgium: the decision P. Laine recorded");
+  assert.deepEqual((await call("GET", "/v1/signals?tier=confirmed")).body.signals.map(item => item.id), ["SIG-BE-STRIKE-1124"]);
+  assert.equal((await call("GET", "/v1/signals?tier=nonsense")).status, 400);
+  assert.equal((await call("GET", "/v1/signals/SIG-IL-TLV-0104")).body.tier, "potential");
+  assert.equal((await call("GET", "/v1/signals/NO-SUCH-SIGNAL")).status, 404);
+  const risk = (await call("GET", "/v1/shipments/SHP-IL-01/risk")).body;
+  assert.deepEqual([risk.route.departure, risk.route.arrival, risk.matches[0].tier], ["BRU", "TLV", "confirmed"]);
+  assert.equal((await call("GET", "/v1/shipments/SHP-99/risk")).status, 404);
   // Reset for a rehearsal: versions from the earlier run are withdrawn, and the case can be approved again.
   const reset = (await call("POST", "/v1/cases/uk/reset", {})).body.workflow;
   assert.equal(reset.stage, "review");
@@ -266,7 +278,7 @@ try {
   returnDueDeferrals(db, model, "2026-12-01");
   const returned = caseRow(db, "es").state;
   assert.equal(returned.stage, "review");
-  assert.equal(returned.events.at(-1).actor, "RegChain scheduler");
+  assert.equal(returned.events.at(-1).actor, "SupplyShield scheduler");
   assert.equal((await call("GET", "/v1/audit/verify")).body.ok, true, "the audit chain is intact after every step");
   console.log("ok  API: 401/403/409/422 and other-site refusals, idempotent decisions, outbox delivery, acknowledgement by the owner only, closing blocked while shipments are blocked,");
   console.log("    requirement history and date lookup, evidence, impact, shipment actions, change decisions, rehearsal reset, scheduled return from deferral, intact audit chain");

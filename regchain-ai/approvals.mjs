@@ -9,6 +9,7 @@ import { cacheDir } from "./sources.mjs";
 import { loadData, readApprovals, verifyOptionSafe as verifyOption } from "./rules.mjs";
 import { draftApprovedOption } from "./agent.mjs";
 import { appendAudit, openDatabase, transaction } from "./db.mjs";
+import { emptyScope } from "./monitoring.mjs";
 
 const refuse = (statusCode, message) => Object.assign(new Error(message), { statusCode });
 const runFile = (root, shipment) => join(cacheDir(root), `agent-run-${shipment}.json`);
@@ -46,7 +47,7 @@ export async function approvePlan(root, { shipment, option, by, runAt, role = nu
   let entry;
   if (option === "escalate") {
     const passing = options.find(item => verifyOption(data, shipment, item.actions).passes);
-    if (passing) throw refuse(409, `"${passing.title}" passes RegChain's rules now. Approve it, or withdraw other plans, instead of escalating.`);
+    if (passing) throw refuse(409, `"${passing.title}" passes SupplyShield's rules now. Approve it, or withdraw other plans, instead of escalating.`);
     entry = { option, title: "Escalation", actions: [] };
   } else {
     const chosen = options.find(item => item.id === option);
@@ -54,7 +55,7 @@ export async function approvePlan(root, { shipment, option, by, runAt, role = nu
     const check = verifyOption(data, shipment, chosen.actions);
     if (!check.passes) {
       const reasons = check.notes.filter(note => note.startsWith("Not feasible")).map(note => note.replace("Not feasible: ", "")).join(" ");
-      throw refuse(409, `"${chosen.title}" does not pass RegChain's rules now: ${reasons || "the shipment would still be " + check.after.toLowerCase() + "."}`);
+      throw refuse(409, `"${chosen.title}" does not pass SupplyShield's rules now: ${reasons || "the shipment would still be " + check.after.toLowerCase() + "."}`);
     }
     entry = { option, title: chosen.title, actions: chosen.actions, after: check.after };
     // A passing option other than the recommendation has no drafts yet: draft its changes now, through the draft inbox.
@@ -103,7 +104,9 @@ export async function planSummaries(root) {
 
 // Start again for a rehearsal: approvals are archived, never deleted, and the reset is logged.
 // With plans: true, the latest runs move to the run history too, so every shipment starts with no plan.
-export async function startFresh(root, { plans = false, by = null } = {}) {
+export async function startFresh(root, { plans = false, empty = false, by = null } = {}) {
+  // An empty workspace also disconnects the active-trial portfolio and clears the monitoring decisions (both stay in the trail).
+  if (empty) emptyScope(root, { by });
   const dir = cacheDir(root);
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
   await mkdir(join(dir, "agent-runs"), { recursive: true });

@@ -280,7 +280,7 @@ flowchart TD
 ### Scenario D · No internet, or no API key
 
 - Plans recorded beforehand stay on the board and the plan pages, so nothing on screen depends on the venue.
-- **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers in a few seconds. Say so plainly: "this is the scripted walkthrough; the live run took 90 seconds this morning."
+- **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers in a few seconds. Say so plainly: "This is the scripted walkthrough: the same tools and rules, with the decisions written in code instead of made by Claude." Mention a live run only if one has been recorded; its time and token use are in the run's audit record.
 - The AI check on the change cases also shows its last recorded result.
 
 ### After the demo

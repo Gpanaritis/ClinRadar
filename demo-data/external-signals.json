@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0",
+  "note": "External-risk items recorded by SupplyShield's last check, for countries it monitors. Items marked illustrative are invented for the scenario: never present them as real news. Live items from official feeds are in recorded-feeds.json and are refreshed by Run the check.",
+  "checked_at": "2026-11-14T06:12:00Z",
+  "signals": [
+    {
+      "id": "SIG-BE-STRIKE-1124",
+      "incident": "BE-NATIONAL-ACTION-2026-11-24",
+      "type": "external",
+      "category": "strike",
+      "title": "National strike day in Belgium: no departures from Brussels Airport on 24 Nov 2026",
+      "country": "BE",
+      "authority": "Brussels Airport operational notice",
+      "illustrative": true,
+      "publishedAt": "2026-11-13T16:00:00Z",
+      "detectedAt": "2026-11-14T06:12:00Z",
+      "window": { "from": "2026-11-24", "to": "2026-11-24" },
+      "summary": "A national action day is announced for Tuesday 24 November. Brussels Airport expects no departing flights and has suspended cargo handling for the day. Picket lines are possible at ports and industrial zones.",
+      "locations": [
+        { "kind": "airport", "code": "BRU", "effect": "No departing flights; cargo handling suspended." },
+        { "kind": "facility", "id": "DEPOT-BE", "effect": "Staff of logistics sites may join the action." },
+        { "kind": "road", "country": "BE", "effect": "Picket lines possible at ports and industrial zones; road transport may be slowed." }
+      ]
+    },
+    {
+      "id": "SIG-BE-STRIKE-1124-FPS",
+      "incident": "BE-NATIONAL-ACTION-2026-11-24",
+      "type": "external",
+      "category": "strike",
+      "title": "Federal transport notice: national action day on 24 Nov 2026, disruption expected at airports and ports",
+      "country": "BE",
+      "authority": "Belgian Federal Public Service Mobility and Transport notice",
+      "illustrative": true,
+      "publishedAt": "2026-11-13T18:30:00Z",
+      "detectedAt": "2026-11-14T06:12:00Z",
+      "window": { "from": "2026-11-24", "to": "2026-11-24" },
+      "summary": "The federal transport service expects severe disruption at Brussels Airport and at the ports on Tuesday 24 November because of a national action day.",
+      "locations": [
+        { "kind": "airport", "code": "BRU", "effect": "Severe disruption expected." },
+        { "kind": "road", "country": "BE", "effect": "Disruption expected around ports and industrial zones." }
+      ]
+    },
+    {
+      "id": "SIG-COURIER-TRACKING-1114",
+      "type": "external",
+      "category": "tracking",
+      "title": "EMEA specialty courier: tracking updates delayed on its customer portal, 14 Nov 2026",
+      "country": "BE",
+      "authority": "EMEA specialty courier service status page",
+      "illustrative": true,
+      "publishedAt": "2026-11-14T05:40:00Z",
+      "detectedAt": "2026-11-14T06:12:00Z",
+      "window": { "from": "2026-11-14", "to": "2026-11-14" },
+      "summary": "Tracking events reach the customer portal with a delay of up to three hours. Bookings, pick-ups and flights run as planned.",
+      "locations": [
+        { "kind": "provider", "carrier": "EMEA specialty courier", "effect": "Tracking updates delayed; bookings, pick-ups and flights unaffected." }
+      ]
+    },
+    {
+      "id": "SIG-IL-TLV-0104",
+      "type": "external",
+      "category": "airport",
+      "title": "Ben Gurion Airport: reduced cargo handling during runway works, 4 to 8 Jan 2027",
+      "country": "IL",
+      "authority": "Israel Airports Authority notice",
+      "illustrative": true,
+      "publishedAt": "2026-11-11T09:00:00Z",
+      "detectedAt": "2026-11-14T06:12:00Z",
+      "window": { "from": "2027-01-04", "to": "2027-01-08" },
+      "summary": "Planned runway works reduce cargo handling at Ben Gurion Airport from 4 to 8 January. Airlines may consolidate cargo flights; carriers will confirm bookings closer to the date.",
+      "locations": [
+        { "kind": "airport", "code": "TLV", "effect": "Fewer cargo slots; carriers may move bookings by a day or two." }
+      ]
+    },
+    {
+      "id": "SIG-FR-ROAD-1202",
+      "type": "external",
+      "category": "road",
+      "title": "Road hauliers' protest announced on the A10 and A63 motorways towards Spain, 2 to 4 Dec 2026",
+      "country": "FR",
+      "authority": "French road hauliers' federation announcement",
+      "illustrative": true,
+      "publishedAt": "2026-11-12T10:30:00Z",
+      "detectedAt": "2026-11-14T06:12:00Z",
+      "window": { "from": "2026-12-02", "to": "2026-12-04" },
+      "summary": "Hauliers plan slow-moving convoys and possible blockades on the A10 and A63 motorways between Bordeaux and the Spanish border.",
+      "locations": [
+        { "kind": "road", "country": "FR", "effect": "Slow convoys and possible blockades between Bordeaux and the Spanish border." }
+      ]
+    }
+  ]
+}

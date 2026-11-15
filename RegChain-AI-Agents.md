@@ -1,27 +1,27 @@
-# RegChain AI · Agents that resolve blocked shipments
+# SupplyShield AI · Agents that resolve blocked and disrupted shipments
 
-*15 November 2026. Design note for the hackathon team: what the agent layer does, how it is built, and how it fits validated clinical systems.*
+*15 November 2026. Design note for the hackathon team: what the agent layer does, how it is built, and how it fits validated clinical systems. SupplyShield AI was called RegChain AI; see [SupplyShield-AI.md](SupplyShield-AI.md).*
 
 ## What it does
 
-The Shipment checks page finds the problem: 13 of 25 planned shipments are blocked and 5 need a confirmation. The agent layer works on the next question, **what do we do about it?**
+The Shipments page finds the problem: 14 of 25 planned shipments are blocked and 5 need a confirmation. One of the blocked shipments, SHP-IL-01, is blocked by an external event: the courier cancelled its flight from Brussels on the Belgian strike day. The agent layer works on the next question, **what do we do about it?**
 
 Fixing a blocked shipment today means asking several teams. Supply checks for another batch, the depot looks for a relabelling slot, Regulatory finds the authorisation letter in the eTMF, and someone writes to the site. Each answer sits in a different validated system. When several shipments are blocked at once, the same kits or the same relabelling slot can easily be promised twice.
 
-**Agent plans**, in the menu, is the work queue: every shipment that needs action, most urgent first. Opening one shows its plan page, where a team of AI agents works on that shipment:
+**Shipments › Needs action** is the work queue: every shipment that needs action, most urgent first. Opening one shows its plan page, where a team of AI agents works on that shipment:
 
-- An **orchestrator** reads the failed checks, the destination's Country Specification and what other plans already hold, and decides what it needs to know.
+- An **orchestrator**, instructed as SupplyShield AI, reads the failed checks, the external signals on the shipment's route, the monitoring scope, the destination's Country Specification and what other plans already hold, and decides what it needs to know. It keeps an observed event, a potential exposure and a confirmed disruption apart, and never treats one as another without evidence.
 - It **delegates** to specialists. Each one can use only the tools of its own systems:
   - the **supply agent** works with IRT and ERP: stock, batches and QP plans;
-  - the **logistics agent** works with the depot, ERP and IRT: relabelling, label approvals, site stock and couriers;
-  - the **records agent** works with the eTMF: authorisations and site contacts;
+  - the **logistics agent** works with the depot, the courier, ERP and IRT: the route and the day of each leg, the courier's and the depot's status, qualified alternative departures, relabelling, label approvals, site stock;
+  - the **records agent** works with the eTMF: authorisations, import approvals and their terms (port of entry, kits, consignee, validity), site contacts;
   - the **communications agent** writes messages to sites in English and the local language.
 - The orchestrator builds two or three options and **checks each one** with RegChain's rule engine before recommending it.
 - It **drafts** the changes for the recommended option, for example a shipment change request in IRT or a relabelling work order for the depot. Each draft names the option it belongs to.
 - **RegChain's verifier**, which uses fixed rules and no AI, checks every option again. A draft for an option that fails is withdrawn. Only passing options can be approved.
 - A **named person in Clinical Supply** approves the plan in RegChain. The server checks it once more before recording it. Each draft still has to be approved in its own validated system.
 
-**Plan all with AI agents**, on Agent plans, does this for every shipment that needs action, as one orchestrated run:
+**Plan all with AI agents**, on Shipments, does this for every shipment that needs action, as one orchestrated run:
 
 1. **Triage.** The orchestrator orders the shipments by preparation date, the most urgent first.
 2. **One agent team per shipment.** Each shipment gets its own run, as above.
@@ -40,12 +40,13 @@ Every step appears live on screen, and every run can be exported as an audit rec
 | SHP-ES-10 (Spain) | Batch XZ417-26C has no QP release planned; site ES-08 has no pharmacy code | There is a QP slot on 2 Mar 2027, with kits at the depot two business days later. The eTMF has the site contact. The communications agent drafts the request in Spanish and English. | Book the QP release and ask for the code: drafts for ERP and the site portal. The shipment moves from Blocked to Confirm, because a booked release is not yet a signed one. |
 | SHP-07 (UK) | Nothing blocks it; the post-cutoff label needs confirming against the approved specification | The ERP shows the updated label is approved. | Proceed, with a pre-dispatch confirmation draft for the depot. |
 | SHP-03 (Germany) | No German label specification for the batch | The specification takes 15 business days and the site has 7 days of stock. | Nothing passes, so the agents escalate to Quality instead of guessing. |
+| SHP-IL-01 (Israel) | Confirmed disruption: the courier cancelled the Brussels to Tel Aviv flight on 24 Nov 2026, the Belgian strike day (illustrative scenario) | The courier's booking system holds the cancellation (14 Nov, 08:10 UTC). The depot does not collect on 24 Nov. The courier flies the same lane from Amsterdam, Frankfurt and Luxembourg. The import approval names Tel Aviv (TLV) as the port of entry, which a European departure does not change. The Tel Aviv site has 13 days of stock, until 27 Nov: if nobody acts, the next free flight delivers on 29 Nov and 14 patients go 2 days without treatment. | Leave from Amsterdam: same dispatch day, same delivery date. Drafts go to the courier (booking change) and the depot (collection instruction). Luxembourg fails until someone turns on monitoring for Luxembourg. A 25 Nov dispatch fails: the kits would arrive on 30 Nov, after the stock runs out. The communications agent alerts the Clinical Supply lead. |
 
-In the portfolio run on today's data, 18 shipments get 16 plans that pass, 2 escalations (SHP-03, SHP-05) and 2 re-plans (SHP-06, and SHP-IL-03 because SHP-IL-02 takes the Israel-only kits), with 31 drafts for people to approve. Nothing changes in any validated system.
+In the portfolio run on today's data, 19 shipments get 17 plans that pass, 2 escalations (SHP-03, SHP-05) and 2 re-plans (SHP-06, and SHP-IL-03 because SHP-IL-02 takes the Israel-only kits). Nothing changes in any validated system.
 
 ## Watching the team: Agents in action
 
-The **Agents in action** page shows who does what. The master agent (the orchestrator, Claude Opus 5.5) sits on top and hands tasks to four specialists (Claude Sonnet 5.5). Under them are the six systems they reach over MCP, and next to them the RegChain verifier, which is fixed code, not AI. Each step draws a line from the one who acts to the one it reaches: a task handed out, a system read, an answer, a report back, an option tested, a draft put in the inbox. The master agent's card shows how the work was split between the specialists.
+The **Agents in action** page shows who does what. The master agent (the orchestrator, Claude Opus 5.5) sits on top and hands tasks to four specialists (Claude Sonnet 5.5). Under them are the systems they reach over MCP, and next to them the SupplyShield verifier, which is fixed code, not AI. Each step draws a line from the one who acts to the one it reaches: a task handed out, a system read, an answer, a report back, an option tested, a draft put in the inbox. The master agent's card shows how the work was split between the specialists.
 
 The page replays the last run, with each shipment's own run placed where the master agent handed it out, or follows a run live. It replays at 1× to 8×, steps one at a time, filters the steps by agent, and opens a single shipment's run. After the first check it replays the scripted run automatically, because a scripted run finishes in seconds.
 
@@ -60,19 +61,21 @@ flowchart LR
   O -->|delegate| C[Communications agent]
   S & L & R & C -.->|claude-sonnet-5-5| M
   O --> M[(MCP servers)]
-  M --- IRT & ERP & Depot & eTMF & Specs[RegChain rules] & Drafts[Draft inbox]
-  O --> V[RegChain verifier<br/>fixed rules, no AI,<br/>counts what plans hold]
+  M --- IRT & ERP & Depot & eTMF & CTMS & Courier & Specs[SupplyShield rules,<br/>scope and signals] & Drafts[Draft inbox]
+  O --> V[SupplyShield verifier<br/>fixed rules, no AI,<br/>counts what plans hold]
   V --> H[Clinical Supply approves<br/>server re-checks]
   H --> D[Each draft approved in its own system]
 ```
 
-- **Six MCP servers** (`regchain-ai/mcp-servers.mjs`), one per system. Each runs as its own process and is reached through the Model Context Protocol SDK. None of them receives the API key.
-  - **RegChain**: shipment checks, Country Specifications, option checks, commitments (what approved plans already hold).
+- **Eight MCP servers** (`regchain-ai/mcp-servers.mjs`), one per system. Each runs as its own process and is reached through the Model Context Protocol SDK. None of them receives the API key.
+  - **SupplyShield**: shipment checks (including the route and import-approval checks), Country Specifications, option checks, commitments (what approved plans already hold), the monitoring scope and the external signals.
   - **IRT**: shipments, depot stock, site stock.
   - **ERP**: batches, label approvals, QP plans.
-  - **Depot**: relabelling capacity, couriers.
-  - **eTMF**: trial authorisations, site contacts.
-  - **Draft inbox**: create a draft for a named option.
+  - **Depot**: relabelling capacity, couriers, the facility's own status by day.
+  - **eTMF**: trial authorisations, import approvals with their terms, site contacts.
+  - **CTMS**: the active studies and, per country, whether the company supplies it.
+  - **Courier**: a shipment's route with the day of each leg, the booking and tracking status, qualified alternative departures and whether their countries are monitored.
+  - **Draft inbox**: create a draft for a named option, in IRT, ERP, the depot, the courier, the QMS, the eTMF or the site portal.
 
   A specification section with a change waiting for approval says so, so an agent never treats the old text as the whole rule.
 - **The agent loop** (`regchain-ai/agent.mjs`). Claude's tool use, with the orchestrator delegating through a `delegate_to_agent` tool. Each specialist runs its own loop with only its own tools, and returns a written report. A run is capped at 16 orchestrator turns, 8 per specialist and 60 tool calls. The portfolio run (`resolvePortfolio`) runs up to three shipments at a time in live mode.
@@ -107,26 +110,27 @@ Clinical supply runs on validated systems: IRT, ERP, the depot's warehouse syste
 ## Running it
 
 - **Scripted walkthrough:** works as soon as RegChain runs.
-  - For one shipment: **Agent plans** → SHP-04, SHP-01 or SHP-ES-10 → **Run the agents again** → **Scripted walkthrough (no AI)**.
-  - For every shipment: **Agent plans** → **Scripted walkthrough (no AI)**.
+  - For one shipment: **Shipments** → SHP-IL-01, SHP-04, SHP-01 or SHP-ES-10 → **Run the agents again** → **Scripted walkthrough (no AI)**.
+  - For every shipment: **Shipments** → **Scripted walkthrough (no AI)**.
   - Every journey and demo script: [RegChain-AI-User-Journeys.md](RegChain-AI-User-Journeys.md).
 - **Live agents:** add `ANTHROPIC_API_KEY` to `.env` next to `serve-regchain.cjs` and restart RegChain. **Run the AI agents** is enabled once the key is set. To reach Claude through AWS, Google Cloud or Azure instead, see [Which Claude service](RegChain-AI-Deployment.md#which-claude-service).
   - A run for one shipment takes a minute or two and uses Claude Opus 5.5 for the orchestrator and Claude Sonnet 5.5 for the specialists.
-  - A live portfolio run of 18 shipments takes several minutes and costs more. Run it once before the demo; the page loads the last run.
+  - A live portfolio run of 19 shipments takes several minutes and costs more. Run it once before the demo; the page loads the last run.
 - **Tests:** `npm run check:agent` makes no API call and uses a temporary cache, so approvals on the computer never change the results. It checks:
-  - the rules match the page (13 blocked, 5 to confirm, 7 ready), and the Israel rules: the shared booklet refused from 3 Jan 2027, Israeli working days, three ways out;
+  - the rules match the page (14 blocked, 5 to confirm, 6 ready), and the Israel rules: the shared booklet refused from 3 Jan 2027, Israeli working days, three ways out, and the Brussels strike blocking SHP-IL-01;
   - the verifier rejects partial, impossible, too-late and malformed options;
   - commitments: kits and slots held by another plan are not offered again;
-  - all six MCP servers start, and only the draft inbox can write;
-  - six scripted runs end as expected (swap, relabel with a Monday dispatch, fix the data, escalate, proceed with a confirmation);
-  - the portfolio run: 18 shipments, most urgent first, SHP-06 and SHP-IL-03 re-planned, nothing promised twice;
+  - all eight MCP servers start, and only the draft inbox can write;
+  - eight scripted runs end as expected (swap, relabel with a Monday dispatch, fix the data, escalate, proceed with a confirmation, leave from Amsterdam);
+  - the portfolio run: 19 shipments, most urgent first (SHP-IL-01 second), SHP-06 and SHP-IL-03 re-planned, nothing promised twice;
   - approvals: re-checked on the server, refused when stale or failing, withdrawals free their holds, and every step is logged;
   - the live loop end to end with a stand-in for Claude, including a withdrawn draft for an option that fails.
+- `npm run check:supplyshield` checks the monitoring scope, the recommendations, the signal tiers, the route and option checks (Amsterdam passes, Luxembourg needs a monitoring decision, the depot does not collect on the strike day), the monitoring roles and the audit trail, and the state with no portfolio connected.
 
 ## Real and illustrative
 
-- **Real:** the MCP protocol and servers, the agent loop with Claude's tool use, the rule engine, the portfolio allocation, the streaming, the approval and the audit record.
-- **Illustrative:** the systems behind the MCP servers are fictional data files (`demo-data/supply-operations.json`), not IRT, ERP, a depot or an eTMF.
+- **Real:** the MCP protocol and servers, the agent loop with Claude's tool use, the rule engine, the portfolio allocation, the streaming, the approval and the audit record, and the official feeds SupplyShield reads (UK FCDO travel advice, GDACS).
+- **Illustrative:** the systems behind the MCP servers are fictional data files (`demo-data/supply-operations.json`, `demo-data/supply-network.json`), not IRT, ERP, a depot, an eTMF, a CTMS or a courier. The Belgian strike and the Ben Gurion runway works are invented for the scenario and labelled so on screen.
 
 ## Before it could be used for real
 

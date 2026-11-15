@@ -102,7 +102,7 @@
     "depotStock": { "Q-801": 40, "Q-802": 30, "Q-815": 14 },
     "relabel": { "label": "LBL-IL-02", "slots": [{ "date": "2026-12-08", "kits": 30 }, { "date": "2026-12-15", "kits": 30 }], "turnaroundBusinessDays": 2 },
     "transitBusinessDays": 3,
-    "siteStockDays": { "SITE-IL-01": 21, "SITE-IL-02": 16, "SITE-IL-03": 12, "SITE-GR-01": 19, "SITE-CY-01": 25 },
+    "siteStockDays": { "SITE-IL-01": 13, "SITE-IL-02": 16, "SITE-IL-03": 12, "SITE-GR-01": 19, "SITE-CY-01": 25 },
     "importApprovals": {
       "SHP-IL-01": { "status": "approved", "number": "MOH-IMP-26-4410" },
       "SHP-IL-02": { "status": "approved", "number": "MOH-IMP-26-4471" },

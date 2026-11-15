@@ -1,5 +1,5 @@
 // Checks the agent layer without calling the Anthropic API:
-// the rules match the dashboard, the verifier is strict, the six MCP servers start and answer, scripted runs resolve
+// the rules match the dashboard, the verifier is strict, the eight MCP servers start and answer, scripted runs resolve
 // different kinds of shipment, the portfolio run never promises the same kits or slot twice, approvals are re-checked
 // on the server, the live loop works end to end with a stand-in AI client, and the Claude service setting picks the
 // right models and request for each service.
@@ -25,17 +25,19 @@ const data = await loadData(root);
 
 // 1. The same results as the dashboard's Shipment checks page.
 const by = result => allShipmentChecks(data).filter(item => item.result === result).map(item => item.id).sort();
-assert.deepEqual(by("Blocked"), ["SHP-01", "SHP-02", "SHP-03", "SHP-04", "SHP-05", "SHP-06", "SHP-08", "SHP-10", "SHP-ES-08", "SHP-ES-09", "SHP-ES-10", "SHP-IL-02", "SHP-IL-03"]);
+assert.deepEqual(by("Blocked"), ["SHP-01", "SHP-02", "SHP-03", "SHP-04", "SHP-05", "SHP-06", "SHP-08", "SHP-10", "SHP-ES-08", "SHP-ES-09", "SHP-ES-10", "SHP-IL-01", "SHP-IL-02", "SHP-IL-03"]);
 assert.deepEqual(by("Confirm"), ["SHP-07", "SHP-09", "SHP-ES-05", "SHP-ES-06", "SHP-ES-07"]);
-assert.deepEqual(by("Ready"), ["SHP-CY-01", "SHP-ES-01", "SHP-ES-02", "SHP-ES-03", "SHP-ES-04", "SHP-GR-01", "SHP-IL-01"]);
-console.log("ok  rules: 13 blocked, 5 to confirm, 7 ready, as on the Shipment checks page");
+assert.deepEqual(by("Ready"), ["SHP-CY-01", "SHP-ES-01", "SHP-ES-02", "SHP-ES-03", "SHP-ES-04", "SHP-GR-01"]);
+console.log("ok  rules: 14 blocked (SHP-IL-01 by the Brussels strike), 5 to confirm, 6 ready, as on the Shipments page");
 
 // 1b. Israel: one booklet label can no longer serve two countries.
 {
   const { checkShipment } = await import("../regchain-ai/rules.mjs");
   const il02 = checkShipment(data, "SHP-IL-02");
   assert.match(il02.checks.find(item => item.section === "regulatory" && /Israel-only/.test(item.requirement)).detail, /shared with GR and CY/);
-  assert.equal(checkShipment(data, "SHP-IL-01").result, "Ready", "kits imported before the date may keep the shared booklet");
+  const il01 = checkShipment(data, "SHP-IL-01");
+  assert.equal(il01.checks.find(item => item.section === "regulatory" && /Israel-only/.test(item.requirement)).result, "Pass", "kits imported before the date may keep the shared booklet");
+  assert.equal(il01.checks.find(item => item.section === "risk").result, "Fail", "the courier cancelled its flight on the strike day");
   assert.equal(checkShipment(data, "SHP-GR-01").result, "Ready", "Greece keeps the booklet");
   assert.equal(checkShipment(data, "SHP-IL-03").checks.find(item => /Israeli working day/.test(item.requirement)).result, "Fail", "a Friday delivery fails in Israel");
   assert.equal(checkShipment(data, "SHP-CY-01").checks.find(item => /working day/.test(item.requirement) && item.section === "logistics" && /Delivered/.test(item.requirement)).result, "Pass", "a Monday delivery passes in Cyprus");
@@ -68,16 +70,16 @@ assert.equal(verifyOption(held, "SHP-04", [{ type: "swap_batch", batch_id: "J-20
 assert.equal(verifyOption(held, "SHP-01", [{ type: "relabel", relabel_date: "2026-11-16" }, { type: "delay", new_dispatch_date: "2026-11-23" }]).passes, true, "a shipment's own hold does not count against it");
 console.log("ok  commitments: kits and relabelling places promised to other shipments are not offered again");
 
-// 4. Six MCP servers; only the draft inbox can create anything.
+// 4. Eight MCP servers; only the draft inbox can create anything.
 const systems = await connectSystems(root);
 const described = describeSystems(systems);
-assert.equal(described.length, 6);
+assert.equal(described.length, 8);
 const writers = described.flatMap(system => system.tools.filter(tool => !tool.readOnly).map(tool => `${system.id}.${tool.name}`));
 assert.deepEqual(writers, ["drafts.create_draft"]);
 console.log(`ok  MCP: ${described.map(system => `${system.name} (${system.tools.length})`).join(", ")}; only drafts.create_draft writes, and only drafts`);
 
 // 5. Scripted runs on each kind of shipment.
-const expectations = { "SHP-04": "swap-J-203", "SHP-01": "relabel-2026-11-16", "SHP-ES-09": "fix-data", "SHP-03": "escalate", "SHP-07": "proceed-confirm", "SHP-ES-05": "proceed-confirm", "SHP-IL-03": "swap-Q-815" };
+const expectations = { "SHP-04": "swap-J-203", "SHP-01": "relabel-2026-11-16", "SHP-ES-09": "fix-data", "SHP-03": "escalate", "SHP-07": "proceed-confirm", "SHP-ES-05": "proceed-confirm", "SHP-IL-03": "swap-Q-815", "SHP-IL-01": "reroute-AMS" };
 const saved = {};
 for (const [shipment, recommended] of Object.entries(expectations)) {
   const run = await resolveShipment({ root, shipmentId: shipment, mode: "scripted", systems });
@@ -85,7 +87,7 @@ for (const [shipment, recommended] of Object.entries(expectations)) {
   assert.equal(run.resolution.recommended, recommended, JSON.stringify(run.resolution));
   assert.ok(run.resolution.options.every(option => option.title && option.actions.length), "every option has a title and actions");
   if (recommended === "escalate") assert.ok(run.verification.every(item => !item.passes), "an escalation means no option passes");
-  else assert.ok(run.verification.find(item => item.id === recommended).passes, "the recommended option must pass RegChain's own verification");
+  else assert.ok(run.verification.find(item => item.id === recommended).passes, "the recommended option must pass SupplyShield's own verification");
   assert.ok(run.drafts.length >= 1 && run.drafts.every(draft => draft.executed === false && draft.option_id === recommended));
   saved[shipment] = run;
   console.log(`ok  scripted ${shipment}: ${run.events.length} steps, ${run.events.filter(e => e.type === "tool_call").length} MCP calls, ${run.drafts.length} draft${run.drafts.length === 1 ? "" : "s"}, recommends ${recommended}`);
@@ -96,8 +98,9 @@ await closeSystems(systems);
 const portfolio = await resolvePortfolio({ root, mode: "scripted", onShipment: run => writeFile(join(testCache, `agent-run-${run.shipment}.json`), JSON.stringify(run)) });
 const { record: board, runs } = portfolio;
 assert.equal(board.error, undefined, board.error);
-assert.deepEqual({ shipments: board.summary.shipments, plans: board.summary.plans, escalated: board.summary.escalated, reallocated: board.summary.reallocated }, { shipments: 18, plans: 16, escalated: 2, reallocated: 2 });
-assert.deepEqual(board.board.map(row => row.shipment).slice(0, 3), ["SHP-04", "SHP-01", "SHP-03"], "most urgent first");
+assert.deepEqual({ shipments: board.summary.shipments, plans: board.summary.plans, escalated: board.summary.escalated, reallocated: board.summary.reallocated }, { shipments: 19, plans: 17, escalated: 2, reallocated: 2 });
+assert.deepEqual(board.board.map(row => row.shipment).slice(0, 4), ["SHP-04", "SHP-IL-01", "SHP-01", "SHP-03"], "most urgent first: SHP-IL-01 must be prepared by 16 Nov");
+assert.equal(board.board.find(row => row.shipment === "SHP-IL-01").recommended, "reroute-AMS", "the strike's flight is replaced, not the shipment");
 const moved = board.board.find(row => row.changed);
 assert.equal(moved.shipment, "SHP-06");
 assert.match(moved.note, /2026-11-16 slot.*SHP-01/);
@@ -120,9 +123,9 @@ console.log(`ok  portfolio: ${board.summary.shipments} shipments, ${board.summar
 await approvePlan(root, { shipment: "SHP-01", option: "relabel-2026-11-16", by: "P. Laine · Clinical Supply", runAt: runs["SHP-01"].at });
 // SHP-06's first choice now loses to SHP-01's approved hold.
 const firstChoice06 = runs["SHP-06"].resolution.options.find(option => option.id === "relabel-2026-11-16");
-await assert.rejects(approvePlan(root, { shipment: "SHP-06", option: firstChoice06.id, by: "P. Laine · Clinical Supply", runAt: runs["SHP-06"].at }), /does not pass RegChain's rules now.*SHP-01/);
+await assert.rejects(approvePlan(root, { shipment: "SHP-06", option: firstChoice06.id, by: "P. Laine · Clinical Supply", runAt: runs["SHP-06"].at }), /does not pass SupplyShield's rules now.*SHP-01/);
 await approvePlan(root, { shipment: "SHP-06", option: moved.recommended, by: "P. Laine · Clinical Supply", runAt: runs["SHP-06"].at });
-await assert.rejects(approvePlan(root, { shipment: "SHP-04", option: "escalate", by: "P. Laine · Clinical Supply" }), /passes RegChain's rules now/);
+await assert.rejects(approvePlan(root, { shipment: "SHP-04", option: "escalate", by: "P. Laine · Clinical Supply" }), /passes SupplyShield's rules now/);
 await approvePlan(root, { shipment: "SHP-03", option: "escalate", by: "P. Laine · Clinical Supply" });
 await assert.rejects(approvePlan(root, { shipment: "SHP-01", option: "relabel-2026-11-16", by: "P. Laine · Clinical Supply" }), /already approved/);
 await assert.rejects(approvePlan(root, { shipment: "SHP-02", option: "swap-H-108", by: "P. Laine · Clinical Supply", runAt: "2020-01-01T00:00:00.000Z" }), /newer agent run/);
@@ -139,6 +142,8 @@ assert.deepEqual((await approvalLog(root)).map(entry => entry.event), ["plan.app
 console.log("ok  approvals: re-checked on the server, refused when stale, already approved or no longer passing; withdrawals free their holds; every step logged");
 
 // 8. The live loop with a stand-in AI client: delegation, MCP calls, verification, a draft and the resolution.
+// The orchestrator's system prompt is the SupplyShield master instructions plus its task, cached as one prefix.
+const systemText = params => (Array.isArray(params.system) ? params.system.map(block => block.text).join("\n") : params.system);
 function standIn() {
   const turns = { orchestrator: 0, supply: 0 };
   const reply = (content, stop_reason = "tool_use") => ({ content, stop_reason, usage: { input_tokens: 10, output_tokens: 5 } });
@@ -147,7 +152,11 @@ function standIn() {
   return {
     messages: {
       stream(params) {
-        const who = params.system.includes("orchestrator") ? "orchestrator" : "supply";
+        const who = systemText(params).includes("orchestrator") ? "orchestrator" : "supply";
+        if (who === "orchestrator") {
+          assert.ok(Array.isArray(params.system) && /Non-negotiable country-scope rule/.test(params.system[0].text), "the orchestrator works under the SupplyShield master instructions");
+          assert.equal(params.system.at(-1).cache_control?.type, "ephemeral", "tools and both system blocks are cached as one prefix");
+        } else assert.equal(typeof params.system, "string", "specialists keep their short instructions");
         const step = turns[who]++;
         let message;
         if (who === "supply") {
@@ -157,7 +166,7 @@ function standIn() {
             reply([{ type: "text", text: "Reading the checks." }, use("specs__get_shipment_checks", { shipment_id: "SHP-04" })]),
             reply([use("delegate_to_agent", { agent: "supply", task: "Find IMP-004 batches at the UK depot." })]),
             reply([use("specs__verify_option", { shipment_id: "SHP-04", actions: plan })]),
-            // A draft for an option that will fail RegChain's check: it must come back withdrawn.
+            // A draft for an option that will fail SupplyShield's check: it must come back withdrawn.
             reply([use("drafts__create_draft", { target_system: "IRT", kind: "Dispatch date change", shipment_id: "SHP-04", option_id: "B", title: "Delay", body: "Unverified." })]),
             reply([use("drafts__create_draft", { target_system: "IRT", kind: "Shipment change request", shipment_id: "SHP-04", option_id: "A", title: "Swap to J-203", body: "Verified." })]),
             reply([use("submit_resolution", { summary: "Swap to J-203.", root_cause: "Legacy label after the cutoff.", options: [{ id: "A", title: "Swap to J-203", actions: plan, why: "Updated label." }, { id: "B", title: "Delay to 2026-11-30", actions: [{ type: "delay", new_dispatch_date: "2026-11-30" }], why: "Time." }], recommended: "A" })]),
@@ -211,7 +220,7 @@ console.log(`ok  live loop (stand-in AI): ${live.events.length} steps, delegatio
     const seen = new Map();
     const inner = standIn();
     const viaBedrock = await resolveShipment({ root, shipmentId: "SHP-04", mode: "live", client: { messages: { stream(params) {
-      seen.set(params.system.includes("orchestrator") ? "orchestrator" : "supply", params.model);
+      seen.set(systemText(params).includes("orchestrator") ? "orchestrator" : "supply", params.model);
       return inner.messages.stream(params);
     } } } });
     assert.equal(viaBedrock.error, undefined, viaBedrock.error);

@@ -288,6 +288,6 @@ What each call sends:
 
 Do not put real company specifications or records into AI requests until the company has a data processing agreement and retention terms with the provider that runs the chosen service: Anthropic, or the cloud provider for Bedrock, Vertex AI and Foundry.
 
-The AI credentials stay on the server: the page only learns which service is set and whether it is ready. The six MCP server processes start with a minimal environment plus the data and cache folder settings, never the API key or the cloud credentials.
+The AI credentials stay on the server: the page only learns which service is set and whether it is ready. The eight MCP server processes start with a minimal environment plus the data and cache folder settings, never the API key or the cloud credentials.
 
 AI results and agent runs stay as files in the cache folder (`REGCHAIN_CACHE_DIR`): the last AI check per case (`analysis-latest.json`, `analysis-es-latest.json`), the latest run per shipment (`agent-run-<shipment>.json`), the last portfolio run (`agent-portfolio-run.json`), every saved version of each shipment run under `agent-runs/`, and the cached official texts. Approvals and case decisions are in the database. `npm run backup` copies the cache together with the database.
