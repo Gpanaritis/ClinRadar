@@ -43,7 +43,7 @@ flowchart LR
 `POST /v1/replays` with `fixture_set` (`uk-labelling` or `es-notice`) and `extraction_mode` (`live` or `recorded`):
 
 1. **Sources.** Fetch the official texts (live) or use the last stored copy (recorded). Each version is stored once per SHA-256 of its text, with its normalised hash, edition and retrieval time.
-2. **Extraction.** In live mode, Claude drafts the change and RegChain checks every quote, the date and the status. In recorded mode, the last result is used.
+2. **Extraction.** In live mode, Gemini drafts the change and RegChain checks every quote, the date and the status. In recorded mode, the last result is used.
 3. **Evidence.** Each evidence passage is located in the stored text. Its offsets and hash are kept, and `GET /v1/evidence/{id}` returns them. A passage that can't be found is reported, not assumed.
 4. **Comparison.** One of four outcomes:
    - **material change:** the before and after versions differ after normalisation;

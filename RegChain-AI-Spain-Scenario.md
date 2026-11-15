@@ -61,7 +61,7 @@ The other three trials in the demo portfolio with Spanish sites have no shipment
 
 ## The AI check
 
-On the Spain case, **Run AI check** sends Claude two texts: the note (in Spanish) and the current Spain Country Specification. Claude returns a draft with the summary, the effective date, the transition, the operational instruction, one **edit per specification line** and quotes that support each claim. RegChain then checks four things, and a failed check blocks approval:
+On the Spain case, **Run AI check** sends Gemini two texts: the note (in Spanish) and the current Spain Country Specification. Gemini returns a draft with the summary, the effective date, the transition, the operational instruction, one **edit per specification line** and quotes that support each claim. RegChain then checks four things, and a failed check blocks approval:
 
 - every quote appears word for word in the note, in Spanish and never translated;
 - the effective date is 2027-03-01;

@@ -74,7 +74,7 @@ The public launch page lives in `sites/clinradar/` (static HTML, CSS and a small
 
 ## AI step
 
-The UK labeling case has a live AI check, at the top of its **Evidence & impact** tab. The local server fetches the official texts at run time: regulation 46 as in force on 27 April 2026 and from 28 April 2026 (legislation.gov.uk), Schedule 14 paragraph 6, and the MHRA guidance section on labelling transition (GOV.UK). Claude (`claude-opus-5-5`) drafts the change for `GB/IMP_LABELING`, and RegChain then checks the draft itself:
+The UK labeling case has a live AI check, at the top of its **Evidence & impact** tab. The local server fetches the official texts at run time: regulation 46 as in force on 27 April 2026 and from 28 April 2026 (legislation.gov.uk), Schedule 14 paragraph 6, and the MHRA guidance section on labelling transition (GOV.UK). Gemini (`gemini-3.8-flash`) drafts the change for `GB/IMP_LABELING`, and RegChain then checks the draft itself:
 
 - every quote must appear word for word in the source it cites;
 - the effective date must match the recorded rule (28 April 2026);
@@ -85,10 +85,10 @@ If any check fails, Approve and Edit & approve are blocked for the Regulatory SM
 To turn it on:
 
 1. Install Node.js 22.13 or later, which includes npm.
-2. Create a file named `.env` next to `serve-regchain.cjs` containing `ANTHROPIC_API_KEY=` followed by your key. Git ignores this file.
-3. Open **Start-ClinRadar.cmd**. The first time, it installs the Anthropic SDK with npm.
+2. Create a file named `.env` next to `serve-regchain.cjs` containing `GEMINI_API_KEY=` followed by your key. Git ignores this file.
+3. Open **Start-ClinRadar.cmd**. The first time, it installs the Google GenAI SDK with npm.
 
-RegChain uses Claude models only. To reach them through AWS, Google Cloud or Microsoft Azure instead of Anthropic's API, set `REGCHAIN_AI_PROVIDER` as described in [Which Claude service](RegChain-AI-Deployment.md#which-claude-service).
+RegChain uses the Gemini API with a server-side Google AI Studio key. See [Gemini API setup](RegChain-AI-Deployment.md#gemini-api).
 
 `npm run check:ai` tests the source fetching and RegChain's checks without calling the API.
 
@@ -104,13 +104,13 @@ Open **http://127.0.0.1:4173/?empty** to start from an empty workspace (one-pers
 
 **Agents in action**, in the menu, shows the team at work: the master agent ranks the shipments and hands tasks to the Supply, Logistics, Records and Communications agents; they read IRT, ERP, the depot and the eTMF over MCP; the RegChain verifier (fixed rules, no AI) tests every option. Replay any run step by step at 1× to 8×, filter the steps by agent, or pick one shipment. A live run streams in as it happens.
 
-**Settings**, in the menu, holds the **Monitoring schedule** (how often and when the sources are checked, and whether the agents then prepare plans for blocked shipments) and the **AI connections** (the Claude service, each agent's model, the company systems over MCP, and requests for new connections that the Quality owner approves). Every change is kept in the audit trail; keys never pass through the page. See the [screen guide](RegChain-AI-Screen-Guide.md), section 12.
+**Settings**, in the menu, holds the **Monitoring schedule** (how often and when the sources are checked, and whether the agents then prepare plans for blocked shipments) and the **AI connections** (the Gemini service, each agent's model, the company systems over MCP, and requests for new connections that the Quality owner approves). Every change is kept in the audit trail; keys never pass through the page. See the [screen guide](RegChain-AI-Screen-Guide.md), section 12.
 
 The Israel scenario ([RegChain-AI-Israel-Scenario.md](RegChain-AI-Israel-Scenario.md), illustrative) shows a booklet label that can no longer serve two countries: from 3 Jan 2027 Israel refuses the label shared with Greece and Cyprus, so the stock splits and the agents choose between Israel-only kits, relabelling and an earlier import.
 
 ## Agents
 
-**Shipments › Needs action** lists every shipment that needs action, most urgent first. Each one opens a plan page where an orchestrator (Claude Opus 5.5, with ClinRadar's instructions) and four specialist agents (Claude Sonnet 5.5) work through the problem:
+**Shipments › Needs action** lists every shipment that needs action, most urgent first. Each one opens a plan page where an orchestrator (Gemini 3.8 Flash, with ClinRadar's instructions) and four specialist agents (Gemini 3.8 Flash) work through the problem:
 
 - They read IRT, ERP, the depot, the eTMF, the CTMS and the courier through eight MCP servers, which are read-only except for a draft inbox.
 - They propose two or three options and check each one against ClinRadar's rules. For a confirmed disruption these can include leaving from another qualified airport (`reroute`) or a later dispatch.
@@ -120,7 +120,7 @@ Only options that pass the fixed rules can be approved, only by Clinical Supply,
 
 **Plan all with AI agents**, on Shipments, runs the agents on every shipment that needs action, most urgent first: 19 today, 17 with a plan and 2 escalated. ClinRadar then checks the plans together so that no kit or relabelling slot is promised twice. Today SHP-06 moves to the 18 Nov slot because SHP-01 needs the 16 Nov one more urgently. SHP-IL-01, whose flight the Brussels strike cancelled, leaves from Amsterdam instead.
 
-**Run the AI agents** needs the same `.env` key as the AI step. **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers without calling Claude. To rehearse from a clean start, open **http://127.0.0.1:4173/?fresh** (clears decisions, keeps plans) or **?fresh=all** (also clears plans). Nothing is deleted: cleared approvals are kept in full in the audit trail, and runs are archived in `.regchain-cache/`. Starting fresh works only in the one-person mode. `npm run check:agent` tests the rules, the eight MCP servers, scripted runs, the portfolio allocation, server-side approvals and the live loop with a stand-in for Claude, without calling the API. The systems behind the MCP servers are fictional data in `demo-data/supply-operations.json` and `demo-data/supply-network.json`. Design and compliance notes: [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
+**Run the AI agents** needs the same `.env` key as the AI step. **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers without calling Gemini. To rehearse from a clean start, open **http://127.0.0.1:4173/?fresh** (clears decisions, keeps plans) or **?fresh=all** (also clears plans). Nothing is deleted: cleared approvals are kept in full in the audit trail, and runs are archived in `.regchain-cache/`. Starting fresh works only in the one-person mode. `npm run check:agent` tests the rules, the eight MCP servers, scripted runs, the portfolio allocation, server-side approvals and the live loop with a stand-in for Gemini, without calling the API. The systems behind the MCP servers are fictional data in `demo-data/supply-operations.json` and `demo-data/supply-network.json`. Design and compliance notes: [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
 
 - [ClinRadar: the brief, how each rule is built, the demonstration, what is real](ClinRadar.md)
 - [Research: clinical supply failures, business continuity, competitors, and whether the problem is real](ClinRadar-Research.md)

@@ -70,7 +70,7 @@ const model = createCaseModel(data);
 const plain = value => JSON.parse(JSON.stringify(value));
 assert.deepEqual(plain(model.impact.ukImpactSummary()), plain(page.ukImpactSummary()), "UK impact");
 assert.deepEqual(plain(model.impact.spainImpact()), plain(page.spainImpact()), "Spain impact");
-const passing = { at: "2026-11-14T08:00:00.000Z", model: "claude-opus-5-5", verification: { verified: true, checks: [{ ok: true }, { ok: true }] },
+const passing = { at: "2026-11-14T08:00:00.000Z", model: "gemini-3.8-flash", verification: { verified: true, checks: [{ ok: true }, { ok: true }] },
   draft: { proposedRequirement: "Check each batch's QP date before dispatch.", requirementStatement: "Amended Part 7 applies from 28 April 2026.", scope: "UK IMP batches",
     transition: { conditions: ["Pre-cutoff QP date"] }, sectionEdits: [{ section: "invoice", replaces: "", text: "A delivery note in Spanish." }] } };
 const sequences = {

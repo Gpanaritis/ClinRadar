@@ -8,7 +8,7 @@ if errorlevel 1 (
   exit /b 1
 )
 set "NEED_INSTALL="
-if not exist "%~dp0node_modules\@anthropic-ai\sdk\package.json" set "NEED_INSTALL=1"
+if not exist "%~dp0node_modules\@google\genai\package.json" set "NEED_INSTALL=1"
 if not exist "%~dp0node_modules\@modelcontextprotocol\sdk\package.json" set "NEED_INSTALL=1"
 if defined NEED_INSTALL (
   where npm.cmd >nul 2>nul

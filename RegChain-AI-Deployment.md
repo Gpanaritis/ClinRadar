@@ -50,42 +50,25 @@ All settings are environment variables. An unset variable uses the default.
 | `REGCHAIN_TENANT` | `default` | The `tenant_id` written on outbox events |
 | `REGCHAIN_ALLOW_LOCAL_AUTH_ON_NETWORK` | off | Lets local mode listen on a network address. Anyone who reaches it can act as any role. Not for a team |
 | `REGCHAIN_NEW_PASSWORD` | none | Read by `scripts/users.mjs` only: the password to set instead of a generated one |
-| `REGCHAIN_AI_PROVIDER` | `anthropic` | Which Claude service RegChain calls: `anthropic`, `aws`, `bedrock`, `google-cloud`, `vertex` or `foundry`. See [Which Claude service](#which-claude-service) |
-| `ANTHROPIC_API_KEY` | none | With `anthropic`: turns on the live AI check and live agent runs. `ANTHROPIC_AUTH_TOKEN` is also accepted |
-| `REGCHAIN_MODEL_ORCHESTRATOR`, `REGCHAIN_MODEL_SPECIALIST`, `REGCHAIN_MODEL_WATCH`, `REGCHAIN_MODEL_AI_CHECK` | the service's names for Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5 and Claude Opus 5.5 | The model for the master agent, the specialist agents, the watch team and the AI check. Claude models only |
+| `REGCHAIN_AI_PROVIDER` | `gemini` | Gemini Developer API; only `gemini` is accepted |
+| `GEMINI_API_KEY` | none | Google AI Studio key; turns on live AI checks and agent runs |
+| `REGCHAIN_MODEL_ORCHESTRATOR`, `REGCHAIN_MODEL_SPECIALIST`, `REGCHAIN_MODEL_WATCH`, `REGCHAIN_MODEL_AI_CHECK` | the service's names for Gemini 3.8 Flash, Gemini 3.8 Flash, Gemini 3.5 Flash-Lite and Gemini 3.8 Flash | The model for the master agent, the specialist agents, the watch team and the AI check. Gemini models only |
 
 Switches accept `1`, `true`, `yes` or `on`. A number that is empty or not a number falls back to its default.
 
 **Where to set them.** In the environment of the process (in `docker-compose.yml` or your process manager), or in a `.env` file next to `serve-regchain.cjs`. The server, `scripts/users.mjs` and `scripts/backup.mjs` all read that file before anything else, so they use the same settings and open the same database. A variable already set in the environment wins over the file. Make `.env` readable only by the account that runs RegChain, because it can hold the API key.
 
-## Which Claude service
+## Gemini API
 
-RegChain uses Claude models only. `REGCHAIN_AI_PROVIDER` chooses how it reaches them: through Anthropic directly, or through the cloud the company already uses, so the AI requests stay under the company's existing cloud agreement, account and region. The agents, prompts, rules and checks are the same on every service.
+RegChain calls the Gemini Developer API through the `@google/genai` package included in `package.json`. Create a key in [Google AI Studio](https://aistudio.google.com/api-keys), add `GEMINI_API_KEY=your-key` to `.env` next to `serve-regchain.cjs`, and restart the server. Keep the key on the server.
 
-| `REGCHAIN_AI_PROVIDER` | Service | Package to install | What to set | Model names |
-|---|---|---|---|---|
-| `anthropic` (default) | Claude API, run by Anthropic | None, it is included | `ANTHROPIC_API_KEY` (or `ANTHROPIC_AUTH_TOKEN`) | `claude-opus-5-5`, `claude-sonnet-5-5` |
-| `aws` | Claude Platform on AWS: run by Anthropic, reached and billed through AWS | `@anthropic-ai/aws-sdk` | `AWS_REGION`, `ANTHROPIC_AWS_WORKSPACE_ID`, AWS credentials | The same as Anthropic's |
-| `bedrock` | Amazon Bedrock, run by AWS | `@anthropic-ai/bedrock-sdk` | `AWS_REGION`, AWS credentials (or `AWS_BEARER_TOKEN_BEDROCK`). Turn on access to the two models in the AWS console first | `anthropic.claude-opus-5-5`, `anthropic.claude-sonnet-5-5` |
-| `google-cloud` | Claude on Google Cloud (Anthropic managed): run by Anthropic, reached and billed through Google Cloud | `@anthropic-ai/google-cloud-sdk` | `ANTHROPIC_GOOGLE_CLOUD_WORKSPACE_ID`, the project (`ANTHROPIC_GOOGLE_CLOUD_PROJECT`, or the one in the Google credentials), Google credentials | The same as Anthropic's |
-| `vertex` | Google Cloud Vertex AI, run by Google | `@anthropic-ai/vertex-sdk` | `CLOUD_ML_REGION` (`global`, or `us` or `eu`; regional endpoints do not serve these models), `ANTHROPIC_VERTEX_PROJECT_ID` (or the project in the Google credentials), Google credentials | The same as Anthropic's |
-| `foundry` | Microsoft Foundry, on Azure | `@anthropic-ai/foundry-sdk`, and `@azure/identity` for Microsoft Entra ID | `ANTHROPIC_FOUNDRY_RESOURCE` (or `ANTHROPIC_FOUNDRY_BASE_URL`), and `ANTHROPIC_FOUNDRY_API_KEY` or Microsoft Entra ID | The deployment names, which by default are Anthropic's model names |
+`REGCHAIN_AI_PROVIDER` defaults to `gemini` and accepts only `gemini`. Remove any old provider setting when migrating. Cloud identities and credentials for other AI services are no longer used.
 
-**Credentials.**
+The default model is `gemini-3.8-flash` for the orchestrator, specialists and regulation checks, and `gemini-3.5-flash-lite` for the watch team. Override these with `REGCHAIN_MODEL_ORCHESTRATOR`, `REGCHAIN_MODEL_SPECIALIST`, `REGCHAIN_MODEL_AI_CHECK` and `REGCHAIN_MODEL_WATCH`; each value must be a Gemini model ID available to your API key. See [Google's model catalog](https://ai.google.dev/gemini-api/docs/models).
 
-- AWS (`aws`, `bedrock`): the usual AWS chain, so an IAM role on the server, a profile, or `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`. The identity needs access to Claude in that account.
-- Google (`google-cloud`, `vertex`): Application Default Credentials, so the service account attached to the server, `GOOGLE_APPLICATION_CREDENTIALS`, or `gcloud auth application-default login` on a workstation. When none is found, a live AI run stops with that message and the rest of RegChain keeps working.
-- Azure (`foundry`): `ANTHROPIC_FOUNDRY_API_KEY`, or without it Microsoft Entra ID through a managed identity, a service principal or `az login`.
+Agent turns use Gemini function declarations and function responses, retaining model thought signatures across tool calls. Regulation checks request JSON constrained by a schema. A blocked or truncated answer stops the run with a message. There is no automatic fallback to another model. Status responses report readiness and model names without exposing the key.
 
-**Installing the package.** In a folder install, run `npm install` with the package name in the RegChain folder. With Docker, build with it: `docker compose build --build-arg REGCHAIN_AI_PACKAGES=@anthropic-ai/bedrock-sdk` (several packages go in quotes, separated by spaces), and add the service's settings to `docker-compose.yml`. The cloud packages are not in `package.json`, so an install that uses Anthropic's API carries no cloud libraries.
-
-**Model names.** `REGCHAIN_MODEL_ORCHESTRATOR`, `REGCHAIN_MODEL_SPECIALIST`, `REGCHAIN_MODEL_WATCH` and `REGCHAIN_MODEL_AI_CHECK` replace the names in the table, for example for a Foundry deployment with its own name. Only Claude models are accepted: a name without "claude" turns live AI off with a message.
-
-**One difference between services.** On the services Anthropic runs (`anthropic`, `aws`, `google-cloud`), the AI check asks for Anthropic's server-side fallback, so another Claude model can answer if the chosen one declines. Bedrock, Vertex AI and Foundry do not offer it: there a refusal ends the check with a message, and the expert runs it again or decides without it. Everything else RegChain uses (streaming, tool use, adaptive thinking, structured outputs) works on all six.
-
-**Checking it.** At start, RegChain prints the Claude service and whether it is ready, or the one setting that is missing. The page shows the same sentence where the AI check and the agents are started.
-
-Changing the service or a model is a change to the validated system (see [RegChain-AI-Validation.md](RegChain-AI-Validation.md)): run `npm run check:ai`, a live AI check and a live agent run on the new service before people rely on it.
+At start, RegChain prints whether Gemini is ready or which setting is missing. The dashboard shows the same setup instructions. Recorded results and scripted runs work without a key.
 
 ## Run with Docker Compose
 
@@ -97,10 +80,10 @@ The image (`Dockerfile`):
 - keeps all data in the `/data` volume;
 - has a health check that calls `/v1/health` every 30 seconds on the configured port and passes only on HTTP 200, which needs an intact audit chain.
 
-`docker-compose.yml` runs one instance. It publishes port 4173 on `127.0.0.1` only, keeps `/data` in the named volume `regchain-data`, restarts unless stopped, and passes `REGCHAIN_AI_PROVIDER` and `ANTHROPIC_API_KEY` from your shell or from a `.env` file next to `docker-compose.yml`. `.dockerignore` keeps `.env`, the local database and the cache out of the image.
+`docker-compose.yml` runs one instance. It publishes port 4173 on `127.0.0.1` only, keeps `/data` in the named volume `regchain-data`, restarts unless stopped, and passes `REGCHAIN_AI_PROVIDER` and `GEMINI_API_KEY` from your shell or from a `.env` file next to `docker-compose.yml`. `.dockerignore` keeps `.env`, the local database and the cache out of the image.
 
 1. In `docker-compose.yml`, uncomment `REGCHAIN_PUBLIC_ORIGIN` and `REGCHAIN_TRUST_PROXY` and set the address (see the next section).
-2. For the live AI check and live agent runs, put `ANTHROPIC_API_KEY=` and your key in `.env` next to `docker-compose.yml`. To reach Claude through AWS, Google Cloud or Azure instead, follow [Which Claude service](#which-claude-service). Without AI, recorded results and scripted agent runs still work.
+2. For the live AI check and live agent runs, put `GEMINI_API_KEY=` and your key in `.env` next to `docker-compose.yml`. See [Gemini API](#gemini-api) for configuration. Without AI, recorded results and scripted agent runs still work.
 3. Build and start:
    ```sh
    docker compose build
@@ -115,7 +98,7 @@ The image (`Dockerfile`):
    ```
 5. Check it answers: `curl -s http://127.0.0.1:4173/v1/health`.
 
-On first start, RegChain creates the database, runs the migrations, creates the cases and replays both fixture sets with the recorded extraction. A new volume has an empty cache, so this first replay fetches the UK official texts once from legislation.gov.uk and GOV.UK. It makes no AI call. Allow outbound HTTPS to `www.legislation.gov.uk` and `www.gov.uk`, and to the Claude service if you use the live AI check or live agents: `api.anthropic.com` for Anthropic's API, or the cloud service's endpoint in your region.
+On first start, RegChain creates the database, runs the migrations, creates the cases and replays both fixture sets with the recorded extraction. A new volume has an empty cache, so this first replay fetches the UK official texts once from legislation.gov.uk and GOV.UK. It makes no AI call. Allow outbound HTTPS to `www.legislation.gov.uk` and `www.gov.uk`, and to the Gemini service if you use the live AI check or live agents: `generativelanguage.googleapis.com`.
 
 ## HTTPS reverse proxy
 
@@ -159,7 +142,7 @@ What these two settings change:
    REGCHAIN_TRUST_PROXY=1
    REGCHAIN_DATA_DIR=/var/lib/regchain
    REGCHAIN_CACHE_DIR=/var/lib/regchain/cache
-   ANTHROPIC_API_KEY=your-key
+   GEMINI_API_KEY=your-key
    ```
    Keep `REGCHAIN_HOST=127.0.0.1` when the proxy runs on the same server.
 5. Start it with `node serve-regchain.cjs` under a process manager that restarts it. (`npm start` adds `--open`, which only opens a browser in local mode on Windows.) A systemd example:
@@ -280,7 +263,7 @@ Earlier versions kept agent plan approvals in `agent-approvals.json` in the cach
 
 ## AI and the data it receives
 
-RegChain calls the configured Claude service only for the live AI check and live agent runs, and only once that service is set up (see [Which Claude service](#which-claude-service)). Recorded results and scripted agent runs make no AI call.
+RegChain calls the configured Gemini service only for the live AI check and live agent runs, and only once that service is set up (see [Gemini API](#gemini-api)). Recorded results and scripted agent runs make no AI call.
 
 What each call sends:
 
@@ -288,7 +271,7 @@ What each call sends:
 - **Spain AI check:** the fictional Spanish note and the current Spain Country Specification. In this repository the specification is fictional too.
 - **Live agent runs:** the shipment data the agents read through the MCP servers. In this repository that data is fictional (`demo-data/supply-operations.json`).
 
-Do not put real company specifications or records into AI requests until the company has a data processing agreement and retention terms with the provider that runs the chosen service: Anthropic, or the cloud provider for Bedrock, Vertex AI and Foundry.
+Do not put real company specifications or records into AI requests until the company has a data processing agreement and retention terms with the provider that runs the chosen service: Google.
 
 The AI credentials stay on the server: the page only learns which service is set and whether it is ready. The eight MCP server processes start with a minimal environment plus the data and cache folder settings, never the API key or the cloud credentials.
 

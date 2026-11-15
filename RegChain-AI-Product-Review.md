@@ -65,7 +65,7 @@ The **Shipment checks** page tests all 20 planned shipments against their destin
 
 The hackathon is about agentic AI, and finding a blocked shipment is only half the job. **Agent plans**, in the menu, gives every shipment that needs action a team of agents:
 
-- An orchestrator (Claude Opus 5.5) delegates to supply, logistics, records and communications agents (Claude Sonnet 5.5).
+- An orchestrator (Gemini 3.8 Flash) delegates to supply, logistics, records and communications agents (Gemini 3.8 Flash).
 - The agents read IRT, ERP, the depot and the eTMF through six MCP servers, all read-only except a draft inbox.
 - The orchestrator proposes options and checks each one with RegChain's rules, then drafts the changes for people to approve in their own validated systems.
 

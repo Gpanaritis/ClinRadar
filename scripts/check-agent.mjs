@@ -1,7 +1,7 @@
-// Checks the agent layer without calling the Anthropic API:
+// Checks the agent layer without calling the Google API:
 // the rules match the dashboard, the verifier is strict, the eight MCP servers start and answer, scripted runs resolve
 // different kinds of shipment, the portfolio run never promises the same kits or slot twice, approvals are re-checked
-// on the server, the live loop works end to end with a stand-in AI client, and the Claude service setting picks the
+// on the server, the live loop works end to end with a stand-in AI client, and the Gemini service setting picks the
 // right models and request for each service.
 // Usage: node scripts/check-agent.mjs [--save]   (--save writes the scripted runs as recorded results, for UI testing)
 // Every check runs in a temporary cache, so approvals on this computer never change the results.
@@ -82,17 +82,17 @@ console.log(`ok  MCP: ${described.map(system => `${system.name} (${system.tools.
 {
   const { AGENTS, WATCH_AGENTS, WATCH_MODEL } = await import("../regchain-ai/agent.mjs");
   assert.deepEqual(WATCH_AGENTS, ["weather", "transport", "security", "regulatory"]);
-  assert.equal(WATCH_MODEL, "claude-haiku-5-5");
+  assert.equal(WATCH_MODEL, "gemini-3.5-flash-lite");
   assert.deepEqual(WATCH_AGENTS.map(id => AGENTS[id].name), ["Weather & natural hazards", "Strikes & transport", "Security & travel advice", "Regulatory & customs"]);
   const specsTools = described.find(system => system.id === "specs").tools;
   for (const id of WATCH_AGENTS) {
-    assert.equal(AGENTS[id].model, "claude-haiku-5-5");
+    assert.equal(AGENTS[id].model, "gemini-3.5-flash-lite");
     assert.ok(AGENTS[id].tools.includes("specs__get_watch_brief") && AGENTS[id].tools.every(name => name.startsWith("specs__") && specsTools.some(tool => tool.name === name.split("__")[1] && tool.readOnly)), `${id}: read-only ClinRadar tools only`);
     assert.match(AGENTS[id].system, /Never treat a single unverified source as confirmed/);
     assert.match(AGENTS[id].system, /No probabilities/);
   }
-  assert.equal(AGENTS.orchestrator.model, "claude-opus-5-5");
-  assert.equal(AGENTS.logistics.model, "claude-sonnet-5-5");
+  assert.equal(AGENTS.orchestrator.model, "gemini-3.8-flash");
+  assert.equal(AGENTS.logistics.model, "gemini-3.8-flash");
   const read = async (tool, args) => JSON.parse((await systems.specs.client.callTool({ name: tool, arguments: args })).content[0].text);
   const weather = await read("get_risk_signals", { hazard: "weather" });
   assert.ok(weather.length >= 3 && weather.every(item => item.hazard === "weather"), "the hazard filter returns only that kind");
@@ -218,27 +218,32 @@ console.log("ok  approvals: re-checked on the server, refused when stale, alread
 
 // 8. The live loop with a stand-in AI client: delegation, MCP calls, verification, a draft and the resolution.
 // The orchestrator's system prompt is the ClinRadar master instructions plus its task, cached as one prefix.
-const systemText = params => (Array.isArray(params.system) ? params.system.map(block => block.text).join("\n") : params.system);
+const systemText = params => params.config.systemInstruction;
 function standIn() {
   const turns = { orchestrator: 0, supply: 0 };
-  const reply = (content, stop_reason = "tool_use") => ({ content, stop_reason, usage: { input_tokens: 10, output_tokens: 5 } });
-  const use = (name, input) => ({ type: "tool_use", id: `t${Math.random().toString(36).slice(2, 8)}`, name, input });
+  const reply = (parts, finishReason = "STOP") => ({ candidates: [{ content: { role: "model", parts }, finishReason }], usageMetadata: { promptTokenCount: 10, candidatesTokenCount: 5 } });
+  const use = (name, args) => ({ functionCall: { id: `t${Math.random().toString(36).slice(2, 8)}`, name, args }, thoughtSignature: "test-signature" });
   const plan = [{ type: "swap_batch", batch_id: "J-203" }, { type: "record_authorisation_route", authorisation_route: "old_rules" }];
   return {
-    messages: {
-      stream(params) {
+    models: {
+      async generateContent(params) {
         const who = systemText(params).includes("orchestrator") ? "orchestrator" : "supply";
         if (who === "orchestrator") {
-          assert.ok(Array.isArray(params.system) && /Non-negotiable country-scope rule/.test(params.system[0].text), "the orchestrator works under the ClinRadar master instructions");
-          assert.equal(params.system.at(-1).cache_control?.type, "ephemeral", "tools and both system blocks are cached as one prefix");
-        } else assert.equal(typeof params.system, "string", "specialists keep their short instructions");
+          assert.match(params.config.systemInstruction, /Non-negotiable country-scope rule/, "the orchestrator works under the ClinRadar master instructions");
+        } else assert.equal(typeof params.config.systemInstruction, "string", "specialists keep their short instructions");
+        for (const content of params.contents.filter(item => item.role === "model")) {
+          for (const part of content.parts.filter(item => item.functionCall)) assert.equal(part.thoughtSignature, "test-signature", "tool turns retain Gemini thought signatures");
+        }
+        for (const part of params.contents.flatMap(item => item.parts).filter(item => item.functionResponse)) {
+          assert.ok(part.functionResponse.name && part.functionResponse.response.result, "tool results return Gemini function responses");
+        }
         const step = turns[who]++;
         let message;
         if (who === "supply") {
-          message = step === 0 ? reply([use("irt__get_depot_stock", { depot: "UK depot", product_id: "IMP-004" })]) : reply([{ type: "text", text: "J-203: 48 kits, label v2." }], "end_turn");
+          message = step === 0 ? reply([use("irt__get_depot_stock", { depot: "UK depot", product_id: "IMP-004" })]) : reply([{ text: "J-203: 48 kits, label v2." }], "STOP");
         } else {
           message = [
-            reply([{ type: "text", text: "Reading the checks." }, use("specs__get_shipment_checks", { shipment_id: "SHP-04" })]),
+            reply([{ text: "Reading the checks." }, use("specs__get_shipment_checks", { shipment_id: "SHP-04" })]),
             reply([use("delegate_to_agent", { agent: "supply", task: "Find IMP-004 batches at the UK depot." })]),
             reply([use("specs__verify_option", { shipment_id: "SHP-04", actions: plan })]),
             // A draft for an option that will fail ClinRadar's check: it must come back withdrawn.
@@ -247,8 +252,8 @@ function standIn() {
             reply([use("submit_resolution", { summary: "Swap to J-203.", root_cause: "Legacy label after the cutoff.", options: [{ id: "A", title: "Swap to J-203", actions: plan, why: "Updated label." }, { id: "B", title: "Delay to 2026-11-30", actions: [{ type: "delay", new_dispatch_date: "2026-11-30" }], why: "Time." }], recommended: "A" })]),
           ][step];
         }
-        assert.ok(params.tools.every(tool => /^[a-zA-Z0-9_-]{1,64}$/.test(tool.name)), "tool names must be valid");
-        return { finalMessage: async () => message };
+        assert.ok(params.config.tools[0].functionDeclarations.every(tool => /^[a-zA-Z0-9_-]{1,64}$/.test(tool.name)), "tool names must be valid");
+        return message;
       },
     },
   };
@@ -268,14 +273,15 @@ console.log(`ok  live loop (stand-in AI): ${live.events.length} steps, delegatio
   const { runWatchSweep } = await import("../regchain-ai/agent.mjs");
   const seen = [];
   const turns = {};
-  const client = { messages: { stream(params) {
-    const id = ["Weather & natural hazards", "Strikes & transport", "Security & travel advice", "Regulatory & customs"].find(name => params.system.includes(`"${name}" watch agent`));
-    seen.push({ id, model: params.model, thinking: "thinking" in params, tools: params.tools.map(tool => tool.name) });
+  const client = { models: { async generateContent(params) {
+    const id = ["Weather & natural hazards", "Strikes & transport", "Security & travel advice", "Regulatory & customs"].find(name => params.config.systemInstruction.includes(`"${name}" watch agent`));
+    seen.push({ id, model: params.model, tools: params.config.tools[0].functionDeclarations.map(tool => tool.name) });
     const step = (turns[id] = (turns[id] ?? 0) + 1);
-    const message = step === 1
-      ? { stop_reason: "tool_use", content: [{ type: "tool_use", id: `w${seen.length}`, name: "specs__get_watch_brief", input: { hazard: "security" } }], usage: { input_tokens: 5, output_tokens: 2 } }
-      : { stop_reason: "end_turn", content: [{ type: "text", text: `${id}: checked.` }], usage: { input_tokens: 5, output_tokens: 2 } };
-    return { finalMessage: async () => message };
+    const parts = step === 1
+      ? [{ functionCall: { id: `w${seen.length}`, name: "specs__get_watch_brief", args: { hazard: "security" } } }]
+      : [{ text: `${id}: checked.` }];
+    const message = { candidates: [{ content: { role: "model", parts }, finishReason: "STOP" }], usageMetadata: { promptTokenCount: 5, candidatesTokenCount: 2 } };
+    return message;
   } } };
   const sweepSystems = await connectSystems(root, ["specs"]);
   const record = { events: [], usage: { input_tokens: 0, output_tokens: 0 } };
@@ -284,67 +290,79 @@ console.log(`ok  live loop (stand-in AI): ${live.events.length} steps, delegatio
   const findings = await runWatchSweep({ root, data: sweepData, mode: "live", client, systems: sweepSystems, send, record });
   await closeSystems(sweepSystems);
   assert.deepEqual(findings.map(item => item.finding), ["Weather & natural hazards: checked.", "Strikes & transport: checked.", "Security & travel advice: checked.", "Regulatory & customs: checked."]);
-  assert.ok(seen.every(item => item.model === "claude-haiku-5-5" && !item.thinking), "the watch model, without extended thinking");
+  assert.ok(seen.every(item => item.model === "gemini-3.5-flash-lite"), "the configured watch model");
   assert.deepEqual(record.events.filter(event => event.type === "tool_call").map(event => event.input.hazard), ["weather", "transport", "security", "regulatory"], "each watch agent reads only its own hazard");
   assert.ok(!seen.some(item => item.tools.includes("delegate_to_agent") || item.tools.includes("drafts__create_draft")), "watch agents cannot delegate or draft");
-  assert.ok(findings.every(item => item.model === "claude-haiku-5-5"));
-  console.log("ok  live watch sweep (stand-in AI): four watch agents on claude-haiku-5-5, reads pinned to their own hazard, no delegation or drafts");
+  assert.ok(findings.every(item => item.model === "gemini-3.5-flash-lite"));
+  console.log("ok  live watch sweep (stand-in AI): four watch agents on gemini-3.5-flash-lite, reads pinned to their own hazard, no delegation or drafts");
 }
 
-// 9. Which Claude service: one setting, Claude models only, and one clear sentence for whatever is missing.
+// 9. Gemini setup, credentials and SDK construction, without a network call.
 {
-  const { claudeSettings, setupMessage, createClaude, credentialsRefused, PROVIDERS } = await import("../regchain-ai/claude.mjs");
-  const { draftChange } = await import("../regchain-ai/analyze.mjs");
-  const plain = claudeSettings({ ANTHROPIC_API_KEY: "test" });
-  assert.equal(plain.provider, "anthropic");
-  assert.ok(plain.configured && plain.serverFallbacks);
-  assert.deepEqual(plain.models, { orchestrator: "claude-opus-5-5", specialist: "claude-sonnet-5-5", watch: "claude-haiku-5-5", aiCheck: "claude-opus-5-5" });
-  assert.equal(claudeSettings({ ANTHROPIC_API_KEY: "test", REGCHAIN_MODEL_WATCH: "my-claude-haiku-deployment" }).models.watch, "my-claude-haiku-deployment", "REGCHAIN_MODEL_WATCH overrides the watch model");
-  assert.match(claudeSettings({ ANTHROPIC_API_KEY: "test", REGCHAIN_MODEL_WATCH: "gpt-5-mini" }).problems[0], /Claude models only: REGCHAIN_MODEL_WATCH/);
-  assert.equal(setupMessage(claudeSettings({}), true), "Add ANTHROPIC_API_KEY to the .env file next to serve-regchain.cjs, then restart RegChain.");
-  const bedrock = claudeSettings({ REGCHAIN_AI_PROVIDER: "bedrock", AWS_REGION: "eu-central-1" });
-  assert.ok(bedrock.configured && !bedrock.serverFallbacks);
-  assert.deepEqual(bedrock.models, { orchestrator: "anthropic.claude-opus-5-5", specialist: "anthropic.claude-sonnet-5-5", watch: "anthropic.claude-haiku-5-5", aiCheck: "anthropic.claude-opus-5-5" });
-  assert.match(setupMessage(bedrock, false), /npm install @anthropic-ai\/bedrock-sdk/);
-  assert.deepEqual(claudeSettings({ REGCHAIN_AI_PROVIDER: "aws", AWS_REGION: "eu-west-1" }).missing, ["ANTHROPIC_AWS_WORKSPACE_ID"]);
-  assert.ok(claudeSettings({ REGCHAIN_AI_PROVIDER: "google-cloud", ANTHROPIC_GOOGLE_CLOUD_WORKSPACE_ID: "wrkspc_test" }).configured);
-  assert.match(setupMessage(claudeSettings({ REGCHAIN_AI_PROVIDER: "vertex" }), true), /CLOUD_ML_REGION/);
-  assert.equal(claudeSettings({ REGCHAIN_AI_PROVIDER: "vertex", CLOUD_ML_REGION: "global" }).models.orchestrator, "claude-opus-5-5");
-  assert.deepEqual(claudeSettings({ REGCHAIN_AI_PROVIDER: "Foundry" }).missing, ["ANTHROPIC_FOUNDRY_RESOURCE"]);
-  assert.match(claudeSettings({ ANTHROPIC_API_KEY: "test", REGCHAIN_MODEL_SPECIALIST: "gpt-5" }).problems[0], /Claude models only/);
-  assert.match(claudeSettings({ REGCHAIN_AI_PROVIDER: "openai" }).problems[0], /Use one of: anthropic, aws, bedrock, google-cloud, vertex, foundry/);
-  assert.match(credentialsRefused({ status: 401 }, plain), /Anthropic API key was not accepted/);
-  assert.match(credentialsRefused({ status: 403 }, bedrock), /Amazon Bedrock did not accept/);
-  assert.equal(credentialsRefused({ status: 500 }, bedrock), null);
+  const { geminiSettings, geminiStatus, setupMessage, createGemini, credentialsRefused, responseParts, tokenUsage, DEFAULT_MODELS } = await import("../regchain-ai/gemini.mjs");
+  const plain = geminiSettings({ GEMINI_API_KEY: "test" });
+  assert.equal(plain.provider, "gemini");
+  assert.ok(plain.configured);
+  assert.deepEqual(plain.models, DEFAULT_MODELS);
+  assert.equal(geminiSettings({ GEMINI_API_KEY: "test", REGCHAIN_MODEL_WATCH: "gemini-custom" }).models.watch, "gemini-custom");
+  assert.match(geminiSettings({ GEMINI_API_KEY: "test", REGCHAIN_MODEL_WATCH: "other-model" }).problems[0], /Gemini models only/);
+  assert.equal(setupMessage(geminiSettings({}), true), "Add GEMINI_API_KEY to the .env file next to serve-regchain.cjs, then restart RegChain.");
+  assert.ok(!geminiSettings({ GEMINI_API_KEY: " " }).configured);
+  assert.match(geminiSettings({ REGCHAIN_AI_PROVIDER: "bedrock" }).problems[0], /must be "gemini"/);
+  assert.match(credentialsRefused({ status: 401 }), /Gemini API key was not accepted/);
+  assert.match(credentialsRefused({ status: 403 }), /Gemini API key was not accepted/);
+  assert.match(credentialsRefused({ status: 400, message: "API key not valid" }), /Gemini API key was not accepted/);
+  assert.equal(credentialsRefused({ status: 500 }), null);
+  await assert.rejects(createGemini({ env: {} }), /Add GEMINI_API_KEY/);
+  await assert.rejects(createGemini({ env: { GEMINI_API_KEY: "test" }, load: async () => { throw new Error("not installed"); } }), /Run npm install/);
+  let options;
+  await createGemini({ env: { GEMINI_API_KEY: " test " }, load: async name => {
+    assert.equal(name, "@google/genai");
+    return { GoogleGenAI: class { constructor(config) { options = config; } } };
+  } });
+  assert.equal(options.apiKey, "test");
+  assert.equal(options.vertexai, false);
+  assert.ok(!JSON.stringify(geminiStatus({ GEMINI_API_KEY: "secret-test-key" })).includes("secret-test-key"));
+  assert.throws(() => responseParts({ candidates: [{ finishReason: "MAX_TOKENS" }] }), /cut off/);
+  assert.throws(() => responseParts({ promptFeedback: { blockReason: "SAFETY" } }), /declined/);
+  assert.throws(() => responseParts({ candidates: [{ finishReason: "SAFETY" }] }), /declined/);
+  assert.throws(() => responseParts({}), /no answer/);
+  assert.deepEqual(tokenUsage({ usageMetadata: { promptTokenCount: 10, candidatesTokenCount: 5, thoughtsTokenCount: 3, cachedContentTokenCount: 2 } }), { input_tokens: 10, output_tokens: 8, cache_read_input_tokens: 2 });
+  console.log("ok  Gemini configuration, key validation, SDK construction, blocked/truncated replies and usage accounting");
+}
 
-  // Through Amazon Bedrock: the agents and the AI check use Bedrock's model names, and the AI check leaves out the
-  // server-side fallback that Bedrock does not offer.
-  const saved = { REGCHAIN_AI_PROVIDER: process.env.REGCHAIN_AI_PROVIDER, AWS_REGION: process.env.AWS_REGION };
-  Object.assign(process.env, { REGCHAIN_AI_PROVIDER: "bedrock", AWS_REGION: "eu-central-1" });
-  try {
-    await assert.rejects(createClaude({ load: async () => { throw new Error("not installed"); } }), /npm install @anthropic-ai\/bedrock-sdk/);
-    const seen = new Map();
-    const inner = standIn();
-    const viaBedrock = await resolveShipment({ root, shipmentId: "SHP-04", mode: "live", client: { messages: { stream(params) {
-      seen.set(systemText(params).includes("orchestrator") ? "orchestrator" : "supply", params.model);
-      return inner.messages.stream(params);
-    } } } });
-    assert.equal(viaBedrock.error, undefined, viaBedrock.error);
-    assert.equal(seen.get("orchestrator"), "anthropic.claude-opus-5-5");
-    assert.equal(seen.get("supply"), "anthropic.claude-sonnet-5-5");
-    assert.equal(viaBedrock.models.service, "Amazon Bedrock");
-    const sources = [{ id: "v1", role: "before", text: "Old text." }, { id: "v2", role: "after", text: "New text." }];
-    let sent;
-    await draftChange(sources, { claude: claudeSettings(), client: { messages: { async create(params) {
-      sent = params;
-      return { model: params.model, stop_reason: "end_turn", content: [{ type: "text", text: "{}" }] };
-    } } } });
-    assert.equal(sent.model, "anthropic.claude-opus-5-5");
-    assert.ok(!("fallbacks" in sent) && !("betas" in sent), "Bedrock gets no server-side fallback");
-  } finally {
-    for (const [name, value] of Object.entries(saved)) value === undefined ? delete process.env[name] : (process.env[name] = value);
-  }
-  console.log(`ok  Claude service: ${Object.keys(PROVIDERS).length} services, Claude models only, a clear sentence for what is missing, and a live run through Amazon Bedrock with its own model names`);
+// 10. Exercise the actual Google SDK serializer with an in-memory HTTP transport.
+{
+  const { GoogleGenAI } = await import("@google/genai");
+  const { draftChange } = await import("../regchain-ai/analyze.mjs");
+  const requests = [];
+  const client = new GoogleGenAI({ apiKey: "transport-test-key", vertexai: false, httpOptions: { fetch: async (url, options) => {
+    assert.ok(String(url).startsWith("https://generativelanguage.googleapis.com/"));
+    assert.equal(new Headers(options.headers).get("x-goog-api-key"), "transport-test-key");
+    const body = JSON.parse(options.body);
+    requests.push(body);
+    const parts = body.generationConfig?.responseMimeType === "application/json"
+      ? [{ text: JSON.stringify({ summary: "SDK transport test" }) }]
+      : requests.length === 2
+        ? [{ functionCall: { name: "specs__get_shipment_checks", args: { shipment_id: "SHP-04" } }, thoughtSignature: "transport-signature" }]
+        : [{ functionCall: { name: "submit_resolution", args: { summary: "Needs expert review.", root_cause: "Transport test.", options: [], recommended: "escalate" } } }];
+    return new Response(JSON.stringify({ candidates: [{ content: { role: "model", parts }, finishReason: "STOP" }], modelVersion: "gemini-transport-test", usageMetadata: { promptTokenCount: 7, candidatesTokenCount: 4 } }), { headers: { "content-type": "application/json" } });
+  } } });
+  const sources = [{ id: "v1", role: "before", text: "Old text." }, { id: "v2", role: "after", text: "New text." }];
+  const checked = await draftChange(sources, { client });
+  assert.equal(checked.model, "gemini-transport-test");
+  assert.equal(checked.draft.summary, "SDK transport test");
+  assert.equal(checked.usage.input_tokens, 7);
+  assert.deepEqual(requests[0].generationConfig.responseJsonSchema.properties.claims.items.properties.sourceId.enum, ["v1", "v2"]);
+  assert.ok(requests[0].systemInstruction.parts[0].text.includes("Regulatory Affairs"));
+  const run = await resolveShipment({ root, shipmentId: "SHP-04", mode: "live", client });
+  assert.equal(run.error, undefined, run.error);
+  assert.ok(requests[1].tools[0].functionDeclarations.some(tool => tool.name === "delegate_to_agent" && tool.parametersJsonSchema));
+  assert.ok(requests[1].contents[0].parts[0].text.includes("SHP-04"));
+  assert.equal(requests[2].contents[1].parts[0].thoughtSignature, "transport-signature");
+  assert.equal(requests[2].contents[2].parts[0].functionResponse.name, "specs__get_shipment_checks");
+  assert.ok(requests[2].contents[2].parts[0].functionResponse.response.result);
+  console.log("ok  Google SDK HTTP serialization: API key header, source schema, system prompt and agent function declarations");
 }
 
 (await import("../regchain-ai/db.mjs")).closeDatabase(root);

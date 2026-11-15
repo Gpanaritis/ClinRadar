@@ -23,8 +23,8 @@ RegChain is the system of record for what it owns: source versions and evidence,
 
 ## GAMP 5 categorisation and approach
 
-- **Category 5, custom application.** RegChain's code was written for this purpose. Its runtime (Node.js), database engine (SQLite through `node:sqlite`) and libraries (`zod`, the MCP SDK, the Anthropic SDK) can be treated as infrastructure and standard components, identified by the exact versions in `package-lock.json`.
-- **The AI model is an external service.** It needs a supplier assessment and an agreement with the provider, as for any service provider under Annex 11 §3. The provider is whoever runs the chosen Claude service: Anthropic, or the company's cloud provider for Amazon Bedrock, Google Cloud Vertex AI and Microsoft Foundry.
+- **Category 5, custom application.** RegChain's code was written for this purpose. Its runtime (Node.js), database engine (SQLite through `node:sqlite`) and libraries (`zod`, the MCP SDK, the Google GenAI SDK) can be treated as infrastructure and standard components, identified by the exact versions in `package-lock.json`.
+- **The AI model is an external service.** It needs a supplier assessment and an agreement with the provider, as for any service provider under Annex 11 §3. The Gemini API provider is Google.
 - **Risk-based approach.** Following GAMP 5 (second edition), effort goes where patient safety, product quality and data integrity are affected. A starting point for the risk assessment:
 
 | Function | Why it matters | Suggested rigour |
@@ -97,7 +97,7 @@ Run the journeys in [RegChain-AI-User-Journeys.md](RegChain-AI-User-Journeys.md)
 
 The design keeps the AI output as a draft:
 
-1. **The AI drafts.** Claude drafts the regulatory change from the official text (UK), or from the note and the current specification (Spain). Agents propose options for a blocked shipment and draft the changes each option needs.
+1. **The AI drafts.** Gemini drafts the regulatory change from the official text (UK), or from the note and the current specification (Spain). Agents propose options for a blocked shipment and draft the changes each option needs.
 2. **Deterministic checks verify.** Before anyone can approve, RegChain checks the draft: every quote must appear word for word in the source it cites, the effective date must match the recorded rule, the change status must agree with the text comparison, and for Spain each edit must replace a line the specification has. Agent options are checked against fixed shipment rules, and checked again on the server when someone approves. A draft or option that fails cannot be approved.
 3. **A qualified person decides.** The Regulatory SME approves, edits or rejects the change and gives a rationale. Clinical Supply approves a supply plan. Each draft for IRT, ERP, the depot or the QMS is still approved in that system.
 
@@ -105,8 +105,8 @@ The draft EU GMP Annex 22 on artificial intelligence, published for public consu
 
 What validation of the AI parts should cover:
 
-- The model IDs are pinned in code (`claude-opus-5-5` for the AI check and the orchestrator, `claude-sonnet-5-5` for the specialist agents), and the prompts are versioned in git. The Claude service (`REGCHAIN_AI_PROVIDER`) and any model name set for it (`REGCHAIN_MODEL_*`) are configuration items, and only Claude models are accepted. Changing the service, a model or a prompt is a change to the system: run `check:ai` and `check:agent` again, then a live AI check and a live agent run on the chosen service, and record the result.
-- On the services Anthropic runs (`anthropic`, `aws`, `google-cloud`), the AI check allows the provider's server-side fallback (`fallbacks: "default"` in `regchain-ai/analyze.mjs`), so another model may answer when the pinned one is unavailable. Each result records the model that answered. Decide whether to keep the fallback for validated use. Bedrock, Vertex AI and Foundry have no server-side fallback, so there the pinned model answers or the check stops.
+- The model IDs are pinned in code (`gemini-3.8-flash` for the AI check and the orchestrator, `gemini-3.8-flash` for the specialist agents), and the prompts are versioned in git. The Gemini service (`REGCHAIN_AI_PROVIDER`) and any model name set for it (`REGCHAIN_MODEL_*`) are configuration items, and only Gemini models are accepted. Changing the service, a model or a prompt is a change to the system: run `check:ai` and `check:agent` again, then a live AI check and a live agent run on the chosen service, and record the result.
+- Gemini requests use the configured model without automatic fallback. Each result records the model version returned by the API.
 - Live AI answers vary between runs. Validate the deterministic checks and the human review with fixed test cases, as the stand-in clients in `check:ai` and `check:agent` do, rather than the wording of a live answer.
 - Review, at intervals, the cases where people rejected or edited the AI draft or chose an option other than the recommended one.
 

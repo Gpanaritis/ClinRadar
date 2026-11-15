@@ -136,7 +136,7 @@ const port = await new Promise(resolve => {
   const probe = createServer().listen(0, "127.0.0.1", () => { const { port: free } = probe.address(); probe.close(() => resolve(free)); });
 });
 const env = { ...process.env, REGCHAIN_AUTH: "password", REGCHAIN_HOST: "127.0.0.1", REGCHAIN_PORT: String(port), REGCHAIN_DATA_DIR: dataDir, REGCHAIN_CACHE_DIR: cacheDir,
-  REGCHAIN_LOGIN_ATTEMPTS: "3", REGCHAIN_LOGIN_ATTEMPTS_PER_ADDRESS: "12", REGCHAIN_WRITES_PER_MINUTE: "60", REGCHAIN_CONTACTS_PER_HOUR: "8", REGCHAIN_LOG_LEVEL: "warn", ANTHROPIC_API_KEY: "",
+  REGCHAIN_LOGIN_ATTEMPTS: "3", REGCHAIN_LOGIN_ATTEMPTS_PER_ADDRESS: "12", REGCHAIN_WRITES_PER_MINUTE: "60", REGCHAIN_CONTACTS_PER_HOUR: "8", REGCHAIN_LOG_LEVEL: "warn", GEMINI_API_KEY: "",
   REGCHAIN_ENTERPRISE_TOKEN: "enterprise-test-token-4f1c9a7e2b" };
 const ENTERPRISE_TOKEN = env.REGCHAIN_ENTERPRISE_TOKEN;
 const users = (args, extra = {}) => spawnSync(process.execPath, [join(root, "scripts", "users.mjs"), ...args], { env: { ...env, ...extra }, encoding: "utf8" });

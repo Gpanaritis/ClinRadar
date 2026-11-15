@@ -6,11 +6,6 @@ ENV NODE_ENV=production
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
-# For a Claude service other than Anthropic's own API, its package, for example
-#   docker compose build --build-arg REGCHAIN_AI_PACKAGES=@anthropic-ai/bedrock-sdk
-# (see "Which Claude service" in RegChain-AI-Deployment.md).
-ARG REGCHAIN_AI_PACKAGES=""
-RUN if [ -n "$REGCHAIN_AI_PACKAGES" ]; then npm install --omit=dev --no-save $REGCHAIN_AI_PACKAGES && npm cache clean --force; fi
 COPY . .
 RUN mkdir -p /data/cache && chown -R node:node /data
 

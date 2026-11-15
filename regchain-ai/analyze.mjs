@@ -1,13 +1,13 @@
-// AI step: Claude reads the sources for a case and drafts the change.
+// AI step: Gemini reads the sources for a case and drafts the change.
 // UK case: the two official versions of regulation 46 and the supporting sources.
 // Spain case (fictional): a new information note in Spanish and the current Spain Country Specification.
 // RegChain then checks the draft itself: every quote must appear in the source it cites,
 // and the effective date must match the recorded rule.
 
 import { normalise } from "./sources.mjs";
-import { claudeSettings, createClaude, DEFAULT_MODELS } from "./claude.mjs";
+import { geminiSettings, createGemini, DEFAULT_MODELS, responseParts, tokenUsage } from "./gemini.mjs";
 
-// The AI check's model on Anthropic's own API. claude.mjs gives the name on the configured service.
+// The AI check's model on Google's own API. gemini.mjs gives the name on the configured service.
 export const MODEL = DEFAULT_MODELS.aiCheck;
 
 const UK_SYSTEM = `You support a Regulatory Affairs expert in a clinical supply team.
@@ -126,8 +126,8 @@ function sourceBlock(source) {
   ].join("\n");
 }
 
-// Calls Claude once. `client` and `claude` (the service settings) can be passed in for tests; `profile` picks the case ("uk" or "es").
-export async function draftChange(sources, { client, profile = "uk", claude = claudeSettings() } = {}) {
+// Calls Gemini once. `client` and `gemini` (the service settings) can be passed in for tests; `profile` picks the case ("uk" or "es").
+export async function draftChange(sources, { client, profile = "uk", gemini = geminiSettings() } = {}) {
   const settings = PROFILES[profile];
   if (!settings) throw new Error(`Unknown case: ${profile}`);
   const usable = sources.filter(source => source.text);
@@ -136,33 +136,25 @@ export async function draftChange(sources, { client, profile = "uk", claude = cl
       ? "Both versions of regulation 46 are needed. Check the internet connection and fetch the sources again."
       : "The note and the current specification are both needed.");
   }
-  const api = client ?? (await createClaude());
-  const request = {
-    model: claude.models.aiCheck,
-    max_tokens: 16000,
-    thinking: { type: "adaptive" },
-    output_config: {
-      effort: "high",
-      format: { type: "json_schema", schema: schemaFor(usable.map(source => source.id), settings) },
+  const api = client ?? (await createGemini());
+  const response = await api.models.generateContent({
+    model: gemini.models.aiCheck,
+    contents: [{ role: "user", parts: [{ text: `${usable.map(sourceBlock).join("\n\n")}\n\n${settings.task}` }] }],
+    config: {
+      maxOutputTokens: 16000,
+      systemInstruction: settings.system,
+      responseMimeType: "application/json",
+      responseJsonSchema: schemaFor(usable.map(source => source.id), settings),
     },
-    system: settings.system,
-    messages: [{ role: "user", content: `${usable.map(sourceBlock).join("\n\n")}\n\n${settings.task}` }],
-  };
-  // Anthropic's own services can answer with a fallback model when the chosen one declines; Bedrock, Vertex AI and
-  // Foundry do not offer it, so there a refusal ends the check with a message.
-  const response = claude.serverFallbacks
-    ? await api.beta.messages.create({ ...request, betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" })
-    : await api.messages.create(request);
-  if (response.stop_reason === "refusal") throw new Error("The model declined this request.");
-  if (response.stop_reason === "max_tokens") throw new Error("The model's answer was cut off. Try again.");
-  const text = response.content.filter(block => block.type === "text").map(block => block.text).join("");
+  });
+  const text = responseParts(response).filter(part => part.text && !part.thought).map(part => part.text).join("");
   let draft;
   try {
     draft = JSON.parse(text);
   } catch {
     throw new Error("The model's answer was not valid JSON. Try again.");
   }
-  return { draft, model: response.model, usage: response.usage ?? null };
+  return { draft, model: response.modelVersion ?? gemini.models.aiCheck, usage: tokenUsage(response) };
 }
 
 // RegChain's own checks on the draft. Nothing here trusts the model.

@@ -1251,13 +1251,13 @@ function firstRunView() {
     [2,"official feeds: UK FCDO travel advice and GDACS alerts"],
     [shipments.length,"planned shipments in the supply plan"],
     [systems,"company systems over MCP, read-only or drafts only"],
-    [5,"AI agents and one rule checker with no AI"+(agentServer()&&agentState.status&&!live?" · scripted without a Claude key":"")]
+    [5,"AI agents and one rule checker with no AI"+(agentServer()&&agentState.status&&!live?" · scripted without a Gemini key":"")]
   ];
   const head=heading("Overview",firstRun==="checking"?"The first check is running. Each step shows what ClinRadar found.":"External risk and country regulatory intelligence for global clinical supply. Nothing has been checked yet.");
   if(firstRun==="empty") {
     return head+(connected?"":undeterminedCard(false))+'<section class="card first-run"><div class="first-grid"><div><div class="plan-eyebrow">Ready for the first check</div><h2>Which countries do we watch, and what does each event mean for our shipments?</h2>'+
       '<p class="muted">The first check takes about a minute and stops once for your decision. You can follow every step.</p><ol class="first-list">'+firstStepNames.map(name=>'<li>'+esc(name)+'</li>').join("")+'</ol>'+
-      (live?'<label class="first-live"><input type="checkbox" id="first-live"'+(firstLive?" checked":"")+'> Let the live AI agents plan (Claude; takes several minutes). Without it, the same steps run with coded decisions.</label>':"")+
+      (live?'<label class="first-live"><input type="checkbox" id="first-live"'+(firstLive?" checked":"")+'> Let the live AI agents plan (Gemini; takes several minutes). Without it, the same steps run with coded decisions.</label>':"")+
       '<div class="actions">'+trigger(connected?"Run the first check":"Connect the CTMS and run the first check","first-run","","primary","retry")+'</div></div>'+
       '<div class="first-facts">'+facts.map(([value,label,off])=>'<div class="first-fact'+(off?" off":"")+'"><strong'+(typeof value==="string"?' class="word"':'')+'>'+esc(value)+'</strong><span>'+esc(label)+'</span></div>').join("")+'</div></div></section>';
   }
@@ -1797,35 +1797,34 @@ function settingsLog(kind) {
 // What each agent works with: the systems behind its tools (regchain-ai/agent.mjs).
 const teamUses = {orchestrator:["ClinRadar","CTMS","Draft inbox"],supply:["IRT","ERP"],logistics:["IRT","ERP","Depot","Courier"],records:["eTMF","IRT"],communications:["ClinRadar"],verifier:["ClinRadar rules"]};
 function modelName(id) {
-  const match=/claude-(opus|sonnet|haiku|fable)-(\d+)-(\d+)/i.exec(String(id??""));
-  return match?match[1][0].toUpperCase()+match[1].slice(1).toLowerCase()+" "+match[2]+"."+match[3]:String(id??"");
+  return String(id??"").replace(/^gemini-/i,"Gemini ").replace(/flash-lite/gi,"Flash-Lite").replace(/flash/gi,"Flash").replace(/-+/g," ");
 }
 function agentModel(id) {
   if(id==="verifier") return "Fixed rules · no AI";
   const models=agentState.status?.models;
   const chosen=id==="orchestrator"?models?.orchestrator:teamWatch.includes(id)?models?.watch:models?.specialists;
-  return chosen?modelName(chosen):teamModels[id].replace("Claude ","");
+  return chosen?modelName(chosen):teamModels[id].replace("Gemini ","");
 }
 function aiServiceCard() {
   const status=agentState.status;
   const server=serverMode();
   const ready=server&&status?.keySet&&status?.sdk;
-  const service=typeof status?.service==="string"?status.service:typeof status?.models?.service==="string"?status.models.service:"Claude API (Anthropic)";
+  const service=typeof status?.service==="string"?status.service:typeof status?.models?.service==="string"?status.models.service:"Gemini API (Google)";
   const [tone,title,text]=!server?["off","Not reachable from this file","Open ClinRadar at http://127.0.0.1:4173 to see the connection."]:
     !status?["off","Checking","Asking the ClinRadar server."]:
-    ready?["ready","Ready for live runs","The agents and the regulation check call Claude."]:
-    ["partial","Scripted walkthrough only",typeof status.setup==="string"&&status.setup?humanDates(status.setup):!status.sdk?"The Claude package for this service is not installed: run npm install in the ClinRadar folder, then restart ClinRadar.":"The service is not set up yet: add its settings to the .env file next to serve-regchain.cjs, then restart ClinRadar."];
+    ready?["ready","Ready for live runs","The agents and the regulation check call Gemini."]:
+    ["partial","Scripted walkthrough only",typeof status.setup==="string"&&status.setup?humanDates(status.setup):!status.sdk?"The Gemini package for this service is not installed: run npm install in the ClinRadar folder, then restart ClinRadar.":"The service is not set up yet: add its settings to the .env file next to serve-regchain.cjs, then restart ClinRadar."];
   const known=server&&status;
-  return '<section class="card"><div class="card-head"><div><h2>Claude service</h2><p>The AI the agents and the regulation check use</p></div></div><div class="settings-body">'+
+  return '<section class="card"><div class="card-head"><div><h2>Gemini service</h2><p>The AI the agents and the regulation check use</p></div></div><div class="settings-body">'+
     '<div class="service-state '+tone+'"><span class="light" aria-hidden="true"></span><span><strong>'+esc(title)+'</strong><small>'+esc(text)+'</small></span></div>'+
-    factlist([["Service",service],["Settings and credentials",!known?"—":status.keySet?"Set on the server":"Missing"],["Claude package",!known?"—":status.sdk?"Installed":"Not installed"],["Without AI","The scripted walkthrough runs the same steps with recorded answers"]])+
-    '<p class="key-note">'+icon("review")+'<span><strong>Keys are never entered on this page.</strong> ClinRadar reaches Claude through Anthropic or the company\'s own cloud (AWS, Google Cloud or Microsoft Azure), chosen on the server with REGCHAIN_AI_PROVIDER. Keys stay in the server\'s .env file or the cloud identity ClinRadar runs under, so no key reaches a browser, a log or the audit trail. Changing the service or a model is a change to a validated system and goes through change control (RegChain-AI-Deployment.md, "Which Claude service").</span></p>'+
+    factlist([["Service",service],["Settings and credentials",!known?"—":status.keySet?"Set on the server":"Missing"],["Gemini package",!known?"—":status.sdk?"Installed":"Not installed"],["Without AI","The scripted walkthrough runs the same steps with recorded answers"]])+
+    '<p class="key-note">'+icon("review")+'<span><strong>Keys are never entered on this page.</strong> ClinRadar calls the Gemini API using GEMINI_API_KEY in the server\'s .env file. The key stays on the server and is never sent to the browser or MCP systems. Model changes go through change control (RegChain-AI-Deployment.md, "Gemini API").</span></p>'+
   '</div></section>';
 }
 function agentsCard() {
   const ids=["orchestrator","supply","logistics","records","communications","verifier"];
   const checkModel=aiStates.uk?.status?.model;
-  const check=checkModel?modelName(checkModel):"Opus 5.5";
+  const check=checkModel?modelName(checkModel):"Gemini 3.8 Flash";
   const rows=ids.map(id=>{
     const profile=agentProfiles[id];
     const rules=id==="verifier";
@@ -1880,7 +1879,7 @@ let agentStatusAsked = false;
 let aiCheckStatusAsked = false;
 function aiConnectionsPanel() {
   if(serverMode()&&!agentState.status&&!agentStatusAsked) {agentStatusAsked=true;queueMicrotask(loadAgentStatus);}
-  // The regulation check's model on the chosen Claude service (a Bedrock or Foundry name can differ), from /api/ai/status.
+  // The regulation check model configured on the server, from /api/ai/status.
   if(serverMode()&&!aiStates.uk.status&&!aiCheckStatusAsked) {
     aiCheckStatusAsked=true;
     aiRequest(aiPath("/api/ai/status","uk")).then(status=>{aiStates.uk.status=status;if(page==="settings"&&settingsTab==="ai") render();}).catch(()=>{});
@@ -1953,7 +1952,7 @@ function sourceReferences() {
 }
 // Short explanations for panel titles people ask about.
 const panelTips = {
-  "AI reading of the source change":"Claude reads the official texts and drafts the change. ClinRadar then checks every quote word for word against the source, and the effective date against the recorded rule. A failed check blocks approval, and the Regulatory SME decides.",
+  "AI reading of the source change":"Gemini reads the official texts and drafts the change. ClinRadar then checks every quote word for word against the source, and the effective date against the recorded rule. A failed check blocks approval, and the Regulatory SME decides.",
   "Regulatory evidence":"Tier 1 is binding law. Tier 2 is official guidance on how the authority reads it. Each excerpt comes from the source version ClinRadar stored, so it can be checked later.",
   "Assessment":"Act: work is needed before dispatch. Check: confirm the specification, no change expected. Look back: batches that may already have shipped under the old label.",
   "Batch applicability":"For the UK rule, the date that decides is the finished-IMP QP certification date, compared with 28 Apr 2026.",
@@ -2247,7 +2246,7 @@ function aiSetupHints() {
   const status=aiState.status;
   if(!status) return "";
   const hints=[];
-  if(status.setup) hints.push(status.setup); else { if(!status.sdk) hints.push("Run npm install once in the ClinRadar folder, then restart the launcher."); if(!status.keySet) hints.push("Add ANTHROPIC_API_KEY to a .env file next to serve-regchain.cjs."); }
+  if(status.setup) hints.push(status.setup); else { if(!status.sdk) hints.push("Run npm install once in the ClinRadar folder, then restart the launcher."); if(!status.keySet) hints.push("Add GEMINI_API_KEY to a .env file next to serve-regchain.cjs."); }
   return hints.length?'<details class="setup-note"><summary>The AI check is not set up on this computer</summary><p>'+esc(hints.join(" "))+'</p></details>':"";
 }
 function aiResult(result) {
@@ -2288,8 +2287,8 @@ function aiCard() {
   const mode=busy?badge("Running","blue"):offline?badge("Needs the local server"):result?badge(aiState.fresh?"Live":"Recorded",aiState.fresh?"blue":""):badge("Not run yet");
   const action=offline?mode:'<div class="actions">'+mode+'<button id="ai-run" type="button" class="btn primary" data-act="ai-run"'+(busy?" disabled":"")+'>'+icon("retry")+(busy?"Checking…":result?"Run again":"Run AI check")+'</button></div>';
   const uk=currentChange!=="es";
-  const intro=uk?'<p>Claude reads the official versions of regulation 46 before and after 28 April 2026, Schedule 14 paragraph 6 and the MHRA labelling guidance, then drafts the change. ClinRadar checks every quote against the source text and the effective date against the recorded rule. A failed check blocks SME approval.</p>':
-    '<p>Claude reads the new information note in Spanish and the current Spain Country Specification, then drafts the edits in English. ClinRadar checks that every quote appears word for word in the note (in Spanish, never translated), that the effective date matches the recorded rule, and that every edit targets a real line of the specification. A failed check blocks SME approval.</p>';
+  const intro=uk?'<p>Gemini reads the official versions of regulation 46 before and after 28 April 2026, Schedule 14 paragraph 6 and the MHRA labelling guidance, then drafts the change. ClinRadar checks every quote against the source text and the effective date against the recorded rule. A failed check blocks SME approval.</p>':
+    '<p>Gemini reads the new information note in Spanish and the current Spain Country Specification, then drafts the edits in English. ClinRadar checks that every quote appears word for word in the note (in Spanish, never translated), that the effective date matches the recorded rule, and that every edit targets a real line of the specification. A failed check blocks SME approval.</p>';
   const body=offline?'<p>Open ClinRadar with Start-ClinRadar.cmd to use the AI check. It needs the local server.</p>':
     aiSetupHints()+(aiState.error?'<p class="form-feedback" role="alert">'+esc(aiState.error)+'</p>':"")+(result?aiResult(result):"");
   return '<div id="ai-card" class="ai-card">'+panel("AI reading of the source change",uk?"Official texts fetched live · checked by ClinRadar, decided by the SME":"Note in Spanish · checked by ClinRadar, decided by the SME",casePad(intro+body),action)+'</div>';
@@ -2889,7 +2888,7 @@ function controlsPanel(id,status) {
 function agentSetupNote(status) {
   const live=agentServer()&&status?.keySet&&status?.sdk;
   return !agentServer()?'<div class="inline-note">'+icon("info")+'<span>The agents need the local server: open ClinRadar with Start-ClinRadar.cmd.</span></div>':
-    !live?'<p class="setup-line">'+icon("info")+'<span>AI agents are not connected yet, so the scripted walkthrough runs the same steps with coded decisions. An administrator connects Claude under <button type="button" class="link-button" data-act="open-settings" data-value="ai">Settings › AI connections</button>.</span></p>':"";
+    !live?'<p class="setup-line">'+icon("info")+'<span>AI agents are not connected yet, so the scripted walkthrough runs the same steps with coded decisions. An administrator connects Gemini under <button type="button" class="link-button" data-act="open-settings" data-value="ai">Settings › AI connections</button>.</span></p>':"";
 }
 const approverNote = () => canApprovePlans()?"":'<p class="form-feedback">Clinical Supply approves supply plans. Choose '+esc(roleName("viewer",workflow))+' under Acting as.</p>';
 function runButtons(scope,primaryLabel) {
@@ -3183,8 +3182,8 @@ const teamShows = event => teamFilter==="all"||(teamFilter==="watch"?teamWatch.i
 const teamSystems = [["ClinRadar","Specifications, shipment checks and external risk"],["CTMS","Active-trial portfolio"],["IRT","Stock, sites and shipments"],["ERP","Batches, labels, QP plans"],["Depot","Relabelling and collections"],["Courier","Bookings and tracking"],["eTMF","Authorisations, approvals, contacts"],["Draft inbox","Drafts for people to approve"]];
 // Runs recorded before the rename call the specifications system "RegChain".
 const systemName = name => ["RegChain","SupplyShield"].includes(name)?"ClinRadar":name;
-const teamModels = {orchestrator:"Claude Opus 5.5",supply:"Claude Sonnet 5.5",logistics:"Claude Sonnet 5.5",records:"Claude Sonnet 5.5",communications:"Claude Sonnet 5.5",verifier:"Fixed rules · no AI",
-  weather:"Claude Haiku 5.5",transport:"Claude Haiku 5.5",security:"Claude Haiku 5.5",regulatory:"Claude Haiku 5.5"};
+const teamModels = {orchestrator:"Gemini 3.8 Flash",supply:"Gemini 3.8 Flash",logistics:"Gemini 3.8 Flash",records:"Gemini 3.8 Flash",communications:"Gemini 3.8 Flash",verifier:"Fixed rules · no AI",
+  weather:"Gemini 3.5 Flash-Lite",transport:"Gemini 3.5 Flash-Lite",security:"Gemini 3.5 Flash-Lite",regulatory:"Gemini 3.5 Flash-Lite"};
 const teamInitials = {orchestrator:"M",supply:"S",logistics:"L",records:"R",communications:"C",verifier:"V",weather:"W",transport:"T",security:"A",regulatory:"G"};
 const teamShort = {orchestrator:"Master",supply:"Supply",logistics:"Logistics",records:"Records",communications:"Comms",verifier:"Verifier",weather:"Weather",transport:"Transport",security:"Security",regulatory:"Regulatory"};
 const teamNodeName = id => !id?"":id.startsWith("sys:")?id.slice(4):id==="orchestrator"?"Master agent":agentProfiles[id]?.name??id;

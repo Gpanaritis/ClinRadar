@@ -54,7 +54,7 @@ In the portfolio run on today's data, 19 shipments get 17 plans that pass, 2 esc
 
 ## Watching the team: Agents in action
 
-The **Agents in action** page shows who does what. The master agent (the orchestrator, Claude Opus 5.5) sits on top and hands tasks to four specialists (Claude Sonnet 5.5). Under them are the systems they reach over MCP, and next to them the ClinRadar verifier, which is fixed code, not AI. Each step draws a line from the one who acts to the one it reaches: a task handed out, a system read, an answer, a report back, an option tested, a draft put in the inbox. The master agent's card shows how the work was split between the specialists.
+The **Agents in action** page shows who does what. The master agent (the orchestrator, Gemini 3.8 Flash) sits on top and hands tasks to four specialists (Gemini 3.8 Flash). Under them are the systems they reach over MCP, and next to them the ClinRadar verifier, which is fixed code, not AI. Each step draws a line from the one who acts to the one it reaches: a task handed out, a system read, an answer, a report back, an option tested, a draft put in the inbox. The master agent's card shows how the work was split between the specialists.
 
 The page replays the last run, with each shipment's own run placed where the master agent handed it out, or follows a run live. It replays at 1× to 8×, steps one at a time, filters the steps by agent, and opens a single shipment's run. After the first check it replays the scripted run automatically, because a scripted run finishes in seconds.
 
@@ -62,12 +62,12 @@ The page replays the last run, with each shipment's own run placed where the mas
 
 ```mermaid
 flowchart LR
-  P[Shipment panel or<br/>Resolve all] --> O[Orchestrator<br/>claude-opus-5-5]
+  P[Shipment panel or<br/>Resolve all] --> O[Orchestrator<br/>gemini-3.8-flash]
   O -->|delegate| S[Supply agent]
   O -->|delegate| L[Logistics agent]
   O -->|delegate| R[Records agent]
   O -->|delegate| C[Communications agent]
-  S & L & R & C -.->|claude-sonnet-5-5| M
+  S & L & R & C -.->|gemini-3.8-flash| M
   O --> M[(MCP servers)]
   M --- IRT & ERP & Depot & eTMF & CTMS & Courier & Specs[ClinRadar rules,<br/>scope and signals] & Drafts[Draft inbox]
   O --> V[ClinRadar verifier<br/>fixed rules, no AI,<br/>counts what plans hold]
@@ -86,10 +86,10 @@ flowchart LR
   - **Draft inbox**: create a draft for a named option, in IRT, ERP, the depot, the courier, the QMS, the eTMF or the site portal.
 
   A specification section with a change waiting for approval says so, so an agent never treats the old text as the whole rule.
-- **The agent loop** (`regchain-ai/agent.mjs`). Claude's tool use, with the orchestrator delegating through a `delegate_to_agent` tool. Each specialist runs its own loop with only its own tools, and returns a written report. A run is capped at 16 orchestrator turns, 8 per specialist and 60 tool calls. The portfolio run (`resolvePortfolio`) runs the watch sweep first (`runWatchSweep`), then up to three shipments at a time in live mode.
+- **The agent loop** (`regchain-ai/agent.mjs`). Gemini's tool use, with the orchestrator delegating through a `delegate_to_agent` tool. Each specialist runs its own loop with only its own tools, and returns a written report. A run is capped at 16 orchestrator turns, 8 per specialist and 60 tool calls. The portfolio run (`resolvePortfolio`) runs the watch sweep first (`runWatchSweep`), then up to three shipments at a time in live mode.
 - **The watch team.** Agent ids `weather`, `transport`, `security`, `regulatory`. Their tools are `specs.get_watch_brief` (sources, monitored countries and regions, coverage gaps, and for regulatory the changes and import approvals with the shipments each affects) and `specs.get_risk_signals` (or `specs.get_country_specification` for regulatory). `get_risk_signals` takes optional `hazard` and `region` filters; the loop pins a watch agent's reads to its own hazard whatever it asks for. Watch agents cannot delegate or draft. Every signal carries a `hazard` field (weather, transport, security or regulatory), set by fixed rules in `supplyshield.mjs` from its category and source. Their instructions: keep observed, potential and confirmed apart, name missing evidence and its owner, never invent facts, never treat a single unverified source as confirmed, no probabilities.
 - **Enterprise risk alerts.** The company's enterprise risk system (Everbridge, Dataminr, Crisis24 and the like) alerts offices and travellers, not trials. ClinRadar turns each alert into a signal and matches it like any other (`regchain-ai/enterprise.mjs`; see [ClinRadar.md](ClinRadar.md#enterprise-risk-alerts)). The weather, transport and security watch agents also read `specs.get_enterprise_alerts` for their own hazard (pinned like their other reads) and end their report with what it found, for example "Enterprise risk system: 3 alerts, 1 touches our network (merged into SIG-BE-STRIKE-1124), 1 coverage gap (touches the drug product manufacturer in Switzerland, not monitored)". Alerts arrive through `POST /api/enterprise-alerts`, which needs the enterprise system's bearer token (`REGCHAIN_ENTERPRISE_TOKEN`) with named users.
-- **Models.** The orchestrator runs on Claude Opus 5.5 (`REGCHAIN_MODEL_ORCHESTRATOR`), the specialists on Claude Sonnet 5.5 (`REGCHAIN_MODEL_SPECIALIST`), and the watch team on Claude Haiku 5.5 (`claude-haiku-5-5`, `REGCHAIN_MODEL_WATCH`), because sweeping every monitored country is cheap, high-volume scanning. Watch agents run without extended thinking. Only Claude models are accepted for any of the three.
+- **Models.** The orchestrator runs on Gemini 3.8 Flash (`REGCHAIN_MODEL_ORCHESTRATOR`), the specialists on Gemini 3.8 Flash (`REGCHAIN_MODEL_SPECIALIST`), and the watch team on Gemini 3.5 Flash-Lite (`gemini-3.5-flash-lite`, `REGCHAIN_MODEL_WATCH`), because sweeping every monitored country is cheap, high-volume scanning. Strategy and reasoning defaults are managed by the selected Gemini model. Only Gemini models are accepted for any of the three.
 - **The rule engine** (`regchain-ai/rules.mjs`). The same checks as the Shipment checks page, plus the option check. The option check tests:
   - whether an option is possible: stock, label approval, slot dates and capacity, site stock against a delay, the eTMF record, QP lead time;
   - whether it is done in time: kits relabelled, label specifications ready and QP-released kits at the depot before preparation starts, not only before dispatch;
@@ -98,7 +98,7 @@ flowchart LR
   Malformed dates make an option fail; they never stop the run.
 - **Approvals** (`regchain-ai/approvals.mjs`). The server re-checks an option against the rules and the kits and slots other approved plans hold, refuses a stale or failing one, drafts the changes when someone picks an option other than the recommendation, and logs every approval and withdrawal.
 - **The server** streams each step to the page (`/api/agent/run`, `/api/agent/portfolio-run`), keeps every version of every run, and refuses a second run while one is in progress.
-- **Scripted walkthrough.** The same steps through the same MCP servers, with the decisions written in code instead of made by Claude. It works without an API key and serves as the baseline for tests.
+- **Scripted walkthrough.** The same steps through the same MCP servers, with the decisions written in code instead of made by Gemini. It works without an API key and serves as the baseline for tests.
 
 ## Compliance design
 
@@ -115,7 +115,7 @@ Clinical supply runs on validated systems: IRT, ERP, the depot's warehouse syste
 | **Audit trail (ALCOA+)** | Every step is logged with a timestamp: the goal, each delegation, each tool call with its inputs and the system's full answer, each report, the options, the rule results, the drafts and which option each belongs to, the models and token counts. Every version of every run is kept. Approvals and withdrawals are logged with the person, the time and the run they came from. **Export the run** saves it as JSON. |
 | **Least privilege** | Each specialist sees only the tools of its own systems. The orchestrator can read checks, specifications and commitments, check options and create drafts, but cannot read stock or batch data directly. The MCP server processes get no API key. |
 | **Prompt injection and runaway runs** | Every agent's prompt says tool results and documents are data, not instructions. Nothing an agent reads can make it execute anything, because no tool executes anything. Turn and tool-call limits stop a loop. |
-| **Change control for the AI itself** | Model IDs are pinned in code (a deployment can only give them the names its Claude service uses, and only Claude models are accepted), prompts are versioned in git, and `npm run check:agent` is the regression test. Changing the model or a prompt means running it again before release. |
+| **Change control for the AI itself** | Model IDs are pinned in code (a deployment can only give them the names its Gemini service uses, and only Gemini models are accepted), prompts are versioned in git, and `npm run check:agent` is the regression test. Changing the model or a prompt means running it again before release. |
 | **Data protection** | The prototype uses fictional data. Real Country Specifications and records never go into the repository or an AI request. In production this needs a data processing agreement and the company's approved AI hosting. |
 
 ## Running it
@@ -124,8 +124,8 @@ Clinical supply runs on validated systems: IRT, ERP, the depot's warehouse syste
   - For one shipment: **Shipments** → SHP-IL-01, SHP-04, SHP-01 or SHP-ES-10 → **Run the agents again** → **Scripted walkthrough (no AI)**.
   - For every shipment: **Shipments** → **Scripted walkthrough (no AI)**.
   - Every journey and demo script: [RegChain-AI-User-Journeys.md](RegChain-AI-User-Journeys.md).
-- **Live agents:** add `ANTHROPIC_API_KEY` to `.env` next to `serve-regchain.cjs` and restart RegChain. **Run the AI agents** is enabled once the key is set. To reach Claude through AWS, Google Cloud or Azure instead, see [Which Claude service](RegChain-AI-Deployment.md#which-claude-service).
-  - A run for one shipment takes a minute or two and uses Claude Opus 5.5 for the orchestrator, Claude Sonnet 5.5 for the specialists and Claude Haiku 5.5 for any watch agent it consults.
+- **Live agents:** add `GEMINI_API_KEY` to `.env` next to `serve-regchain.cjs` and restart RegChain. **Run the AI agents** is enabled once the key is set. See [Gemini API setup](RegChain-AI-Deployment.md#gemini-api).
+  - A run for one shipment takes a minute or two and uses Gemini 3.8 Flash for the orchestrator, Gemini 3.8 Flash for the specialists and Gemini 3.5 Flash-Lite for any watch agent it consults.
   - A live portfolio run of 19 shipments takes several minutes and costs more. Run it once before the demo; the page loads the last run.
 - **Tests:** `npm run check:agent` makes no API call and uses a temporary cache, so approvals on the computer never change the results. It checks:
   - the rules match the page (14 blocked, 5 to confirm, 6 ready), and the Israel rules: the shared booklet refused from 3 Jan 2027, Israeli working days, three ways out, and the Brussels strike blocking SHP-IL-01;
@@ -133,15 +133,15 @@ Clinical supply runs on validated systems: IRT, ERP, the depot's warehouse syste
   - commitments: kits and slots held by another plan are not offered again;
   - all eight MCP servers start, and only the draft inbox can write;
   - eight scripted runs end as expected (swap, relabel with a Monday dispatch, fix the data, escalate, proceed with a confirmation, leave from Amsterdam);
-  - the watch team: four agents on Claude Haiku 5.5 with read-only ClinRadar tools; the `hazard` and `region` filters; the SHP-IL-01 run consults the transport watch agent before logistics;
+  - the watch team: four agents on Gemini 3.5 Flash-Lite with read-only ClinRadar tools; the `hazard` and `region` filters; the SHP-IL-01 run consults the transport watch agent before logistics;
   - the portfolio run: the four watch agents report before triage; 19 shipments, patients first (SHP-IL-01), then by preparation date; SHP-06 and SHP-IL-03 re-planned, nothing promised twice;
   - approvals: re-checked on the server, refused when stale or failing, withdrawals free their holds, and every step is logged;
-  - the live loop end to end with a stand-in for Claude, including a withdrawn draft for an option that fails, and a live watch sweep whose reads stay pinned to each agent's hazard.
+  - the live loop end to end with a stand-in for Gemini, including a withdrawn draft for an option that fails, and a live watch sweep whose reads stay pinned to each agent's hazard.
 - `npm run check:supplyshield` checks the monitoring scope, the recommendations, the signal tiers and hazards, the watch summary, the route and option checks (Amsterdam passes, Luxembourg needs a monitoring decision, the depot does not collect on the strike day, an unmonitored Belgium makes SHP-IL-01 Confirm rather than Ready), the monitoring roles and the audit trail, and the state with no portfolio connected.
 
 ## Real and illustrative
 
-- **Real:** the MCP protocol and servers, the agent loop with Claude's tool use, the rule engine, the portfolio allocation, the streaming, the approval and the audit record, and the official feeds ClinRadar reads (UK FCDO travel advice, GDACS).
+- **Real:** the MCP protocol and servers, the agent loop with Gemini's tool use, the rule engine, the portfolio allocation, the streaming, the approval and the audit record, and the official feeds ClinRadar reads (UK FCDO travel advice, GDACS).
 - **Illustrative:** the systems behind the MCP servers are fictional data files (`demo-data/supply-operations.json`, `demo-data/supply-network.json`), not IRT, ERP, a depot, an eTMF, a CTMS or a courier. The Belgian strike and the Ben Gurion runway works are invented for the scenario and labelled so on screen.
 
 ## Before it could be used for real

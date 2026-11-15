@@ -20,7 +20,7 @@
     "check": "node scripts/embed-data.mjs --check && node scripts/check-ai-step.mjs && node scripts/check-supplyshield.mjs && node scripts/check-agent.mjs && node scripts/check-server.mjs && node scripts/check-security.mjs"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^1.8.0",
+    "@google/genai": "^3.3.0",
     "@modelcontextprotocol/sdk": "^1.32.2",
     "zod": "^4.6.7"
   },

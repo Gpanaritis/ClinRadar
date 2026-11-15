@@ -1,4 +1,4 @@
-// Checks the AI step without calling the Anthropic API:
+// Checks the AI step without calling the Google API:
 // fetches the official UK sources, reads the fictional Spain note, then runs
 // RegChain's own checks on drafts from a stand-in client, with and without errors.
 // Usage: node scripts/check-ai-step.mjs [--save]
@@ -44,14 +44,12 @@ const madeUp = { statement: "A rule the sources never state.", sourceId: after.i
 
 function standIn(draft) {
   return {
-    beta: {
-      messages: {
-        async create(params) {
-          assert.equal(params.model, MODEL);
-          assert.equal(params.output_config.format.type, "json_schema");
-          assert.deepEqual(params.output_config.format.schema.properties.claims.items.properties.sourceId.enum, sources.map(source => source.id));
-          return { model: "test stand-in (no API call)", stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify(draft) }] };
-        },
+    models: {
+      async generateContent(params) {
+        assert.equal(params.model, MODEL);
+        assert.equal(params.config.responseMimeType, "application/json");
+        assert.deepEqual(params.config.responseJsonSchema.properties.claims.items.properties.sourceId.enum, sources.map(source => source.id));
+        return { modelVersion: "test stand-in (no API call)", candidates: [{ finishReason: "STOP", content: { role: "model", parts: [{ text: JSON.stringify(draft) }] } }] };
       },
     },
   };
@@ -108,14 +106,12 @@ const esClaims = [
 ];
 function esStandIn(draft) {
   return {
-    beta: {
-      messages: {
-        async create(params) {
-          assert.equal(params.system.includes("Never translate a quote"), true);
-          assert.ok(params.output_config.format.schema.required.includes("sectionEdits"));
-          assert.deepEqual(params.output_config.format.schema.properties.claims.items.properties.sourceId.enum, ["es-spec-current", "es-notice"]);
-          return { model: "test stand-in (no API call)", stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify(draft) }] };
-        },
+    models: {
+      async generateContent(params) {
+        assert.equal(params.config.systemInstruction.includes("Never translate a quote"), true);
+        assert.ok(params.config.responseJsonSchema.required.includes("sectionEdits"));
+        assert.deepEqual(params.config.responseJsonSchema.properties.claims.items.properties.sourceId.enum, ["es-spec-current", "es-notice"]);
+        return { modelVersion: "test stand-in (no API call)", candidates: [{ finishReason: "STOP", content: { role: "model", parts: [{ text: JSON.stringify(draft) }] } }] };
       },
     },
   };

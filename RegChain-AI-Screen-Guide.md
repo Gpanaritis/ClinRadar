@@ -1,6 +1,6 @@
 # RegChain AI · screen guide and gap review
 
-Status on 14 November 2026. The screens were captured with the portfolio and the Spain scenario loaded; the screens themselves carry no demo labels. The AI panel shows the test run from `scripts/check-ai-step.mjs`, which uses a stand-in instead of Claude and is labelled as such on screen; no real AI run has been done yet.
+Status on 14 November 2026. The screens were captured with the portfolio and the Spain scenario loaded; the screens themselves carry no demo labels. The AI panel shows the test run from `scripts/check-ai-step.mjs`, which uses a stand-in instead of Gemini and is labelled as such on screen; no real AI run has been done yet.
 
 **In short:** the dashboard tells the story end to end, from one regulation change to the trials, batches and shipments it affects, then the expert's decision, the updated Country Specification and the Quality task. Two things weaken it today: the quote check proves words exist but not that they support the claim, and the system only watches four known pages, so it would miss a brand-new regulation or guidance page. (A third, the expert approving pre-written text instead of the AI's draft, is now fixed; see logic gap 1.)
 
@@ -22,11 +22,11 @@ Status on 14 November 2026. The screens were captured with the portfolio and the
 
 ![AI check](screens/03-ai-check.png)
 
-**Shows:** the live AI step. The server fetches the official texts, shows their versions and fingerprints and a line-by-line comparison of regulation 46, then Claude drafts the change, and RegChain runs four checks. A failed check blocks approval.
+**Shows:** the live AI step. The server fetches the official texts, shows their versions and fingerprints and a line-by-line comparison of regulation 46, then Gemini drafts the change, and RegChain runs four checks. A failed check blocks approval.
 
 **Proves for the pitch:** the AI cannot invent evidence. In this test run, a made-up quote is marked "Not found" and SME approval is blocked.
 
-**Real or simulated:** the sources are fetched live from legislation.gov.uk and GOV.UK. The draft in this capture comes from the test stand-in, not from Claude.
+**Real or simulated:** the sources are fetched live from legislation.gov.uk and GOV.UK. The draft in this capture comes from the test stand-in, not from Gemini.
 
 ### 3. UK case · Regulatory evidence and assessment
 
@@ -127,8 +127,8 @@ The Regulatory SME or the Quality owner changes the schedule; for other roles th
 
 **AI connections shows:**
 
-- **Agents and their models:** each agent, the Claude model it uses and the systems it reads; the verifier is fixed rules, no AI.
-- **Claude service:** which service RegChain calls (Anthropic, or the company's own AWS, Google Cloud or Microsoft Azure, set with `REGCHAIN_AI_PROVIDER`; see [Which Claude service](RegChain-AI-Deployment.md#which-claude-service)), and whether live runs are possible or only the scripted walkthrough, with the one thing still missing. Keys are never entered on the page: they stay in the server's `.env` file or the cloud identity RegChain runs under. Changing the service or a model goes through change control.
+- **Agents and their models:** each agent, the Gemini model it uses and the systems it reads; the verifier is fixed rules, no AI.
+- **Gemini service:** whether the Gemini API is ready for live runs, with setup instructions when it is unavailable. Set `GEMINI_API_KEY` in the server’s `.env` file; keys are never entered on the page. See [Gemini API setup](RegChain-AI-Deployment.md#gemini-api).
 - **Company systems over MCP:** each system, what the agents may do there (read-only, or draft-only for the Draft inbox), its tools and whether RegChain reached it.
 - **Request a new connection:** anyone can ask for a new system (name, what the agents would read, MCP address if known, read-only or draft-only, business owner, why). The request changes nothing. The Quality owner approves or rejects it with a reason; the person who asked cannot approve their own request. An approved connection still has to be built and validated before any agent uses it.
 
@@ -226,7 +226,7 @@ After approval, the plan says who approved it and when, and **What happens next*
 
 ![Agent plans on a narrow screen](screens/19g-agent-plans-narrow.png)
 
-On a narrow screen, such as a phone or the side pane of the Claude app, every row of Agent plans and Shipment checks becomes a card. The shipment and its prepare-by date come first, then the plan, then the next step, so **Approve** or **Acknowledge** is always visible. Opened as a file instead of at http://127.0.0.1:4173, every page shows an orange notice: the agents, approvals and live checks need RegChain running.
+On a narrow screen, such as a phone or a narrow browser pane, every row of Agent plans and Shipment checks becomes a card. The shipment and its prepare-by date come first, then the plan, then the next step, so **Approve** or **Acknowledge** is always visible. Opened as a file instead of at http://127.0.0.1:4173, every page shows an orange notice: the agents, approvals and live checks need RegChain running.
 
 When no option passes, as for SHP-03 (the German label specification takes 15 business days and the site has 7 days of stock), the plan page says **No option passes the rules**, lists why each option fails, and offers **Acknowledge the escalation**.
 
@@ -311,7 +311,7 @@ Ordered by how much they matter for the pitch. The [product review of 15 Nov 202
 
 | Kind of change | Today | With the fixes in Part 3 |
 | --- | --- | --- |
-| Edit to one of the four pages we watch | Yes, when someone presses "Run AI check": the comparison shows it and Claude drafts it | Automatically, on a schedule, when a fingerprint or the page's update date changes |
+| Edit to one of the four pages we watch | Yes, when someone presses "Run AI check": the comparison shows it and Gemini drafts it | Automatically, on a schedule, when a fingerprint or the page's update date changes |
 | New amendment not yet in the consolidated text | No | Yes, from the legislation.gov.uk change list and new legislation feed |
 | New guidance page or new statutory instrument | No | Yes, from the GOV.UK and legislation.gov.uk feeds, with the AI judging relevance |
 | Change in another country | No, the check covers the UK only | Yes, once that country's sources are added |

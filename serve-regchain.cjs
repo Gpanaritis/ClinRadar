@@ -8,7 +8,7 @@ const { randomBytes, timingSafeEqual } = require("node:crypto");
 const { pathToFileURL } = require("node:url");
 const { spawn } = require("node:child_process");
 
-// A local .env file (ignored by git) can hold the Anthropic API key and REGCHAIN_* settings. It is read first, so the
+// A local .env file (ignored by git) can hold the Google API key and REGCHAIN_* settings. It is read first, so the
 // settings below see it; variables already set in the environment win.
 const envFile = join(__dirname, ".env");
 if (existsSync(envFile)) {
@@ -21,7 +21,7 @@ if (existsSync(envFile)) {
 
 // Settings, security headers and logs (regchain-ai/config.mjs, security.mjs). Defaults serve one person on this computer.
 const { loadConfig } = require("./regchain-ai/config.mjs");
-const claude = require("./regchain-ai/claude.mjs");
+const gemini = require("./regchain-ai/gemini.mjs");
 const { securityHeaders, withNonce, newNonce, requestId, clientAddress, createLogger, createRateLimiter } = require("./regchain-ai/security.mjs");
 let config;
 try {
@@ -165,7 +165,7 @@ function agentSystems() {
   return agentSystemsCache;
 }
 
-// One agent run, streamed to the page as server-sent events. Live runs call Claude; scripted runs do not.
+// One agent run, streamed to the page as server-sent events. Live runs call Gemini; scripted runs do not.
 let agentRunning = false;
 async function streamAgentRun(request, response) {
   const site = request.headers["sec-fetch-site"];
@@ -184,7 +184,7 @@ async function streamAgentRun(request, response) {
   const { loadData, shipmentView } = await loadModule("rules.mjs");
   if (!shipmentView(await loadData(__dirname), shipment)) return fail("Unknown shipment.");
   if (mode === "live") {
-    const ai = claude.claudeStatus();
+    const ai = gemini.geminiStatus();
     if (!ai.ready) return fail(ai.message);
   }
   if (agentRunning) return fail("An agent run is already in progress.");
@@ -199,7 +199,7 @@ async function streamAgentRun(request, response) {
     response.write("event: complete\ndata: " + JSON.stringify(record) + "\n\n");
     response.end();
   } catch (error) {
-    const message = claude.credentialsRefused(error) ? claude.credentialsRefused(error) :
+    const message = gemini.credentialsRefused(error) ? gemini.credentialsRefused(error) :
       error.code === "ERR_MODULE_NOT_FOUND" ? "The agent packages are not installed. Run npm install in the RegChain folder, then restart RegChain." :
       error.message || "The agent run failed.";
     console.error("Agent run failed: " + message);
@@ -223,7 +223,7 @@ async function streamPortfolioRun(request, response) {
     response.end();
   };
   if (mode === "live") {
-    const ai = claude.claudeStatus();
+    const ai = gemini.geminiStatus();
     if (!ai.ready) return fail(ai.message);
   }
   if (agentRunning) return fail("An agent run is already in progress.");
@@ -240,7 +240,7 @@ async function streamPortfolioRun(request, response) {
     response.write("event: complete\ndata: " + JSON.stringify(record) + "\n\n");
     response.end();
   } catch (error) {
-    const message = claude.credentialsRefused(error) ? claude.credentialsRefused(error) :
+    const message = gemini.credentialsRefused(error) ? gemini.credentialsRefused(error) :
       error.code === "ERR_MODULE_NOT_FOUND" ? "The agent packages are not installed. Run npm install in the RegChain folder, then restart RegChain." :
       error.message || "The portfolio run failed.";
     console.error("Portfolio run failed: " + message);
@@ -261,9 +261,9 @@ async function readJson(request) {
   try { return JSON.parse(body || "{}"); } catch { throw Object.assign(new Error("Invalid JSON."), { statusCode: 400 }); }
 }
 
-// What the page needs to know about the AI: which Claude service, whether it is set up, and if not, the one thing to do.
+// What the page needs to know about the AI: which Gemini service, whether it is set up, and if not, the one thing to do.
 function aiSetup() {
-  const ai = claude.claudeStatus();
+  const ai = gemini.geminiStatus();
   return { service: ai.label, keySet: ai.configured, sdk: ai.installed, setup: ai.message };
 }
 
@@ -578,7 +578,7 @@ async function handleApi(request, response, path) {
   if (path === "/api/ai/status" && request.method === "GET") {
     const recorded = await latestAnalysis(caseId);
     sendJson(response, 200, {
-      model: claude.claudeSettings().models.aiCheck,
+      model: gemini.geminiSettings().models.aiCheck,
       ...aiSetup(),
       recorded: recorded ? { at: recorded.at, model: recorded.model, verified: recorded.verification.verified } : null
     });
@@ -587,7 +587,7 @@ async function handleApi(request, response, path) {
   if (path === "/api/agent/status" && request.method === "GET") {
     sendJson(response, 200, {
       ...aiSetup(),
-      models: claude.liveModels(),
+      models: gemini.liveModels(),
       systems: await agentSystems(),
       running: agentRunning,
     });
@@ -776,7 +776,7 @@ async function handleApi(request, response, path) {
       return;
     }
     request.resume();
-    const ai = claude.claudeStatus();
+    const ai = gemini.geminiStatus();
     if (!ai.ready) {
       sendJson(response, 503, { error: ai.message });
       return;
@@ -793,7 +793,7 @@ async function handleApi(request, response, path) {
     } catch (error) {
       // The AI service refusing RegChain's credentials is a problem upstream (502), not a sign-in for this person (401).
       const status = error.status ? 502 : 500;
-      const message = claude.credentialsRefused(error) || error.message || "The AI check failed.";
+      const message = gemini.credentialsRefused(error) || error.message || "The AI check failed.";
       console.error("AI check failed: " + message);
       sendJson(response, status, { error: message });
     } finally {
@@ -900,8 +900,8 @@ server.on("error", error => {
 });
 
 server.listen(port, host, () => {
-  const ai = claude.claudeStatus();
-  console.log("Claude service: " + ai.label + (ai.ready ? ", ready for live AI checks and agent runs." : ". Live AI is off: " + ai.message));
+  const ai = gemini.geminiStatus();
+  console.log("Gemini service: " + ai.label + (ai.ready ? ", ready for live AI checks and agent runs." : ". Live AI is off: " + ai.message));
   console.log("RegChain AI is running at " + origin + (config.auth === "password" ? " (named users sign in)" : "") + "\nPress Ctrl+C to stop.");
   openBrowser();
   agentSystems().catch(error => console.error("The agent systems did not start: " + error.message));

@@ -125,7 +125,7 @@ Four agents sweep every monitored country, one kind of hazard each. Every signal
 | `security` | Security & travel advice | UK FCDO travel advice, conflict, unrest, border closures | UK FCDO (live or recorded) |
 | `regulatory` | Regulatory & customs | Rule changes waiting for the Regulatory SME, import permits and approvals | Country Specifications, UK legislation and MHRA guidance, EU rules, eTMF import approvals |
 
-They run on Claude Haiku 5.5 (`REGCHAIN_MODEL_WATCH`): sweeping every country is cheap, high-volume scanning. The orchestrator stays on Claude Opus 5.5 and the specialists on Claude Sonnet 5.5. In **Plan all**, the orchestrator dispatches the four before triage, and triage uses what they found: patients first (SHP-IL-01 runs out on 27 Nov), then by preparation date. In a single-shipment run with a route risk, the orchestrator asks the matching watch agent to confirm the event, its evidence level and its duration before the logistics agent looks for alternatives.
+They run on Gemini 3.5 Flash-Lite (`REGCHAIN_MODEL_WATCH`): sweeping every country is cheap, high-volume scanning. The orchestrator stays on Gemini 3.8 Flash and the specialists on Gemini 3.8 Flash. In **Plan all**, the orchestrator dispatches the four before triage, and triage uses what they found: patients first (SHP-IL-01 runs out on 27 Nov), then by preparation date. In a single-shipment run with a route risk, the orchestrator asks the matching watch agent to confirm the event, its evidence level and its duration before the logistics agent looks for alternatives.
 
 To keep the story global, the recorded events include an illustrative US National Weather Service winter storm watch over the US depot in Allentown, Pennsylvania, on 16–17 Nov 2026. No collection is planned there on those days, so it is an observed event that touches a facility of ours. The weather agent also names what is not watched (the APAC depot in Singapore, the manufacturer in Switzerland, the supplier in India) and the red GDACS tropical cyclone alert in India from 1 to 3 Nov, which is context for a recommendation, not a signal.
 
@@ -165,7 +165,7 @@ The watch agents read the alerts of their own kind (`specs.get_enterprise_alerts
 | 3:45 | Plan page | **Approve this plan** as Clinical Supply. Two drafts: a booking change for the courier and a new collection instruction for the depot | "Nothing has changed in any system yet. Each draft is approved where it belongs." |
 | 4:30 | Audit | Export the audit record; Settings shows who turned Belgium on and why | "Every decision is traceable." |
 
-Without an API key, the agents run as the scripted walkthrough (no AI) through the same MCP servers. Say so plainly. No live Claude run has been recorded yet.
+Without an API key, the agents run as the scripted walkthrough (no AI) through the same MCP servers. Say so plainly. No live Gemini run has been recorded yet.
 
 ## What is real, what is illustrative
 

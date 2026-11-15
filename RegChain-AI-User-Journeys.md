@@ -76,7 +76,7 @@ The menu follows the day's work: **Overview · Shipments · Studies · Signals �
 | **Agents in action** | How did the watch team, the master agent and the specialists work through the shipments? | Replay, pause, step, change the speed, filter by agent |
 | **Country specifications** | What does each country require today, and what is changing? | Open a section |
 | **Settings › Monitoring schedule** | When do the checks run, and do the agents start on their own after a check? | **Save schedule**; **Run checks now** |
-| **Settings › AI connections** | Which Claude models and company systems do the agents use, and is the AI ready? | **Request a new connection**; the Quality owner approves or rejects it |
+| **Settings › AI connections** | Which Gemini models and company systems do the agents use, and is the AI ready? | **Request a new connection**; the Quality owner approves or rejects it |
 | **Settings › Sources** | Did every official source and feed answer? | **Retry this check** |
 
 ### Filters
@@ -296,13 +296,13 @@ SHP-07 is "Confirm before dispatch": its post-cutoff label needs checking agains
 
 **Agents in action** → run **Every shipment**. The order of the work:
 
-1. **Watch team**. Four agents run on Claude Haiku 5.5, one per kind of hazard, each across every monitored country:
+1. **Watch team**. Four agents run on Gemini 3.5 Flash-Lite, one per kind of hazard, each across every monitored country:
    - **Weather & natural hazards** (GDACS): its top item is an illustrative winter storm watch at the US depot, observed only, because no collection is planned there. It also names the coverage gap where depots sit in unmonitored countries (Singapore, Switzerland, India).
    - **Strikes & transport**: the Belgian strike, confirmed for SHP-IL-01 and not affecting SHP-03.
    - **Security & travel advice** (UK FCDO).
    - **Regulatory & customs**: the open changes and the import permits.
-2. **Master agent** (Claude Opus 5.5) ranks the shipments, patients first: SHP-IL-01, whose site runs out on 27 Nov, comes before the shipments ranked by preparation date. It then hands tasks to the specialists.
-3. **Specialists** (Claude Sonnet 5.5): supply, logistics, records and communications read the company's systems over MCP, read-only.
+2. **Master agent** (Gemini 3.8 Flash) ranks the shipments, patients first: SHP-IL-01, whose site runs out on 27 Nov, comes before the shipments ranked by preparation date. It then hands tasks to the specialists.
+3. **Specialists** (Gemini 3.8 Flash): supply, logistics, records and communications read the company's systems over MCP, read-only.
 4. **ClinRadar verifier** (fixed rules, no AI) tests every option and checks the plans together, so nothing is promised twice.
 5. **Clinical Supply** approves.
 
@@ -560,7 +560,7 @@ With **Continue without it**, Belgium stays off. The strike is not matched to SH
 ### Scenario D · No internet, or no API key
 
 - Plans recorded beforehand stay on the Shipments page and the shipment pages, so nothing on screen depends on the venue.
-- **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers in a few seconds. Say so plainly: "This is the scripted walkthrough: the same tools and rules, with the decisions written in code instead of made by Claude."
+- **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers in a few seconds. Say so plainly: "This is the scripted walkthrough: the same tools and rules, with the decisions written in code instead of made by Gemini."
 - Mention a live run only if one has been recorded. Its time and token use are in the run's audit record.
 - Without the internet, the official feeds come from the recorded copy, and the page says so with its date.
 - The AI check on the change cases shows its last recorded result.
