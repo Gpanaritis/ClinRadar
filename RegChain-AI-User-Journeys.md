@@ -99,6 +99,7 @@ The menu follows the day's work: **Overview · Shipments · Studies · Signals �
 3. **Route**: a map of the route, from the depot through the airports to the site.
    - The booked route is grey, and a disrupted leg is red (or amber when only possibly affected).
    - The approved or recommended plan's way round is dashed green, for example leaving from Amsterdam instead of Brussels.
+   - Hover over, tap or tab to a stop for its card: the depot (with **View full details**), each airport (its flight and any disruption, with **Open the signal**) and the site.
 
    Under the map, each leg is listed with its date.
    - A disrupted leg shows its tier and **Open the signal**.
@@ -152,9 +153,19 @@ flowchart TD
 2. **Where it happens**, the map under the list, shows the same facts in place:
    - our sites (sized by patients) and depots;
    - depots and factories in countries nobody monitors, outlined in amber;
-   - the confirmed disruption (pulsing red) and potential exposures (amber), and the routes they touch.
+   - the confirmed disruption (pulsing red) and potential exposures (amber, with "!"), and the routes they touch.
 
-   Select a marker to open its signal, or a route to open its shipment. **Europe and Middle East** and **World** switch the area.
+   Hover over a marker or a route for its card; a click or a tap keeps it open. The card gives the facts (patients, studies, shipments and their checks; the signal's window, evidence and the shipments it touches) and the way to the full details:
+   - a site city or a depot: **View full details** opens the side panel with its sites, studies, planned shipments and what puts them at risk;
+   - a signal: **Open the signal**; a route: **Open the shipment**.
+
+   Hovering a place also lights up its routes. Sites that would overlap are grouped with their count: hover for the cities in the group, select it to zoom in and separate them.
+   - Zoom with **+** and **−**, Ctrl or ⌘ + scroll, a double-click or a pinch; drag to move around once zoomed in. City names appear as you zoom in.
+   - The chips under the map show or hide sites, depots, confirmed disruptions, potential exposures, routes that need action and other planned routes (hidden at first).
+   - Keyboard: the map is one tab stop that starts on the most urgent place; arrow keys move between places, Enter opens the card and Escape closes it.
+   - On a phone the card opens under the map.
+
+   **Europe and Middle East** and **World** switch the area.
 3. **Review the plans** opens **Shipments › Needs action**.
 4. **Plan all with AI agents**. Without a key, use **Scripted walkthrough (no AI)**. A progress bar shows "Planning 19 shipments · N done".
 5. Choose **Prepare by: Within 7 days**.
