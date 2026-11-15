@@ -52,6 +52,8 @@ To turn it on:
 2. Create a file named `.env` next to `serve-regchain.cjs` containing `ANTHROPIC_API_KEY=` followed by your key. Git ignores this file.
 3. Open **Start-RegChain.cmd**. The first time, it installs the Anthropic SDK with npm.
 
+RegChain uses Claude models only. To reach them through AWS, Google Cloud or Microsoft Azure instead of Anthropic's API, set `REGCHAIN_AI_PROVIDER` as described in [Which Claude service](RegChain-AI-Deployment.md#which-claude-service).
+
 `npm run check:ai` tests the source fetching and RegChain's checks without calling the API.
 
 ## First run and the agents at work

@@ -6,10 +6,12 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport, getDefaultEnvironment } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { join } from "node:path";
+import { claudeSettings, createClaude, liveModels, DEFAULT_MODELS } from "./claude.mjs";
 import { loadData, verifyOptionSafe as verifyOption, businessDaysAfter, allShipmentChecks, shipmentView, addDays, isWeekend, prepareByFor, isIsraeliWeekend } from "./rules.mjs";
 
-export const ORCHESTRATOR_MODEL = "claude-opus-5-5";
-export const SPECIALIST_MODEL = "claude-sonnet-5-5";
+// The models on Anthropic's own API. claude.mjs gives the names on the configured service (REGCHAIN_AI_PROVIDER).
+export const ORCHESTRATOR_MODEL = DEFAULT_MODELS.orchestrator;
+export const SPECIALIST_MODEL = DEFAULT_MODELS.specialist;
 export const SYSTEM_NAMES = { specs: "RegChain", irt: "IRT", erp: "ERP", depot: "Depot", etmf: "eTMF", drafts: "Draft inbox" };
 const LIMITS = { orchestratorTurns: 16, specialistTurns: 8, toolCalls: 60 };
 
@@ -154,7 +156,7 @@ function withdrawFailedDrafts(record) {
 export async function resolveShipment({ root, shipmentId, mode = "live", client, emit = () => {}, systems: given }) {
   const data = await loadData(root);
   const systems = given ?? await connectSystems(root);
-  const record = { at: new Date().toISOString(), shipment: shipmentId, mode, models: mode === "live" ? { orchestrator: ORCHESTRATOR_MODEL, specialists: SPECIALIST_MODEL } : null,
+  const record = { at: new Date().toISOString(), shipment: shipmentId, mode, models: mode === "live" ? liveModels() : null,
     systems: describeSystems(systems), events: [], drafts: [], usage: { input_tokens: 0, output_tokens: 0 }, resolution: null, verification: [] };
   const send = makeSender(record, emit);
   const call = makeCaller({ systems, record, send });
@@ -181,14 +183,15 @@ export async function resolveShipment({ root, shipmentId, mode = "live", client,
 }
 
 async function liveRun({ root, shipmentId, client, systems, call, send, record }) {
-  const api = client ?? new (await import("@anthropic-ai/sdk")).default();
+  const api = client ?? (await createClaude());
+  const { models } = claudeSettings();
   const loop = async (agentId, task) => {
     const agent = AGENTS[agentId];
     const isOrchestrator = agentId === "orchestrator";
     const tools = [...toolDefinitions(systems, agent.tools), ...(isOrchestrator ? [DELEGATE_TOOL, SUBMIT_TOOL] : [])];
     const messages = [{ role: "user", content: task }];
     for (let turn = 0; turn < (isOrchestrator ? LIMITS.orchestratorTurns : LIMITS.specialistTurns); turn++) {
-      const stream = api.messages.stream({ model: agent.model, max_tokens: 8000, thinking: { type: "adaptive" }, system: agent.system, tools, messages });
+      const stream = api.messages.stream({ model: isOrchestrator ? models.orchestrator : models.specialist, max_tokens: 8000, thinking: { type: "adaptive" }, system: agent.system, tools, messages });
       const message = await stream.finalMessage();
       record.usage.input_tokens += message.usage?.input_tokens ?? 0;
       record.usage.output_tokens += message.usage?.output_tokens ?? 0;
@@ -491,7 +494,7 @@ export async function draftApprovedOption({ root, run, option }) {
 export async function resolvePortfolio({ root, mode = "scripted", client, emit = () => {}, onShipment = async () => {} }) {
   const data = await loadData(root);
   const systems = await connectSystems(root);
-  const record = { kind: "portfolio", at: new Date().toISOString(), mode, models: mode === "live" ? { orchestrator: ORCHESTRATOR_MODEL, specialists: SPECIALIST_MODEL } : null,
+  const record = { kind: "portfolio", at: new Date().toISOString(), mode, models: mode === "live" ? liveModels() : null,
     events: [], usage: { input_tokens: 0, output_tokens: 0 }, board: [], summary: null };
   const send = makeSender(record, emit);
   const runs = {};

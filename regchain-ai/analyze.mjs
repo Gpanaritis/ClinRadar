@@ -5,8 +5,10 @@
 // and the effective date must match the recorded rule.
 
 import { normalise } from "./sources.mjs";
+import { claudeSettings, createClaude, DEFAULT_MODELS } from "./claude.mjs";
 
-export const MODEL = "claude-opus-5-5";
+// The AI check's model on Anthropic's own API. claude.mjs gives the name on the configured service.
+export const MODEL = DEFAULT_MODELS.aiCheck;
 
 const UK_SYSTEM = `You support a Regulatory Affairs expert in a clinical supply team.
 You compare two official versions of a UK regulation, with supporting official sources, and draft what changed for the company's country record.
@@ -124,13 +126,8 @@ function sourceBlock(source) {
   ].join("\n");
 }
 
-async function defaultClient() {
-  const { default: Anthropic } = await import("@anthropic-ai/sdk");
-  return new Anthropic();
-}
-
-// Calls Claude once. `client` can be passed in for tests; `profile` picks the case ("uk" or "es").
-export async function draftChange(sources, { client, profile = "uk" } = {}) {
+// Calls Claude once. `client` and `claude` (the service settings) can be passed in for tests; `profile` picks the case ("uk" or "es").
+export async function draftChange(sources, { client, profile = "uk", claude = claudeSettings() } = {}) {
   const settings = PROFILES[profile];
   if (!settings) throw new Error(`Unknown case: ${profile}`);
   const usable = sources.filter(source => source.text);
@@ -139,12 +136,10 @@ export async function draftChange(sources, { client, profile = "uk" } = {}) {
       ? "Both versions of regulation 46 are needed. Check the internet connection and fetch the sources again."
       : "The note and the current specification are both needed.");
   }
-  const api = client ?? (await defaultClient());
-  const response = await api.beta.messages.create({
-    model: MODEL,
+  const api = client ?? (await createClaude());
+  const request = {
+    model: claude.models.aiCheck,
     max_tokens: 16000,
-    betas: ["server-side-fallback-2026-07-01"],
-    fallbacks: "default",
     thinking: { type: "adaptive" },
     output_config: {
       effort: "high",
@@ -152,7 +147,12 @@ export async function draftChange(sources, { client, profile = "uk" } = {}) {
     },
     system: settings.system,
     messages: [{ role: "user", content: `${usable.map(sourceBlock).join("\n\n")}\n\n${settings.task}` }],
-  });
+  };
+  // Anthropic's own services can answer with a fallback model when the chosen one declines; Bedrock, Vertex AI and
+  // Foundry do not offer it, so there a refusal ends the check with a message.
+  const response = claude.serverFallbacks
+    ? await api.beta.messages.create({ ...request, betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" })
+    : await api.messages.create(request);
   if (response.stop_reason === "refusal") throw new Error("The model declined this request.");
   if (response.stop_reason === "max_tokens") throw new Error("The model's answer was cut off. Try again.");
   const text = response.content.filter(block => block.type === "text").map(block => block.text).join("");

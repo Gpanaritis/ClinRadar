@@ -2,13 +2,21 @@
 # proxy (for example Caddy or nginx) in front, and set REGCHAIN_PUBLIC_ORIGIN to the address people open.
 services:
   regchain:
-    build: .
+    build:
+      context: .
+      args:
+        # For a Claude service other than Anthropic's own API, its package (RegChain-AI-Deployment.md, "Which Claude service").
+        REGCHAIN_AI_PACKAGES: ${REGCHAIN_AI_PACKAGES:-}
     ports:
       - "127.0.0.1:4173:4173"
     environment:
       # REGCHAIN_PUBLIC_ORIGIN: "https://regchain.your-company.example"
       # REGCHAIN_TRUST_PROXY: "1"
+      REGCHAIN_AI_PROVIDER: ${REGCHAIN_AI_PROVIDER:-anthropic}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      # For a cloud service, add its settings, for example Amazon Bedrock:
+      # AWS_REGION: "eu-central-1"
+      # and give the container the cloud identity that may call Claude (an IAM role, a service account, a managed identity).
     volumes:
       - regchain-data:/data
     restart: unless-stopped
