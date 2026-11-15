@@ -259,6 +259,9 @@ try {
   assert.ok(scope.recommendations.find(item => item.code === "BE").monitoring.external.on, "Belgium: the decision P. Laine recorded");
   assert.deepEqual((await call("GET", "/v1/signals?tier=confirmed")).body.signals.map(item => item.id), ["SIG-BE-STRIKE-1124"]);
   assert.equal((await call("GET", "/v1/signals?tier=nonsense")).status, 400);
+  const weatherSignals = (await call("GET", "/v1/signals?hazard=weather")).body.signals;
+  assert.ok(weatherSignals.length && weatherSignals.every(item => item.hazard === "weather"), "the watch team's hazard filter");
+  assert.equal((await call("GET", "/v1/signals?hazard=nonsense")).status, 400);
   assert.equal((await call("GET", "/v1/signals/SIG-IL-TLV-0104")).body.tier, "potential");
   assert.equal((await call("GET", "/v1/signals/NO-SUCH-SIGNAL")).status, 404);
   const risk = (await call("GET", "/v1/shipments/SHP-IL-01/risk")).body;
