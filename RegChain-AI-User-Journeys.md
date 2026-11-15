@@ -67,7 +67,7 @@ The menu has: **Overview · Monitoring scope · Signals · Shipments · Agents i
 | **Shipments › All shipments** | Which planned shipments break their country's rules, or meet a risk on their route? | Filter, then open a shipment |
 | **Shipment page** | For one shipment: why it needs action, its route, what the agents recommend, what approval sends | **Approve this plan**, or **Approve instead** |
 | **Change case** | Is this rule change real, and how does the specification change? | **Run AI check**, then **Approve & publish** |
-| **Agents in action** | How did the master agent and the specialists work through the shipments? | Replay, pause, step, change the speed, filter by agent |
+| **Agents in action** | How did the watch team, the master agent and the specialists work through the shipments? | Replay, pause, step, change the speed, filter by agent |
 | **Country specifications** | What does each country require today, and what is changing? | Open a section |
 | **Settings › Monitoring schedule** | When do the checks run, and do the agents start on their own after a check? | **Save schedule**; **Run checks now** |
 | **Settings › AI connections** | Which Claude models and company systems do the agents use, and is the AI ready? | **Request a new connection**; the Quality owner approves or rejects it |
@@ -261,6 +261,22 @@ SHP-07 is "Confirm before dispatch": its post-cutoff label needs checking agains
 - **Withdraw the approval**, on the shipment page. The kits and slot places the plan held are free again, and the withdrawal is logged.
 - **Run the agents again**, at the bottom of the shipment page, makes a new run. A new run never inherits an earlier approval: the page says the approval came from an earlier run until someone withdraws it.
 
+### J8b · The watch team and the master agent
+
+**Agents in action** → run **Every shipment**. The order of the work:
+
+1. **Watch team**. Four agents run on Claude Haiku 5.5, one per kind of hazard, each across every monitored country:
+   - **Weather & natural hazards** (GDACS): its top item is an illustrative winter storm watch at the US depot, observed only, because no collection is planned there. It also names the coverage gap where depots sit in unmonitored countries (Singapore, Switzerland, India).
+   - **Strikes & transport**: the Belgian strike, confirmed for SHP-IL-01 and not affecting SHP-03.
+   - **Security & travel advice** (UK FCDO).
+   - **Regulatory & customs**: the open changes and the import permits.
+2. **Master agent** (Claude Opus 5.5) ranks the shipments, patients first: SHP-IL-01, whose site runs out on 27 Nov, comes before the shipments ranked by preparation date. It then hands tasks to the specialists.
+3. **Specialists** (Claude Sonnet 5.5): supply, logistics, records and communications read the company's systems over MCP, read-only.
+4. **SupplyShield verifier** (fixed rules, no AI) tests every option and checks the plans together, so nothing is promised twice.
+5. **Clinical Supply** approves.
+
+On a single shipment with a route risk, the master agent first asks the matching watch agent to confirm the event, its evidence and how long it lasts, then sends logistics to look for alternatives.
+
 ### J9 · Deciding what SupplyShield monitors
 
 **Who:** Clinical Supply for external risk; the Regulatory SME for regulatory and customs. **Why it matters:** SupplyShield watches only the countries that the active-trial portfolio puts in scope. Every other country is a suggestion with its evidence. It stays off until a person turns it on, with a reason.
@@ -369,9 +385,9 @@ The case also opens from **Signals** → **Regulatory & customs** → **UK IMP l
    1. **The scope.** The CTMS shows 18 of 22 studies active. 16 countries are monitored automatically, 5 are registered but not active, and Portugal is to confirm.
    2. **The suggestions.** 50 countries are suggested, all off. The check stops once for a decision: "Turn on external-risk monitoring for Belgium: it hosts our central EU depot (Mechelen)". Choose **Turn it on as P. Laine · Clinical Supply** or **Continue without it**.
    3. **The sources.** The 8 regulatory sources are read: UK regulation 46 changed, plus a new Spanish note and a new Israeli notice. Then the official feeds for the 17 countries monitored for external risk.
-   4. **The matches.** SHP-IL-01's flight is a confirmed disruption, SHP-IL-02 a potential exposure, and SHP-03 is not affected after check. 12 observed events touch nothing of ours. Then the UK, Israel and Spain impacts.
+   4. **The matches.** SHP-IL-01's flight is a confirmed disruption, SHP-IL-02 a potential exposure, and SHP-03 is not affected after check. 13 observed events touch nothing of ours. Then the UK, Israel and Spain impacts.
    5. **The shipments.** 25 shipments are re-checked: 14 blocked, 5 to confirm, 6 ready.
-   6. **The agents.** The 19 shipments that need action go to the agent team.
+   6. **The agents.** The watch team sweeps its four kinds of hazard, and the 19 shipments that need action go to the agent team, patients first.
 4. The page opens **Agents in action** and replays the run. Pause, step, change the speed, or filter by agent.
 5. Back on the **Overview**, under **Needs your decision**:
    - SHP-IL-01 comes first, with **Review the plan**;
@@ -457,7 +473,7 @@ With **Continue without it**, Belgium stays off. The strike is not matched to SH
 | 0:15 | Overview | **Connect the CTMS and run the first check** | "First, the active trials set the scope: 16 countries, always on. Closed and suspended studies are left out. Portugal's status is contradictory, so a person confirms it." |
 | 0:45 | Overview | **Turn it on as P. Laine · Clinical Supply** | "Our central EU depot is in Belgium, where we have no active trial. SupplyShield suggests it with the evidence. I decide, and my reason goes into the audit trail." |
 | 1:15 | Overview | Watch steps 3 to 6 | "A national strike day in Belgium cancels SHP-IL-01's flight to Tel Aviv. The courier confirmed it; it isn't just a news item. SHP-03's truck leaves the day before, so it is not affected. 14 shipments are blocked." |
-| 1:45 | Agents in action | Watch the replay; chip **Verifier** | "The master agent ranks 19 shipments and hands tasks to four specialists. They read the company's systems over MCP, read-only. Every option goes to SupplyShield's rules: fixed code, not AI." |
+| 1:45 | Agents in action | Watch the replay; chips **Watch team**, then **Verifier** | "Four watch agents sweep one hazard each across the 17 monitored countries: weather, strikes and transport, security advice, regulatory change. The master agent ranks 19 shipments, patients first, and hands tasks to four specialists. They read the company's systems over MCP, read-only. Every option goes to SupplyShield's rules: fixed code, not AI." |
 | 2:45 | Shipment page SHP-IL-01 | Overview → **Review the plan** | "If nothing is done, 14 patients go 2 days without treatment. The agents propose leaving from Amsterdam: same delivery day. Luxembourg would need a monitoring decision first, and a later dispatch arrives after the site runs out." |
 | 3:45 | Shipment page | **Approve this plan** | "I approve as Clinical Supply. The courier and the depot get drafts to approve in their own systems. Nothing changed in any validated system." |
 | 4:15 | Shipments › Needs action | Chips **Re-planned**, then **Escalations** | "The same team works on every shipment. Nothing is promised twice, and when nothing is safe, the agents escalate instead of guessing." |
