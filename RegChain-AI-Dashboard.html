@@ -243,25 +243,101 @@ tr[data-act]{cursor:pointer}
 .tip-pop{display:none!important}
 #tip-layer{position:fixed;z-index:1300;display:none;max-width:min(300px,calc(100vw - 32px));background:#132446;color:#fff;font:500 12.5px/1.45 Inter,"Segoe UI",sans-serif;padding:9px 11px;border-radius:8px;box-shadow:0 8px 22px #13244640;pointer-events:none;text-align:left}
 #tip-layer.on{display:block}
-/* Maps */
-.map-wrap{display:grid;gap:8px;padding:0 14px 14px}.route-map{padding:0 0 12px}
-.map-svg{display:block;width:100%;height:auto;max-height:430px;background:linear-gradient(180deg,#eaf2fb,#f3f7fc);border:1px solid #e1e9f3;border-radius:10px}
-.map-land{fill:#dfe6ef;stroke:#c2cfdf;stroke-width:.7}
-.map-route{fill:none;stroke-width:2.6;stroke-linecap:round}.map-route.thin{stroke-width:2.2}
-.map-route.booked{stroke:#5b6b84;stroke-dasharray:1 0}.map-route.confirmed{stroke:#dc2626}.map-route.potential{stroke:#d97706;stroke-dasharray:7 5}.map-route.alt{stroke:#15924a;stroke-dasharray:8 6;stroke-width:2.8}
-.map-mark circle,.map-mark rect{stroke:#fff;stroke-width:1.6;vector-effect:non-scaling-stroke}
-.map-mark.site circle{fill:#2563eb;fill-opacity:.82}.map-mark.depot rect{fill:#132446}.map-mark.depot.unwatched rect{fill:#fff;stroke:#d97706;stroke-dasharray:3 2;stroke-width:1.8}
-.map-mark.airport circle{fill:#fff;stroke:#132446;stroke-width:1.8}.map-mark.airport.alt circle{stroke:#15924a}
-.map-mark.confirmed circle{fill:#dc2626}.map-mark.potential circle{fill:#f59e0b}
-.map-mark text{fill:#132446;font-weight:700;font-family:Inter,"Segoe UI",sans-serif;paint-order:stroke;stroke:#ffffffd9;stroke-width:3px;stroke-linejoin:round}
-.map-mark[data-act],.map-trip{cursor:pointer}.map-mark[data-act]:focus,.map-trip:focus{outline:none}.map-mark[data-act]:focus circle,.map-mark[data-act]:hover circle{stroke:#132446;stroke-width:2.4}.map-trip:hover .map-route,.map-trip:focus .map-route{stroke-width:4}
-.map-pulse{fill:#dc2626;fill-opacity:.18;stroke:none!important;transform-box:fill-box;transform-origin:center;animation:map-pulse 1.8s ease-out infinite}
-@keyframes map-pulse{0%{transform:scale(.35);opacity:.9}100%{transform:scale(1);opacity:0}}
-@media (prefers-reduced-motion:reduce){.map-pulse{animation:none}}
-.map-legend{display:flex;flex-wrap:wrap;gap:6px 16px;list-style:none;margin:0;padding:0;font-size:12.5px;color:#4b5d78}.map-legend li{display:flex;align-items:center;gap:6px}
-.map-legend .key{display:inline-block;width:22px;height:0;border-top:3px solid #5b6b84}.map-legend .key.confirmed{border-color:#dc2626}.map-legend .key.potential{border-top-style:dashed;border-color:#d97706}.map-legend .key.alt{border-top-style:dashed;border-color:#15924a}
-.map-legend .key.dot{width:10px;height:10px;border:0;border-radius:50%}.map-legend .key.dot.site{background:#2563eb}.map-legend .key.dot.depot{background:#132446;border-radius:2px}.map-legend .key.dot.unwatched{background:#fff;border:2px dashed #d97706;border-radius:2px;width:8px;height:8px}.map-legend .key.dot.confirmed{background:#dc2626}.map-legend .key.dot.potential{background:#f59e0b}
+/* Maps: the Overview and the shipment route share one engine. Markers are drawn in pixels and keep their size at any zoom. */
+.map-wrap{display:grid;gap:10px;padding:0 14px 14px}.route-map{padding:0 0 12px}
+.map-stage{position:relative;container-type:inline-size}
+.map-viewport{position:relative;overflow:hidden;border-radius:14px;border:1px solid #d9e4f2;background:radial-gradient(140% 110% at 50% -10%,#f4f8fe 0%,#e5edf9 55%,#d9e5f4 100%);box-shadow:inset 0 1px 0 #fff,0 1px 2px #13244610}
+.map-svg{display:block;width:100%;height:auto;max-height:460px;fill:none;stroke:none;stroke-width:1;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;touch-action:pan-x pan-y}
+.map-stage.zoomed .map-svg{cursor:grab;touch-action:none}.map-stage.dragging .map-svg,.map-stage.dragging .map-mark,.map-stage.dragging .map-trip{cursor:grabbing}
+.map-grat{stroke:#cbd9ea;stroke-width:.6;opacity:.6;vector-effect:non-scaling-stroke}
+.map-land{fill:#fff;stroke:#c3d2e5;stroke-width:.8;stroke-linejoin:round}.map-land-shadow{fill:#c6d4e7;opacity:.75}
+.map-route,.map-casing,.map-hitline{fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.map-route{stroke-width:2.4}.map-casing{stroke:#fff;stroke-width:6;opacity:.92}.map-hitline{stroke:transparent;stroke-width:14;pointer-events:stroke}
+.map-route.booked{stroke:#5b6b84}.map-route.confirmed{stroke:#dc2626;stroke-width:2.8}
+.map-route.potential{stroke:#d97706;stroke-dasharray:7 6;animation:map-flow 1.4s linear infinite}
+.map-route.alt{stroke:#15924a;stroke-width:2.8;stroke-dasharray:7 6;animation:map-flow 1.4s linear infinite}
+.map-route.planned{stroke:#7d90ae;stroke-width:1.5;opacity:.6}
+.map-end{fill:#fff;stroke:#7d90ae;stroke-width:1.8}.map-end.potential{stroke:#d97706}.map-end.confirmed{stroke:#dc2626}.map-stage.hide-action .map-end.action,.map-stage.hide-planned .map-end.planned{display:none}.map-trip.planned .map-casing{opacity:0}.map-trip.planned .map-hitline{stroke-width:10}
+@keyframes map-flow{to{stroke-dashoffset:-26}}
+.map-trip{cursor:pointer;outline:none;transition:opacity .18s}
+.map-trip:hover .map-route,.map-trip.on .map-route,.map-trip:focus-visible .map-route{stroke-width:3.8}
+.map-trip.planned:hover .map-route,.map-trip.planned.on .map-route,.map-trip.planned:focus-visible .map-route{stroke:#3f5679;stroke-width:2.4;opacity:1}
+.map-trip:focus-visible .map-casing{stroke:#bcd0fb;stroke-width:10;opacity:1}
+.map-stage.hl .map-trip:not(.on){opacity:.14}
+.map-mark{cursor:pointer;outline:none}.map-mark .hit{fill:transparent}
+.map-mark .body{transform-box:fill-box;transform-origin:center;transition:transform .18s cubic-bezier(.2,.8,.3,1.25)}
+.map-mark:hover .body,.map-mark.on .body,.map-mark[aria-expanded="true"] .body{transform:scale(1.16)}
+.map-mark .ring{fill:none;stroke:#1a52d1;stroke-width:2.2;opacity:0;transition:opacity .15s;pointer-events:none}
+.map-mark:focus-visible .ring,.map-mark[aria-expanded="true"] .ring{opacity:1}
+.mk-site .halo,.mk-cluster .halo{fill:#2563eb;opacity:.16}.mk-site .dot{fill:#2f6bf0;stroke:#fff;stroke-width:1.6}
+.mk-cluster .dot{fill:#1d4ed8;stroke:#fff;stroke-width:2}.mk-cluster .count{fill:#fff;font:800 11px/1 Inter,"Segoe UI",sans-serif;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.mk-facility .sq{fill:#132446;stroke:#fff;stroke-width:1.8}.mk-facility .pip{fill:#fff}
+.mk-facility.unwatched .sq{fill:#fff;stroke:#d97706;stroke-width:2;stroke-dasharray:3.2 2.2}.mk-facility.unwatched .pip{fill:#d97706}
+.mk-signal .dot{stroke:#fff;stroke-width:2.2}.mk-signal .glyph{stroke:#fff;stroke-width:2.1;stroke-linecap:round}
+.mk-signal.confirmed .dot{fill:#dc2626}.mk-signal.potential .dot{fill:#f59e0b}.mk-signal.potential .halo{fill:#f59e0b;opacity:.24}
+.mk-signal .pulse{fill:#dc2626;opacity:0;transform-box:fill-box;transform-origin:center;animation:map-pulse 2.2s ease-out infinite;pointer-events:none}.mk-signal .pulse.late{animation-delay:1.1s}
+@keyframes map-pulse{0%{transform:scale(.38);opacity:.45}100%{transform:scale(1);opacity:0}}
+.mk-airport .halo{fill:#132446;opacity:.1}.mk-airport .dot{fill:#fff;stroke:#132446;stroke-width:2}.mk-airport .core{fill:#132446}
+.mk-airport.alt .halo{fill:#15924a}.mk-airport.alt .dot{stroke:#15924a}.mk-airport.alt .core{fill:#15924a}
+.mk-airport.potential .dot{stroke:#d97706}.mk-airport.potential .core{fill:#d97706}.mk-airport.confirmed .dot{stroke:#dc2626}.mk-airport.confirmed .core{fill:#dc2626}
+.map-label{fill:#1d3357;font:700 11px Inter,"Segoe UI",sans-serif;letter-spacing:.1px;paint-order:stroke;stroke:#fff;stroke-width:3.5px;stroke-linejoin:round;pointer-events:none}
+.map-stage.hide-sites :is(.mk-site,.mk-cluster,.lb-site),.map-stage.hide-facilities :is(.mk-facility,.lb-facility),.map-stage.hide-confirmed .mk-signal.confirmed,.map-stage.hide-potential .mk-signal.potential,.map-stage.hide-action .map-trip.action,.map-stage.hide-planned .map-trip.planned{display:none}
+.map-ctrl{position:absolute;top:10px;right:10px;z-index:3;display:grid;background:#ffffffeb;border:1px solid #d9e4f2;border-radius:11px;box-shadow:0 6px 18px -6px #13244640;overflow:hidden;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.map-ctrl button{width:34px;height:34px;border:0;padding:0;background:none;color:#23466e;display:grid;place-items:center;cursor:pointer}
+.map-ctrl button+button{border-top:1px solid #e6edf6}.map-ctrl button:hover{background:#edf4ff;color:var(--blue)}.map-ctrl button:focus-visible{outline-offset:-3px}
+.map-ctrl button[aria-disabled="true"]{color:#b4c2d6;background:none;cursor:default}.map-ctrl svg{width:16px;height:16px}
+.map-hint{position:absolute;left:50%;bottom:14px;margin:0;padding:7px 13px;border-radius:999px;background:#132446e6;color:#fff;font-size:12px;font-weight:650;white-space:nowrap;opacity:0;transform:translate(-50%,6px);transition:opacity .2s,transform .2s;pointer-events:none;box-shadow:0 6px 18px -6px #13244680}
+.map-hint.on{opacity:1;transform:translate(-50%,0)}
+.map-credit{position:absolute;right:8px;bottom:6px;margin:0;padding:1px 6px;border-radius:5px;background:#ffffffb8;color:#7487a3;font-size:10px;pointer-events:none}
+.map-pop{position:absolute;left:0;top:0;z-index:6;width:min(300px,calc(100% - 16px));padding:12px 14px 13px;background:#fff;color:var(--ink);border:1px solid #dce5f1;border-radius:14px;box-shadow:0 22px 44px -16px #13244666,0 6px 14px -6px #1324462e;font-size:12.5px;line-height:1.45;visibility:hidden;opacity:0;transform:translateY(4px) scale(.98);transition:opacity .15s ease,transform .15s ease,visibility 0s linear .15s;pointer-events:none}
+.map-pop.on{visibility:visible;opacity:1;transform:none;transition:opacity .15s ease,transform .15s ease,visibility 0s;pointer-events:auto}
+.map-pop.away{visibility:hidden!important;opacity:0!important}
+.map-pop::before{content:"";position:absolute;width:12px;height:12px;background:#fff;border:1px solid #dce5f1;transform:rotate(45deg)}
+.map-pop[data-side="top"]::before{left:calc(var(--ax) - 6px);bottom:-7px;border-left:0;border-top:0}.map-pop[data-side="bottom"]::before{left:calc(var(--ax) - 6px);top:-7px;border-right:0;border-bottom:0}
+.map-pop[data-side="right"]::before{top:calc(var(--ay) - 6px);left:-7px;border-right:0;border-top:0}.map-pop[data-side="left"]::before{top:calc(var(--ay) - 6px);right:-7px;border-left:0;border-bottom:0}
+.map-pop.dock{position:static;width:auto;margin-top:10px;display:none;transform:none}.map-pop.dock.on{display:block}.map-pop.dock::before{display:none}
+.mp-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:24px;margin:-3px -6px 4px 0}
+.mp-kind{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#5a6f8e}
+.mp-kind i{flex:none;width:9px;height:9px;border-radius:50%;background:#2f6bf0}
+.mp-kind.facility i{border-radius:2.5px;background:#132446}.mp-kind.unwatched i{background:#fff;border:2px dashed #d97706;border-radius:2.5px}
+.mp-kind.confirmed{color:#b91c1c}.mp-kind.confirmed i{background:#dc2626;box-shadow:0 0 0 3px #dc262626}.mp-kind.potential{color:#a35a00}.mp-kind.potential i{background:#f59e0b;box-shadow:0 0 0 3px #f59e0b33}
+.mp-kind.planned i{width:12px;height:3px;border-radius:2px;background:#7d90ae}.mp-kind.airport i{background:#fff;border:2px solid #132446}.mp-kind.airport.alt i{border-color:#15924a}
+.mp-close{display:none;place-items:center;width:26px;height:26px;padding:0;border:0;border-radius:8px;background:none;color:#6a7d99;cursor:pointer}
+.map-pop.pinned .mp-close,.map-pop.dock .mp-close{display:grid}.mp-close:hover{background:#eef3fa;color:var(--ink)}.mp-close svg{width:14px;height:14px}
+.mp-title{margin:0;font-size:15px;line-height:1.3;font-weight:750;letter-spacing:-.2px;color:var(--ink)}
+.mp-sub{margin:2px 0 0;color:var(--muted);font-size:12px}
+.mp-text{margin:8px 0 0;color:#3f597c;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.mp-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:10px 0 0}
+.mp-stats div{min-width:0;padding:6px 8px;border:1px solid #e7eef8;border-radius:10px;background:#f5f8fd}
+.mp-stats dt{font-size:10.5px;font-weight:650;color:#5a6f8e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-stats dd{margin:1px 0 0;font-size:16px;font-weight:800;letter-spacing:-.3px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-stats dd.txt{font-size:12.5px;letter-spacing:0;line-height:1.3;padding-top:2px;white-space:normal;overflow-wrap:anywhere}
+.mp-list{list-style:none;margin:10px 0 0;padding:0;display:grid}
+.mp-list li{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;padding:5px 0;border-top:1px solid #eef2f8}.mp-list li:first-child{border-top:0}
+.mp-row{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#3f597c}.mp-row b{color:var(--ink)}.mp-list .badge{flex:none}
+.mp-dim{flex:none;color:#6a7d99;font-size:11.5px;white-space:nowrap}.mp-more{margin:3px 0 0;color:#6a7d99;font-size:11.5px}
+.mp-note{margin:9px 0 0;padding:7px 9px;border-radius:9px;background:#f1f5fb;color:#3f597c;font-size:12px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.mp-note.confirmed{background:#fef2f2;color:#9f1d1d}.mp-note.potential,.mp-note.warn{background:#fff7e6;color:#8a4b00}.mp-note.ok{background:#ecfbf2;color:#146c3c}
+.mp-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.mp-actions:empty{display:none}.mp-actions .btn{flex:1 1 auto}
+.map-legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px;list-style:none;margin:0;padding:0;font-size:12px;color:#4b5d78}.map-legend li{display:flex;align-items:center;gap:6px}
+.map-layer-btn{display:inline-flex;align-items:center;gap:7px;min-height:30px;padding:4px 6px 4px 10px;border:1px solid #d9e4f2;border-radius:999px;background:#fff;color:#33507a;font-size:12px;font-weight:650;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.map-layer-btn:hover{border-color:#9db8f2;background:#f7faff}
+.map-layer-btn .n{min-width:20px;padding:1px 6px;border-radius:999px;background:#edf3fc;color:#23466e;font-size:11px;font-weight:800;text-align:center}
+.map-layer-btn[aria-pressed="false"]{border-style:dashed;background:#f6f8fb;color:#8394ad}.map-layer-btn[aria-pressed="false"] .key{opacity:.3}.map-layer-btn[aria-pressed="false"] .n{background:#eef1f6;color:#8394ad}
+.map-key{padding:0 4px;color:#5a6f8e}
+.map-legend .key{display:inline-block;flex:none;width:22px;height:0;border-top:3px solid #5b6b84}.map-legend .key.confirmed{border-color:#dc2626}.map-legend .key.potential{border-top-style:dashed;border-color:#d97706}.map-legend .key.alt{border-top-style:dashed;border-color:#15924a}
+.map-legend .key.line.action{height:3px;border:0;border-radius:2px;background:linear-gradient(90deg,#dc2626 0 46%,transparent 46% 56%,#d97706 56% 74%,transparent 74% 84%,#d97706 84%)}.map-legend .key.line.planned{border-top:2px solid #7d90ae}
+.map-legend .key.dot{width:10px;height:10px;border:0;border-radius:50%}.map-legend .key.dot.site{background:#2f6bf0}.map-legend .key.dot.depot{background:#132446;border-radius:3px}.map-legend .key.dot.unwatched{background:#fff;border:2px dashed #d97706;border-radius:3px}.map-legend .key.dot.confirmed{background:#dc2626}.map-legend .key.dot.potential{background:#f59e0b}
+.map-legend .key.size{width:20px;height:13px;border:0;background:radial-gradient(circle at 4px 9px,#2f6bf0 3px,transparent 3.6px),radial-gradient(circle at 13px 6.5px,#2f6bf0 6px,transparent 6.6px)}
 .map-card .card-head{flex-wrap:wrap;gap:10px}
+.map-detail-list{list-style:none;margin:6px 0 0;padding:0;display:grid}
+.map-detail-list li{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid #e6edf6}.map-detail-list li:first-child{border-top:0}
+.map-detail-list li>div{flex:1;min-width:0;display:grid;gap:1px;justify-items:start}.map-detail-list strong{font-size:12.5px}.map-detail-list small{color:#5a6f8e;font-size:11.5px}
+.map-detail-list .badge{flex:none}.map-detail-list li>div>.badge{margin-bottom:3px}.map-detail-num{font-size:12px;font-weight:700;color:#33507a;white-space:nowrap}
+@container (max-width:560px){.map-svg{min-height:280px}.map-credit{display:none}.map-ctrl{top:8px;right:8px}.map-ctrl button{width:30px;height:30px}}
+@media (max-width:640px){.map-card .map-legend{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -10px;padding:0 10px 2px;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)}.map-card .map-legend::-webkit-scrollbar{display:none}.map-card .map-legend li{flex:none}}
+@media (max-width:560px){.map-wrap{padding:0 10px 12px}.map-ctrl{top:8px;right:8px}.map-ctrl button{width:32px;height:32px}.map-layer-btn{padding:3px 5px 3px 8px;font-size:11.5px}.map-credit{display:none}}
+@media (prefers-reduced-motion:reduce){.map-route.potential,.map-route.alt,.mk-signal .pulse{animation:none}.mk-signal .pulse{opacity:.16;transform:scale(.7)}.mk-signal .pulse.late{display:none}.map-mark .body,.map-pop,.map-pop.on,.map-hint{transition:none}}
 .enterprise-list{list-style:none;margin:0;padding:0 16px 8px}.enterprise-fold>summary{padding:4px 16px 12px}.enterprise-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:14px;padding:11px 0;border-top:1px solid #edf1f7}.enterprise-row:first-child{border-top:0}.enterprise-result{display:grid;gap:4px;justify-items:start}.enterprise-result small{color:#4b5d78}@media (max-width:760px){.enterprise-row{grid-template-columns:1fr}}
 .study-countries{display:flex;flex-wrap:wrap;gap:4px}.study-country{font:700 11px/1 Inter,"Segoe UI",sans-serif;padding:4px 6px;border-radius:6px;background:#f1f4f9;color:#7a889e;border:1px solid #e3e9f2}.study-country.on{background:#eaf1ff;color:#1d4ed8;border-color:#c9daff}
 .muted.block,small.block{display:block;margin-top:2px}.source-line{display:flex;align-items:center;gap:6px;color:#5b6b84;font-size:12.5px;margin:0}.source-line svg{width:14px;height:14px}
@@ -792,7 +868,11 @@ const icons = {
   scope:'<circle cx="8" cy="8" r="5.5"/><path d="M2.5 8h11M8 2.5c-3 3.2-3 7.8 0 11m0-11c3 3.2 3 7.8 0 11"/>',
   signals:'<circle cx="8" cy="8" r="1.3"/><path d="M5.3 10.7a3.8 3.8 0 0 1 0-5.4m5.4 0a3.8 3.8 0 0 1 0 5.4M3.4 12.6a6.5 6.5 0 0 1 0-9.2m9.2 0a6.5 6.5 0 0 1 0 9.2"/>',
   lock:'<rect x="3.5" y="7" width="9" height="6.5" rx="1.2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/>',
-  route:'<circle cx="4" cy="12" r="1.6"/><circle cx="12" cy="4" r="1.6"/><path d="M5.6 12H10a2 2 0 0 0 0-4H6a2 2 0 0 1 0-4h4.4"/>'
+  route:'<circle cx="4" cy="12" r="1.6"/><circle cx="12" cy="4" r="1.6"/><path d="M5.6 12H10a2 2 0 0 0 0-4H6a2 2 0 0 1 0-4h4.4"/>',
+  plus:'<path d="M8 3.5v9M3.5 8h9"/>',
+  minus:'<path d="M3.5 8h9"/>',
+  fit:'<path d="M2.5 6V2.5H6m4 0h3.5V6m0 4v3.5H10m-4 0H2.5V10"/>',
+  close:'<path d="m4.5 4.5 7 7m0-7-7 7"/>'
 };
 const navItems = {overview:"Overview",shipments:"Shipments",studies:"Studies",signals:"Signals",scope:"Monitoring scope",team:"Agents in action",countries:"Country specifications",settings:"Settings"};
 // Earlier page names still open the right place, so no button or link breaks: Agent plans is the Shipments "Needs action"
@@ -3973,6 +4053,7 @@ function signalView() {
 // After a page is drawn: bring a country asked for on Monitoring scope into view.
 function afterRender() {
   enhanceSelects();
+  mapMountAll();
   if(page!=="scope"||!scopeFocus) return;
   const code=scopeFocus;
   scopeFocus=null;
@@ -4066,6 +4147,10 @@ function studyPage() {
     '<p class="source-line">'+icon("plug")+esc("Sources: "+studySources.map(([name,what])=>name+" ("+what+")").join(" · "))+'</p>';
 }
 // ---------- Maps: where it happens. Offline: Natural Earth land outlines (public domain), no map tiles, no internet. ----------
+// One engine draws the Overview map and each shipment route. Markers keep their size in pixels at any zoom; sites that would
+// overlap are grouped and split as you zoom in; every marker and route opens a card on hover, focus or tap with its facts and
+// the way to the full details. Zoom: the + and − buttons, Ctrl or ⌘ + scroll, double-click or pinch; drag to pan when zoomed in.
+// Keyboard: the map is one tab stop, arrow keys move between places, Enter opens the card and Escape closes it.
 const worldLand = (()=>{
   try {
     const path=JSON.parse(byId("world-land")?.textContent??"{}").path??"";
@@ -4119,21 +4204,6 @@ function mapFrame(points,{minLon=6,minLat=4,aspect=2,pad=.16}={}) {
   const cx=(ax+bx)/2,cy=(ay+by)/2;
   return {k,project,x:cx-w/2,y:cy-h/2,w,h,u:w/100};
 }
-const mapLand = frame => worldLand?'<g transform="scale('+frame.k.toFixed(4)+' 1)"><path class="map-land" d="'+worldLand+'" vector-effect="non-scaling-stroke"/></g>':"";
-const mapSvg = (frame,body,label) => '<svg class="map-svg" viewBox="'+[frame.x,frame.y,frame.w,frame.h].map(value=>value.toFixed(2)).join(" ")+'" role="img" aria-label="'+esc(label)+'" preserveAspectRatio="xMidYMid meet">'+mapLand(frame)+body+'</svg>';
-function mapArc(frame,from,to,air,css,extra="") {
-  const [x1,y1]=frame.project(from),[x2,y2]=frame.project(to);
-  if(!air) return '<path class="map-route '+css+'" d="M'+x1.toFixed(2)+' '+y1.toFixed(2)+'L'+x2.toFixed(2)+' '+y2.toFixed(2)+'" vector-effect="non-scaling-stroke"'+extra+'/>';
-  const mx=(x1+x2)/2,my=(y1+y2)/2,dx=x2-x1,dy=y2-y1,bend=.18;
-  return '<path class="map-route '+css+'" d="M'+x1.toFixed(2)+' '+y1.toFixed(2)+'Q'+(mx+dy*bend).toFixed(2)+' '+(my-dx*bend).toFixed(2)+' '+x2.toFixed(2)+' '+y2.toFixed(2)+'" vector-effect="non-scaling-stroke"'+extra+'/>';
-}
-function mapDot(frame,point,css,r,title,label="",act="",anchor="right") {
-  const [x,y]=frame.project(point);
-  const action=act?' data-act="'+act.split("|")[0]+'" data-value="'+esc(act.split("|")[1])+'" tabindex="0" role="button" aria-label="'+esc(title)+'"':"";
-  return '<g class="map-mark '+css+'"'+action+'>'+(css.includes("pulse")?'<circle class="map-pulse" cx="'+x.toFixed(2)+'" cy="'+y.toFixed(2)+'" r="'+(r*2.4).toFixed(2)+'"/>':"")+
-    (css.includes("square")?'<rect x="'+(x-r).toFixed(2)+'" y="'+(y-r).toFixed(2)+'" width="'+(r*2).toFixed(2)+'" height="'+(r*2).toFixed(2)+'" rx="'+(r*.3).toFixed(2)+'"/>':'<circle cx="'+x.toFixed(2)+'" cy="'+y.toFixed(2)+'" r="'+r.toFixed(2)+'"/>')+
-    '<title>'+esc(title)+'</title>'+(label?'<text x="'+(anchor==="left"?x-r*1.7:x+r*1.7).toFixed(2)+'" y="'+(y+frame.u*.8).toFixed(2)+'"'+(anchor==="left"?' text-anchor="end"':'')+' style="font-size:'+(frame.u*2.6).toFixed(2)+'px">'+esc(label)+'</text>':"")+'</g>';
-}
 // The stops of a planned shipment's booked route, from the depot to the site.
 function routeStops(shipment,route) {
   const depot=facilityPoint(route.facility),site=geoCities[shipment.site]??geoCountries[route.legs.at(-1)?.country];
@@ -4143,79 +4213,682 @@ function routeStops(shipment,route) {
   stops.push({point:site,label:shipment.site,kind:"site"});
   return stops;
 }
+// ----- Map models: what each marker and route stands for, built when the page is drawn -----
+const mapModels = {};
+const mapCams = {};
+const mapLayersOff = new Set(["planned"]);
+const mapMod = /Mac|iPhone|iPad/.test(navigator.platform)?"⌘":"Ctrl";
+const mapReduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+const mapPointKey = point => point.map(value=>value.toFixed(2)).join(",");
+const mapDomId = key => "map-"+String(key).replace(/[^\w-]/g,"-");
+const mapSiteR = patients => 4+Math.min(8.5,Math.sqrt(Math.max(1,patients))*.95);
+const mapDay = day => day?displayDay(day).replace(/ \d{4}$/,""):"Not set";
+const mapOpenMatches = id => (ss?.byShipment?.[id]??[]).filter(match=>["confirmed","potential"].includes(match.tier));
+const mapSignalMatches = id => Object.entries(ss?.byShipment??{}).flatMap(([shipment,list])=>list.filter(match=>match.signal===id&&["confirmed","potential"].includes(match.tier)).map(match=>({...match,shipment})));
+const mapWorst = matches => matches.some(match=>match.tier==="confirmed")?"confirmed":matches.length?"potential":null;
+const mapResult = {Blocked:["Blocked","red"],Confirm:["Confirm","amber"],Ready:["Ready","green"]};
+const facilityKinds = {depot:"Depot",packaging:"Packaging site",manufacturer:"Manufacturer",supplier:"Supplier"};
+const mapMonitored = code => (ss?.scope?.monitored?.external??[]).includes(code);
+function mapArcD(frame,from,to,air) {
+  const [x1,y1]=frame.project(from),[x2,y2]=frame.project(to);
+  const mx=(x1+x2)/2,my=(y1+y2)/2,dx=x2-x1,dy=y2-y1,bend=air?.18:.06;
+  return "M"+x1.toFixed(2)+" "+y1.toFixed(2)+"Q"+(mx+dy*bend).toFixed(2)+" "+(my-dx*bend).toFixed(2)+" "+x2.toFixed(2)+" "+y2.toFixed(2);
+}
+const mapLine = (d,css) => '<path class="map-casing" d="'+d+'"/><path class="map-route '+css+'" d="'+d+'"/>';
+function mapGraticule(frame) {
+  const [x0]=frame.project([-180,0]),[x1]=frame.project([180,0]);
+  let d="";
+  for(let lon=-180;lon<=180;lon+=10) d+="M"+frame.project([lon,0])[0].toFixed(2)+" 0V500";
+  for(let lat=-80;lat<=80;lat+=10) d+="M"+x0.toFixed(2)+" "+frame.project([0,lat])[1].toFixed(2)+"H"+x1.toFixed(2);
+  return '<path class="map-grat" d="'+d+'"/>';
+}
+// The land is drawn twice from one outline: a soft shadow a pixel lower, then the land itself.
+const mapLand = (frame,id,s) => worldLand?'<defs><path id="'+id+'-land" d="'+worldLand+'" vector-effect="non-scaling-stroke"/></defs><g transform="scale('+frame.k.toFixed(4)+' 1)"><use class="map-land-shadow" href="#'+id+'-land" transform="translate(0 '+(1.3/s).toFixed(4)+')"/><use class="map-land" href="#'+id+'-land"/></g>':"";
+// Site cities from the active studies (IRT sites and patients on treatment), with the planned shipments to each.
+function mapSiteIndex(shipments) {
+  const cities={};
+  for(const study of studyIndex().filter(item=>item.counted)) for(const site of study.sites) {
+    const point=geoCities[site.city];
+    if(!point) continue;
+    const key=mapPointKey(point);
+    const entry=cities[key]??={key,point,city:site.city,country:site.country,sites:[],patients:0,studies:new Map(),shipments:[]};
+    entry.sites.push({...site,study:study.id});
+    entry.patients+=site.patients??0;
+    entry.studies.set(study.id,study.title);
+  }
+  for(const shipment of shipments) {
+    const point=geoCities[shipment.site];
+    const entry=point?cities[mapPointKey(point)]:null;
+    if(entry) entry.shipments.push(shipment);
+  }
+  return cities;
+}
+function mapSiteItem(entry) {
+  const open=entry.shipments.flatMap(shipment=>mapOpenMatches(shipment.id));
+  return {type:"site",key:"site:"+entry.key,point:entry.point,r:mapSiteR(entry.patients),weight:entry.patients||1,cluster:true,label:entry.city,entry,open,
+    links:[...entry.shipments.map(shipment=>"trip:"+shipment.id),...new Set(open.map(match=>"signal:"+match.signal))],
+    aria:entry.city+": "+plural(entry.sites.length,"site")+", "+plural(entry.patients,"patient")+" on treatment, "+plural(entry.studies.size,"study","studies")};
+}
+function mapFacilityItem(facility,shipments) {
+  const point=facilityPoint(facility.id);
+  if(!point) return null;
+  const watched=mapMonitored(facility.country),city=String(facility.city??"").split(",")[0];
+  const out=shipments.filter(shipment=>ss?.routes?.[shipment.id]?.facility===facility.id);
+  return {type:"facility",key:"facility:"+facility.id,point,r:7,css:watched?"":"unwatched",label:city,facility,watched,city,shipments:out,
+    links:out.map(shipment=>"trip:"+shipment.id),aria:facility.name+", "+city+(watched?"":", not monitored for external risk")};
+}
+function mapSignalItem(signal) {
+  const point=signalPoint(signal),tier=countKey(signal);
+  if(!point||!["confirmed","potential"].includes(tier)) return null;
+  const matches=mapSignalMatches(signal.id);
+  return {type:"signal",key:"signal:"+signal.id,point,r:8.5,css:tier,tier,signal,matches,label:null,
+    links:[...new Set(matches.map(match=>"trip:"+match.shipment))],aria:tierStyle[tier][0]+": "+signal.title};
+}
+function mapTripItem(frame,shipment,route) {
+  const stops=routeStops(shipment,route);
+  if(!stops) return null;
+  const matches=mapOpenMatches(shipment.id),tier=mapWorst(matches),site=geoCities[shipment.site];
+  const d=stops.slice(1).map((stop,index)=>mapArcD(frame,stops[index].point,stop.point,stop.kind==="airport"&&stops[index].kind==="airport")).join("");
+  return {type:"trip",key:"trip:"+shipment.id,shipment,route,matches,tier,d,end:stops.at(-1).point,
+    links:["facility:"+route.facility,...(site?["site:"+mapPointKey(site)]:[]),...new Set(matches.map(match=>"signal:"+match.signal))],
+    aria:shipment.id+" to "+shipment.site+(tier?", "+tierStyle[tier][0].toLowerCase():"")};
+}
+function mapModel(key,frame,{items=[],trips=[],legs="",cluster=false,labelZoom=1,maxZ=8,label=""}) {
+  const model={key,frame,items:items.map(item=>({...item,xy:frame.project(item.point)})),trips,legs,cluster,labelZoom,maxZ,label,marks:new Map(),tripMap:new Map(trips.map(trip=>[trip.key,trip]))};
+  mapModels[key]=model;
+  const sig=[frame.x,frame.y,frame.w,frame.h].map(value=>value.toFixed(2)).join();
+  if(mapCams[key]?.sig!==sig) mapCams[key]={z:1,cx:frame.x+frame.w/2,cy:frame.y+frame.h/2,sig};
+  mapClampCam(model,mapCams[key]);
+  return model;
+}
+// ----- Drawing: markers are drawn in pixels (scaled by 1/s), so they keep their size at any zoom -----
+function mapClusterItem(group) {
+  const members=group.members;
+  return {type:"cluster",key:"cluster:"+members.map(member=>member.key.slice(5)).sort().join("|"),xy:group.xy,r:group.r,members,label:null,
+    links:[...new Set(members.flatMap(member=>[member.key,...member.links]))],
+    aria:plural(members.length,"site city","site cities")+" around "+members[0].label+": "+members.map(member=>member.label).join(", ")};
+}
+function mapMarkHtml(item,inv,id,tabbable) {
+  const [x,y]=(item.at??item.xy).map(value=>value.toFixed(3)),r=item.r;
+  let pre="",shape="",outer=r;
+  if(item.type==="site") {shape='<circle class="halo" r="'+(r+3.5).toFixed(1)+'"/><circle class="dot" r="'+r.toFixed(1)+'"/>';outer=r+3.5;}
+  else if(item.type==="cluster") {shape='<circle class="halo" r="'+(r+5).toFixed(1)+'"/><circle class="dot" r="'+r.toFixed(1)+'"/><text class="count">'+item.members.length+'</text>';outer=r+5;}
+  else if(item.type==="facility") {shape='<rect class="sq" x="-7" y="-7" width="14" height="14" rx="3.5"/><rect class="pip" x="-2.25" y="-2.25" width="4.5" height="4.5" rx="1.2"/>';outer=9;}
+  else if(item.type==="signal") {pre=item.tier==="confirmed"?'<circle class="pulse" r="22"/><circle class="pulse late" r="22"/>':"";shape=(item.tier==="potential"?'<circle class="halo" r="13"/>':"")+'<circle class="dot" r="'+r+'"/><path class="glyph" d="M0-4.2V.6M0 3.5v.1"/>';outer=item.tier==="potential"?13:r;}
+  else if(item.type==="airport") {shape='<circle class="halo" r="9"/><circle class="dot" r="5.5"/><circle class="core" r="1.9"/>';outer=9;}
+  return '<g class="map-mark map-scaled mk-'+item.type+(item.css?" "+item.css:"")+'" data-key="'+esc(item.key)+'" data-links="'+esc((item.links??[]).join(" "))+'" data-x="'+x+'" data-y="'+y+'" transform="translate('+x+' '+y+') scale('+inv+')" tabindex="'+(tabbable?0:-1)+'" role="button" aria-haspopup="dialog" aria-expanded="false" aria-label="'+esc(item.aria)+'">'+
+    '<circle class="hit" r="'+Math.max(outer+3,13).toFixed(1)+'"/>'+pre+'<g class="body" filter="url(#'+id+'-shadow)">'+shape+'</g><circle class="ring" r="'+(outer*1.16+3).toFixed(1)+'"/></g>';
+}
+// Labels go where they fit: next to their marker, on the right or else the left, never over another marker or label.
+function mapLabels(model,marks,s,cam,inv) {
+  if(cam.z<model.labelZoom) return "";
+  const boxes=marks.map(item=>{const X=(item.at??item.xy)[0]*s,Y=(item.at??item.xy)[1]*s,r=item.r+3;return [X-r,Y-r,X+r,Y+r];});
+  const taken=box=>boxes.some(other=>box[0]<other[2]&&box[2]>other[0]&&box[1]<other[3]&&box[3]>other[1]);
+  const rank={facility:0,airport:1,site:2};
+  let html="";
+  for(const item of marks.filter(entry=>entry.label).sort((a,b)=>(rank[a.type]??3)-(rank[b.type]??3)||(b.weight??0)-(a.weight??0))) {
+    const X=(item.at??item.xy)[0]*s,Y=(item.at??item.xy)[1]*s,width=item.label.length*6.5+4,gap=item.r+6;
+    const right=[X+gap,Y-8,X+gap+width,Y+8],left=[X-gap-width,Y-8,X-gap,Y+8];
+    const box=!taken(right)?right:!taken(left)?left:null;
+    if(!box) continue;
+    boxes.push(box);
+    const [x,y]=(item.at??item.xy).map(value=>value.toFixed(3));
+    html+='<text class="map-label map-scaled lb-'+item.type+'" data-x="'+x+'" data-y="'+y+'" transform="translate('+x+' '+y+') scale('+inv+')" x="'+(box===right?gap:-gap)+'" y="4"'+(box===right?"":' text-anchor="end"')+'>'+esc(item.label)+'</text>';
+  }
+  return '<g class="map-labels" aria-hidden="true">'+html+'</g>';
+}
+// Depots, factories and signals that would sit on another marker are moved apart a few pixels, so each stays visible and
+// can be pointed at; their card gives the exact place. Zooming in brings them back to it.
+function mapSpread(marks,s) {
+  for(const item of marks) item.at=item.xy;
+  const movable=marks.filter(item=>["facility","signal","airport"].includes(item.type));
+  const size=item=>item.type==="facility"||item.type==="signal"||item.type==="airport"?9:item.r+(item.type==="cluster"?4:2);
+  for(let pass=0;pass<4;pass++) for(const a of movable) for(const b of marks) {
+    if(a===b) continue;
+    let dx=(a.at[0]-b.at[0])*s,dy=(a.at[1]-b.at[1])*s,d=Math.hypot(dx,dy);
+    const need=size(a)+size(b)+2;
+    if(d>=need) continue;
+    if(d<.01) {dx=0;dy=-1;d=1;}
+    const shared=movable.includes(b),push=Math.min(need-d,12)/(shared?2:1)/s;
+    a.at=[a.at[0]+dx/d*push,a.at[1]+dy/d*push];
+    if(shared) b.at=[b.at[0]-dx/d*push,b.at[1]-dy/d*push];
+  }
+  for(const item of movable) {
+    const dx=(item.at[0]-item.xy[0])*s,dy=(item.at[1]-item.xy[1])*s,d=Math.hypot(dx,dy);
+    if(d>18) item.at=[item.xy[0]+dx/d*18/s,item.xy[1]+dy/d*18/s];
+  }
+}
+// Sites that would overlap at this zoom are grouped into one marker with their count; zooming in splits them.
+function mapMarks(model,s,cam,roving,id) {
+  const frame=model.frame;
+  let marks=model.items;
+  if(model.cluster) {
+    const groups=[];
+    for(const item of model.items.filter(entry=>entry.cluster).sort((a,b)=>b.weight-a.weight)) {
+      const group=groups.find(entry=>Math.hypot(entry.xy[0]-item.xy[0],entry.xy[1]-item.xy[1])*s<entry.r+item.r+3);
+      if(!group) {groups.push({members:[item],xy:item.xy,r:item.r});continue;}
+      group.members.push(item);
+      const total=group.members.reduce((sum,member)=>sum+member.weight,0);
+      group.xy=[0,1].map(axis=>group.members.reduce((sum,member)=>sum+member.xy[axis]*member.weight,0)/total);
+      group.r=Math.max(11,mapSiteR(group.members.reduce((sum,member)=>sum+member.entry.patients,0))+1.5);
+    }
+    marks=[...groups.map(group=>group.members.length>1?mapClusterItem(group):group.members[0]),...model.items.filter(entry=>!entry.cluster)];
+  }
+  model.marks=new Map(marks.map(item=>[item.key,item]));
+  mapSpread(marks,s);
+  const order={cluster:0,site:0,facility:1,airport:2,signal:3};
+  marks=[...marks].sort((a,b)=>(order[a.type]??2)-(order[b.type]??2));
+  // One tab stop for the whole map: the place last visited, else the most urgent one.
+  const first=roving&&model.tripMap.has(roving)?null:roving&&model.marks.has(roving)?roving:(marks.find(item=>item.tier==="confirmed")??marks.find(item=>item.tier==="potential")??marks[0])?.key;
+  const inv=(1/s).toFixed(5);
+  const ends=model.trips.filter(trip=>trip.end).map(trip=>{const [x,y]=frame.project(trip.end).map(value=>value.toFixed(3));return '<circle class="map-end map-scaled '+(trip.tier?"action "+trip.tier:"planned")+'" data-x="'+x+'" data-y="'+y+'" transform="translate('+x+' '+y+') scale('+inv+')" r="3.6"/>';}).join("");
+  return (ends?'<g class="map-ends" aria-hidden="true">'+ends+'</g>':"")+marks.map(item=>mapMarkHtml(item,inv,id,item.key===first)).join("")+mapLabels(model,marks,s,cam,inv);
+}
+function mapTripHtml(trip) {
+  return '<g class="map-trip '+(trip.tier?"action "+trip.tier:"planned")+'" data-key="'+esc(trip.key)+'" data-links="'+esc(trip.links.join(" "))+'" tabindex="-1" role="button" aria-haspopup="dialog" aria-expanded="false" aria-label="'+esc(trip.aria)+'">'+
+    '<path class="map-hitline" d="'+trip.d+'"/>'+mapLine(trip.d,trip.tier??"planned")+'</g>';
+}
+function mapStage(model) {
+  const {key,frame}=model,cam=mapCams[key],id=mapDomId(key);
+  // The scale (pixels per map unit) before the page is laid out: from the map already on the page, else the content width.
+  const width=document.querySelector('.map-stage[data-map="'+CSS.escape(key)+'"] .map-svg')?.clientWidth||Math.max(300,(byId("view")?.clientWidth??900)-60);
+  const s=Math.min(width/(frame.w/cam.z),460/(frame.h/cam.z));
+  const hide=key.startsWith("net:")?[...mapLayersOff].map(layer=>" hide-"+layer).join(""):"";
+  const control=(act,label,symbol,off)=>'<button type="button" data-map-act="'+act+'" aria-label="'+label+'" title="'+label+'"'+(off?' aria-disabled="true"':'')+'>'+icon(symbol)+'</button>';
+  return '<div class="map-stage'+(cam.z>1.01?" zoomed":"")+hide+'" data-map="'+esc(key)+'">'+
+    '<div class="map-viewport"><svg class="map-svg" viewBox="'+mapViewBox(frame,cam)+'" role="group" aria-label="'+esc(model.label)+'" aria-describedby="'+id+'-help" preserveAspectRatio="xMidYMid meet">'+
+    '<defs><filter id="'+id+'-shadow" x="-80%" y="-80%" width="260%" height="260%" color-interpolation-filters="sRGB"><feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#0f2547" flood-opacity=".32"/></filter></defs>'+
+    mapGraticule(frame)+mapLand(frame,id,s)+'<g class="map-routes">'+model.legs+model.trips.filter(trip=>!trip.tier).map(mapTripHtml).join("")+model.trips.filter(trip=>trip.tier).map(mapTripHtml).join("")+'</g>'+
+    '<g class="map-marks">'+mapMarks(model,s,cam,null,id)+'</g></svg>'+
+    '<p class="map-credit">Land outlines: Natural Earth</p><p class="map-hint" aria-hidden="true">'+esc("Hold "+mapMod+" and scroll to zoom")+'</p></div>'+
+    '<div class="map-pop" role="dialog" aria-labelledby="'+id+'-pop-title" tabindex="-1"></div>'+
+    '<div class="map-ctrl" role="group" aria-label="Zoom the map">'+control("in","Zoom in","plus",cam.z>=model.maxZ-.01)+control("out","Zoom out","minus",cam.z<=1.01)+control("fit","Show the whole area","fit",cam.z<=1.01)+'</div>'+
+    '<p class="sr" id="'+id+'-help">'+esc("Arrow keys move between places on the map, Enter opens the details of a place and Escape closes them. Plus and minus zoom in and out.")+'</p></div>';
+}
+// ----- The card: the facts of a marker or route, and the way to its full details -----
+function mapPopHtml(item,id) {
+  const head=(css,text)=>'<div class="mp-head"><span class="mp-kind '+css+'"><i></i>'+esc(text)+'</span><button type="button" class="mp-close" data-map-act="close" aria-label="Close the details">'+icon("close")+'</button></div>';
+  const title=(text,sub)=>'<h3 class="mp-title" id="'+id+'-pop-title">'+esc(text)+'</h3>'+(sub?'<p class="mp-sub">'+esc(sub)+'</p>':"");
+  const stats=list=>'<dl class="mp-stats">'+list.map(([label,value])=>'<div><dt>'+esc(label)+'</dt><dd'+(typeof value==="number"?"":' class="txt"')+'>'+esc(value)+'</dd></div>').join("")+'</dl>';
+  const rows=(list,max,row,more)=>list.length?'<ul class="mp-list">'+list.slice(0,max).map(row).join("")+'</ul>'+(list.length>max?'<p class="mp-more">'+esc("+ "+(list.length-max)+" more"+(more??""))+'</p>':""):"";
+  const note=(text,tone="")=>'<p class="mp-note '+tone+'">'+esc(text)+'</p>';
+  const actions=(...buttons)=>'<div class="mp-actions">'+buttons.filter(Boolean).join("")+'</div>';
+  const result=shipment=>badge(...(mapResult[shipment.result]??[shipment.result,""]));
+  const riskNote=matches=>{
+    const worst=mapWorst(matches);
+    if(!worst) return "";
+    const match=matches.find(entry=>entry.tier===worst),signal=signalById(match.signal);
+    return note(tierStyle[worst][0]+": "+(signal?.title??match.title??match.label),worst);
+  };
+  if(item.type==="site") {
+    const entry=item.entry;
+    return head("site","Site city")+title(entry.city,ssName(entry.country)+" · "+plural(entry.sites.length,"site"))+
+      stats([["Patients",entry.patients],["Studies",entry.studies.size],["Shipments",entry.shipments.length]])+riskNote(item.open)+
+      rows(entry.shipments,3,shipment=>'<li><span class="mp-row"><b>'+esc(shipment.id)+'</b>'+esc(" · prepare by "+mapDay(shipment.prepareBy))+'</span>'+result(shipment)+'</li>'," in the full details")+
+      actions(trigger("View full details","map-site",entry.key,"primary small","arrow"));
+  }
+  if(item.type==="cluster") {
+    const members=item.members,studies=new Set(members.flatMap(member=>[...member.entry.studies.keys()]));
+    return head("site",plural(members.length,"site city","site cities"))+(countries=>title(countries.length===1?countries[0]:"Around "+members[0].label,countries.length===1?"Around "+members[0].label:countries.join(", ")))([...new Set(members.map(member=>ssName(member.entry.country)))])+
+      stats([["Sites",members.reduce((sum,member)=>sum+member.entry.sites.length,0)],["Patients",members.reduce((sum,member)=>sum+member.entry.patients,0)],["Studies",studies.size]])+
+      rows(members,4,member=>'<li><span class="mp-row">'+esc(member.label)+'</span><span class="mp-dim">'+esc(plural(member.entry.patients,"patient"))+'</span></li>')+
+      actions('<button type="button" class="btn primary small" data-map-act="cluster">'+icon("plus")+'Zoom in to separate them</button>');
+  }
+  if(item.type==="facility") {
+    const facility=item.facility,out=item.shipments,kind=facilityKinds[facility.kind]??"Facility";
+    return head("facility"+(item.watched?"":" unwatched"),kind)+title(facility.name,item.city+", "+ssName(facility.country))+
+      (item.watched?"":note(ssName(facility.country)+" is not monitored for external risk: strikes, weather and security events there go unseen.","warn"))+
+      stats([["Shipments",out.length],["Need action",out.filter(shipment=>shipment.result!=="Ready").length],["Patients",out.reduce((sum,shipment)=>sum+(shipment.patients??0),0)]])+
+      riskNote(out.flatMap(shipment=>mapOpenMatches(shipment.id)))+
+      rows(out,3,shipment=>'<li><span class="mp-row"><b>'+esc(shipment.id)+'</b>'+esc(" → "+shipment.site)+'</span>'+result(shipment)+'</li>'," in the full details")+
+      actions(trigger("View full details","map-facility",facility.id,"primary small","arrow"),item.watched?"":trigger("Monitoring scope","open-scope",facility.country,"small","scope"));
+  }
+  if(item.type==="signal") {
+    const signal=item.signal,matches=item.matches,patients=matches.reduce((sum,match)=>sum+(match.patients??0),0);
+    return head(item.tier,tierStyle[item.tier][0])+title(signal.title,ssName(signal.country)+" · "+signalWhen(signal))+
+      (signal.summary?'<p class="mp-text">'+esc(signal.summary)+'</p>':"")+
+      stats([["Shipments",new Set(matches.map(match=>match.shipment)).size],["Patients",patients||"Not known"],["Evidence",signal.evidenceName??"Not stated"]])+
+      rows(matches,3,match=>'<li><span class="mp-row"><b>'+esc(match.shipment)+'</b>'+esc(" · "+match.label)+'</span><span class="mp-dim">'+esc(mapDay(match.date))+'</span></li>'," on the signal's page")+
+      actions(trigger("Open the signal","open-signal",signal.id,"primary small","arrow"));
+  }
+  if(item.type==="trip") {
+    const shipment=item.shipment;
+    return head(item.tier??"planned",item.tier?tierStyle[item.tier][0]:"Planned shipment")+title(shipment.id+" to "+shipment.site,item.route.nodes.join(" → "))+
+      stats([["Dispatch",mapDay(shipment.dispatch)],["Patients",shipment.patients??"Not known"],["Checks",(mapResult[shipment.result]??[shipment.result])[0]]])+riskNote(item.matches)+
+      actions(trigger("Open the shipment","open-agents",shipment.id,"primary small","arrow"));
+  }
+  if(item.type==="airport") {
+    const leg=item.leg,signals=[...new Set(item.matches.map(match=>match.signal))].filter(signalById);
+    return head("airport"+(item.css?" "+item.css:""),item.roleText)+title(airportName(item.code),leg?leg.label+" · "+displayDay(leg.date):"")+
+      (item.planText?note(item.planText,"ok"):"")+riskNote(item.matches)+(signals.length?actions(...signals.map(signal=>trigger("Open the signal","open-signal",signal,"primary small","arrow"))):"");
+  }
+  return "";
+}
+// ----- Full details of a site city or a depot, in the side panel -----
+const mapDetailList = rows => rows.length?'<ul class="map-detail-list">'+rows.join("")+'</ul>':"";
+const mapDetailBlock = (title,body) => '<section class="drawer-block map-detail"><h3>'+esc(title)+'</h3>'+body+'</section>';
+const mapShipmentRow = shipment => '<li><div><strong>'+esc(shipment.id)+'</strong><small>'+esc([shipment.site,shipment.trial,"prepare by "+displayDay(shipment.prepareBy)].filter(Boolean).join(" · "))+'</small></div>'+badge(...(resultStyle[shipment.result]??[shipment.result,""]))+trigger("Open","open-agents",shipment.id,"small","arrow")+'</li>';
+function mapRiskRow(match) {
+  const signal=signalById(match.signal);
+  return '<li><div>'+statusBadge(statusKey(match.tier,signal))+'<strong>'+esc(signal?.title??match.title??match.label)+'</strong><small>'+esc(match.shipment+" · "+match.label+" · "+displayDay(match.date))+'</small></div>'+(signal?trigger("Open","map-go","open-signal|"+signal.id,"small","arrow"):"")+'</li>';
+}
+function mapSiteDetail(key) {
+  const entry=mapSiteIndex(plannedShipments())[key];
+  if(!entry) return;
+  const risks=entry.shipments.flatMap(shipment=>mapOpenMatches(shipment.id).map(match=>({...match,shipment:shipment.id})));
+  drawer("Site city",entry.city+", "+ssName(entry.country),
+    factlist([["Country",ssName(entry.country)],["Sites",String(entry.sites.length)],["Patients on treatment",String(entry.patients)],["Studies",String(entry.studies.size)],["Planned shipments",String(entry.shipments.length)]])+
+    (risks.length?mapDetailBlock("What puts these shipments at risk",mapDetailList(risks.map(mapRiskRow))):"")+
+    mapDetailBlock("Sites",mapDetailList(entry.sites.map(site=>'<li><div><strong>'+esc(site.id)+'</strong><small>'+esc(site.study+" · "+(entry.studies.get(site.study)??""))+'</small></div><span class="map-detail-num">'+esc(plural(site.patients??0,"patient"))+'</span></li>')))+
+    mapDetailBlock("Studies",mapDetailList([...entry.studies].map(([id,title])=>'<li><div><strong>'+esc(id)+'</strong><small>'+esc(title)+'</small></div>'+trigger("Open","map-go","open-study|"+id,"small","arrow")+'</li>')))+
+    mapDetailBlock("Planned shipments to "+entry.city,entry.shipments.length?mapDetailList(entry.shipments.map(mapShipmentRow)):'<p>No shipment is planned to '+esc(entry.city)+'.</p>')+
+    '<p class="source-line">'+icon("plug")+esc("Sources: IRT (sites, patients on treatment, shipments), CTMS (studies) and ClinRadar's route checks")+'</p>');
+}
+function mapFacilityDetail(id) {
+  const facility=(ss?.scope?.facilities??[]).find(item=>item.id===id);
+  if(!facility) return;
+  const shipments=plannedShipments().filter(shipment=>ss?.routes?.[shipment.id]?.facility===id);
+  const watched=mapMonitored(facility.country),kind=facilityKinds[facility.kind]??"Facility";
+  const risks=shipments.flatMap(shipment=>mapOpenMatches(shipment.id).map(match=>({...match,shipment:shipment.id})));
+  drawer(kind,facility.name,
+    factlist([["City",facility.city],["Country",ssName(facility.country)],["External risk",watched?"Monitored":"Not monitored"],["Planned shipments from here",String(shipments.length)],["Patients who depend on them",String(shipments.reduce((sum,shipment)=>sum+(shipment.patients??0),0))]])+
+    (watched?"":'<div class="inline-note">'+icon("info")+'<span>'+esc(ssName(facility.country)+" is not monitored for external risk, so ClinRadar cannot see strikes, weather or security events at this "+kind.toLowerCase()+".")+'</span>'+trigger("Open Monitoring scope","map-go","open-scope|"+facility.country,"small","scope")+'</div>')+
+    (risks.length?mapDetailBlock("What puts these shipments at risk",mapDetailList(risks.map(mapRiskRow))):"")+
+    mapDetailBlock("Planned shipments from here",shipments.length?mapDetailList(shipments.map(mapShipmentRow)):'<p>No planned shipment leaves from here.</p>'));
+}
+// ----- The maps -----
 function routeMap(shipment,route,matches) {
   const stops=routeStops(shipment,route);
   if(!stops||!worldLand) return "";
-  const tierOf=kind=>matches.filter(match=>match.leg===kind&&["confirmed","potential"].includes(match.tier)).reduce((top,match)=>!top||tierRank[match.tier]>tierRank[top]?match.tier:top,null);
+  const open=matches.filter(match=>["confirmed","potential"].includes(match.tier));
+  const tierOf=kind=>open.filter(match=>match.leg===kind).reduce((top,match)=>!top||tierRank[match.tier]>tierRank[top]?match.tier:top,null);
   // The plan's way round: an approved or recommended option that leaves from another airport.
   const record=agentShipment===shipment.id?agentState.record:null;
   const chosenId=agentApprovals[shipment.id]?.option??record?.resolution?.recommended;
   const via=(record?.resolution?.options??[]).find(option=>option.id===chosenId)?.actions?.find(action=>action.type==="reroute")?.via;
   const viaPoint=via&&route.mode==="air"?geoAirports[via]:null;
-  const frame=mapFrame([...stops.map(stop=>stop.point),...(viaPoint?[viaPoint]:[])],{aspect:1.6,minLon:5,minLat:3,pad:.12});
+  const frame=mapFrame([...stops.map(stop=>stop.point),...(viaPoint?[viaPoint]:[])],{aspect:1.6,minLon:5,minLat:3,pad:.24});
   const air=route.mode==="air"&&stops.length===4;
   const segments=air?[[0,1,false,"road"],[1,2,true,"air"],[2,3,false,"road"]]:[[0,stops.length-1,false,"road"]];
-  const legsSvg=segments.map(([a,b,isAir,kind])=>{const tier=tierOf(kind);return mapArc(frame,stops[a].point,stops[b].point,isAir,tier?tier:"booked");}).join("");
-  const altSvg=viaPoint?mapArc(frame,stops[0].point,viaPoint,false,"alt")+mapArc(frame,viaPoint,stops[2].point,true,"alt"):"";
-  const u=frame.u;
-  // Labels: the departure airport to the left, the alternative to the right, the site; the depot and the arrival airport keep tooltips.
-  const labelOf=(stop,index)=>stop.kind==="site"?stop.label:stop.kind==="airport"&&index===1?stop.label:"";
-  const stopsSvg=stops.map((stop,index)=>mapDot(frame,stop.point,stop.kind==="depot"?"depot square":stop.kind==="site"?"site":"airport",stop.kind==="airport"?u*.9:u*1.15,stop.kind==="depot"?"Depot: "+stop.label:stop.label,labelOf(stop,index),"",index===1?"left":"right")).join("")+
-    (viaPoint?mapDot(frame,viaPoint,"airport alt",u*.9,airportName(via),via):"");
+  const legs=segments.map(([a,b,isAir,kind])=>mapLine(mapArcD(frame,stops[a].point,stops[b].point,isAir),tierOf(kind)??"booked")).join("")+
+    (viaPoint?mapLine(mapArcD(frame,stops[0].point,viaPoint,false)+mapArcD(frame,viaPoint,stops[2].point,true),"alt"):"");
+  const shipments=plannedShipments(),plan=agentApprovals[shipment.id]?"Approved plan":"Recommended plan";
+  const facility=(ss?.scope?.facilities??[]).find(item=>item.id===route.facility)??{id:route.facility,name:route.legs[0]?.name??stops[0].label,city:stops[0].label,country:route.legs[0]?.country,kind:"depot"};
+  const sitePoint=stops.at(-1).point,siteEntry=mapSiteIndex(shipments)[mapPointKey(sitePoint)]??{key:mapPointKey(sitePoint),point:sitePoint,city:shipment.site,country:route.legs.at(-1)?.country,sites:[],patients:shipment.patients??0,studies:new Map(),shipments:[shipment]};
+  const airLeg=route.legs.find(leg=>leg.kind==="air"),airMatches=open.filter(match=>match.leg==="air");
+  const airport=(code,point,role)=>({type:"airport",key:"airport:"+code+":"+role,point,r:5.5,css:role==="alternative"?"alt":tierOf("air")??"",label:code,code,role,
+    roleText:{departure:"Departure airport",arrival:"Arrival airport",alternative:"Alternative departure"}[role],leg:role==="alternative"?null:airLeg,matches:role==="alternative"?[]:airMatches,
+    planText:role==="alternative"?plan+": leave from "+airportName(code)+" instead of "+airportName(route.departure)+".":"",aria:airportName(code)+", "+{departure:"departure airport",arrival:"arrival airport",alternative:"alternative departure in the "+plan.toLowerCase()}[role]});
+  const items=[{...mapSiteItem(siteEntry),cluster:false,label:shipment.site},mapFacilityItem(facility,shipments),
+    ...(air?[airport(route.departure,stops[1].point,"departure"),airport(route.arrival,stops[2].point,"arrival")]:[]),...(viaPoint?[airport(via,viaPoint,"alternative")]:[])].filter(Boolean);
+  const model=mapModel("route:"+shipment.id,frame,{items,legs,labelZoom:0,maxZ:10,label:"Route of "+shipment.id+" from "+stops[0].label+" to "+shipment.site});
   const hit=["air","road","collection","delivery"].map(tierOf).find(Boolean);
-  const disruption=matches.find(match=>["confirmed","potential"].includes(match.tier));
-  const legend='<ul class="map-legend"><li><i class="key booked"></i>Booked route</li>'+(hit?'<li><i class="key '+hit+'"></i>'+esc((hit==="confirmed"?"Disrupted: ":"Possibly affected: ")+(signalById(disruption?.signal)?.title??disruption?.label??""))+'</li>':"")+
-    (viaPoint?'<li><i class="key alt"></i>'+esc((agentApprovals[shipment.id]?"Approved plan":"Recommended plan")+": leave from "+airportName(via))+'</li>':"")+'</ul>';
-  return '<div class="map-wrap route-map">'+mapSvg(frame,legsSvg+altSvg+stopsSvg,"Route of "+shipment.id+" from "+stops[0].label+" to "+shipment.site)+legend+'</div>';
+  const disruption=open[0];
+  const legend='<ul class="map-legend"><li class="map-key"><i class="key booked"></i>Booked route</li>'+(hit?'<li class="map-key"><i class="key '+hit+'"></i>'+esc((hit==="confirmed"?"Disrupted: ":"Possibly affected: ")+(signalById(disruption?.signal)?.title??disruption?.label??""))+'</li>':"")+
+    (viaPoint?'<li class="map-key"><i class="key alt"></i>'+esc(plan+": leave from "+airportName(via))+'</li>':"")+'</ul>';
+  return '<div class="map-wrap route-map">'+mapStage(model)+legend+'</div>';
 }
 // The Overview map: our sites and depots, the disruptions and exposures on our routes, and the routes they touch.
 let mapView = "europe";
-const mapViews = {europe:{label:"Europe and Middle East",box:[[-11,28],[42,61]]},world:{label:"World",box:[[-128,-42],[152,64]]}};
+const mapViews = {europe:{label:"Europe and Middle East",box:[[-11,28],[42,61]],aspect:1.9,maxZ:6},world:{label:"World",box:[[-128,-42],[152,64]],aspect:2.4,maxZ:12}};
 function networkMap() {
   if(!worldLand||!ss?.scope) return "";
   const view=mapViews[mapView];
-  const frame=mapFrame(view.box,{aspect:mapView==="world"?2.4:1.9,pad:.02,minLon:1,minLat:1});
-  const u=frame.u;
-  const cities={};
-  for(const study of studyIndex().filter(item=>item.counted)) for(const site of study.sites) {
-    const point=geoCities[site.city];
-    if(!point) continue;
-    const entry=cities[site.city]??={point,sites:0,patients:0,studies:new Set()};
-    entry.sites++;entry.patients+=site.patients??0;entry.studies.add(study.id);
-  }
-  const sitesSvg=Object.entries(cities).map(([city,entry])=>mapDot(frame,entry.point,"site",u*(.45+Math.min(.9,Math.sqrt(entry.patients||1)/9)),city+": "+plural(entry.sites,"site")+", "+entry.patients+" patients on treatment, "+plural(entry.studies.size,"study","studies"))).join("");
-  const monitoredExternal=new Set(ss.scope.monitored?.external??[]);
-  const facilitiesSvg=(ss.scope.facilities??[]).map(facility=>{
-    const point=facilityPoint(facility.id);
-    if(!point) return "";
-    const watched=monitoredExternal.has(facility.country);
-    return mapDot(frame,point,"depot square"+(watched?"":" unwatched"),u*.75,facility.name+" ("+String(facility.city??"").split(",")[0]+")"+(watched?"":" · not monitored for external risk"));
-  }).join("");
-  const open=Object.entries(ss.byShipment??{}).flatMap(([id,list])=>list.filter(match=>["confirmed","potential"].includes(match.tier)).map(match=>({...match,shipment:id})));
+  const frame=mapFrame(view.box,{aspect:view.aspect,pad:.02,minLon:1,minLat:1});
   const shipments=plannedShipments();
-  const routesSvg=[...new Set(open.map(match=>match.shipment))].map(id=>{
-    const shipment=shipments.find(item=>item.id===id),route=ss.routes?.[id];
-    const stops=shipment&&route?routeStops(shipment,route):null;
-    if(!stops) return "";
-    const tier=open.some(match=>match.shipment===id&&match.tier==="confirmed")?"confirmed":"potential";
-    const pairs=stops.slice(1).map((stop,index)=>[stops[index].point,stop.point,stop.kind==="airport"&&stops[index].kind==="airport"]);
-    return '<g class="map-trip" data-act="open-agents" data-value="'+esc(id)+'" tabindex="0" role="button" aria-label="'+esc("Open "+id)+'"><title>'+esc(id+" to "+shipment.site)+'</title>'+pairs.map(([from,to,isAir])=>mapArc(frame,from,to,isAir,tier+" thin")).join("")+'</g>';
-  }).join("");
-  const signals=(ss.signals??[]).filter(signal=>["confirmed","potential"].includes(countKey(signal)));
-  const risksSvg=signals.map(signal=>{
-    const point=signalPoint(signal);
-    if(!point) return "";
-    const key=countKey(signal);
-    return mapDot(frame,point,key+(key==="confirmed"?" pulse":""),u*.95,signal.title,"","open-signal|"+signal.id);
-  }).join("");
-  const counts=signalCounts();
+  const sites=Object.values(mapSiteIndex(shipments)).map(mapSiteItem);
+  const facilities=(ss.scope.facilities??[]).map(facility=>mapFacilityItem(facility,shipments)).filter(Boolean);
+  const signals=(ss.signals??[]).map(mapSignalItem).filter(Boolean);
+  const trips=shipments.map(shipment=>ss.routes?.[shipment.id]?mapTripItem(frame,shipment,ss.routes[shipment.id]):null).filter(Boolean);
+  const siteKeys=new Set(sites.map(item=>item.key));
+  for(const trip of trips) if(siteKeys.has("site:"+mapPointKey(trip.end))) trip.end=null;
+  const model=mapModel("net:"+mapView,frame,{items:[...sites,...facilities,...signals],trips,cluster:true,labelZoom:1.8,maxZ:view.maxZ,
+    label:"Map of our sites, depots and factories, the disruptions and exposures on our routes, and the routes they touch"});
+  const counts=signalCounts(),action=trips.filter(trip=>trip.tier).length;
   const chips=Object.entries(mapViews).map(([id,item])=>'<button type="button" class="filter-chip" data-act="map-view" data-value="'+id+'" aria-pressed="'+(mapView===id)+'">'+esc(item.label)+'</button>').join("");
-  return '<section class="card map-card"><div class="card-head"><div><h2>Where it happens'+tip("Our sites (sized by patients on treatment) and depots, the disruptions and exposures that touch our shipments, and those shipments' routes. Select a marker or a route to open it. The same facts are in the lists on this page.","About the map")+'</h2>'+
-    '<p>'+esc(plural(counts.confirmed,"confirmed disruption")+" and "+plural(counts.potential,"potential exposure")+" on our routes · "+plural(Object.keys(cities).length,"site city","site cities")+" · "+plural((ss.scope.facilities??[]).length,"depot or factory","depots or factories"))+'</p></div>'+
+  const layer=(id,key,text,count)=>'<li><button type="button" class="map-layer-btn" data-act="map-layer" data-value="'+id+'" aria-pressed="'+!mapLayersOff.has(id)+'"><i class="key '+key+'"></i>'+esc(text)+'<span class="n">'+count+'</span></button></li>';
+  return '<section class="card map-card"><div class="card-head"><div><h2>Where it happens'+tip("Our sites (sized by patients on treatment) and depots, the disruptions and exposures that touch our shipments, and those shipments' routes. Hover over, tap or tab to a marker or a route for its details, then open the full details. Zoom with the + and − buttons or "+mapMod+" + scroll. The same facts are in the lists on this page.","About the map")+'</h2>'+
+    '<p>'+esc(plural(counts.confirmed,"confirmed disruption")+" and "+plural(counts.potential,"potential exposure")+" on our routes · "+plural(sites.length,"site city","site cities")+" · "+plural(facilities.length,"depot or factory","depots or factories"))+'</p></div>'+
     '<div class="chip-filters" role="group" aria-label="Map area">'+chips+'</div></div>'+
-    '<div class="map-wrap">'+mapSvg(frame,sitesSvg+facilitiesSvg+routesSvg+risksSvg,"Map of our sites, depots and the disruptions on our routes")+
-    '<ul class="map-legend"><li><i class="key dot site"></i>Site, sized by patients</li><li><i class="key dot depot"></i>Depot or factory</li><li><i class="key dot unwatched"></i>Not monitored</li><li><i class="key dot confirmed"></i>Confirmed disruption</li><li><i class="key dot potential"></i>Potential exposure</li><li><i class="key confirmed"></i>Route that needs action</li></ul></div></section>';
+    '<div class="map-wrap">'+mapStage(model)+
+    '<ul class="map-legend" aria-label="Show or hide on the map">'+layer("sites","dot site","Sites",sites.length)+layer("facilities","dot depot","Depots and factories",facilities.length)+
+      layer("confirmed","dot confirmed","Confirmed disruptions",signals.filter(item=>item.tier==="confirmed").length)+layer("potential","dot potential","Potential exposures",signals.filter(item=>item.tier==="potential").length)+
+      layer("action","line action","Routes that need action",action)+layer("planned","line planned","Other planned routes",trips.length-action)+
+      '<li class="map-key"><i class="key dot unwatched"></i>Not monitored</li><li class="map-key"><i class="key size"></i>Sized by patients</li></ul></div></section>';
 }
+// ----- Interaction: zoom and pan, the card on hover, focus or tap, and moving between places with the keyboard -----
+const mapFind = (stage,key) => key?stage.querySelector('[data-key="'+CSS.escape(key)+'"]'):null;
+const mapClusterOf = (stage,key) => [...stage.querySelectorAll(".mk-cluster")].find(node=>node.dataset.links.split(" ").includes(key));
+function mapClampCam(model,cam) {
+  const frame=model.frame;
+  cam.z=Math.min(model.maxZ,Math.max(1,Number.isFinite(cam.z)?cam.z:1));
+  const hw=frame.w/(2*cam.z),hh=frame.h/(2*cam.z);
+  cam.cx=Math.min(frame.x+frame.w-hw,Math.max(frame.x+hw,Number.isFinite(cam.cx)?cam.cx:frame.x+frame.w/2));
+  cam.cy=Math.min(frame.y+frame.h-hh,Math.max(frame.y+hh,Number.isFinite(cam.cy)?cam.cy:frame.y+frame.h/2));
+  return cam;
+}
+const mapViewBox = (frame,cam) => [cam.cx-frame.w/(2*cam.z),cam.cy-frame.h/(2*cam.z),frame.w/cam.z,frame.h/cam.z].map(value=>value.toFixed(3)).join(" ");
+function mapScale(stage) {const ctm=stage.querySelector(".map-svg")?.getScreenCTM();return ctm&&ctm.a>0?ctm.a:stage._s||1;}
+function mapToUser(stage,x,y) {const ctm=stage.querySelector(".map-svg")?.getScreenCTM();if(!ctm) return null;const point=new DOMPoint(x,y).matrixTransform(ctm.inverse());return [point.x,point.y];}
+function mapToClient(stage,[x,y]) {const point=new DOMPoint(x,y).matrixTransform(stage.querySelector(".map-svg").getScreenCTM());return [point.x,point.y];}
+function mapTripMid(el) {const path=el.querySelector(".map-route");if(!path) return null;const point=path.getPointAtLength(path.getTotalLength()/2);return [point.x,point.y];}
+// Camera to screen: the view box, the markers' 1/s scale, the land's shadow, the zoom buttons and the open card.
+function mapApply(stage) {
+  const key=stage.dataset.map,model=mapModels[key],cam=mapCams[key];
+  if(!model||!cam) return;
+  const svg=stage.querySelector(".map-svg");
+  svg.setAttribute("viewBox",mapViewBox(model.frame,cam));
+  const s=mapScale(stage),inv=(1/s).toFixed(5);
+  for(const node of svg.querySelectorAll(".map-scaled")) node.setAttribute("transform","translate("+node.dataset.x+" "+node.dataset.y+") scale("+inv+")");
+  svg.querySelector(".map-land-shadow")?.setAttribute("transform","translate(0 "+(1.3/s).toFixed(4)+")");
+  stage.classList.toggle("zoomed",cam.z>1.01);
+  const off=(act,value)=>stage.querySelector('.map-ctrl [data-map-act="'+act+'"]')?.setAttribute("aria-disabled",String(value));
+  off("in",cam.z>=model.maxZ-.01);off("out",cam.z<=1.01);off("fit",cam.z<=1.01);
+  mapPlacePop(stage);
+}
+// Markers again for this zoom: groups split or join, labels find room. Focus and the open card stay with their place.
+function mapPaint(stage) {
+  const key=stage.dataset.map,model=mapModels[key],cam=mapCams[key];
+  if(!model||!cam||!stage.isConnected) return;
+  const svg=stage.querySelector(".map-svg");
+  svg.setAttribute("viewBox",mapViewBox(model.frame,cam));
+  const s=mapScale(stage);
+  const focused=stage.contains(document.activeElement)?document.activeElement.closest(".map-mark")?.dataset.key:null;
+  svg.querySelector(".map-marks").innerHTML=mapMarks(model,s,cam,stage._roving,mapDomId(key));
+  stage._s=s;
+  mapApply(stage);
+  if(focused) (mapFind(stage,focused)??(focused.startsWith("cluster:")?mapFind(stage,"site:"+focused.slice(8).split("|")[0]):mapClusterOf(stage,focused)))?.focus({preventScroll:true});
+  if(stage._pop&&!mapFind(stage,stage._pop.key)) mapClose(stage);
+  if(stage._hl) mapHighlight(stage,mapFind(stage,stage._hl));
+}
+function mapMove(stage,target,animate=true,then=null) {
+  const key=stage.dataset.map,model=mapModels[key],cam=mapCams[key];
+  if(!model||!cam) return;
+  mapClampCam(model,target);
+  cancelAnimationFrame(stage._anim);
+  clearTimeout(stage._paintT);
+  const zoomed=Math.abs(target.z-cam.z)>.001;
+  if(!animate||mapReduced()) {
+    Object.assign(cam,{z:target.z,cx:target.cx,cy:target.cy});
+    mapApply(stage);
+    if(zoomed) stage._paintT=setTimeout(()=>{mapPaint(stage);then?.();},animate?0:140); else then?.();
+    return;
+  }
+  const from={z:cam.z,cx:cam.cx,cy:cam.cy},start=performance.now(),duration=340;
+  const step=now=>{
+    const t=Math.min(1,(now-start)/duration),e=1-Math.pow(1-t,3);
+    cam.z=from.z*Math.pow(target.z/from.z,e);cam.cx=from.cx+(target.cx-from.cx)*e;cam.cy=from.cy+(target.cy-from.cy)*e;
+    if(t<1) {mapApply(stage);stage._anim=requestAnimationFrame(step);return;}
+    Object.assign(cam,{z:target.z,cx:target.cx,cy:target.cy});
+    if(zoomed) mapPaint(stage); else mapApply(stage);
+    then?.();
+  };
+  stage._anim=requestAnimationFrame(step);
+}
+// Zoom keeping the point under the pointer (or the centre) where it is.
+function mapZoomAt(stage,z,clientX,clientY,options={}) {
+  const key=stage.dataset.map,model=mapModels[key],cam=mapCams[key],point=mapToUser(stage,clientX,clientY);
+  if(!model||!cam||!point) return;
+  const z1=Math.min(model.maxZ,Math.max(1,z));
+  mapMove(stage,{z:z1,cx:point[0]-(point[0]-cam.cx)*cam.z/z1,cy:point[1]-(point[1]-cam.cy)*cam.z/z1},options.animate??true,options.then);
+}
+function mapZoomCluster(stage,key,focus) {
+  const model=mapModels[stage.dataset.map],cluster=model?.marks.get(key),cam=mapCams[stage.dataset.map];
+  if(!cluster?.members) return;
+  const xs=cluster.members.map(member=>member.xy[0]),ys=cluster.members.map(member=>member.xy[1]);
+  const width=Math.max(...xs)-Math.min(...xs)||model.frame.w/200,height=Math.max(...ys)-Math.min(...ys)||model.frame.h/200;
+  const z=Math.min(model.maxZ,Math.max(cam.z*2,Math.min(model.frame.w*.55/width,model.frame.h*.55/height)));
+  const lead=cluster.members[0].key;
+  mapClose(stage);
+  if(focus) stage._roving=lead;
+  mapMove(stage,{z,cx:(Math.max(...xs)+Math.min(...xs))/2,cy:(Math.max(...ys)+Math.min(...ys))/2},true,()=>{if(focus) (mapFind(stage,lead)??mapClusterOf(stage,lead))?.focus({preventScroll:true});});
+}
+function mapControl(stage,act) {
+  const model=mapModels[stage.dataset.map],cam=mapCams[stage.dataset.map];
+  if(act==="close") {mapClose(stage,true);return;}
+  if(act==="cluster") {mapZoomCluster(stage,stage._pop?.key,stage.querySelector(".map-pop").contains(document.activeElement));return;}
+  if(act==="fit") {mapMove(stage,{z:1,cx:model.frame.x+model.frame.w/2,cy:model.frame.y+model.frame.h/2});return;}
+  const box=stage.querySelector(".map-viewport").getBoundingClientRect();
+  mapZoomAt(stage,cam.z*(act==="in"?2:.5),box.left+box.width/2,box.top+box.height/2);
+}
+// Linked highlight: a site lights up its routes, a route its depot, site and signal; the rest fades back.
+function mapHighlight(stage,el) {
+  const nodes=stage.querySelectorAll(".map-mark,.map-trip");
+  stage._hl=el?.dataset.key??null;
+  if(!el) {stage.classList.remove("hl");for(const node of nodes) node.classList.remove("on");return;}
+  const key=el.dataset.key,links=new Set((el.dataset.links??"").split(" ").filter(Boolean));
+  let linked=false;
+  for(const node of nodes) {
+    const on=node===el||links.has(node.dataset.key)||(node.dataset.links??"").split(" ").includes(key);
+    node.classList.toggle("on",on);
+    if(on&&node!==el&&node.classList.contains("map-trip")&&node.getClientRects().length) linked=true;
+  }
+  stage.classList.toggle("hl",linked);
+}
+function mapSetRoving(stage,el) {
+  for(const node of stage.querySelectorAll('.map-mark[tabindex="0"],.map-trip[tabindex="0"]')) if(node!==el) node.tabIndex=-1;
+  el.tabIndex=0;
+  stage._roving=el.dataset.key;
+}
+// The map keeps one tab stop: when a layer hides it, the next visible place takes it.
+function mapFixRoving(stage) {
+  const current=stage.querySelector('.map-mark[tabindex="0"],.map-trip[tabindex="0"]');
+  if(current?.getClientRects().length) return;
+  const next=[...stage.querySelectorAll(".map-mark,.map-trip")].reverse().find(node=>node.getClientRects().length);
+  if(next) mapSetRoving(stage,next);
+}
+// Arrow keys: the nearest place in that direction, preferring places in line with the current one.
+function mapNearest(stage,el,[dx,dy]) {
+  const center=node=>{const box=(node.querySelector(".body")??node).getBoundingClientRect();return [box.left+box.width/2,box.top+box.height/2];};
+  const [x0,y0]=center(el);
+  let best=null,score=Infinity;
+  for(const node of stage.querySelectorAll(".map-mark,.map-trip")) {
+    if(node===el||!node.getClientRects().length) continue;
+    const [x,y]=center(node),along=(x-x0)*dx+(y-y0)*dy,across=Math.abs((x-x0)*dy-(y-y0)*dx);
+    if(along<=2) continue;
+    if(along+across*2<score) {score=along+across*2;best=node;}
+  }
+  return best;
+}
+function mapEnsureVisible(stage,el) {
+  const cam=mapCams[stage.dataset.map];
+  if(!cam||cam.z<=1.01) return;
+  const view=stage.querySelector(".map-viewport").getBoundingClientRect(),box=(el.querySelector(".body")??el).getBoundingClientRect(),m=28;
+  if(box.left>=view.left+m&&box.right<=view.right-m&&box.top>=view.top+m&&box.bottom<=view.bottom-m) return;
+  const point=mapToUser(stage,box.left+box.width/2,box.top+box.height/2);
+  if(point) mapMove(stage,{z:cam.z,cx:point[0],cy:point[1]});
+}
+function mapOpen(stage,el,{pinned=false,at=null}={}) {
+  const model=mapModels[stage.dataset.map],key=el.dataset.key,item=model?.marks.get(key)??model?.tripMap.get(key);
+  if(!item) return;
+  const pop=stage.querySelector(".map-pop"),prev=stage._pop;
+  if(prev&&prev.key!==key) mapFind(stage,prev.key)?.setAttribute("aria-expanded","false");
+  if(prev?.key!==key) pop.innerHTML=mapPopHtml(item,mapDomId(stage.dataset.map));
+  stage._pop={key,pinned:pinned||Boolean(prev?.key===key&&prev.pinned),at:prev?.key===key&&prev.at?prev.at:at};
+  pop.classList.toggle("pinned",stage._pop.pinned);
+  pop.classList.add("on");
+  el.setAttribute("aria-expanded","true");
+  mapPlacePop(stage);
+  if(stage._pop.pinned&&pop.classList.contains("dock")) pop.scrollIntoView({block:"nearest"});
+}
+function mapClose(stage,refocus=false) {
+  clearTimeout(stage._show);clearTimeout(stage._hide);
+  if(!stage._pop) return null;
+  const anchor=mapFind(stage,stage._pop.key);
+  anchor?.setAttribute("aria-expanded","false");
+  stage._pop=null;
+  stage.querySelector(".map-pop")?.classList.remove("on","pinned");
+  mapHighlight(stage,null);
+  if(refocus) anchor?.focus({preventScroll:true});
+  return anchor;
+}
+function mapCloseAll() {
+  let anchor=null;
+  for(const stage of document.querySelectorAll(".map-stage")) anchor=mapClose(stage)??anchor;
+  return anchor;
+}
+// The card goes above, below, right or left of its marker, wherever it fits; on phones it sits under the map.
+const mapDocked = () => matchMedia("(max-width: 640px)").matches;
+function mapPlacePop(stage) {
+  const state=stage._pop;
+  if(!state) return;
+  const pop=stage.querySelector(".map-pop"),anchor=mapFind(stage,state.key);
+  if(!anchor||!anchor.getClientRects().length) {mapClose(stage);return;}
+  anchor.setAttribute("aria-expanded","true");
+  const sr=stage.getBoundingClientRect(),view=stage.querySelector(".map-viewport").getBoundingClientRect();
+  const dock=mapDocked();
+  pop.classList.toggle("dock",dock);
+  if(dock) {pop.style.left=pop.style.top="";pop.classList.remove("away");return;}
+  let x,y,rad;
+  if(anchor.classList.contains("map-trip")) {[x,y]=mapToClient(stage,state.at??mapTripMid(anchor));rad=4;}
+  else {const box=(anchor.querySelector(".body")??anchor).getBoundingClientRect();x=box.left+box.width/2;y=box.top+box.height/2;rad=box.height/2;}
+  pop.classList.toggle("away",x<view.left||x>view.right||y<view.top||y>view.bottom);
+  x-=sr.left;y-=sr.top;
+  const w=pop.offsetWidth,h=pop.offsetHeight,gap=rad+12,W=sr.width,H=view.bottom-sr.top,m=8;
+  const clamp=(value,low,high)=>Math.max(low,Math.min(high,value));
+  const places=[["top",clamp(x-w/2,m,W-w-m),y-gap-h],["bottom",clamp(x-w/2,m,W-w-m),y+gap],["right",x+gap,clamp(y-h/2,m,H-h-m)],["left",x-gap-w,clamp(y-h/2,m,H-h-m)]];
+  const fits=([,left,top])=>left>=m-.5&&top>=m-.5&&left+w<=W-m+.5&&top+h<=H-m+.5;
+  const [side,left,top]=places.find(fits)??(y>H/2?places[0]:places[1]);
+  pop.style.left=left+"px";
+  pop.style.top=top+"px";
+  pop.dataset.side=side;
+  pop.style.setProperty("--ax",clamp(x-left,18,w-18)+"px");
+  pop.style.setProperty("--ay",clamp(y-top,18,h-18)+"px");
+}
+function mapActivate(stage,el,{at=null,keyboard=false}={}) {
+  if(el.classList.contains("mk-cluster")) {mapZoomCluster(stage,el.dataset.key,keyboard);return;}
+  mapOpen(stage,el,{pinned:true,at:at??(el.classList.contains("map-trip")?mapTripMid(el):null)});
+  mapHighlight(stage,el);
+  if(keyboard) {const pop=stage.querySelector(".map-pop");(pop.querySelector(".mp-actions .btn")??pop.querySelector(".mp-close")??pop).focus({preventScroll:true});}
+}
+function mapHint(stage) {
+  const hint=stage.querySelector(".map-hint");
+  if(!hint) return;
+  hint.classList.add("on");
+  clearTimeout(stage._hintT);
+  stage._hintT=setTimeout(()=>hint.classList.remove("on"),1300);
+}
+const mapResize = typeof ResizeObserver==="function"?new ResizeObserver(entries=>{
+  for(const entry of entries) {
+    const stage=entry.target.closest(".map-stage");
+    if(!stage?.isConnected) {mapResize.unobserve(entry.target);continue;}
+    const s=mapScale(stage);
+    if(!stage._s||Math.abs(s-stage._s)/s>.01) mapPaint(stage); else mapApply(stage);
+  }
+}):null;
+function mapMount(stage) {
+  const key=stage.dataset.map;
+  if(stage.dataset.ready||!mapModels[key]) return;
+  stage.dataset.ready="1";
+  const view=stage.querySelector(".map-viewport"),pointers=new Map();
+  stage.addEventListener("pointerover",event=>{
+    if(event.pointerType!=="mouse"||stage._drag?.moved) return;
+    if(event.target.closest(".map-pop")) {clearTimeout(stage._hide);return;}
+    const el=event.target.closest(".map-mark,.map-trip");
+    if(!el) return;
+    clearTimeout(stage._hide);clearTimeout(stage._show);
+    mapHighlight(stage,el);
+    if(stage._pop?.pinned||mapDocked()) return;
+    const at=mapToUser(stage,event.clientX,event.clientY),show=()=>mapOpen(stage,el,{at});
+    if(stage._pop) show(); else stage._show=setTimeout(show,90);
+  });
+  stage.addEventListener("pointerout",event=>{
+    if(event.pointerType!=="mouse") return;
+    const from=event.target.closest(".map-mark,.map-trip,.map-pop"),to=event.relatedTarget;
+    if(!from||(to&&from.contains(to))) return;
+    const toPlace=to?.closest?.(".map-mark,.map-trip"),toPop=to?.closest?.(".map-pop");
+    clearTimeout(stage._show);
+    if(!toPlace&&!toPop) mapHighlight(stage,stage._pop?.pinned?mapFind(stage,stage._pop.key):null);
+    if(stage._pop&&!stage._pop.pinned&&!toPlace&&!(toPop&&stage.contains(toPop))) stage._hide=setTimeout(()=>{if(stage._pop&&!stage._pop.pinned) mapClose(stage);},220);
+  });
+  stage.addEventListener("click",event=>{
+    if(stage._suppress) {stage._suppress=false;event.stopPropagation();event.preventDefault();return;}
+    const control=event.target.closest("[data-map-act]");
+    if(control) {event.preventDefault();if(control.getAttribute("aria-disabled")!=="true") mapControl(stage,control.dataset.mapAct);return;}
+    const el=event.target.closest(".map-mark,.map-trip");
+    if(el) {mapActivate(stage,el,{at:mapToUser(stage,event.clientX,event.clientY)});return;}
+    if(stage._pop&&!event.target.closest(".map-pop")) mapClose(stage);
+  });
+  stage.addEventListener("keydown",event=>{
+    if(event.key==="Escape"&&stage._pop) {event.preventDefault();mapClose(stage,true);return;}
+    const el=event.target.closest?.(".map-mark,.map-trip");
+    if(!el) return;
+    if(event.key==="Enter"||event.key===" ") {event.preventDefault();mapActivate(stage,el,{keyboard:true});return;}
+    const direction={ArrowRight:[1,0],ArrowLeft:[-1,0],ArrowDown:[0,1],ArrowUp:[0,-1]}[event.key];
+    if(direction) {event.preventDefault();mapNearest(stage,el,direction)?.focus();return;}
+    if(["+","=","-","_"].includes(event.key)) {
+      event.preventDefault();
+      const box=(el.querySelector(".body")??el).getBoundingClientRect();
+      mapZoomAt(stage,mapCams[key].z*(event.key==="-"||event.key==="_"?.5:2),box.left+box.width/2,box.top+box.height/2);
+    }
+  });
+  stage.addEventListener("focusin",event=>{
+    const el=event.target.closest?.(".map-mark,.map-trip");
+    if(!el) {clearTimeout(stage._hide);return;}
+    mapSetRoving(stage,el);
+    mapEnsureVisible(stage,el);
+    mapHighlight(stage,el);
+    if(!(stage._pop?.pinned&&stage._pop.key===el.dataset.key)) mapOpen(stage,el,{at:el.classList.contains("map-trip")?mapTripMid(el):null});
+  });
+  stage.addEventListener("focusout",event=>{if(event.relatedTarget&&!stage.contains(event.relatedTarget)) mapClose(stage);});
+  view.addEventListener("wheel",event=>{
+    if(!(event.ctrlKey||event.metaKey)) {mapHint(stage);return;}
+    event.preventDefault();
+    mapZoomAt(stage,mapCams[key].z*Math.exp(-event.deltaY*(event.deltaMode===1?.05:.0025)),event.clientX,event.clientY,{animate:false});
+  },{passive:false});
+  view.addEventListener("dblclick",event=>{
+    if(event.target.closest(".map-mark,.map-trip")) return;
+    event.preventDefault();
+    mapZoomAt(stage,mapCams[key].z*(event.shiftKey?.5:2),event.clientX,event.clientY);
+  });
+  // Drag to pan and pinch to zoom, once zoomed in; at the whole area a touch still scrolls the page.
+  view.addEventListener("pointerdown",event=>{
+    if(event.pointerType==="mouse"&&event.button!==0) return;
+    if(mapCams[key].z<=1.01||event.target.closest(".map-ctrl")) return;
+    pointers.set(event.pointerId,[event.clientX,event.clientY]);
+    const cam=mapCams[key];
+    if(pointers.size===1) stage._drag={x:event.clientX,y:event.clientY,cx:cam.cx,cy:cam.cy,id:event.pointerId,moved:false,s:mapScale(stage)};
+    if(pointers.size===2) {const [a,b]=[...pointers.values()];stage._pinch={d:Math.hypot(a[0]-b[0],a[1]-b[1])||1,z:cam.z};}
+  });
+  view.addEventListener("pointermove",event=>{
+    const drag=stage._drag;
+    if(!drag||!pointers.has(event.pointerId)) return;
+    pointers.set(event.pointerId,[event.clientX,event.clientY]);
+    if(pointers.size>=2&&stage._pinch) {
+      const [a,b]=[...pointers.values()];
+      drag.moved=true;
+      mapZoomAt(stage,stage._pinch.z*Math.hypot(a[0]-b[0],a[1]-b[1])/stage._pinch.d,(a[0]+b[0])/2,(a[1]+b[1])/2,{animate:false});
+      return;
+    }
+    if(event.pointerId!==drag.id||stage._pinch) return;
+    const dx=event.clientX-drag.x,dy=event.clientY-drag.y;
+    if(!drag.moved&&Math.hypot(dx,dy)<5) return;
+    if(!drag.moved) {
+      drag.moved=true;
+      view.setPointerCapture?.(event.pointerId);
+      stage.classList.add("dragging");
+      if(stage._pop&&!stage._pop.pinned) mapClose(stage);
+    }
+    const cam=mapCams[key];
+    cam.cx=drag.cx-dx/drag.s;cam.cy=drag.cy-dy/drag.s;
+    mapClampCam(mapModels[key],cam);
+    mapApply(stage);
+  });
+  const end=event=>{
+    pointers.delete(event.pointerId);
+    if(!stage._drag) return;
+    if(stage._drag.moved) {stage._suppress=true;setTimeout(()=>{stage._suppress=false;},0);}
+    if(stage._pinch&&pointers.size<2) stage._pinch=null;
+    if(pointers.size===0) {stage._drag=null;stage.classList.remove("dragging");}
+  };
+  view.addEventListener("pointerup",end);
+  view.addEventListener("pointercancel",end);
+  if(mapResize) mapResize.observe(view); else mapPaint(stage);
+}
+function mapMountAll() {for(const stage of document.querySelectorAll(".map-stage:not([data-ready])")) mapMount(stage);}
+// A pinned card closes with a click anywhere else, and any card with Escape.
+document.addEventListener("click",event=>{for(const stage of document.querySelectorAll(".map-stage")) if(stage._pop&&!stage.contains(event.target)) mapClose(stage);});
+document.addEventListener("keydown",event=>{if(event.key==="Escape") for(const stage of document.querySelectorAll(".map-stage")) if(stage._pop&&!stage.contains(event.target)) mapClose(stage);});
 const views = {
   studies:studiesView,
   study:studyPage,
@@ -4475,7 +5148,17 @@ const actions={
   "signals-type":type=>{signalType=type;signalTier="all";signalCountry="all";navigate("signals");},
   "open-signal":id=>{currentSignalId=id;navigate("signal");},
   "open-study":id=>{currentStudyId=id;navigate("study");},
-  "map-view":id=>{mapView=id;render();document.querySelector('[data-act="map-view"][data-value="'+id+'"]')?.focus();},
+  "map-view":id=>{mapView=id;delete mapCams["net:"+id];render();document.querySelector('[data-act="map-view"][data-value="'+id+'"]')?.focus();},
+  "map-layer":id=>{
+    if(mapLayersOff.has(id)) mapLayersOff.delete(id); else mapLayersOff.add(id);
+    for(const button of document.querySelectorAll('[data-act="map-layer"][data-value="'+id+'"]')) button.setAttribute("aria-pressed",String(!mapLayersOff.has(id)));
+    for(const stage of document.querySelectorAll('.map-stage[data-map^="net:"]')) {stage.classList.toggle("hide-"+id,mapLayersOff.has(id));mapClose(stage);mapFixRoving(stage);}
+    notify((mapLayersOff.has(id)?"Hidden on the map: ":"Shown on the map: ")+document.querySelector('[data-act="map-layer"][data-value="'+id+'"]')?.childNodes[1]?.textContent+".");
+  },
+  // The full details of a place on the map open in the side panel; closing it returns to the marker.
+  "map-site":key=>{const anchor=mapCloseAll();mapSiteDetail(key);if(anchor) drawerOrigin=anchor;},
+  "map-facility":id=>{const anchor=mapCloseAll();mapFacilityDetail(id);if(anchor) drawerOrigin=anchor;},
+  "map-go":value=>{const [act,...rest]=value.split("|");if(byId("drawer").open) {drawerOrigin=null;byId("drawer").close();}actions[act]?.(rest.join("|"));},
   "studies-filter":id=>{studiesFilter=id;render();document.querySelector('[data-act="studies-filter"][data-value="'+id+'"]')?.focus();},
   "signal-plan":id=>{const status=agentState.status;openAgents(id);startAgentRun(status?.keySet&&status?.sdk?"live":"scripted");},
   "open-scope":code=>{const rec=ss?.scope?.recommendations?.find(item=>item.code===code);if(rec) {openFolds.add(isDismissed(rec)?"rec-dismissed":"rec-"+rec.group);scopeQuery="";}scopeFocus=code;navigate("scope");},
@@ -4693,7 +5376,7 @@ let ddWidth=innerWidth;
 window.addEventListener("resize",()=>{if(innerWidth!==ddWidth) {ddWidth=innerWidth;ddClose(false);} else if(ddSelect) ddPlace(ddButton(ddSelect));});
 document.addEventListener("scroll",event=>{if(ddSelect&&!ddPop.contains(event.target)) ddClose(false);},true);
 new MutationObserver(records=>{
-  if(records.some(record=>record.addedNodes.length)) enhanceSelects();
+  if(records.some(record=>record.addedNodes.length)) {enhanceSelects();mapMountAll();}
   if(ddSelect&&!ddSelect.isConnected) ddClose(false);
 }).observe(document.body,{childList:true,subtree:true});
 // ---------- Explanations: one layer above the page, placed next to the (i) ----------
