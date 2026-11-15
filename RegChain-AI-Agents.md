@@ -8,7 +8,7 @@ The Shipment checks page finds the problem: 11 of 20 planned shipments are block
 
 Fixing a blocked shipment today means asking several teams. Supply checks for another batch, the depot looks for a relabelling slot, Regulatory finds the authorisation letter in the eTMF, and someone writes to the site. Each answer sits in a different validated system. When several shipments are blocked at once, the same kits or the same relabelling slot can easily be promised twice.
 
-**Resolve with agents** in a shipment's panel hands one shipment to a team of AI agents:
+**Agent plans**, in the menu, is the work queue: every shipment that needs action, most urgent first. Opening one shows its plan page, where a team of AI agents works on that shipment:
 
 - An **orchestrator** reads the failed checks, the destination's Country Specification and what other plans already hold, and decides what it needs to know.
 - It **delegates** to specialists. Each one can use only the tools of its own systems:
@@ -21,7 +21,7 @@ Fixing a blocked shipment today means asking several teams. Supply checks for an
 - **RegChain's verifier**, which uses fixed rules and no AI, checks every option again. A draft for an option that fails is withdrawn. Only passing options can be approved.
 - A **named person in Clinical Supply** approves the plan in RegChain. The server checks it once more before recording it. Each draft still has to be approved in its own validated system.
 
-**Resolve all with agents**, on the Shipment checks page, does this for every shipment that needs action, as one orchestrated run:
+**Plan all with AI agents**, on Agent plans, does this for every shipment that needs action, as one orchestrated run:
 
 1. **Triage.** The orchestrator orders the shipments by preparation date, the most urgent first.
 2. **One agent team per shipment.** Each shipment gets its own run, as above.
@@ -101,8 +101,9 @@ Clinical supply runs on validated systems: IRT, ERP, the depot's warehouse syste
 ## Running it
 
 - **Scripted walkthrough:** works as soon as RegChain runs.
-  - For one shipment: open Shipment checks, open SHP-04, SHP-01 or SHP-ES-10, then **Resolve with agents** and **Scripted walkthrough (no AI)**.
-  - For every shipment: **Resolve all with agents** at the top of Shipment checks.
+  - For one shipment: **Agent plans** → SHP-04, SHP-01 or SHP-ES-10 → **Run the agents again** → **Scripted walkthrough (no AI)**.
+  - For every shipment: **Agent plans** → **Scripted walkthrough (no AI)**.
+  - Every journey and demo script: [RegChain-AI-User-Journeys.md](RegChain-AI-User-Journeys.md).
 - **Live agents:** add `ANTHROPIC_API_KEY` to `.env` next to `serve-regchain.cjs` and restart RegChain. **Run the AI agents** is enabled once the key is set.
   - A run for one shipment takes a minute or two and uses Claude Opus 5.5 for the orchestrator and Claude Sonnet 5.5 for the specialists.
   - A live portfolio run of 16 shipments takes several minutes and costs more. Run it once before the demo; the page loads the last run.

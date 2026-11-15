@@ -3,7 +3,7 @@
 // relabelling places that other approved plans already hold. An option that no longer passes cannot be approved,
 // and nothing is promised twice. An approval changes nothing in a validated system: each draft is still approved there.
 
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { cacheDir } from "./sources.mjs";
 import { loadData, readApprovals, verifyOptionSafe as verifyOption } from "./rules.mjs";
@@ -76,6 +76,49 @@ export async function approvePlan(root, { shipment, option, by, runAt }) {
   await saveApprovals(root, approvals);
   await log(root, { event: option === "escalate" ? "escalation.acknowledged" : "plan.approved", shipment, option, title: entry.title, by: approvals[shipment].by, runAt: run.at, drafts });
   return { approval: approvals[shipment], run };
+}
+
+// Where each shipment's latest agent run stands: a plan that passes, a plan to review, or an escalation.
+export async function planSummaries(root) {
+  const dir = cacheDir(root);
+  let names = [];
+  try { names = (await readdir(dir)).filter(name => /^agent-run-SHP-[A-Z0-9-]+\.json$/.test(name)); } catch {}
+  const summaries = {};
+  for (const name of names) {
+    try {
+      const run = JSON.parse(await readFile(join(dir, name), "utf8"));
+      if (!run.resolution) continue;
+      const recommended = run.resolution.recommended;
+      const verdict = (run.verification ?? []).find(item => item.id === recommended);
+      const option = (run.resolution.options ?? []).find(item => item.id === recommended);
+      const anyPasses = (run.verification ?? []).some(item => item.passes);
+      summaries[run.shipment] = {
+        shipment: run.shipment, runAt: run.at, mode: run.mode, recommended, title: option?.title ?? "Escalate",
+        status: verdict?.passes ? "plan" : anyPasses ? "review" : "escalate", after: verdict?.after ?? null,
+        allocation: run.resolution.allocationShort ?? "", drafts: run.drafts.filter(draft => !draft.withdrawn).length,
+        calls: run.events.filter(event => event.type === "tool_call").length,
+      };
+    } catch {}
+  }
+  return summaries;
+}
+
+// Start again for a rehearsal: approvals are archived, never deleted, and the reset is logged.
+// With plans: true, the latest runs move to the run history too, so every shipment starts with no plan.
+export async function startFresh(root, { plans = false, by = null } = {}) {
+  const dir = cacheDir(root);
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+  await mkdir(join(dir, "agent-runs"), { recursive: true });
+  try { await rename(approvalsFile(root), join(dir, `agent-approvals-archived-${stamp}.json`)); } catch {}
+  let moved = 0;
+  if (plans) {
+    let names = [];
+    try { names = (await readdir(dir)).filter(name => /^agent-(run-SHP-[A-Z0-9-]+|portfolio-run)\.json$/.test(name)); } catch {}
+    await mkdir(join(dir, "agent-runs", `archived-${stamp}`), { recursive: true });
+    for (const name of names) { await rename(join(dir, name), join(dir, "agent-runs", `archived-${stamp}`, name)); moved++; }
+  }
+  await log(root, { event: plans ? "approvals_and_plans.archived" : "approvals.archived", by, runsArchived: moved });
+  return { archived: true, plans, runsArchived: moved };
 }
 
 export async function withdrawPlan(root, { shipment, by }) {

@@ -500,6 +500,11 @@ export async function resolvePortfolio({ root, mode = "scripted", client, emit =
           await draftEscalation({ call, agent: "verifier", shipmentId: item.id, options, reason: "once the more urgent shipments' plans are counted" });
         }
         run.resolution.allocation = note;
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const slot = firstFailure.match(/the (\d{4})-(\d{2})-(\d{2}) slot/);
+        const holders = firstFailure.match(/(?:promised to|plans of) ([A-Z0-9-]+(?:, [A-Z0-9-]+)*)/)?.[1];
+        const what = slot ? `the ${Number(slot[3])} ${months[Number(slot[2]) - 1]} relabelling slot` : "the kits it needed";
+        run.resolution.allocationShort = holders ? `${chosen ? "Re-planned" : "Escalated"}: ${what} goes to ${holders}, which is more urgent.` : `${chosen ? "Re-planned" : "Escalated"}: the first choice no longer passes.`;
         send({ agent: "verifier", type: "allocation", shipment: item.id, text: `${item.id}: ${note}` });
       }
       // The shipment's own page shows the options as checked here, with the more urgent plans counted.

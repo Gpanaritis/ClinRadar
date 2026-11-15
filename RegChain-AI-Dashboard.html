@@ -66,6 +66,30 @@ svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke
 .setup-note{font-size:12px;color:var(--muted);margin:4px 0 8px}.setup-note summary{cursor:pointer}.reset-link{margin:14px 0 0;text-align:right;font-size:12px}.btn:disabled{opacity:.45;cursor:not-allowed}
 .badge-stack{display:flex;flex-wrap:wrap;gap:4px}.check-item p{margin:3px 0 2px}.check-detail{color:var(--ink)!important}.pending-basis{color:#8a5300!important;font-weight:650}
 .drawer-block .block-head .field{font-size:11px}
+.small-text{font-size:12px}.result-count{margin:0;padding:0 15px 8px;font-size:12px;color:var(--muted)}.search-field input{min-width:220px}
+.plan-link{display:inline-flex;align-items:center;gap:4px;border:0;background:none;padding:2px 0;color:var(--ink);cursor:pointer;text-align:left}.plan-link svg{width:12px;height:12px;color:#5b76a0}.plan-link:hover .badge{filter:brightness(.96);text-decoration:underline}
+.plan-callout{background:#f5f9ff;border:1px solid #d6e3f8;border-radius:10px;padding:12px 13px}.plan-callout p{margin:6px 0 8px;font-size:13px}
+.chip-filters{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.filter-chip{border:1px solid #d5e2f1;background:white;color:#33507a;border-radius:20px;padding:5px 11px;font-size:12px;font-weight:700;cursor:pointer}.filter-chip[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:white}.filter-chip:hover{border-color:#9db8f2}.chip-count{display:inline-block;min-width:16px;margin-left:3px;padding:0 5px;border-radius:9px;background:#edf3fc;color:#33507a;font-size:11px}.filter-chip[aria-pressed="true"] .chip-count{background:#ffffff33;color:white}
+.toggle-inline{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-left:auto}
+.fold{margin-top:15px}.fold>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px 15px}.fold>summary::-webkit-details-marker{display:none}.fold>summary:hover{background:#f7faff}.fold[open]>summary{border-bottom:1px solid var(--line)}.fold-title{display:inline-flex;align-items:center;gap:8px}.fold-title svg{width:15px;height:15px;color:var(--blue)}.fold>.chip-filters{padding:11px 15px 4px}.fold .guardrail-list{padding-top:14px}
+.control-pills{display:flex;flex-wrap:wrap;gap:6px}.control-pills span{font-size:11px;font-weight:700;color:#24426d;background:#eef4fc;border-radius:5px;padding:3px 7px}
+.setup-line{display:flex;gap:6px;align-items:flex-start;font-size:12px;color:var(--muted);margin:8px 0 0}.setup-line svg{width:14px;height:14px;flex:none;margin-top:1px}
+.journey{list-style:none;margin:0 0 15px;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:white;border:1px solid var(--line);border-radius:11px;overflow:hidden}.journey-step{display:flex;gap:9px;align-items:flex-start;padding:11px 13px;min-width:0}.journey-step+.journey-step{border-left:1px solid var(--line)}.journey-step strong{display:block;font-size:13px}.journey-step small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px;overflow-wrap:anywhere}.journey-num{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;background:#edf1f7;color:#5a6f8c}.journey-step.done .journey-num{background:#e7f6ef;color:#196449}.journey-step.active{background:#f2f7ff;box-shadow:inset 0 -3px var(--blue)}.journey-step.active .journey-num{background:var(--blue);color:white}.journey-step.todo{color:#7a8aa3}
+.plan-layout{display:grid;grid-template-columns:minmax(260px,.85fr) minmax(0,1.6fr);gap:15px;align-items:start}
+.issue-list{list-style:none;margin:0;padding:2px 15px 14px;display:grid;gap:10px}.issue-list li{display:flex;gap:9px;align-items:flex-start;font-size:13px}.issue-list .badge{margin-top:1px}.issue-list small{display:block;margin-top:3px}
+.plan-hero{padding:16px 18px;border-color:#9db8f2;box-shadow:inset 4px 0 var(--blue),var(--shadow)}.plan-hero h2{font-size:18px;margin:2px 0 4px}.plan-hero h3{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#5a6f8c;margin:12px 0 5px}.plan-hero p{font-size:13.5px}.plan-hero.approved{border-color:#c9bdf0;box-shadow:inset 4px 0 #6150a2,var(--shadow)}.plan-hero.escalate{border-color:#f0c3cd;box-shadow:inset 4px 0 #9f2c42,var(--shadow)}.plan-hero.empty,.plan-hero.working{box-shadow:inset 4px 0 #b8c8e2,var(--shadow);border-color:var(--line)}
+.plan-eyebrow{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--blue)}.plan-hero.approved .plan-eyebrow{color:#6150a2}.plan-hero.escalate .plan-eyebrow{color:#9f2c42}.plan-hero.empty .plan-eyebrow,.plan-hero.working .plan-eyebrow{color:#5a6f8c}
+.plan-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px}.change-list{margin:0;padding-left:18px;font-size:13.5px;font-weight:600}.change-list li{margin:3px 0}
+.evidence ul,.why-not{margin:0;padding-left:18px;font-size:12.5px;color:#3f597c}.evidence li,.why-not li{margin:3px 0}.replanned-note{margin:6px 0 0;color:#8a5300!important;font-weight:650;font-size:13px}
+.decision{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}.decision .form-feedback{flex-basis:100%;margin:0}.decision.done{align-items:center;font-size:13px;color:#3f597c}.decision.done svg{width:16px;height:16px;color:#6150a2;flex:none}.decision.done span{flex:1;min-width:220px}
+.draft-list{list-style:none;margin:0;padding:0 15px 12px}.draft-list li{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid #edf1f7;font-size:13px}.draft-list li:first-child{border-top:0}.draft-list small{display:block;color:var(--muted);margin-top:2px}.draft-list .system-chip{flex:none;margin-top:1px}.draft-text summary{cursor:pointer;font-size:12px;color:var(--blue);margin-top:3px}.draft-text p{font-size:12px;color:#3f597c;margin:4px 0 0}
+.draft-list.withdrawn li>span:last-child>strong{text-decoration:line-through;opacity:.65}.draft-list.withdrawn small{color:#9f2c42}.withdrawn-drafts{padding:0 15px 12px}.withdrawn-drafts>summary{cursor:pointer;font-size:12px;color:var(--muted);padding:4px 0}
+.option-rows{list-style:none;margin:0;padding:0 15px 12px}.option-rows li{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 0;border-top:1px solid #edf1f7}.option-rows li:first-child{border-top:0}.option-rows strong{font-size:13px}.option-rows small{display:block;color:var(--muted);font-size:12px;margin-top:2px}.option-side{display:flex;gap:8px;align-items:center;flex:none}
+.plans-head{align-items:flex-start}.plans-filters{padding:0 15px 10px}.plan-title{display:block;font-size:13px;margin-top:4px}.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12.5px;color:var(--muted)}
+.run-line{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:15px;font-size:12px;color:var(--muted)}.run-line>span{flex:1;min-width:240px}.rerun{flex-basis:100%}.rerun>summary{cursor:pointer;color:var(--blue);font-weight:700}.rerun .actions{margin:8px 0 4px}
+.progress-card{padding:12px 15px;margin-bottom:15px}.progress-text{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px}.progress-text small{color:var(--muted)}.progress-bar{height:6px;border-radius:4px;background:#edf1f7;margin-top:8px;overflow:hidden}.progress-bar span{display:block;height:100%;background:var(--blue);transition:width .3s}
+@media(max-width:900px){.plan-layout,.plan-columns{grid-template-columns:minmax(0,1fr)}.journey{grid-template-columns:repeat(2,minmax(0,1fr))}.journey-step:nth-child(3){border-left:0}.journey-step:nth-child(n+3){border-top:1px solid var(--line)}}
+@media(max-width:640px){.journey{grid-template-columns:minmax(0,1fr)}.journey-step+.journey-step{border-left:0;border-top:1px solid var(--line)}.option-rows li{flex-direction:column;align-items:flex-start}.search-field input{min-width:0;width:100%}.search-field{flex:1 1 100%}.toggle-inline{margin-left:0}}
 .agent-chip{display:inline-flex;align-items:center;white-space:nowrap;border-radius:6px;padding:3px 7px;font-size:11px;font-weight:750;background:#edf1f7;color:#38506f;justify-self:start}.agent-orchestrator{background:#e8efff;color:#173f9e}.agent-supply{background:#e7f6ef;color:#196449}.agent-logistics{background:#fff2d9;color:#7a4500}.agent-records{background:#f0ecff;color:#5a4899}.agent-comms{background:#e3f5f7;color:#0f5f6a}.agent-verifier{background:#132446;color:#fff}.system-chip{display:inline-flex;border:1px solid #cddbef;border-radius:5px;padding:1px 6px;font-size:11px;font-weight:700;color:#24426d;background:#f7faff;white-space:nowrap}
 .agent-timeline{list-style:none;margin:0;padding:0 15px 12px;max-height:620px;overflow:auto}.agent-step{display:grid;grid-template-columns:158px minmax(0,1fr);gap:10px;align-items:start;padding:8px 0;border-top:1px solid #edf1f7;font-size:13px;overflow-wrap:anywhere}.agent-step:first-child{border-top:0}.agent-step code{font-size:12px;color:#173f9e}.agent-step .muted{font-size:12px}.agent-step-tool_result{padding-top:0;border-top:0}.agent-step-tool_result .agent-chip{visibility:hidden}.agent-step-verified,.agent-step-resolution,.agent-step-goal{background:#f5f9ff;margin:0 -15px;padding-left:15px;padding-right:15px}
 .roster{list-style:none;margin:0;padding:0 15px 10px}.roster li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 8px;align-items:center;padding:8px 0;border-top:1px solid #edf1f7}.roster li:first-child{border-top:0}.roster small{grid-column:1/-1;color:var(--muted);font-size:11px}.roster-state{grid-row:1;grid-column:2}
@@ -556,9 +580,10 @@ const icons = {
   countries:'<path d="M3 14V2.5m0 1c2-1.5 3.3-.5 5 0 1.8.5 3 .7 5-1v7c-2 1.7-3.2 1.5-5 1-1.7-.5-3-1.5-5 0"/>',
   schedule:'<rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/><path d="M5.5 2.5v3m5-3v3M2.5 7h11M6 10.5h3.5"/>',
   review:'<path d="M5 2.5h6l2 2v9H3v-11h2zm.5 6 1.6 1.6 3.5-3.5"/>',
+  plans:'<circle cx="4" cy="4" r="1.7"/><circle cx="12" cy="4" r="1.7"/><circle cx="8" cy="12.2" r="1.7"/><path d="M5.7 4h4.6M4.8 5.5l2.4 5M11.2 5.5l-2.4 5"/>',
   shipments:'<path d="M2.5 5 8 2.5 13.5 5v6L8 13.5 2.5 11zM2.5 5 8 7.5 13.5 5M8 7.5v6"/>'
 };
-const navItems = {overview:"Overview",shipments:"Shipment checks",countries:"Country specifications",sources:"Source log",schedule:"Monitoring schedule"};
+const navItems = {overview:"Overview",shipments:"Shipment checks",plans:"Agent plans",countries:"Country specifications",sources:"Source log",schedule:"Monitoring schedule"};
 const byId = id => document.getElementById(id);
 const esc = value => String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const icon = name => '<svg viewBox="0 0 16 16" aria-hidden="true">'+icons[name]+'</svg>';
@@ -665,10 +690,9 @@ function shell() {
   byId("brand-mark").innerHTML=icon("logo");
   byId("mode").innerHTML=icon("clock")+" Checked "+replayDate;
   byId("crumb").innerHTML=page==="case"?'Clinical Supply '+icon("chevron")+" <strong>Change details</strong>":
-    page==="agent"?'Clinical Supply '+icon("chevron")+" Shipment checks "+icon("chevron")+" <strong>Agents</strong>":
-    page==="agents-all"?'Clinical Supply '+icon("chevron")+" Shipment checks "+icon("chevron")+" <strong>Agents · all shipments</strong>":
+    page==="agent"?'Clinical Supply '+icon("chevron")+" Agent plans "+icon("chevron")+" <strong>"+esc(agentShipment??"")+"</strong>":
     'Clinical Supply '+icon("chevron")+' <strong>'+esc(navItems[page])+'</strong>';
-  byId("nav").innerHTML=Object.entries(navItems).map(([id,name])=>'<button type="button" class="nav" data-act="nav" data-value="'+id+'"'+(page===id?' aria-current="page"':(page==="case"&&id==="overview")||(["agent","agents-all"].includes(page)&&id==="shipments")?' aria-current="location"':'')+'>'+icon(id)+name+'</button>').join("");
+  byId("nav").innerHTML=Object.entries(navItems).map(([id,name])=>'<button type="button" class="nav" data-act="nav" data-value="'+id+'"'+(page===id?' aria-current="page"':(page==="case"&&id==="overview")||(page==="agent"&&id==="plans")?' aria-current="location"':'')+'>'+icon(id)+name+'</button>').join("");
 }
 function heading(title,description,action="") {
   return '<header class="page-head"><div><h1 id="page-title" tabindex="-1">'+title+'</h1><p>'+description+'</p></div>'+action+'</header>';
@@ -1625,61 +1649,120 @@ function attention(shipment) {
   const issues=shipment.checks.filter(item=>blocking.includes(item.result)||item.result==="Confirm").length;
   return first?specSectionNames[first.section]+": "+first.detail+(issues>1?" (+"+(issues-1)+" more)":""):"All connected checks pass.";
 }
+// ---------- Shipment checks: the list, its filters and the shipment panel ----------
+let shipmentPlanFilter = "all";
+let shipmentSearch = "";
+const planStatusStyle = {
+  none:["No plan yet",""], running:["Agents working","blue"], plan:["Plan to approve","blue"], review:["Plan to review","amber"],
+  escalate:["Escalation to acknowledge","red"], approved:["Plan approved","purple"], acknowledged:["Escalation acknowledged","purple"]
+};
+const needsAction = shipment => shipment.result!=="Ready";
+// Where a shipment stands with the agents.
+function planStatus(id) {
+  const approval=agentApprovals[id];
+  if(approval) return approval.option==="escalate"?"acknowledged":"approved";
+  if(agentState.running&&agentState.shipment===id) return "running";
+  if(portfolioState.running&&portfolioState.order.includes(id)&&!portfolioState.events.some(event=>event.type==="shipment_done"&&event.shipment===id)) return "running";
+  const plan=agentPlans[id];
+  return plan?plan.status:"none";
+}
+const planBadge = id => badge(...planStatusStyle[planStatus(id)]);
+function matchesSearch(shipment,query) {
+  const text=[shipment.id,shipment.site,shipment.hospital,specCountryName(shipment.countryId),shipment.batch,shipment.trial].join(" ").toLowerCase();
+  return String(query).toLowerCase().split(/\s+/).filter(Boolean).every(word=>text.includes(word));
+}
+const dayDistance = day => {const days=daysFrom(day);return days<0?Math.abs(days)+" days late":days===0?"today":"in "+days+" days";};
 function shipmentRow(shipment) {
-  const days=daysFrom(shipment.prepareBy);
+  const manual=shipment.action&&!["plan","escalated"].includes(shipment.action.action)?shipment.action:null;
   return '<tr><td><button type="button" class="entity-button" data-act="shipment" data-value="'+esc(shipment.id)+'"><span>'+esc(shipment.id)+'<small class="sub">'+esc(shipment.trial+" · batch "+shipment.batch)+'</small></span></button></td>'+
     '<td>'+esc(specCountryName(shipment.countryId))+'<span class="sub">'+esc(shipment.site)+'</span></td>'+
-    '<td class="nowrap">'+esc(displayDay(shipment.dispatch))+'</td><td class="nowrap">'+esc(displayDay(shipment.prepareBy))+'<span class="sub">'+(days<0?Math.abs(days)+" days late":days===0?"today":"in "+days+" days")+'</span></td>'+
-    '<td><div class="badge-stack">'+badge(...resultStyle[shipment.result])+(shipment.action?badge(shipmentActionNames[shipment.action.action],"purple"):"")+'</div></td>'+
+    '<td class="nowrap">'+esc(displayDay(shipment.dispatch))+'</td><td class="nowrap">'+esc(displayDay(shipment.prepareBy))+'<span class="sub">'+dayDistance(shipment.prepareBy)+'</span></td>'+
+    '<td><div class="badge-stack">'+badge(...resultStyle[shipment.result])+(manual?badge(shipmentActionNames[manual.action],"purple"):"")+'</div></td>'+
+    '<td>'+(needsAction(shipment)?'<button type="button" class="plan-link" data-act="open-agents" data-value="'+esc(shipment.id)+'" aria-label="'+esc("Open the agent plan for "+shipment.id)+'">'+planBadge(shipment.id)+icon("chevron")+'</button>':'<span class="muted small-text">Not needed</span>')+'</td>'+
     '<td class="hide-narrow muted">'+esc(attention(shipment))+'</td></tr>';
+}
+function shownShipments() {
+  return plannedShipments().filter(item=>(shipmentFilter==="all"||item.result===shipmentFilter)&&(shipmentCountry==="all"||item.countryId===shipmentCountry)&&
+    (shipmentPlanFilter==="all"||(needsAction(item)&&planStatus(item.id)===shipmentPlanFilter))&&matchesSearch(item,shipmentSearch));
+}
+function shipmentTable() {
+  const shown=shownShipments();
+  const total=plannedShipments().length;
+  return '<p class="result-count">'+esc(shown.length===total?"Showing all "+total+" shipments":"Showing "+shown.length+" of "+total+" shipments")+'</p>'+
+    (shown.length?'<div class="table-wrap" tabindex="0"><table><caption class="sr">Planned shipments, their check results and their agent plans</caption><thead><tr><th>Shipment</th><th>Destination</th><th>Dispatch</th><th>Prepare by</th><th>Result</th><th>Agent plan</th><th class="hide-narrow">What needs attention</th></tr></thead><tbody>'+
+      shown.map(shipmentRow).join("")+'</tbody></table></div>':'<p class="nothing">No shipments match these filters. '+trigger("Clear the filters","clear-shipment-filters","","quiet")+'</p>');
 }
 function shipmentChecks() {
   const all=plannedShipments();
   const count=result=>all.filter(item=>item.result===result).length;
   const notCheckedCount=new Set(all.flatMap(item=>item.checks.filter(entry=>entry.result==="Not checked").map(entry=>specSectionNames[entry.section]))).size;
-  const shown=all.filter(item=>(shipmentFilter==="all"||item.result===shipmentFilter)&&(shipmentCountry==="all"||item.countryId===shipmentCountry));
   const first=all.find(item=>item.result==="Blocked");
   const countryOptions=[["all","All countries"],...[...new Set(all.map(item=>item.countryId))].map(id=>[id,specCountryName(id)])];
-  return heading("Shipment checks","Every planned shipment, checked against its destination's Country Specification before it leaves the depot.",agentServer()?'<div class="actions">'+trigger("Resolve all with agents","open-portfolio","","primary","arrow")+'</div>':"")+
+  const toApprove=all.filter(item=>["plan","review","escalate"].includes(planStatus(item.id))).length;
+  return heading("Shipment checks","Every planned shipment, checked against its destination's Country Specification before it leaves the depot.",
+      agentServer()?'<div class="actions">'+trigger("Agent plans"+(toApprove?" · "+toApprove+" to approve":""),"open-portfolio","","primary","arrow")+'</div>':"")+
     '<div class="tiles" aria-label="Shipment check summary">'+
       tile("Planned shipments",all.length,plural(new Set(all.map(item=>item.countryId)).size,"country","countries")+" · next 4 months","studies")+
       tile("Blocked",count("Blocked"),first?"First: "+first.id+", prepare by "+displayDay(first.prepareBy):"Nothing blocked","alert")+
       tile("Confirm before dispatch",count("Confirm"),"A check to confirm, nothing failing","review")+
       tile("Ready to ship",count("Ready"),"Every connected check passes","overview")+
     '</div>'+
-    '<section class="card"><div class="card-head"><div class="filters"><label class="field">Show<select id="shipment-filter">'+options([["all","All shipments"],["Blocked","Blocked"],["Confirm","Confirm before dispatch"],["Ready","Ready to ship"]],shipmentFilter)+'</select></label>'+
-    '<label class="field">Destination<select id="shipment-country">'+options(countryOptions,shipmentCountry)+'</select></label></div></div>'+
-    (shown.length?'<div class="table-wrap" tabindex="0"><table><caption class="sr">Planned shipments and their check results</caption><thead><tr><th>Shipment</th><th>Destination</th><th>Dispatch</th><th>Prepare by</th><th>Result</th><th class="hide-narrow">What needs attention</th></tr></thead><tbody>'+
-      shown.map(shipmentRow).join("")+'</tbody></table></div>':'<p class="nothing">No shipments match these filters.</p>')+
+    '<section class="card"><div class="card-head"><div class="filters">'+
+      '<label class="field search-field">Search<input id="shipment-search" type="search" placeholder="Shipment, site, batch or trial" value="'+esc(shipmentSearch)+'"></label>'+
+      '<label class="field">Result<select id="shipment-filter">'+options([["all","All results"],["Blocked","Blocked"],["Confirm","Confirm before dispatch"],["Ready","Ready to ship"]],shipmentFilter)+'</select></label>'+
+      '<label class="field">Destination<select id="shipment-country">'+options(countryOptions,shipmentCountry)+'</select></label>'+
+      '<label class="field">Agent plan<select id="shipment-plan">'+options([["all","Any"],["none","No plan yet"],["plan","Plan to approve"],["review","Plan to review"],["escalate","Escalation to acknowledge"],["approved","Plan approved"],["acknowledged","Escalation acknowledged"]],shipmentPlanFilter)+'</select></label>'+
+    '</div></div><div id="shipment-results">'+shipmentTable()+'</div>'+
     '<div class="inline-note">'+icon("info")+'<span>'+esc("Checks use the specification in force and any change still waiting for approval, marked as pending. "+plural(notCheckedCount,"kind")+" of requirement can't be checked yet because the data isn't connected (for example invoices).")+'</span></div></section>';
 }
 function shipmentDetail(id) {
   const shipment=plannedShipments().find(item=>item.id===id);
   const action=shipment.action;
+  const manual=action&&!["plan","escalated"].includes(action.action)?action:null;
+  const approval=agentApprovals[id];
+  const plan=agentPlans[id];
+  const status=planStatus(id);
   const rows=shipment.checks.map(item=>'<li class="check-item"><div class="block-head"><strong>'+esc(specSectionNames[item.section])+'</strong>'+badge(...checkStyle[item.result])+'</div>'+
     '<p>'+esc(item.requirement)+'</p><p class="check-detail">'+esc(item.detail)+'</p><small'+(item.pending?' class="pending-basis"':'')+'>'+esc(item.basis)+'</small></li>').join("");
   const form='<form id="shipment-action-form" class="review-form" data-shipment="'+esc(shipment.id)+'"><label class="field">Action<select name="action">'+
-    options([["hold","Hold the shipment"],["swap","Swap the batch"],["proceed","Proceed as planned"]],action?.action??(shipment.result==="Blocked"?"hold":"proceed"))+'</select></label>'+
+    options([["hold","Hold the shipment"],["swap","Swap the batch"],["proceed","Proceed as planned"]],manual?.action??(shipment.result==="Blocked"?"hold":"proceed"))+'</select></label>'+
     (shipment.result==="Blocked"?'<p class="form-feedback">This shipment is blocked. Proceeding as planned is recorded as an override.</p>':"")+
-    reasonField("Reason")+'<div class="actions"><button type="submit" class="btn primary">Record action</button>'+(action?trigger("Clear the action","clear-shipment-action",shipment.id):"")+'</div><div id="shipment-action-error" class="form-feedback" role="alert"></div></form>';
-  drawer("Shipment check · "+specCountryName(shipment.countryId),shipment.id,'<div class="actions">'+badge(...resultStyle[shipment.result])+(action?badge(shipmentActionNames[action.action],"purple"):"")+'</div>'+
+    reasonField("Reason")+'<div class="actions"><button type="submit" class="btn primary">Record action</button>'+(manual?trigger("Clear the action","clear-shipment-action",shipment.id):"")+'</div><div id="shipment-action-error" class="form-feedback" role="alert"></div></form>';
+  // The agent plan comes first: it is the main way to resolve a shipment.
+  const agentBlock=!needsAction(shipment)?"":
+    '<section class="drawer-block plan-callout"><div class="block-head"><h3>Agent plan</h3>'+planBadge(id)+'</div>'+
+      (approval?'<p>'+escd((approval.option==="escalate"?"Escalation acknowledged":approval.title)+" · approved by "+approval.by+" on "+scheduleDate(approval.at)+".")+'</p>':
+        plan?'<p>'+escd(plan.status==="escalate"?"No option passes the rules. The agents recommend escalating to Quality.":plan.title)+'</p>':
+        '<p>No plan yet. The agents read IRT, ERP, the depot and the eTMF, propose a fix, check it against the rules and draft the changes for you to approve.</p>')+
+      (agentServer()?'<div class="actions">'+trigger(plan||approval?"Open the plan":"Plan with agents","open-agents",id,"primary","arrow")+(approval?trigger("Withdraw the approval","agent-withdraw",id):"")+'</div>':
+        '<p class="muted">The agents need the local server: open RegChain with Start-RegChain.cmd.</p>')+'</section>';
+  drawer("Shipment check · "+specCountryName(shipment.countryId),shipment.id,'<div class="actions">'+badge(...resultStyle[shipment.result])+(manual?badge(shipmentActionNames[manual.action],"purple"):"")+'</div>'+
     factlist([["Trial",shipment.trial+" · "+studyTitle(shipment.trial)],["Destination",specCountryName(shipment.countryId)+" · "+shipment.site+(shipment.hospital?" · "+shipment.hospital:"")],["Batch",shipment.batch],
       ["Dispatch",weekdayName(shipment.dispatch)+" "+displayDay(shipment.dispatch)],...(shipment.delivery?[["Delivery",weekdayName(shipment.delivery)+" "+displayDay(shipment.delivery)]]:[]),
-      ["Prepare by",displayDay(shipment.prepareBy)],["Carrier",shipment.carrier],...(shipment.patients?[["Patients on treatment at the site",String(shipment.patients)]]:[])])+
+      ["Prepare by",displayDay(shipment.prepareBy)+" ("+dayDistance(shipment.prepareBy)+")"],["Carrier",shipment.carrier],...(shipment.patients?[["Patients on treatment at the site",String(shipment.patients)]]:[])])+
+    agentBlock+
     '<section class="drawer-block"><h3>Checks against the specification</h3><ul class="practice">'+rows+'</ul></section>'+
-    (action?'<section class="drawer-block"><h3>Recorded action</h3>'+factlist([["Action",shipmentActionNames[action.action]],["By",action.by],["Recorded",scheduleDate(action.at)],["Reason",action.reason]])+'</section>':"")+
-    (shipment.result!=="Ready"?'<section class="drawer-block"><h3>Resolve with agents</h3><p>An orchestrator and four specialist agents read IRT, ERP, the depot and the eTMF, propose fixes, check each one against the rules and draft the changes for people to approve.</p><div class="actions">'+trigger("Resolve with agents","open-agents",shipment.id,"primary","arrow")+'</div></section>':"")+
-    '<section class="drawer-block"><div class="block-head"><h3>'+(shipment.result==="Ready"?"What to do":"Or record an action yourself")+'</h3>'+caseRoleSelect()+'</div>'+(agentApprovals[shipment.id]?'<p>'+esc("An agent plan is approved for this shipment: "+agentApprovals[shipment.id].title+", by "+agentApprovals[shipment.id].by+". Withdraw it to record a different action.")+'</p><div class="actions">'+trigger("Withdraw the approval","agent-withdraw",shipment.id)+'</div>':form)+'</section>'+
+    (manual?'<section class="drawer-block"><h3>Recorded action</h3>'+factlist([["Action",shipmentActionNames[manual.action]],["By",manual.by],["Recorded",scheduleDate(manual.at)],["Reason",manual.reason]])+'</section>':"")+
+    (approval?"":'<section class="drawer-block"><div class="block-head"><h3>'+(needsAction(shipment)?"Or record an action yourself":"What to do")+'</h3>'+caseRoleSelect()+'</div>'+form+'</section>')+
     (shipment.caseId&&isGoverned(shipment.caseId)?'<div class="actions">'+trigger("Open the "+(shipment.caseId==="uk"?"UK":"Spain")+" case","open-case",shipment.caseId,"","arrow")+'</div>':""));
 }
-// ---------- Agents: an orchestrator and specialist agents resolve shipments through MCP ----------
-// Approvals live on the local server, which checks each plan again before it records it, so two shipments are never
-// promised the same kits or relabelling slot. Only Clinical Supply approves supply plans.
+
+// ---------- Agents: an orchestrator and specialist agents plan each shipment through MCP ----------
+// Approvals and plans live on the local server, which checks each plan again before it records an approval, so two
+// shipments are never promised the same kits or relabelling slot. Only Clinical Supply approves supply plans.
 let agentApprovals = {};
 let agentApprovalLog = [];
+let agentPlans = {};
 let agentShipment = null;
-let agentState = {status:null,running:false,events:[],record:null,error:"",mode:null};
+let agentState = {status:null,running:false,events:[],record:null,error:"",mode:null,shipment:null};
 let portfolioState = {running:false,events:[],record:null,error:"",mode:null,order:[]};
+let trailAgent = "all";
+let trailRaw = false;
+const openPanels = new Set();
+let plansFilter = "action";
+let plansCountry = "all";
+let plansWindow = "all";
+let plansSearch = "";
 const agentProfiles = {
   orchestrator:{name:"Orchestrator",tone:"agent-orchestrator",job:"Plans, delegates, builds and ranks the options"},
   supply:{name:"Supply agent",tone:"agent-supply",job:"Stock, batches and QP plans in IRT and ERP"},
@@ -1692,20 +1775,38 @@ const afterNames = {Ready:"ready to ship",Confirm:"confirm before dispatch",Bloc
 const actionNames = {swap_batch:"Swap batch",relabel:"Relabel",delay:"Delay dispatch",record_authorisation_route:"Record the authorisation route",book_qp_release:"Book the QP release",obtain_pharmacy_code:"Obtain the pharmacy code",create_label_specification:"Create the label specification",proceed:"Proceed as planned"};
 const agentServer = () => location.protocol.startsWith("http");
 const canApprovePlans = () => workflowRole==="viewer";
+const clip = (text,size) => {text=String(text??"");return text.length>size?text.slice(0,size-1)+"…":text;};
+const isoDay = day => /^\d{4}-\d{2}-\d{2}$/.test(String(day??""))?displayDay(day):day;
+const humanDates = text => String(text??"").replace(/\b\d{4}-\d{2}-\d{2}\b/g,day=>displayDay(day));
+const escd = text => esc(humanDates(text));
 function describeAction(action) {
   const detail=action.batch_id??action.relabel_date??action.new_dispatch_date??(action.authorisation_route?action.authorisation_route.replace("_"," "):null)??action.qp_date;
   return (actionNames[action.type]??action.type)+(detail?" · "+detail:"");
 }
+// What an action changes, in plain words.
+function actionSentence(action,shipment) {
+  return {
+    swap_batch:"Ship batch "+action.batch_id+(shipment?" instead of "+shipment.batch:""),
+    relabel:"Relabel the kits at the depot on "+isoDay(action.relabel_date),
+    delay:"Move the dispatch to "+(action.new_dispatch_date?weekdayName(action.new_dispatch_date)+" "+isoDay(action.new_dispatch_date):"a later date"),
+    record_authorisation_route:"Correct the trial's authorisation route in IRT: "+String(action.authorisation_route??"").replace("_"," "),
+    book_qp_release:"Book the QP release for "+isoDay(action.qp_date),
+    obtain_pharmacy_code:"Ask the site for its hospital pharmacy code",
+    create_label_specification:"Start the label specification",
+    proceed:"Ship as planned"
+  }[action.type]??describeAction(action);
+}
 async function agentPost(path,body) {
   return aiRequest(path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
 }
-// The server's approvals are the record; the shipment's recorded action follows them.
-async function loadAgentApprovals() {
+// The server's approvals and plans are the record; the shipment's recorded action follows the approvals.
+async function loadAgentData() {
   if(!agentServer()) return;
   try {
-    const reply=await aiRequest("/api/agent/approvals");
+    const [reply,plans]=await Promise.all([aiRequest("/api/agent/approvals"),aiRequest("/api/agent/plans")]);
     agentApprovals=reply.approvals??{};
     agentApprovalLog=reply.log??[];
+    agentPlans=plans??{};
   } catch {return;}
   let changed=false;
   const next={...shipmentActions};
@@ -1715,12 +1816,12 @@ async function loadAgentApprovals() {
   }
   for(const [id,action] of Object.entries(next)) if(["plan","escalated"].includes(action.action)&&!agentApprovals[id]) {delete next[id];changed=true;}
   if(changed) {shipmentActions=next;storeJson(shipmentActionsKey,shipmentActions);}
-  if(["agent","agents-all","shipments","overview"].includes(page)) render();
+  if(["agent","plans","shipments","overview"].includes(page)) render();
 }
 async function loadAgentStatus() {
   if(!agentServer()) return;
   try {agentState.status=await aiRequest("/api/agent/status");} catch(error) {agentState.error=agentState.error||"The agent systems did not answer: "+error.message;}
-  if(["agent","agents-all"].includes(page)) render();
+  if(["agent","plans"].includes(page)) render();
 }
 async function loadAgentRun(id) {
   if(!agentServer()) return;
@@ -1736,29 +1837,31 @@ async function loadPortfolioRun() {
     const record=await aiRequest("/api/agent/portfolio-last");
     if(!portfolioState.running) portfolioState={...portfolioState,record,events:record.events,mode:record.mode,error:""};
   } catch {}
-  if(page==="agents-all") render();
+  if(page==="plans") render();
 }
 function openAgents(id) {
   if(byId("drawer").open) byId("drawer").close();
   agentShipment=id;
+  trailAgent="all";
   // A run in progress belongs to its own shipment: it is never reset or shown under another one.
   if(!agentState.running) agentState={...agentState,shipment:id,events:[],record:null,error:"",mode:null};
   navigate("agent");
   loadAgentStatus();
-  loadAgentApprovals();
+  loadAgentData();
   loadAgentRun(id);
 }
 function openPortfolio() {
   if(byId("drawer").open) byId("drawer").close();
-  navigate("agents-all");
+  navigate("plans");
   loadAgentStatus();
-  loadAgentApprovals();
+  loadAgentData();
   loadPortfolioRun();
 }
 function startAgentRun(mode) {
   if(agentState.running||portfolioState.running) return;
   const shipment=agentShipment;
   agentState={...agentState,shipment,running:true,events:[],record:null,error:"",mode};
+  openPanels.add("agent-trail");
   render();
   notify(mode==="live"?"The agents are working. This takes a minute or two.":"Running the scripted walkthrough.");
   const source=new EventSource("/api/agent/run?shipment="+encodeURIComponent(shipment)+"&mode="+mode);
@@ -1766,10 +1869,12 @@ function startAgentRun(mode) {
   source.addEventListener("complete",event=>{
     source.close();
     agentState={...agentState,running:false,record:JSON.parse(event.data)};
+    openPanels.delete("agent-trail");
     // If someone moved to another shipment meanwhile, show that one's own last run.
     if(page==="agent"&&agentShipment!==shipment) {agentState={...agentState,shipment:agentShipment,events:[],record:null};loadAgentRun(agentShipment);}
+    loadAgentData();
     render();
-    notify("The agents finished "+shipment+". Review the options and approve one.");
+    notify("The agents finished "+shipment+". Review the plan and approve it.");
   });
   source.addEventListener("failure",event=>{source.close();agentState={...agentState,running:false,error:JSON.parse(event.data).error};render();notify("The agent run did not start.");});
   source.onerror=()=>{if(!agentState.running) return;source.close();agentState={...agentState,running:false,error:"The connection to the agents was lost."};render();};
@@ -1777,8 +1882,9 @@ function startAgentRun(mode) {
 function startPortfolioRun(mode) {
   if(agentState.running||portfolioState.running) return;
   portfolioState={...portfolioState,running:true,events:[],record:null,error:"",mode,order:[]};
+  openPanels.add("plans-activity");
   render();
-  notify(mode==="live"?"The agents are working through every shipment. This takes several minutes.":"Running the scripted walkthrough for every shipment.");
+  notify(mode==="live"?"The agents are planning every shipment. This takes several minutes.":"Running the scripted walkthrough for every shipment.");
   const source=new EventSource("/api/agent/portfolio-run?mode="+mode);
   source.onmessage=event=>{
     const data=JSON.parse(event.data);
@@ -1786,27 +1892,33 @@ function startPortfolioRun(mode) {
     portfolioState.events.push(data);
     updatePortfolioFeed();
   };
-  source.addEventListener("complete",event=>{source.close();portfolioState={...portfolioState,running:false,record:JSON.parse(event.data)};render();notify("Every shipment has a plan or an escalation. Review and approve.");});
+  source.addEventListener("complete",async event=>{
+    source.close();
+    portfolioState={...portfolioState,running:false,record:JSON.parse(event.data)};
+    openPanels.delete("plans-activity");
+    await loadAgentData();
+    render();
+    notify("Every shipment has a plan or an escalation. Review and approve them, most urgent first.");
+  });
   source.addEventListener("failure",event=>{source.close();portfolioState={...portfolioState,running:false,error:JSON.parse(event.data).error};render();notify("The run did not start.");});
   source.onerror=()=>{if(!portfolioState.running) return;source.close();portfolioState={...portfolioState,running:false,error:"The connection to the agents was lost."};render();};
 }
-const clip = (text,size) => {text=String(text??"");return text.length>size?text.slice(0,size-1)+"…":text;};
 function eventBody(event) {
   return {
     goal:'<strong>Goal:</strong> '+esc(event.text),
-    message:esc(clip(event.text,900)),
+    message:escd(clip(event.text,900)),
     triage:'<strong>Triage:</strong> '+esc(event.text),
-    delegate:'asks the <strong>'+esc(agentProfiles[event.to]?.name??event.to)+'</strong>: '+esc(event.text),
+    delegate:'asks the <strong>'+esc(agentProfiles[event.to]?.name??event.to)+'</strong>: '+escd(event.text),
     delegate_shipment:'starts the agent team on '+esc(event.text),
     shipment_done:esc(event.text),
-    tool_call:'calls <span class="system-chip">'+esc(event.system)+'</span> <code>'+esc(event.tool)+'</code> <span class="muted">'+esc(JSON.stringify(event.input))+'</span>',
+    tool_call:'reads <span class="system-chip">'+esc(event.system)+'</span> <code>'+esc(event.tool)+'</code> <span class="muted">'+esc(clip(JSON.stringify(event.input),160))+'</span>',
     tool_result:'<span class="muted">'+esc(event.system)+' answered: '+esc(clip(event.text,420))+'</span>',
-    report:'reports back: '+esc(clip(event.text,900)),
+    report:'reports back: '+escd(clip(event.text,900)),
     draft:'created a draft: '+esc(event.text),
-    verified:'<strong>Checked every option against the rules:</strong> '+esc(event.text),
-    allocation:'<strong>Re-planned:</strong> '+esc(event.text),
+    verified:'<strong>Checked every option against the rules:</strong> '+escd(event.text),
+    allocation:'<strong>Re-planned:</strong> '+escd(event.text),
     warning:'<strong class="warning-text">Check failed:</strong> '+esc(event.text),
-    resolution:'<strong>Resolution:</strong> '+esc(event.text),
+    resolution:'<strong>Resolution:</strong> '+escd(event.text),
     error:'<span class="form-feedback">'+esc(event.text)+'</span>',
     done:esc(event.text)
   }[event.type]??esc(event.text??"");
@@ -1816,164 +1928,247 @@ function agentEvent(event) {
   return '<li class="agent-step agent-step-'+esc(event.type)+'"><span class="agent-chip '+profile.tone+'">'+esc(profile.name)+'</span><div>'+
     (event.nested?'<span class="system-chip shipment-chip">'+esc(event.shipment)+'</span> ':'')+eventBody(event)+'</div></li>';
 }
+// The steps shown in the trail: system answers only when asked for, and one agent at a time if chosen.
+const trailEvents = events => events.filter(event=>(trailRaw||event.type!=="tool_result")&&(trailAgent==="all"||event.agent===trailAgent));
+function trailList(events) {
+  return trailEvents(events).map(agentEvent).join("")||'<li class="nothing">No steps for this agent.</li>';
+}
+function trailFilters(events) {
+  const agents=Object.entries(agentProfiles).filter(([id])=>events.some(event=>event.agent===id));
+  return '<div class="chip-filters" role="group" aria-label="Show the steps of">'+
+    [["all","All agents",events.length],...agents.map(([id,profile])=>[id,profile.name,events.filter(event=>event.agent===id&&event.type==="tool_call").length])].map(([id,name,count])=>
+      '<button type="button" class="filter-chip" data-act="trail-filter" data-value="'+id+'" aria-pressed="'+(trailAgent===id)+'">'+esc(name)+(id==="all"?"":' <span class="chip-count">'+count+'</span>')+'</button>').join("")+
+    '<label class="toggle-inline"><input type="checkbox" id="trail-raw"'+(trailRaw?" checked":"")+'> Show the systems\' answers</label></div>';
+}
 function updateAgentTimeline() {
   const list=byId("agent-timeline");
-  if(!list) return;
-  list.innerHTML=agentState.events.map(agentEvent).join("")||'<li class="nothing">No run yet.</li>';
+  if(!list) {render();return;}
+  list.innerHTML=trailList(agentState.events);
   list.scrollTop=list.scrollHeight;
-  const roster=byId("agent-roster");
-  if(roster) roster.outerHTML=agentRoster(agentState);
+  const count=byId("agent-trail-count");
+  if(count) count.textContent=agentState.events.length+" steps so far";
 }
-// While the whole portfolio runs, the feed shows the latest steps across every shipment.
 function portfolioFeed() {
-  const shown=portfolioState.events.filter(event=>event.type!=="tool_result").slice(-120);
-  return shown.map(agentEvent).join("")||'<li class="nothing">Start a run to watch the orchestrator triage the shipments and run the agent team on each one.</li>';
+  const shown=portfolioState.events.filter(event=>event.type!=="tool_result").slice(-150);
+  return shown.map(agentEvent).join("")||'<li class="nothing">No activity yet.</li>';
 }
 function updatePortfolioFeed() {
   const list=byId("portfolio-feed");
-  if(!list) return;
-  list.innerHTML=portfolioFeed();
-  list.scrollTop=list.scrollHeight;
+  if(list) {list.innerHTML=portfolioFeed();list.scrollTop=list.scrollHeight;}
   const progress=byId("portfolio-progress");
-  if(progress) progress.textContent=portfolioProgress();
-  const roster=byId("agent-roster");
-  if(roster) roster.outerHTML=agentRoster(portfolioState);
+  if(progress) progress.outerHTML=portfolioProgress();
 }
 function portfolioProgress() {
+  if(!portfolioState.running) return "";
   const done=portfolioState.events.filter(event=>event.type==="shipment_done").length;
   const total=portfolioState.order.length;
   const current=[...portfolioState.events].reverse().find(event=>event.type==="delegate_shipment");
-  return portfolioState.running?(total?done+" of "+total+" shipments done"+(current&&done<total?" · working on "+current.shipment:""):"Triage…"):portfolioState.record?"Last run":"No run yet";
-}
-function agentRoster(state) {
-  const events=state.events;
-  const last=events[events.length-1];
-  return '<section id="agent-roster" class="card"><div class="card-head"><div><h2>Agents</h2><p>One orchestrator, four specialists and a rules-based verifier</p></div></div><ul class="roster">'+
-    Object.entries(agentProfiles).map(([id,profile])=>{
-      const own=events.filter(event=>event.agent===id);
-      const calls=own.filter(event=>event.type==="tool_call").length;
-      const busy=state.running&&last?.agent===id;
-      const checked=own.filter(event=>event.type==="verified").length;
-      return '<li><span class="agent-chip '+profile.tone+'">'+esc(profile.name)+'</span><small>'+esc(profile.job)+'</small><span class="roster-state">'+
-        (busy?badge("Working","blue"):id==="verifier"&&own.length?badge(state===agentState?"Checked "+plural(state.record?.verification?.length??0,"option"):"Checked "+plural(checked,"shipment"),"green"):own.length?badge(calls?plural(calls,"tool call"):"Reported back","green"):badge("Idle",""))+'</span></li>';
-    }).join("")+'</ul></section>';
+  const share=total?Math.round(done/total*100):0;
+  return '<section id="portfolio-progress" class="card progress-card" aria-live="polite"><div class="progress-text"><strong>'+esc(total?"Planning "+total+" shipments · "+done+" done":"Sorting the shipments by urgency…")+'</strong>'+
+    (current&&done<total?'<small>'+esc("Working on "+current.shipment)+'</small>':total&&done===total?'<small>Checking the plans together…</small>':"")+'</div><div class="progress-bar"><span style="width:'+share+'%"></span></div></section>';
 }
 function guardrails(status) {
   const systems=(status?.systems??[]).map(system=>'<li><span class="system-chip">'+esc(system.name)+'</span><small>'+esc(plural(system.tools.length,"tool")+" · "+(system.tools.every(tool=>tool.readOnly)?"read-only":"draft-only"))+'</small></li>').join("");
-  return '<section class="card guardrails"><div class="card-head"><div><h2>How the agents are kept in bounds</h2><p>Validated systems stay the system of record</p></div></div><ul class="guardrail-list">'+
+  return '<ul class="guardrail-list">'+
     '<li>'+icon("review")+'<span><strong>Read-only access.</strong> The agents read IRT, ERP, the depot and the eTMF through MCP servers that expose no write tools.</span></li>'+
     '<li>'+icon("file")+'<span><strong>Drafts, never changes.</strong> Their only output is drafts. A named person approves each one in its own validated system, with an electronic signature.</span></li>'+
-    '<li>'+icon("alert")+'<span><strong>Rules decide, not the AI.</strong> RegChain re-checks every option with fixed rules, and again when someone approves it. Kits and relabelling slots are never promised twice.</span></li>'+
-    '<li>'+icon("clock")+'<span><strong>Every step is logged:</strong> the plan, each tool call with its inputs and answers, the models, and who approved or withdrew what.</span></li></ul>'+
-    (systems?'<div class="card-foot"><small>Connected over MCP</small><ul class="system-list">'+systems+'</ul></div>':agentServer()&&!status?'<div class="card-foot"><small>Connecting to the systems over MCP…</small></div>':"")+'</section>';
+    '<li>'+icon("alert")+'<span><strong>Rules decide, not the AI.</strong> RegChain checks every option with fixed rules, and again when someone approves it. Kits and relabelling slots are never promised twice.</span></li>'+
+    '<li>'+icon("clock")+'<span><strong>Every step is logged:</strong> the plan, each system call with its inputs and answers, the models, and who approved or withdrew what.</span></li></ul>'+
+    (systems?'<div class="card-foot"><small>Connected over MCP</small><ul class="system-list">'+systems+'</ul></div>':agentServer()&&!status?'<div class="card-foot"><small>Connecting to the systems over MCP…</small></div>':"");
+}
+// One line that says how the agents are controlled; the details open on request.
+function controlsPanel(id,status) {
+  return '<details id="'+id+'" class="card fold"'+(openPanels.has(id)?" open":"")+'><summary><span class="fold-title">'+icon("review")+'<strong>How the agents are controlled</strong></span>'+
+    '<span class="control-pills"><span>Read-only</span><span>Drafts only</span><span>Rules decide</span><span>Clinical Supply approves</span><span>Every step logged</span></span></summary>'+guardrails(status)+'</details>';
 }
 function agentSetupNote(status) {
   const live=agentServer()&&status?.keySet&&status?.sdk;
-  return (!agentServer()?'<div class="inline-note">'+icon("info")+'<span>The agents need the local server: open RegChain with Start-RegChain.cmd.</span></div>':
-    !live?'<details class="setup-note"><summary>The AI agents are not set up on this computer</summary><p>Add ANTHROPIC_API_KEY to the .env file next to serve-regchain.cjs and restart RegChain. The scripted walkthrough runs the same steps without AI.</p></details>':"");
+  return !agentServer()?'<div class="inline-note">'+icon("info")+'<span>The agents need the local server: open RegChain with Start-RegChain.cmd.</span></div>':
+    !live?'<p class="setup-line">'+icon("info")+'The AI agents are not set up on this computer: add ANTHROPIC_API_KEY to the .env file next to serve-regchain.cjs and restart RegChain. The scripted walkthrough runs the same steps without AI.</p>':"";
 }
 const approverNote = () => canApprovePlans()?"":'<p class="form-feedback">Clinical Supply approves supply plans. Choose '+esc(roleName("viewer",workflow))+' under Acting as.</p>';
-function agentResolution(record) {
-  const resolution=record.resolution;
-  if(!resolution) return "";
-  const approval=agentApprovals[record.shipment];
-  const thisRun=approval&&approval.runAt===record.at;
-  const verification=Object.fromEntries((record.verification??[]).map(item=>[item.id,item]));
-  const anyPasses=resolution.options.some(option=>verification[option.id]?.passes);
-  const recommendedFails=resolution.recommended!=="escalate"&&verification[resolution.recommended]&&!verification[resolution.recommended].passes;
-  const escalate=!anyPasses;
-  const options=resolution.options.map(option=>{
-    const check=verification[option.id];
-    const recommended=option.id===resolution.recommended;
-    const approved=thisRun&&approval.option===option.id;
-    return '<article class="option-card'+(recommended?" recommended":"")+'"><div class="block-head"><h3>'+esc(option.title)+'</h3><div class="badge-stack">'+(recommended?badge("Recommended","blue"):"")+
-      (check?badge(check.passes?"Passes the rules · "+(afterNames[check.after]??check.after):"Does not pass"+(check.feasible?" · "+(afterNames[check.after]??check.after):" · not feasible"),check.passes?"green":"red"):"")+(approved?badge("Approved","purple"):"")+'</div></div>'+
-      '<ul class="action-list">'+option.actions.map(action=>'<li>'+esc(describeAction(action))+'</li>').join("")+'</ul>'+
-      '<p>'+esc(option.why)+(option.risks?' <span class="muted">Risk: '+esc(option.risks)+'</span>':'')+'</p>'+
-      (check?.notes?.length?'<small class="muted">'+esc(check.notes.join(" "))+'</small>':"")+
-      (check?.passes&&!approval?'<div class="actions"><button type="button" class="btn '+(recommended?"primary":"")+'" data-act="agent-approve" data-value="'+esc(option.id)+'"'+(canApprovePlans()?"":" disabled")+'>'+icon("arrow")+'Approve this plan</button></div>':"")+'</article>';
-  }).join("");
-  const nextStep=draft=>draft.withdrawn?"Withdrawn: "+draft.withdrawn:thisRun&&(draft.option_id??resolution.recommended)===approval.option?
-    (approval.option==="escalate"?"Escalation acknowledged in RegChain on ":"Plan approved in RegChain on ")+scheduleDate(approval.at)+". Next: "+(approval.option==="escalate"?"Quality picks it up in ":"approve this draft in ")+draft.target_system+".":draft.status;
-  const drafts=(record.drafts??[]).map(draft=>'<li'+(draft.withdrawn?' class="withdrawn"':'')+'><strong>'+esc(draft.draft_id)+'</strong> · '+esc(draft.title)+'<small>'+esc(nextStep(draft))+'</small><small class="muted">'+esc(draft.body)+'</small></li>').join("");
-  const approvalNote=approval?'<div class="inline-note">'+icon("info")+'<span>'+esc((approval.option==="escalate"?"Escalation acknowledged":"Plan approved: "+approval.title+",")+" by "+approval.by+" on "+scheduleDate(approval.at)+"."+
-    (thisRun?" Nothing has changed in the validated systems; each draft below still needs approval there.":" It came from an earlier run, on "+scheduleDate(Date.parse(approval.runAt))+". Withdraw it to approve a plan from this run."))+'</span>'+
-    trigger("Withdraw the approval","agent-withdraw",record.shipment,"quiet")+'</div>':"";
-  return panel("Resolution",record.mode==="live"?"Proposed by the agents":"Scripted walkthrough",casePad(
-    '<p class="impact-headline">'+esc(resolution.summary)+'</p>'+factlist([["Root cause",resolution.root_cause],...(resolution.allocation?[["Re-planned",resolution.allocation]]:[]),...(escalate?[["Escalation",resolution.escalation||"No option passes the rules."]]:[])])+
-    (recommendedFails?'<p class="form-feedback" role="alert">The agents recommended "'+esc(resolution.options.find(option=>option.id===resolution.recommended)?.title??resolution.recommended)+'", but it does not pass RegChain\'s rules. Its drafts are withdrawn. Approve a passing option'+(escalate?"":" below")+' or escalate.</p>':"")+
-    (escalate&&!approval?'<div class="actions"><button type="button" class="btn primary" data-act="agent-approve" data-value="escalate"'+(canApprovePlans()?"":" disabled")+'>'+icon("arrow")+'Acknowledge the escalation</button></div>':"")+
-    approvalNote+(approval?"":approverNote())+
-    '<h3>Options</h3><div class="option-grid">'+options+'</div>'+
-    '<h3>Drafts for people to approve</h3>'+(drafts?'<ul class="case-list">'+drafts+'</ul>':'<p>No drafts.</p>')),approval?"":caseRoleSelect())+
-    '<div class="actions space">'+trigger("Export the run (audit JSON)","agent-export","","","file")+'</div>';
+function runButtons(scope,primaryLabel) {
+  const status=agentState.status;
+  const live=agentServer()&&status?.keySet&&status?.sdk;
+  const busy=agentState.running||portfolioState.running;
+  const act=scope==="all"?"portfolio-run":"agent-run";
+  return '<div class="actions">'+
+    '<button type="button" class="btn '+(live?"primary":"")+'" data-act="'+act+'" data-value="live"'+(live&&!busy?"":" disabled")+'>'+icon("retry")+esc(primaryLabel)+'</button>'+
+    '<button type="button" class="btn '+(live?"":"primary")+'" data-act="'+act+'" data-value="scripted"'+(agentServer()&&!busy?"":" disabled")+'>Scripted walkthrough (no AI)</button></div>';
 }
+function journeySteps(steps) {
+  return '<ol class="journey" aria-label="Where this shipment stands">'+steps.map((step,index)=>'<li class="journey-step '+step.state+'"'+(step.state==="active"?' aria-current="step"':'')+'><span class="journey-num">'+(step.state==="done"?"✓":index+1)+'</span><span><strong>'+esc(step.label)+'</strong><small>'+esc(step.sub)+'</small></span></li>').join("")+'</ol>';
+}
+const optionReason = check => !check?"":check.passes?"":humanDates(check.notes.find(note=>note.startsWith("Not feasible"))?.replace("Not feasible: ","")??
+  ("The shipment would still be blocked"+(check.checks?.find(item=>blocking.includes(item.result))?": "+check.checks.find(item=>blocking.includes(item.result)).detail:".")));
+// The plan for one shipment, read top to bottom: where it stands, why it is blocked, what to approve, what happens next.
 function agentView() {
   const status=agentState.status;
-  if(agentState.running&&agentState.shipment!==agentShipment) {
-    return heading("Agents · "+esc(agentShipment??""),"The agents are working on another shipment.")+
-      '<div class="inline-note">'+icon("info")+'<span>'+esc("The agents are working on "+agentState.shipment+". This shipment's last run shows when they finish.")+'</span>'+trigger("Watch "+agentState.shipment,"open-agents",agentState.shipment,"quiet","arrow")+'</div>';
-  }
-  const record=agentState.record;
   const shipment=plannedShipments().find(item=>item.id===agentShipment);
-  const live=agentServer()&&status?.keySet&&status?.sdk;
-  const busy=agentState.running||portfolioState.running;
-  const actions='<div class="actions">'+
-    '<button type="button" class="btn primary" data-act="agent-run" data-value="live"'+(live&&!busy?"":" disabled")+'>'+icon("retry")+(agentState.running&&agentState.mode==="live"?"Agents working…":"Run the AI agents")+'</button>'+
-    '<button type="button" class="btn" data-act="agent-run" data-value="scripted"'+(agentServer()&&!busy?"":" disabled")+'>'+(agentState.running&&agentState.mode==="scripted"?"Running…":"Scripted walkthrough (no AI)")+'</button></div>';
-  const runFacts=record?factlist([["Run",(record.mode==="live"?"AI agents · "+record.models.orchestrator+" orchestrator, "+record.models.specialists+" specialists":"Scripted walkthrough · no AI call")+" · "+scheduleDate(Date.parse(record.at))],
-    ["Steps",plural(record.events.length,"step")+" · "+plural(record.events.filter(event=>event.type==="tool_call").length,"MCP call")+" · "+plural(record.drafts.filter(draft=>!draft.withdrawn).length,"draft")],
-    ...(record.mode==="live"?[["Tokens",record.usage.input_tokens+" in · "+record.usage.output_tokens+" out"]]:[])]):"";
-  return heading("Agents · "+esc(agentShipment??""),esc(shipment?specCountryName(shipment.countryId)+" · "+shipment.site+" · dispatch "+displayDay(shipment.dispatch)+" · "+resultStyle[shipment.result][0]:"Choose a shipment on the Shipment checks page."),actions)+
-    agentSetupNote(status)+
+  const back='<div class="actions">'+trigger("All agent plans","open-portfolio","","quiet","arrow")+'</div>';
+  if(!shipment) return heading("Agent plan","Choose a shipment on Agent plans or Shipment checks.",back);
+  const title=shipment.id+" · "+shipment.site+", "+specCountryName(shipment.countryId);
+  const sub="Prepare by "+displayDay(shipment.prepareBy)+" ("+dayDistance(shipment.prepareBy)+") · dispatch "+weekdayName(shipment.dispatch)+" "+displayDay(shipment.dispatch)+
+    (shipment.patients?" · "+shipment.patients+" patients on treatment":"")+" · "+shipment.trial;
+  if(agentState.running&&agentState.shipment!==agentShipment) {
+    return heading(esc(title),esc(sub),back)+'<div class="inline-note">'+icon("info")+'<span>'+esc("The agents are working on "+agentState.shipment+". This shipment's plan shows when they finish.")+'</span>'+trigger("Watch "+agentState.shipment,"open-agents",agentState.shipment,"quiet","arrow")+'</div>';
+  }
+  const record=agentState.running?null:agentState.record;
+  const approval=agentApprovals[shipment.id];
+  const thisRun=Boolean(record&&approval&&approval.runAt===record.at);
+  const issues=shipment.checks.filter(item=>blocking.includes(item.result)||item.result==="Confirm");
+  const verification=Object.fromEntries((record?.verification??[]).map(item=>[item.id,item]));
+  const options=record?.resolution?.options??[];
+  const passing=options.filter(option=>verification[option.id]?.passes);
+  const recommendedId=record?.resolution?.recommended;
+  const chosenId=thisRun?approval.option:(verification[recommendedId]?.passes?recommendedId:passing[0]?.id??"escalate");
+  const chosen=options.find(option=>option.id===chosenId);
+  const activeDrafts=(record?.drafts??[]).filter(draft=>!draft.withdrawn&&(draft.option_id??recommendedId)===chosenId);
+  const steps=journeySteps([
+    {label:"Checked",sub:resultStyle[shipment.result][0]+" · "+plural(issues.length,"issue"),state:"done"},
+    {label:"Agents planned",sub:agentState.running?"Working… "+agentState.events.length+" steps":record?(chosenId==="escalate"?"Escalation recommended":plural(passing.length,"option")+" pass"):"Not run yet",state:record?"done":"active"},
+    {label:"Approved in RegChain",sub:approval?(approval.option==="escalate"?"Escalation acknowledged":"By "+approval.by.split(" · ")[0]):"By Clinical Supply",state:approval?"done":record?"active":"todo"},
+    {label:"Approved in each system",sub:(()=>{const targets=[...new Set(activeDrafts.map(draft=>draft.target_system==="Depot"?"the depot":draft.target_system))];const list=targets.length>1?targets.slice(0,-1).join(", ")+" and "+targets.at(-1):targets[0]??"each system";return approval&&thisRun?plural(activeDrafts.length,"draft")+" waiting in "+list:"Drafts go to "+list;})(),state:approval&&thisRun?"active":"todo"}
+  ]);
+  const problem='<section class="card"><div class="card-head"><div><h2>'+esc(shipment.result==="Blocked"?"Why it is blocked":"What needs confirming")+'</h2><p>Against the '+esc(specCountryName(shipment.countryId))+' Country Specification</p></div>'+trigger("All checks","shipment",shipment.id,"quiet")+'</div>'+
+    '<ul class="issue-list">'+issues.map(item=>'<li>'+badge(...checkStyle[item.result])+'<span><strong>'+esc(specSectionNames[item.section])+'</strong> '+esc(item.detail)+(item.pending?' <small class="pending-basis">'+esc(item.basis)+'</small>':'')+'</span></li>').join("")+'</ul></section>';
+  let main="";
+  if(agentState.running) {
+    main='<section class="card plan-hero working"><div class="plan-eyebrow">The agents are working</div><h2>Reading the systems and building options…</h2><p class="muted">Follow each step below. The plan appears here when RegChain has checked it.</p></section>';
+  } else if(!record) {
+    main='<section class="card plan-hero empty"><div class="plan-eyebrow">No plan yet</div><h2>Let the agents plan this shipment</h2><p>They read IRT, ERP, the depot and the eTMF, propose two or three options, check each one against the rules and draft the changes. Nothing changes until you approve.</p>'+
+      runButtons("one","Run the AI agents")+agentSetupNote(status)+'</section>';
+  } else if(chosenId==="escalate") {
+    main='<section class="card plan-hero escalate"><div class="plan-eyebrow">'+(thisRun?"Escalation acknowledged":"Escalation needed")+'</div><h2>No option passes the rules</h2>'+
+      '<p>'+esc(record.resolution.escalation||"Regulatory Affairs and Clinical Supply decide whether to delay, split or cancel the shipment.")+'</p>'+
+      (options.length?'<ul class="why-not">'+options.map(option=>'<li><strong>'+escd(option.title)+'</strong> '+esc(optionReason(verification[option.id]))+'</li>').join("")+'</ul>':"")+
+      planDecision(record,"escalate",thisRun,approval)+'</section>';
+  } else {
+    const check=verification[chosenId];
+    const evidence=(check?.notes??[]).filter(note=>!note.startsWith("Not feasible"));
+    const remaining=(check?.checks??[]).filter(item=>item.result==="Confirm");
+    const recommendationFailed=!thisRun&&recommendedId!==chosenId&&recommendedId!=="escalate";
+    main='<section class="card plan-hero'+(thisRun?" approved":"")+'"><div class="plan-eyebrow">'+(thisRun?"Approved plan":recommendationFailed?"First option that passes":"Recommended plan")+'</div>'+
+      '<div class="block-head"><h2>'+escd(chosen.title)+'</h2>'+badge("Passes the rules · "+(afterNames[check?.after]??check?.after),"green")+'</div>'+
+      (recommendationFailed?'<p class="form-feedback">'+escd("The agents recommended \""+(options.find(option=>option.id===recommendedId)?.title??recommendedId)+"\", but RegChain's rules reject it: "+optionReason(verification[recommendedId]))+'</p>':"")+
+      (record.resolution.allocation&&chosenId===recommendedId?'<p class="replanned-note">'+esc(record.resolution.allocationShort||record.resolution.allocation)+'</p>':"")+
+      '<div class="plan-columns"><div><h3>What changes</h3><ul class="change-list">'+chosen.actions.map(action=>'<li>'+esc(actionSentence(action,shipment))+'</li>').join("")+'</ul></div>'+
+      '<div><h3>Why this plan</h3><p>'+escd(chosen.why)+'</p>'+(chosen.risks?'<p class="muted"><strong>Risk:</strong> '+escd(chosen.risks)+'</p>':"")+'</div></div>'+
+      (evidence.length?'<div class="evidence"><h3>What RegChain checked</h3><ul>'+evidence.map(note=>'<li>'+escd(note)+'</li>').join("")+'</ul></div>':"")+
+      (remaining.length?'<div class="evidence"><h3>Still to confirm before dispatch</h3><ul>'+remaining.map(item=>'<li>'+escd(item.detail)+'</li>').join("")+'</ul></div>':"")+
+      planDecision(record,chosenId,thisRun,approval)+'</section>';
+  }
+  const next=record&&chosenId!==undefined?draftsCard(record,chosenId,thisRun,approval):"";
+  const others=record?otherOptionsCard(record,chosenId,verification,approval,shipment):"";
+  const events=agentState.running?agentState.events:(record?.events??[]);
+  const trail=(agentState.running||record)?'<details id="agent-trail" class="card fold"'+(openPanels.has("agent-trail")||agentState.running?" open":"")+'><summary><span class="fold-title">'+icon("changes")+'<strong>How the agents worked it out</strong></span><small id="agent-trail-count" class="muted">'+
+      esc(agentState.running?events.length+" steps so far":plural(events.length,"step")+" · "+plural(events.filter(event=>event.type==="tool_call").length,"system call"))+'</small></summary>'+
+      trailFilters(events)+'<ol id="agent-timeline" class="agent-timeline">'+trailList(events)+'</ol></details>':"";
+  const runLine=record?'<section class="run-line"><span>'+esc((record.mode==="live"?"AI agents ("+record.models.orchestrator+", "+record.models.specialists+")":"Scripted walkthrough, no AI")+" · run on "+scheduleDate(Date.parse(record.at))+
+      (record.mode==="live"?" · "+record.usage.input_tokens+" tokens in, "+record.usage.output_tokens+" out":""))+'</span>'+trigger("Export the audit record","agent-export","","quiet","file")+
+      '<details id="agent-rerun" class="rerun"'+(openPanels.has("agent-rerun")?" open":"")+'><summary>Run the agents again</summary>'+runButtons("one","Run the AI agents")+agentSetupNote(status)+'<small class="muted">A new run never inherits an earlier approval.</small></details></section>':"";
+  return heading(esc(title),esc(sub),back)+steps+
     (agentState.error?'<p class="form-feedback" role="alert">'+esc(agentState.error)+'</p>':"")+
-    guardrails(status)+
-    '<div class="case-layout space"><section class="card"><div class="card-head"><div><h2>What the agents are doing</h2><p>'+esc(agentState.running?"Live":record?"Last run":"No run yet")+'</p></div></div>'+
-      '<ol id="agent-timeline" class="agent-timeline">'+(agentState.events.map(agentEvent).join("")||'<li class="nothing">Start a run to watch the orchestrator plan, delegate and check each option.</li>')+'</ol></section>'+
-      '<div class="case-stack">'+agentRoster(agentState)+(runFacts?panel("This run","",casePad(runFacts)):"")+'</div></div>'+
-    (record?'<div class="space">'+agentResolution(record)+'</div>':"")+
-    '<p class="reset-link">'+trigger("All shipments that need action","open-portfolio","","quiet","arrow")+'</p>';
+    '<div class="plan-layout">'+problem+main+'</div>'+next+others+trail+controlsPanel("agent-controls",status)+runLine;
 }
-// Every shipment that needs action, in one orchestrated run.
-function portfolioView() {
+// The approve or acknowledge step, or the approval already recorded.
+function planDecision(record,optionId,thisRun,approval) {
+  if(approval) return '<div class="decision done">'+icon("review")+'<span>'+esc((approval.option==="escalate"?"Escalation acknowledged":"Approved")+" by "+approval.by+" on "+scheduleDate(approval.at)+"."+
+    (thisRun?" Nothing has changed in the validated systems yet: each draft below goes to its own system for approval.":" This approval came from an earlier run, on "+scheduleDate(Date.parse(approval.runAt))+". Withdraw it to approve a plan from this run."))+'</span>'+
+    trigger("Withdraw the approval","agent-withdraw",record.shipment,"quiet")+'</div>';
+  return '<div class="decision">'+caseRoleSelect()+'<button type="button" class="btn primary" data-act="agent-approve" data-value="'+esc(optionId)+'"'+(canApprovePlans()?"":" disabled")+'>'+icon("arrow")+
+    (optionId==="escalate"?"Acknowledge the escalation":"Approve this plan")+'</button>'+approverNote()+'</div>';
+}
+function draftsCard(record,chosenId,thisRun,approval) {
+  const active=record.drafts.filter(draft=>!draft.withdrawn&&(draft.option_id??record.resolution.recommended)===chosenId);
+  const withdrawn=record.drafts.filter(draft=>draft.withdrawn);
+  const approved=Boolean(approval&&thisRun);
+  const item=draft=>'<li><span class="system-chip">'+esc(draft.target_system)+'</span><span><strong>'+esc(draft.kind)+'</strong> · '+esc(draft.draft_id)+
+    '<small>'+esc(draft.withdrawn?"Withdrawn: "+draft.withdrawn:approved?"Waiting for approval in "+draft.target_system+".":"Goes to "+draft.target_system+" for approval once the plan is approved.")+'</small>'+
+    '<details class="draft-text"><summary>Draft text</summary><p>'+escd(draft.body)+'</p></details></span></li>';
+  return '<section class="card space"><div class="card-head"><div><h2>'+(approved?"What happens next":"What approval sends")+'</h2><p>'+esc(active.length?plural(active.length,"draft")+" for people to approve in their own systems":"No drafts")+'</p></div></div>'+
+    (active.length?'<ul class="draft-list">'+active.map(item).join("")+'</ul>':"")+
+    (withdrawn.length?'<details class="withdrawn-drafts"><summary>'+esc(plural(withdrawn.length,"withdrawn draft"))+'</summary><ul class="draft-list withdrawn">'+withdrawn.map(item).join("")+'</ul></details>':"")+'</section>';
+}
+function otherOptionsCard(record,chosenId,verification,approval,shipment) {
+  const others=(record.resolution.options??[]).filter(option=>option.id!==chosenId);
+  if(!others.length) return "";
+  return '<section class="card space"><div class="card-head"><div><h2>Other options the agents considered</h2><p>Each one checked by RegChain\'s rules</p></div></div><ul class="option-rows">'+
+    others.map(option=>{
+      const check=verification[option.id];
+      return '<li><div><strong>'+escd(option.title)+'</strong><small>'+escd(check?.passes?"Also passes, then "+(afterNames[check.after]??check.after)+". "+option.why:optionReason(check))+'</small></div>'+
+        '<div class="option-side">'+badge(check?.passes?"Passes":"Does not pass",check?.passes?"green":"red")+
+        (check?.passes&&!approval?'<button type="button" class="btn small" data-act="agent-approve" data-value="'+esc(option.id)+'"'+(canApprovePlans()?"":" disabled")+'>Approve instead</button>':"")+'</div></li>';
+    }).join("")+'</ul></section>';
+}
+
+// Every shipment that needs action: the work queue for Clinical Supply.
+const plansStatusGroups = {
+  action:{label:"To approve",match:status=>["plan","review","escalate"].includes(status)},
+  none:{label:"No plan yet",match:status=>status==="none"},
+  approved:{label:"Approved",match:status=>["approved","acknowledged"].includes(status)},
+  escalate:{label:"Escalations",match:status=>["escalate","acknowledged"].includes(status)},
+  replanned:{label:"Re-planned",match:(status,plan)=>Boolean(plan?.allocation)},
+  all:{label:"All",match:()=>true}
+};
+function planRows() {
+  return plannedShipments().filter(needsAction).sort((a,b)=>a.prepareBy.localeCompare(b.prepareBy)||(b.patients??0)-(a.patients??0));
+}
+function windowMatch(shipment) {
+  const days=daysFrom(shipment.prepareBy);
+  return plansWindow==="all"||(plansWindow==="7"&&days<=7)||(plansWindow==="30"&&days<=30)||(plansWindow==="later"&&days>30);
+}
+function shownPlans() {
+  const group=plansStatusGroups[plansFilter];
+  return planRows().filter(item=>group.match(planStatus(item.id),agentPlans[item.id])&&(plansCountry==="all"||item.countryId===plansCountry)&&windowMatch(item)&&matchesSearch(item,plansSearch));
+}
+function planRow(shipment,index) {
+  const status=planStatus(shipment.id);
+  const plan=agentPlans[shipment.id];
+  const approval=agentApprovals[shipment.id];
+  const action=status==="plan"?'<button type="button" class="btn small primary" data-act="portfolio-approve" data-value="'+esc(shipment.id)+'"'+(canApprovePlans()?"":" disabled")+'>Approve</button>':
+    status==="escalate"?'<button type="button" class="btn small" data-act="portfolio-approve" data-value="'+esc(shipment.id)+'"'+(canApprovePlans()?"":" disabled")+'>Acknowledge</button>':
+    status==="review"?trigger("Review","open-agents",shipment.id,"small"):
+    status==="none"?trigger("Plan","open-agents",shipment.id,"small"):
+    status==="running"?'<span class="muted small-text">Working…</span>':'<small class="muted">'+esc(approval?.by.split(" · ")[0]??"")+'</small>';
+  return '<tr><td class="nowrap muted">'+(index+1)+'</td>'+
+    '<td><button type="button" class="entity-button" data-act="open-agents" data-value="'+esc(shipment.id)+'"><span>'+esc(shipment.id)+'<small class="sub">'+esc(shipment.site+", "+specCountryName(shipment.countryId))+'</small></span></button></td>'+
+    '<td class="nowrap">'+esc(displayDay(shipment.prepareBy))+'<span class="sub">'+dayDistance(shipment.prepareBy)+'</span></td>'+
+    '<td class="hide-narrow"><span class="clamp">'+esc(attention(shipment))+'</span></td>'+
+    '<td>'+planBadge(shipment.id)+(plan&&status!=="none"?'<span class="plan-title">'+escd(approval?(approval.option==="escalate"?"Escalation":approval.title):plan.status==="escalate"?"No option passes the rules":plan.title)+'</span>':"")+
+      (plan?.allocation?'<small class="sub replanned">'+esc(plan.allocation)+'</small>':"")+'</td>'+
+    '<td class="nowrap">'+action+'</td></tr>';
+}
+function plansTable() {
+  const shown=shownPlans();
+  const total=planRows().length;
+  return '<p class="result-count">'+esc(shown.length===total?"Showing all "+total+" shipments that need action":"Showing "+shown.length+" of "+total+" shipments that need action")+'</p>'+
+    (shown.length?'<div class="table-wrap" tabindex="0"><table><caption class="sr">Agent plans for every shipment that needs action, most urgent first</caption><thead><tr><th>#</th><th>Shipment</th><th>Prepare by</th><th class="hide-narrow">Problem</th><th>Agent plan</th><th>Next step</th></tr></thead><tbody>'+
+      shown.map(planRow).join("")+'</tbody></table></div>':'<p class="nothing">No shipments match these filters. '+trigger("Show all","plans-status","all","quiet")+'</p>');
+}
+function plansView() {
   const status=agentState.status;
-  const record=portfolioState.record;
-  const live=agentServer()&&status?.keySet&&status?.sdk;
-  const busy=agentState.running||portfolioState.running;
-  const actions='<div class="actions">'+
-    '<button type="button" class="btn primary" data-act="portfolio-run" data-value="live"'+(live&&!busy?"":" disabled")+'>'+icon("retry")+(portfolioState.running&&portfolioState.mode==="live"?"Agents working…":"Run the AI agents on all")+'</button>'+
-    '<button type="button" class="btn" data-act="portfolio-run" data-value="scripted"'+(agentServer()&&!busy?"":" disabled")+'>'+(portfolioState.running&&portfolioState.mode==="scripted"?"Running…":"Scripted walkthrough (no AI)")+'</button></div>';
-  const summary=record?.summary;
-  const tiles=summary?'<div class="tiles" aria-label="Portfolio run summary">'+
-    tile("Shipments handled",summary.shipments,esc("Blocked or to confirm, most urgent first"),"studies")+
-    tile("Plans that pass",summary.plans,esc(plural(summary.drafts,"draft")+" waiting for people"),"overview")+
-    tile("Re-planned",summary.reallocated,"So no kits or slot is promised twice","retry")+
-    tile("Escalated",summary.escalated,"No option passes the rules","alert")+'</div>':"";
-  const rows=(record?.board??[]).map((row,index)=>{
-    const approval=agentApprovals[row.shipment];
-    const approvedHere=approval&&approval.runAt===row.runAt;
-    const action=approval?(approvedHere?badge(approval.option==="escalate"?"Escalation acknowledged":"Approved","purple")+'<small class="sub">'+esc(approval.by)+'</small>':badge("Earlier plan approved","purple")):
-      row.status==="error"?badge("No result","red"):
-      '<button type="button" class="btn small" data-act="portfolio-approve" data-value="'+esc(row.shipment)+'"'+(canApprovePlans()?"":" disabled")+'>'+(row.status==="escalate"?"Acknowledge":"Approve")+'</button>';
-    return '<tr><td class="nowrap">'+(index+1)+'</td><td><button type="button" class="entity-button" data-act="open-agents" data-value="'+esc(row.shipment)+'"><span>'+esc(row.shipment)+'<small class="sub">'+esc(specCountryName(row.country)+" · "+row.site)+'</small></span></button></td>'+
-      '<td class="nowrap">'+esc(displayDay(row.prepareBy))+'</td><td>'+badge(...resultStyle[row.before])+'</td>'+
-      '<td>'+esc(row.title)+(row.changed?'<small class="sub replanned">'+esc(row.note)+'</small>':"")+'</td>'+
-      '<td>'+(row.status==="plan"?badge("Passes · "+(afterNames[row.after]??row.after),"green"):row.status==="escalate"?badge("Escalate","red"):badge("Error","red"))+'</td>'+
-      '<td>'+action+'</td></tr>';
+  const rows=planRows();
+  const countryOptions=[["all","All countries"],...[...new Set(rows.map(item=>item.countryId))].map(id=>[id,specCountryName(id)])];
+  const chips=Object.entries(plansStatusGroups).map(([id,group])=>{
+    const count=rows.filter(item=>group.match(planStatus(item.id),agentPlans[item.id])).length;
+    return '<button type="button" class="filter-chip" data-act="plans-status" data-value="'+id+'" aria-pressed="'+(plansFilter===id)+'">'+esc(group.label)+' <span class="chip-count">'+count+'</span></button>';
   }).join("");
-  const facts=record?factlist([["Run",(record.mode==="live"?"AI agents · "+record.models.orchestrator+" orchestrator, "+record.models.specialists+" specialists":"Scripted walkthrough · no AI call")+" · "+scheduleDate(Date.parse(record.at))],
-    ["Steps",plural(summary?.calls??0,"MCP call")+" across "+plural(summary?.shipments??0,"shipment")],
-    ...(record.mode==="live"?[["Tokens",record.usage.input_tokens+" in · "+record.usage.output_tokens+" out"]]:[])]):"";
-  return heading("Agents · every shipment that needs action","The orchestrator runs the agent team on each blocked or to-confirm shipment, most urgent first. RegChain then checks the plans together, so no kits or relabelling slot is promised twice.",actions)+
+  const record=portfolioState.record;
+  const lastRun=record&&!portfolioState.running?'<section class="run-line"><span>'+esc("Planned together on "+scheduleDate(Date.parse(record.at))+" · "+(record.mode==="live"?"AI agents":"scripted walkthrough, no AI")+" · "+
+      plural(record.summary?.calls??0,"system call")+" · "+plural(record.summary?.reallocated??0,"plan")+" re-planned so nothing is promised twice")+'</span>'+trigger("Export the audit record","portfolio-export","","quiet","file")+'</section>':"";
+  return heading("Agent plans","Every shipment that needs action, most urgent first. The agents propose a plan, RegChain checks it, and Clinical Supply approves.",runButtons("all","Plan all with AI agents"))+
     agentSetupNote(status)+
     (portfolioState.error?'<p class="form-feedback" role="alert">'+esc(portfolioState.error)+'</p>':"")+
-    guardrails(status)+tiles+
-    (rows?'<section class="card space"><div class="card-head"><div><h2>Plans, most urgent first</h2><p>Approve each plan as Clinical Supply. Each draft still needs approval in its own system.</p></div>'+caseRoleSelect()+'</div>'+approverNote()+
-      '<div class="table-wrap" tabindex="0"><table><caption class="sr">Agent plans for every shipment that needs action</caption><thead><tr><th>#</th><th>Shipment</th><th>Prepare by</th><th>Before</th><th>Plan</th><th>RegChain</th><th>Approval</th></tr></thead><tbody>'+rows+'</tbody></table></div></section>':"")+
-    '<div class="case-layout space"><section class="card"><div class="card-head"><div><h2>What the agents are doing</h2><p id="portfolio-progress">'+esc(portfolioProgress())+'</p></div></div>'+
-      '<ol id="portfolio-feed" class="agent-timeline">'+portfolioFeed()+'</ol></section>'+
-      '<div class="case-stack">'+agentRoster(portfolioState)+(facts?panel("This run","",casePad(facts)):"")+'</div></div>'+
-    (record?'<div class="actions space">'+trigger("Export the run (audit JSON)","portfolio-export","","","file")+'</div>':"");
+    portfolioProgress()+
+    '<section class="card"><div class="card-head plans-head"><div class="chip-filters" role="group" aria-label="Show plans">'+chips+'</div>'+caseRoleSelect()+'</div>'+
+      '<div class="filters plans-filters"><label class="field search-field">Search<input id="plans-search" type="search" placeholder="Shipment, site, batch or trial" value="'+esc(plansSearch)+'"></label>'+
+      '<label class="field">Destination<select id="plans-country">'+options(countryOptions,plansCountry)+'</select></label>'+
+      '<label class="field">Prepare by<select id="plans-window">'+options([["all","Any time"],["7","Within 7 days"],["30","Within 30 days"],["later","Later than 30 days"]],plansWindow)+'</select></label></div>'+
+      approverNote()+'<div id="plans-results">'+plansTable()+'</div></section>'+
+    ((portfolioState.running||portfolioState.events.length)?'<details id="plans-activity" class="card fold space"'+(openPanels.has("plans-activity")||portfolioState.running?" open":"")+'><summary><span class="fold-title">'+icon("changes")+'<strong>What the agents did</strong></span><small class="muted">'+
+      esc(portfolioState.running?"Live":plural(portfolioState.events.length,"step"))+'</small></summary><ol id="portfolio-feed" class="agent-timeline">'+portfolioFeed()+'</ol></details>':"")+
+    controlsPanel("plans-controls",status)+lastRun;
 }
 async function approveAgentPlan(optionId,shipmentId=agentShipment,runAt=agentState.record?.at) {
   if(!canApprovePlans()) return;
@@ -1981,11 +2176,11 @@ async function approveAgentPlan(optionId,shipmentId=agentShipment,runAt=agentSta
     const reply=await agentPost("/api/agent/approve",{shipment:shipmentId,option:optionId,by:roleName(workflowRole,workflow),runAt});
     if(agentState.record?.shipment===shipmentId) agentState={...agentState,record:reply.run,error:""};
     portfolioState={...portfolioState,error:""};
-    await loadAgentApprovals();
+    await loadAgentData();
     render();
-    notify(optionId==="escalate"?"Escalation acknowledged.":"Plan approved. Each draft still needs approval in its own system.");
+    notify(optionId==="escalate"?"Escalation acknowledged for "+shipmentId+".":"Plan approved for "+shipmentId+". Each draft still needs approval in its own system.");
   } catch(error) {
-    if(page==="agents-all") portfolioState={...portfolioState,error:error.message}; else agentState={...agentState,error:error.message};
+    if(page==="plans") portfolioState={...portfolioState,error:error.message}; else agentState={...agentState,error:error.message};
     render();
     notify("The plan was not approved: "+error.message);
   }
@@ -1993,9 +2188,9 @@ async function approveAgentPlan(optionId,shipmentId=agentShipment,runAt=agentSta
 async function withdrawAgentPlan(shipmentId) {
   try {
     await agentPost("/api/agent/withdraw",{shipment:shipmentId,by:roleName(workflowRole,workflow)});
-    await loadAgentApprovals();
+    await loadAgentData();
     render();
-    notify("Approval withdrawn. The kits and slots it held are free again.");
+    notify("Approval withdrawn for "+shipmentId+". The kits and slots it held are free again.");
   } catch(error) {
     agentState={...agentState,error:error.message};
     render();
@@ -2019,12 +2214,24 @@ function exportAgentRun() {
 function exportPortfolioRun() {
   const record=portfolioState.record;
   if(!record) return;
-  downloadJson("RegChain-agent-portfolio-run.json",{...record,approvals:agentApprovals,approvalLog:agentApprovalLog});
+  downloadJson("RegChain-agent-plans.json",{...record,plans:agentPlans,approvals:agentApprovals,approvalLog:agentApprovalLog});
 }
-loadAgentApprovals();
+// Start again for a rehearsal: open the page with ?fresh (decisions) or ?fresh=all (decisions and plans).
+// Saved decisions on this computer are cleared; approvals and runs on the server are archived, never deleted.
+async function startFreshFromUrl() {
+  const fresh=new URLSearchParams(location.search).get("fresh");
+  if(fresh===null||!agentServer()) return false;
+  try {
+    for(const key of Object.keys(localStorage)) if(key.startsWith("regchain-")) localStorage.removeItem(key);
+  } catch {}
+  try {await agentPost("/api/agent/start-fresh",{plans:fresh==="all",by:"Start fresh link"});} catch {}
+  location.replace(location.pathname);
+  return true;
+}
+startFreshFromUrl().then(started=>{if(!started) loadAgentData();});
 const views = {
   agent:agentView,
-  "agents-all":portfolioView,
+  plans:plansView,
   shipments:shipmentChecks,
   overview,
   countries:countryLibrary,
@@ -2223,7 +2430,10 @@ const actions={
   "agent-run":startAgentRun,
   "portfolio-run":startPortfolioRun,
   "agent-approve":optionId=>approveAgentPlan(optionId),
-  "portfolio-approve":id=>{const row=portfolioState.record?.board.find(item=>item.shipment===id);if(row) approveAgentPlan(row.status==="escalate"?"escalate":row.recommended,id,row.runAt);},
+  "portfolio-approve":id=>{const plan=agentPlans[id];if(plan) approveAgentPlan(plan.status==="escalate"?"escalate":plan.recommended,id,plan.runAt);},
+  "trail-filter":id=>{trailAgent=id;openPanels.add("agent-trail");render();document.querySelector('[data-act="trail-filter"][data-value="'+id+'"]')?.focus();},
+  "plans-status":id=>{plansFilter=id;render();document.querySelector('[data-act="plans-status"][data-value="'+id+'"]')?.focus();},
+  "clear-shipment-filters":()=>{shipmentFilter="all";shipmentCountry="all";shipmentPlanFilter="all";shipmentSearch="";render();},
   "agent-withdraw":async id=>{await withdrawAgentPlan(id);if(byId("drawer").open) shipmentDetail(id);},
   "agent-export":exportAgentRun,
   "portfolio-export":exportPortfolioRun,
@@ -2232,11 +2442,16 @@ const actions={
   "study-detail":studyDetail,
   "study-view":tab=>{studyView=tab;updateStudies();byId("study-card").querySelector('[data-value="'+tab+'"]').focus();notify(tab==="registry"?"Showing public registry candidates.":"Showing the portfolio assessment.");}
 };
+document.addEventListener("toggle",event=>{
+  if(["agent-trail","agent-controls","agent-rerun","plans-activity","plans-controls"].includes(event.target.id)) {if(event.target.open) openPanels.add(event.target.id); else openPanels.delete(event.target.id);}
+},true);
 document.addEventListener("click",event=>{
   const target=event.target.closest("[data-act]");
   if(target && !target.disabled) actions[target.dataset.act](target.dataset.value);
 });
 document.addEventListener("input",event=>{
+  if(event.target.id==="shipment-search"){shipmentSearch=event.target.value;byId("shipment-results").innerHTML=shipmentTable();}
+  if(event.target.id==="plans-search"){plansSearch=event.target.value;byId("plans-results").innerHTML=plansTable();}
   if(event.target.id==="source-search"){
     sourceSearch=event.target.value;
     byId("source-results").innerHTML=sourceTable(sources.filter(tableMatches));
@@ -2247,6 +2462,9 @@ document.addEventListener("input",event=>{
   }
 });
 document.addEventListener("change",event=>{
+  if(event.target.id==="shipment-plan"){shipmentPlanFilter=event.target.value;byId("shipment-results").innerHTML=shipmentTable();return;}
+  if(event.target.id==="plans-country"||event.target.id==="plans-window"){if(event.target.id==="plans-country") plansCountry=event.target.value; else plansWindow=event.target.value;byId("plans-results").innerHTML=plansTable();return;}
+  if(event.target.id==="trail-raw"){trailRaw=event.target.checked;byId("agent-timeline").innerHTML=trailList(agentState.running?agentState.events:(agentState.record?.events??[]));return;}
   if(event.target.id==="workflow-role") {
     workflowRole=event.target.value;
     render();

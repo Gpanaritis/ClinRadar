@@ -317,13 +317,18 @@ async function handleApi(request, response, path) {
     }
     return;
   }
+  if (path === "/api/agent/plans" && request.method === "GET") {
+    const { planSummaries } = await loadModule("approvals.mjs");
+    sendJson(response, 200, await planSummaries(__dirname));
+    return;
+  }
   if (path === "/api/agent/approvals" && request.method === "GET") {
     const { readApprovals } = await loadModule("rules.mjs");
     const { approvalLog } = await loadModule("approvals.mjs");
     sendJson(response, 200, { approvals: await readApprovals(__dirname), log: await approvalLog(__dirname) });
     return;
   }
-  if ((path === "/api/agent/approve" || path === "/api/agent/withdraw") && request.method === "POST") {
+  if ((path === "/api/agent/approve" || path === "/api/agent/withdraw" || path === "/api/agent/start-fresh") && request.method === "POST") {
     if (request.headers.origin && !allowedOrigins.includes(request.headers.origin)) {
       sendJson(response, 403, { error: "Requests from other sites are refused." });
       return;
@@ -334,8 +339,8 @@ async function handleApi(request, response, path) {
     }
     try {
       const body = await readJson(request);
-      const { approvePlan, withdrawPlan } = await loadModule("approvals.mjs");
-      sendJson(response, 200, path === "/api/agent/approve" ? await approvePlan(__dirname, body) : await withdrawPlan(__dirname, body));
+      const { approvePlan, withdrawPlan, startFresh } = await loadModule("approvals.mjs");
+      sendJson(response, 200, path === "/api/agent/approve" ? await approvePlan(__dirname, body) : path === "/api/agent/withdraw" ? await withdrawPlan(__dirname, body) : await startFresh(__dirname, body));
     } catch (error) {
       sendJson(response, error.statusCode || 500, { error: error.message || "The approval could not be recorded." });
     }

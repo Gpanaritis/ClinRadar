@@ -32,7 +32,7 @@ To turn it on:
 
 ## Agents
 
-A blocked shipment's panel has **Resolve with agents**. It opens a page where an orchestrator (Claude Opus 5.5) and four specialist agents (Claude Sonnet 5.5) work through the problem:
+**Agent plans**, in the menu, lists every shipment that needs action, most urgent first. Each one opens a plan page where an orchestrator (Claude Opus 5.5) and four specialist agents (Claude Sonnet 5.5) work through the problem:
 
 - They read IRT, ERP, the depot and the eTMF through six MCP servers, which are read-only except for a draft inbox.
 - They propose two or three options and check each one against RegChain's rules.
@@ -40,10 +40,11 @@ A blocked shipment's panel has **Resolve with agents**. It opens a page where an
 
 Only options that pass the fixed rules can be approved, only by Clinical Supply, and the server checks each one again before recording it. Each draft still needs approval in its own validated system. Every step, approval and withdrawal is logged, and every version of every run is kept in `.regchain-cache/`.
 
-**Resolve all with agents**, on Shipment checks, runs the agents on every shipment that needs action, most urgent first. RegChain then checks the plans together so no kits or relabelling slot is promised twice: today SHP-06 moves to the 18 Nov slot because SHP-01 needs the 16 Nov one more urgently.
+**Plan all with AI agents**, on Agent plans, runs the agents on every shipment that needs action, most urgent first. RegChain then checks the plans together so no kits or relabelling slot is promised twice: today SHP-06 moves to the 18 Nov slot because SHP-01 needs the 16 Nov one more urgently.
 
-**Run the AI agents** needs the same `.env` key as the AI step. **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers without calling Claude. `npm run check:agent` tests the rules, the six MCP servers, scripted runs, the portfolio allocation, server-side approvals and the live loop with a stand-in for Claude, without calling the API. The systems behind the MCP servers are fictional data in `demo-data/supply-operations.json`. Design and compliance notes: [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
+**Run the AI agents** needs the same `.env` key as the AI step. **Scripted walkthrough (no AI)** runs the same steps through the same MCP servers without calling Claude. To rehearse from a clean start, open **http://127.0.0.1:4173/?fresh** (clears decisions, keeps plans) or **?fresh=all** (also clears plans). Nothing is deleted: approvals and runs are archived in `.regchain-cache/`. `npm run check:agent` tests the rules, the six MCP servers, scripted runs, the portfolio allocation, server-side approvals and the live loop with a stand-in for Claude, without calling the API. The systems behind the MCP servers are fictional data in `demo-data/supply-operations.json`. Design and compliance notes: [RegChain-AI-Agents.md](RegChain-AI-Agents.md).
 
+- [User journeys and demo scenarios: every path, who takes it, and the clicks for each demo](RegChain-AI-User-Journeys.md)
 - [Agents: how they resolve blocked shipments within validated systems](RegChain-AI-Agents.md)
 - [Product review, 15 Nov 2026: is the problem real, what was fixed, what is open](RegChain-AI-Product-Review.md)
 - [Project plan: what is done and what is next](RegChain-AI-Project-Plan.md)
