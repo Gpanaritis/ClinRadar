@@ -271,6 +271,10 @@ tr[data-act]{cursor:pointer}
 .map-mark:focus-visible .ring,.map-mark[aria-expanded="true"] .ring{opacity:1}
 .mk-site .halo,.mk-cluster .halo{fill:#2563eb;opacity:.16}.mk-site .dot{fill:#2f6bf0;stroke:#fff;stroke-width:1.6}
 .mk-cluster .dot{fill:#1d4ed8;stroke:#fff;stroke-width:2}.mk-cluster .count{fill:#fff;font:800 11px/1 Inter,"Segoe UI",sans-serif;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.mk-site.blocked .dot,.mk-cluster.blocked .dot{fill:#dc2626}.mk-site.blocked .halo,.mk-cluster.blocked .halo{fill:#dc2626}
+.mk-site.confirm .dot,.mk-cluster.confirm .dot{fill:#b45309}.mk-site.confirm .halo,.mk-cluster.confirm .halo{fill:#d97706}
+.mp-kind.blocked{color:#dc2626}.mp-kind.confirm{color:#b45309}
+.mk-site .status-glyph{fill:#fff;font:800 10px Inter,"Segoe UI",sans-serif;text-anchor:middle;dominant-baseline:central;pointer-events:none}
 .mk-facility .sq{fill:#132446;stroke:#fff;stroke-width:1.8}.mk-facility .pip{fill:#fff}
 .mk-facility.unwatched .sq{fill:#fff;stroke:#d97706;stroke-width:2;stroke-dasharray:3.2 2.2}.mk-facility.unwatched .pip{fill:#d97706}
 .mk-signal .dot{stroke:#fff;stroke-width:2.2}.mk-signal .glyph{stroke:#fff;stroke-width:2.1;stroke-linecap:round}
@@ -4263,11 +4267,13 @@ function mapSiteIndex(shipments) {
   }
   return cities;
 }
+const mapShipmentStatus = shipments => shipments.some(shipment=>shipment.result==="Blocked")?"blocked":shipments.some(shipment=>shipment.result==="Confirm")?"confirm":"";
+const mapStatusText = status => status==="blocked"?"Blocked shipment":status==="confirm"?"Confirm before dispatch":"No shipment needing action";
 function mapSiteItem(entry) {
-  const open=entry.shipments.flatMap(shipment=>mapOpenMatches(shipment.id));
-  return {type:"site",key:"site:"+entry.key,point:entry.point,r:mapSiteR(entry.patients),weight:entry.patients||1,cluster:true,label:entry.city,entry,open,
+  const open=entry.shipments.flatMap(shipment=>mapOpenMatches(shipment.id)),css=mapShipmentStatus(entry.shipments);
+  return {type:"site",css,key:"site:"+entry.key,point:entry.point,r:mapSiteR(entry.patients),weight:entry.patients||1,cluster:true,label:entry.city,entry,open,
     links:[...entry.shipments.map(shipment=>"trip:"+shipment.id),...new Set(open.map(match=>"signal:"+match.signal))],
-    aria:entry.city+": "+plural(entry.sites.length,"site")+", "+plural(entry.patients,"patient")+" on treatment, "+plural(entry.studies.size,"study","studies")};
+    aria:entry.city+": "+plural(entry.sites.length,"site")+", "+plural(entry.patients,"patient")+" on treatment, "+plural(entry.studies.size,"study","studies")+", "+mapStatusText(css)};
 }
 function mapFacilityItem(facility,shipments) {
   const point=facilityPoint(facility.id);
@@ -4287,11 +4293,11 @@ function mapSignalItem(signal) {
 function mapTripItem(frame,shipment,route) {
   const stops=routeStops(shipment,route);
   if(!stops) return null;
-  const matches=mapOpenMatches(shipment.id),tier=mapWorst(matches),site=geoCities[shipment.site];
+  const matches=mapOpenMatches(shipment.id),tier=shipment.result==="Blocked"?"confirmed":shipment.result==="Confirm"?"potential":null,site=geoCities[shipment.site];
   const d=stops.slice(1).map((stop,index)=>mapArcD(frame,stops[index].point,stop.point,stop.kind==="airport"&&stops[index].kind==="airport")).join("");
   return {type:"trip",key:"trip:"+shipment.id,shipment,route,matches,tier,d,end:stops.at(-1).point,
     links:["facility:"+route.facility,...(site?["site:"+mapPointKey(site)]:[]),...new Set(matches.map(match=>"signal:"+match.signal))],
-    aria:shipment.id+" to "+shipment.site+(tier?", "+tierStyle[tier][0].toLowerCase():"")};
+    aria:shipment.id+" to "+shipment.site+", "+(mapResult[shipment.result]?.[0]??shipment.result)};
 }
 function mapModel(key,frame,{items=[],trips=[],legs="",cluster=false,labelZoom=1,maxZ=8,label=""}) {
   const model={key,frame,items:items.map(item=>({...item,xy:frame.project(item.point)})),trips,legs,cluster,labelZoom,maxZ,label,marks:new Map(),tripMap:new Map(trips.map(trip=>[trip.key,trip]))};
@@ -4303,15 +4309,15 @@ function mapModel(key,frame,{items=[],trips=[],legs="",cluster=false,labelZoom=1
 }
 // ----- Drawing: markers are drawn in pixels (scaled by 1/s), so they keep their size at any zoom -----
 function mapClusterItem(group) {
-  const members=group.members;
-  return {type:"cluster",key:"cluster:"+members.map(member=>member.key.slice(5)).sort().join("|"),xy:group.xy,r:group.r,members,label:null,
+  const members=group.members,css=mapShipmentStatus(members.flatMap(member=>member.entry.shipments));
+  return {type:"cluster",css,key:"cluster:"+members.map(member=>member.key.slice(5)).sort().join("|"),xy:group.xy,r:group.r,members,label:null,
     links:[...new Set(members.flatMap(member=>[member.key,...member.links]))],
-    aria:plural(members.length,"site city","site cities")+" around "+members[0].label+": "+members.map(member=>member.label).join(", ")};
+    aria:plural(members.length,"site city","site cities")+" around "+members[0].label+": "+members.map(member=>member.label).join(", ")+", "+mapStatusText(css)};
 }
 function mapMarkHtml(item,inv,id,tabbable) {
   const [x,y]=(item.at??item.xy).map(value=>value.toFixed(3)),r=item.r;
   let pre="",shape="",outer=r;
-  if(item.type==="site") {shape='<circle class="halo" r="'+(r+3.5).toFixed(1)+'"/><circle class="dot" r="'+r.toFixed(1)+'"/>';outer=r+3.5;}
+  if(item.type==="site") {shape='<circle class="halo" r="'+(r+3.5).toFixed(1)+'"/><circle class="dot" r="'+r.toFixed(1)+'"/>'+(item.css?'<text class="status-glyph">'+(item.css==="blocked"?"!":"?")+'</text>':"");outer=r+3.5;}
   else if(item.type==="cluster") {shape='<circle class="halo" r="'+(r+5).toFixed(1)+'"/><circle class="dot" r="'+r.toFixed(1)+'"/><text class="count">'+item.members.length+'</text>';outer=r+5;}
   else if(item.type==="facility") {shape='<rect class="sq" x="-7" y="-7" width="14" height="14" rx="3.5"/><rect class="pip" x="-2.25" y="-2.25" width="4.5" height="4.5" rx="1.2"/>';outer=9;}
   else if(item.type==="signal") {pre=item.tier==="confirmed"?'<circle class="pulse" r="22"/><circle class="pulse late" r="22"/>':"";shape=(item.tier==="potential"?'<circle class="halo" r="13"/>':"")+'<circle class="dot" r="'+r+'"/><path class="glyph" d="M0-4.2V.6M0 3.5v.1"/>';outer=item.tier==="potential"?13:r;}
@@ -4422,14 +4428,14 @@ function mapPopHtml(item,id) {
   };
   if(item.type==="site") {
     const entry=item.entry;
-    return head("site","Site city")+title(entry.city,ssName(entry.country)+" · "+plural(entry.sites.length,"site"))+
+    return head(item.css||"site",item.css?mapStatusText(item.css):"Site city")+title(entry.city,ssName(entry.country)+" · "+plural(entry.sites.length,"site"))+
       stats([["Patients",entry.patients],["Studies",entry.studies.size],["Shipments",entry.shipments.length]])+riskNote(item.open)+
       rows(entry.shipments,3,shipment=>'<li><span class="mp-row"><b>'+esc(shipment.id)+'</b>'+esc(" · prepare by "+mapDay(shipment.prepareBy))+'</span>'+result(shipment)+'</li>'," in the full details")+
       actions(trigger("View full details","map-site",entry.key,"primary small","arrow"));
   }
   if(item.type==="cluster") {
     const members=item.members,studies=new Set(members.flatMap(member=>[...member.entry.studies.keys()]));
-    return head("site",plural(members.length,"site city","site cities"))+(countries=>title(countries.length===1?countries[0]:"Around "+members[0].label,countries.length===1?"Around "+members[0].label:countries.join(", ")))([...new Set(members.map(member=>ssName(member.entry.country)))])+
+    return head(item.css||"site",plural(members.length,"site city","site cities")+(item.css?" · "+mapStatusText(item.css):""))+(countries=>title(countries.length===1?countries[0]:"Around "+members[0].label,countries.length===1?"Around "+members[0].label:countries.join(", ")))([...new Set(members.map(member=>ssName(member.entry.country)))])+
       stats([["Sites",members.reduce((sum,member)=>sum+member.entry.sites.length,0)],["Patients",members.reduce((sum,member)=>sum+member.entry.patients,0)],["Studies",studies.size]])+
       rows(members,4,member=>'<li><span class="mp-row">'+esc(member.label)+'</span><span class="mp-dim">'+esc(plural(member.entry.patients,"patient"))+'</span></li>')+
       actions('<button type="button" class="btn primary small" data-map-act="cluster">'+icon("plus")+'Zoom in to separate them</button>');
@@ -4453,7 +4459,7 @@ function mapPopHtml(item,id) {
   }
   if(item.type==="trip") {
     const shipment=item.shipment;
-    return head(item.tier??"planned",item.tier?tierStyle[item.tier][0]:"Planned shipment")+title(shipment.id+" to "+shipment.site,item.route.nodes.join(" → "))+
+    return head(item.tier??"planned",mapResult[item.shipment.result]?.[0]??"Planned shipment")+title(shipment.id+" to "+shipment.site,item.route.nodes.join(" → "))+
       stats([["Dispatch",mapDay(shipment.dispatch)],["Patients",shipment.patients??"Not known"],["Checks",(mapResult[shipment.result]??[shipment.result])[0]]])+riskNote(item.matches)+
       actions(trigger("Open the shipment","open-agents",shipment.id,"primary small","arrow"));
   }
@@ -4547,14 +4553,14 @@ function networkMap() {
   const counts=signalCounts(),action=trips.filter(trip=>trip.tier).length;
   const chips=Object.entries(mapViews).map(([id,item])=>'<button type="button" class="filter-chip" data-act="map-view" data-value="'+id+'" aria-pressed="'+(mapView===id)+'">'+esc(item.label)+'</button>').join("");
   const layer=(id,key,text,count)=>'<li><button type="button" class="map-layer-btn" data-act="map-layer" data-value="'+id+'" aria-pressed="'+!mapLayersOff.has(id)+'"><i class="key '+key+'"></i>'+esc(text)+'<span class="n">'+count+'</span></button></li>';
-  return '<section class="card map-card"><div class="card-head"><div><h2>Where it happens'+tip("Our sites (sized by patients on treatment) and depots, the disruptions and exposures that touch our shipments, and those shipments' routes. Hover over, tap or tab to a marker or a route for its details, then open the full details. Zoom with the + and − buttons or "+mapMod+" + scroll. The same facts are in the lists on this page.","About the map")+'</h2>'+
+  return '<section class="card map-card"><div class="card-head"><div><h2>Where it happens'+tip("Site and route colors show shipment checks: red means blocked, amber means confirm before dispatch. Site groups use the most urgent shipment status. Blue sites have no shipment needing action. Sites are sized by patients on treatment. The map also shows depots and external disruptions and exposures. Hover over, tap or tab to a marker or a route for its details, then open the full details. Zoom with the + and − buttons or "+mapMod+" + scroll. The same facts are in the lists on this page.","About the map")+'</h2>'+
     '<p>'+esc(plural(counts.confirmed,"confirmed disruption")+" and "+plural(counts.potential,"potential exposure")+" on our routes · "+plural(sites.length,"site city","site cities")+" · "+plural(facilities.length,"depot or factory","depots or factories"))+'</p></div>'+
     '<div class="chip-filters" role="group" aria-label="Map area">'+chips+'</div></div>'+
     '<div class="map-wrap">'+mapStage(model)+
     '<ul class="map-legend" aria-label="Show or hide on the map">'+layer("sites","dot site","Sites",sites.length)+layer("facilities","dot depot","Depots and factories",facilities.length)+
       layer("confirmed","dot confirmed","Confirmed disruptions",signals.filter(item=>item.tier==="confirmed").length)+layer("potential","dot potential","Potential exposures",signals.filter(item=>item.tier==="potential").length)+
-      layer("action","line action","Routes that need action",action)+layer("planned","line planned","Other planned routes",trips.length-action)+
-      '<li class="map-key"><i class="key dot unwatched"></i>Not monitored</li><li class="map-key"><i class="key size"></i>Sized by patients</li></ul></div></section>';
+      layer("action","line action","Blocked / confirm routes",action)+layer("planned","line planned","Ready routes",trips.length-action)+
+      '<li class="map-key"><i class="key dot confirmed"></i>Blocked shipment</li><li class="map-key"><i class="key dot potential"></i>Confirm before dispatch</li><li class="map-key"><i class="key dot site"></i>No shipment needing action</li><li class="map-key"><i class="key dot unwatched"></i>Not monitored</li><li class="map-key"><i class="key size"></i>Sized by patients</li></ul><p class="muted">Red: blocked · Amber: confirm before dispatch · Blue sites: no shipment needing action. Groups show the most urgent check. Select a site or route for details.</p></div></section>';
 }
 // ----- Interaction: zoom and pan, the card on hover, focus or tap, and moving between places with the keyboard -----
 const mapFind = (stage,key) => key?stage.querySelector('[data-key="'+CSS.escape(key)+'"]'):null;
